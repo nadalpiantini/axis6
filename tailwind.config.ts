@@ -15,24 +15,25 @@ const config: Config = {
         bgPrimary: '#FAF8F5',
         bgSecondary: '#F5F2ED',
         
-        // AXIS6 Category Colors
-        physical: '#A6C26F',    // Verde Lima
-        mental: '#365D63',      // Azul Petróleo
-        emotional: '#D36C50',   // Coral Profundo
-        social: '#6F3D56',      // Ciruela
-        spiritual: '#2C3E50',   // Azul Medianoche
-        material: '#C85729',    // Naranja Tierra (was Propósito)
+        // THE RITUAL OS - Brand Category Colors
+        physical: '#D4845C',    // Warm Terracotta
+        mental: '#8B9DC3',      // Sage Blue
+        emotional: '#E8A87C',   // Coral Warm
+        social: '#A8C8B8',      // Soft Sage Green
+        spiritual: '#7B6C8D',   // Deep Lavender
+        material: '#C19A6B',    // Golden Brown
+        art: '#B8A4C9',        // Light Lavender
         
         // Text Colors
         textPrimary: '#2C3E50',
         textSecondary: '#5A6C7D',
         textMuted: '#8B9CAD',
         
-        // Semantic colors
-        success: '#A6C26F',
-        warning: '#C85729',
-        error: '#D36C50',
-        info: '#365D63',
+        // Semantic colors - THE RITUAL OS
+        success: '#A8C8B8',    // Soft Sage Green
+        warning: '#C19A6B',    // Golden Brown
+        error: '#E8A87C',      // Coral Warm
+        info: '#8B9DC3',       // Sage Blue
       },
       fontFamily: {
         serif: ['Playfair Display', 'Georgia', 'serif'],

@@ -3,8 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { withRateLimit, rateLimitConfigs, resetRateLimit } from '@/lib/security/rateLimit'
 import { validateEmail, validatePassword } from '@/lib/security/validation'
 
-export const runtime = 'edge'
-
 export async function POST(request: NextRequest) {
   // Apply rate limiting
   const rateLimitResponse = await withRateLimit(request, rateLimitConfigs.login)

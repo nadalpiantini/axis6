@@ -307,20 +307,30 @@ export default function CategoryCard({ category, isCompleted = false, streakCoun
           </div>
         </motion.div>
 
-        {/* Botón expandir/colapsar */}
+        {/* Botón expandir/colapsar - THE RITUAL OS style */}
         <motion.button
           onClick={() => setShowActions(!showActions)}
-          className="w-full mt-4 py-2 text-sm font-medium rounded-lg transition-colors"
+          className="w-full mt-4 py-3 text-sm font-semibold rounded-2xl backdrop-blur-sm border border-white/20 transition-all duration-300 relative z-10"
           style={{
-            color: category.color,
-            backgroundColor: `${category.color}10`,
+            color: category.darkColor,
+            background: `linear-gradient(135deg, ${category.softColor}40, rgba(255,255,255,0.6))`,
           }}
           whileHover={{ 
-            backgroundColor: `${category.color}20`,
+            scale: 1.02,
+            background: `linear-gradient(135deg, ${category.softColor}60, rgba(255,255,255,0.8))`,
+            boxShadow: `0 4px 15px ${category.color}20`
           }}
           whileTap={{ scale: 0.98 }}
         >
-          {showActions ? 'Ocultar acciones' : 'Ver microacciones'}
+          <span className="flex items-center justify-center gap-2">
+            <motion.span
+              animate={{ rotate: showActions ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              ↓
+            </motion.span>
+            {showActions ? 'Ocultar acciones' : 'Ver microacciones'}
+          </span>
         </motion.button>
       </motion.div>
     </motion.div>
