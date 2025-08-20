@@ -39,7 +39,7 @@ const movementAnimations = {
       transition: { 
         duration: 0.8,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: "easeInOut" as const
       }
     }
   },
@@ -50,7 +50,7 @@ const movementAnimations = {
       transition: { 
         duration: 1.5,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: "easeInOut" as const
       }
     }
   },
@@ -85,7 +85,7 @@ const movementAnimations = {
       transition: { 
         duration: 1.5,
         repeat: Infinity,
-        ease: "easeOut"
+        ease: "easeOut" as const
       }
     }
   },
@@ -118,116 +118,156 @@ export default function CategoryCard({ category, isCompleted = false, streakCoun
     >
       <motion.div
         className={`
-          relative overflow-hidden rounded-2xl p-6
-          backdrop-blur-sm border transition-all duration-300
+          ritual-card relative overflow-hidden p-6
+          transition-all duration-500 group-hover:shadow-2xl
           ${isCompleted 
-            ? 'bg-gradient-to-br border-white/30 shadow-xl' 
-            : 'bg-white/80 border-white/50 hover:bg-white/90'
+            ? 'border-2 border-white/40 shadow-2xl' 
+            : 'border border-white/30 hover:border-white/50'
           }
         `}
         style={{
           background: isCompleted 
-            ? `linear-gradient(135deg, ${category.color}20, ${category.softColor}30)`
+            ? `linear-gradient(135deg, ${category.color}25, ${category.softColor}35, rgba(255,255,255,0.9))`
             : undefined
         }}
         variants={animation}
       >
-        {/* Patrón de fondo decorativo */}
-        <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{
-              background: `radial-gradient(circle, ${category.color}, transparent)`
-            }}
-          />
-        </div>
+        {/* THE RITUAL OS - Organic background pattern */}
+        <div className="absolute inset-0 concentric-organic opacity-20" />
+        <div className="absolute top-0 right-0 w-24 h-24 organic-blob opacity-10"
+             style={{
+               background: `radial-gradient(ellipse 80% 120% at 30% 70%, ${category.color}40, transparent 70%)`
+             }} />
+        
+        {/* Flowing accent */}
+        <div className="absolute bottom-0 left-0 w-full h-2 organic-wave opacity-30"
+             style={{ backgroundColor: `${category.color}20` }} />
 
         {/* Header */}
         <div className="flex items-start justify-between mb-4 relative z-10">
           <div className="flex items-center gap-3">
             <motion.div
               className={`
-                p-3 rounded-xl flex items-center justify-center
-                ${isCompleted ? 'bg-white/90' : 'bg-gradient-to-br'}
+                p-3 rounded-2xl flex items-center justify-center backdrop-blur-sm
+                ${isCompleted 
+                  ? 'bg-white/95 shadow-lg' 
+                  : 'bg-gradient-to-br from-white/60 to-white/40 border border-white/30'
+                }
               `}
               style={{
                 background: !isCompleted 
-                  ? `linear-gradient(135deg, ${category.color}15, ${category.softColor}25)`
+                  ? `linear-gradient(135deg, ${category.softColor}60, rgba(255,255,255,0.8))`
+                  : undefined,
+                boxShadow: isCompleted 
+                  ? `0 4px 20px ${category.color}20`
                   : undefined
               }}
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
+              whileHover={{ 
+                rotate: 360,
+                scale: 1.05,
+                boxShadow: `0 8px 25px ${category.color}30`
+              }}
+              transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
             >
               <Icon 
-                className="w-6 h-6" 
-                style={{ color: category.color }}
+                className={`w-6 h-6 ritual-icon ${isCompleted ? 'ritual-pulse' : ''}`}
+                style={{ color: isCompleted ? category.color : category.darkColor }}
               />
             </motion.div>
             
             <div>
               <h3 
-                className="font-bold text-lg"
+                className="font-serif font-bold text-lg leading-tight"
                 style={{ color: category.darkColor }}
               >
                 {category.ritualName}
               </h3>
-              <p className="text-sm text-gray-600">{category.label}</p>
+              <p className="text-sm text-gray-600/80 font-medium">{category.label}</p>
             </div>
           </div>
 
-          {/* Botón de completado */}
+          {/* Botón de completado - THE RITUAL OS style */}
           <motion.button
             onClick={onToggle}
-            className="relative"
-            whileHover={{ scale: 1.1 }}
+            className={`
+              relative p-2 rounded-2xl backdrop-blur-sm transition-all duration-300
+              ${isCompleted 
+                ? 'bg-white/90 shadow-lg' 
+                : 'bg-white/40 hover:bg-white/60 border border-white/30'
+              }
+            `}
+            whileHover={{ 
+              scale: 1.1,
+              rotate: isCompleted ? 0 : 15,
+              boxShadow: `0 4px 20px ${category.color}30`
+            }}
             whileTap={{ scale: 0.95 }}
+            style={{
+              boxShadow: isCompleted 
+                ? `0 4px 15px ${category.color}25`
+                : undefined
+            }}
           >
             {isCompleted ? (
               <CheckCircle2 
-                className="w-8 h-8"
+                className="w-6 h-6 ritual-pulse"
                 style={{ color: category.color }}
               />
             ) : (
               <Circle 
-                className="w-8 h-8 text-gray-400 hover:text-gray-600"
+                className="w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors"
               />
             )}
           </motion.button>
         </div>
 
-        {/* Mantra */}
+        {/* Mantra - THE RITUAL OS style */}
         <motion.p
-          className="text-sm italic text-gray-700 mb-4 font-serif"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          className="text-sm italic text-gray-700/90 mb-5 font-serif leading-relaxed relative z-10"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
         >
-          "{category.mantra}"
+          <span className="text-2xl font-serif" style={{ color: `${category.color}60` }}>&ldquo;</span>
+          {category.mantra}
+          <span className="text-2xl font-serif" style={{ color: `${category.color}60` }}>&rdquo;</span>
         </motion.p>
 
-        {/* Streak indicator */}
+        {/* Streak indicator - THE RITUAL OS style */}
         {streakCount > 0 && (
           <motion.div
-            className="flex items-center gap-2 mb-4"
+            className="flex items-center gap-3 mb-4 relative z-10"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               {[...Array(Math.min(streakCount, 7))].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.05 }}
+                  className="w-3 h-3 rounded-full shadow-sm"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${category.color}, ${category.darkColor})`,
+                    boxShadow: `0 2px 4px ${category.color}30`
+                  }}
+                  initial={{ scale: 0, rotate: 0 }}
+                  animate={{ scale: 1, rotate: 360 }}
+                  transition={{ 
+                    delay: 0.4 + i * 0.1, 
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 200
+                  }}
                 />
               ))}
             </div>
-            <span className="text-sm font-medium" style={{ color: category.color }}>
+            <motion.span 
+              className="text-sm font-semibold px-2 py-1 rounded-full bg-white/60 backdrop-blur-sm"
+              style={{ color: category.darkColor }}
+              whileHover={{ scale: 1.05 }}
+            >
               {streakCount} días
-            </span>
+            </motion.span>
           </motion.div>
         )}
 

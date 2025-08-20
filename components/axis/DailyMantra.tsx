@@ -2,275 +2,380 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Sparkles, Heart, Brain, Users, Sun, Briefcase, Palette } from 'lucide-react'
+import { Sparkles, Heart, Brain, Users, Sun, Briefcase, Palette, Check, Loader2 } from 'lucide-react'
 
-interface MantraCategory {
-  key: string
-  label: string
-  ritualName: string
-  color: string
-  bgGradient: string
-  icon: React.ReactNode
-  mantra: string
-  microActions: string[]
-  movement: string
+interface Mantra {
+  id: number
+  category_id: number
+  content: { es?: string; en?: string }
+  author: string
+  category_name: { es?: string; en?: string }
+  category_color: string
+  is_completed: boolean
 }
 
-const mantras: MantraCategory[] = [
-  {
-    key: 'physical',
-    label: 'Físico',
-    ritualName: 'Movimiento Vivo',
-    color: '#C85729',
-    bgGradient: 'from-orange-600 to-red-500',
-    icon: <Heart className="w-5 h-5" />,
-    mantra: 'Hoy habito mi cuerpo con ternura',
-    microActions: [
-      'Estirarte lentamente al despertar',
-      'Caminar 10 minutos escuchando tu respiración',
-      'Bailar lo que sientes',
-      'Hacer 5 respiraciones profundas',
-      'Automasaje consciente'
-    ],
-    movement: 'latido'
-  },
-  {
-    key: 'mental',
-    label: 'Mental',
-    ritualName: 'Claridad Interna',
-    color: '#6B7280',
-    bgGradient: 'from-gray-500 to-gray-600',
-    icon: <Brain className="w-5 h-5" />,
-    mantra: 'Hoy hago espacio para pensar menos',
-    microActions: [
-      'Leer 1 página nutritiva',
-      'Apagar notificaciones por 30 minutos',
-      'Respirar antes de responder',
-      'Anotar una idea',
-      'Hacer una pausa consciente'
-    ],
-    movement: 'fade'
-  },
-  {
-    key: 'art',
-    label: 'Arte',
-    ritualName: 'Expresión Creadora',
-    color: '#A78BFA',
-    bgGradient: 'from-purple-400 to-violet-500',
-    icon: <Palette className="w-5 h-5" />,
-    mantra: 'Hoy no creo para mostrar, creo para liberar',
-    microActions: [
-      'Escribir sin editar',
-      'Pintar o colorear',
-      'Grabar un audio personal',
-      'Improvisar una melodía',
-      'Compartir algo imperfecto'
-    ],
-    movement: 'expand'
-  },
-  {
-    key: 'social',
-    label: 'Social',
-    ritualName: 'Vínculo Espejo',
-    color: '#10B981',
-    bgGradient: 'from-emerald-400 to-green-500',
-    icon: <Users className="w-5 h-5" />,
-    mantra: 'Hoy me vinculo sin desaparecer',
-    microActions: [
-      'Enviar mensaje auténtico',
-      'Llamar a alguien solo para escuchar',
-      'Poner un límite claro',
-      'Compartir algo vulnerable',
-      'Hacer una pregunta sincera'
-    ],
-    movement: 'wave'
-  },
-  {
-    key: 'spiritual',
-    label: 'Espiritual',
-    ritualName: 'Presencia Elevada',
-    color: '#4C1D95',
-    bgGradient: 'from-purple-700 to-indigo-800',
-    icon: <Sun className="w-5 h-5" />,
-    mantra: 'Hoy me encuentro más allá del hacer',
-    microActions: [
-      'Meditar 3 minutos',
-      'Leer un texto sagrado',
-      'Orar o agradecer',
-      'Mirar el cielo',
-      'Escuchar silencio'
-    ],
-    movement: 'pulse'
-  },
-  {
-    key: 'material',
-    label: 'Material',
-    ritualName: 'Sustento Terrenal',
-    color: '#B45309',
-    bgGradient: 'from-amber-600 to-yellow-700',
-    icon: <Briefcase className="w-5 h-5" />,
-    mantra: 'Hoy me sostengo, no me demuestro',
-    microActions: [
-      'Completar una tarea con presencia',
-      'Revisar finanzas sin miedo',
-      'Organizar tu espacio',
-      'Decidir no producir más hoy',
-      'Dar valor al trabajo invisible'
-    ],
-    movement: 'vibrate'
-  }
-]
+// Icon mapping for categories
+const categoryIcons: Record<number, React.ReactNode> = {
+  1: <Heart className="w-5 h-5" />,     // Physical
+  2: <Brain className="w-5 h-5" />,     // Mental
+  3: <Palette className="w-5 h-5" />,   // Emotional
+  4: <Users className="w-5 h-5" />,     // Social
+  5: <Sun className="w-5 h-5" />,       // Spiritual
+  6: <Briefcase className="w-5 h-5" />  // Material
+}
 
-const movementVariants = {
-  latido: {
+// Gradient mapping for categories
+const categoryGradients: Record<number, string> = {
+  1: 'from-physical/80 to-physical/40',
+  2: 'from-mental/80 to-mental/40',
+  3: 'from-emotional/80 to-emotional/40',
+  4: 'from-social/80 to-social/40',
+  5: 'from-spiritual/80 to-spiritual/40',
+  6: 'from-material/80 to-material/40'
+}
+
+// Ritual names for categories
+const ritualNames: Record<number, { es: string; en: string }> = {
+  1: { es: 'Movimiento Vivo', en: 'Living Movement' },
+  2: { es: 'Claridad Interna', en: 'Inner Clarity' },
+  3: { es: 'Expresión Emocional', en: 'Emotional Expression' },
+  4: { es: 'Vínculo Espejo', en: 'Mirror Connection' },
+  5: { es: 'Presencia Elevada', en: 'Elevated Presence' },
+  6: { es: 'Sustento Terrenal', en: 'Earthly Sustenance' }
+}
+
+// Micro-actions for each category
+const microActions: Record<number, string[]> = {
+  1: [
+    'Estirarte lentamente al despertar',
+    'Caminar 10 minutos escuchando tu respiración',
+    'Bailar lo que sientes',
+    'Hacer 5 respiraciones profundas',
+    'Automasaje consciente'
+  ],
+  2: [
+    'Leer 1 página nutritiva',
+    'Apagar notificaciones por 30 minutos',
+    'Respirar antes de responder',
+    'Anotar una idea',
+    'Hacer una pausa consciente'
+  ],
+  3: [
+    'Escribir sin editar tus emociones',
+    'Escuchar música que te mueva',
+    'Expresar gratitud a alguien',
+    'Llorar si lo necesitas',
+    'Abrazar a alguien o a ti mismo'
+  ],
+  4: [
+    'Enviar mensaje auténtico',
+    'Llamar a alguien solo para escuchar',
+    'Poner un límite claro',
+    'Compartir algo vulnerable',
+    'Hacer una pregunta sincera'
+  ],
+  5: [
+    'Meditar 3 minutos',
+    'Leer un texto sagrado',
+    'Orar o agradecer',
+    'Mirar el cielo',
+    'Escuchar silencio'
+  ],
+  6: [
+    'Completar una tarea con presencia',
+    'Revisar finanzas sin miedo',
+    'Organizar tu espacio',
+    'Decidir no producir más hoy',
+    'Dar valor al trabajo invisible'
+  ]
+}
+
+// Movement animations for different categories
+const movementVariants: Record<number, any> = {
+  1: { // Physical - heartbeat
     scale: [1, 1.1, 1],
     transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
   },
-  fade: {
-    opacity: [1, 0.5, 1],
+  2: { // Mental - fade
+    opacity: [1, 0.7, 1],
     transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
   },
-  expand: {
-    scale: [1, 1.2, 1],
-    opacity: [0.8, 1, 0.8],
+  3: { // Emotional - expand
+    scale: [1, 1.05, 1],
+    opacity: [0.9, 1, 0.9],
     transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
   },
-  wave: {
-    x: [0, 10, -10, 0],
+  4: { // Social - wave
+    x: [0, 5, -5, 0],
     transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
   },
-  pulse: {
+  5: { // Spiritual - pulse
     boxShadow: [
       "0 0 0 0 rgba(76, 29, 149, 0)",
-      "0 0 0 10px rgba(76, 29, 149, 0.2)",
+      "0 0 0 10px rgba(76, 29, 149, 0.1)",
       "0 0 0 20px rgba(76, 29, 149, 0)",
     ],
     transition: { duration: 2, repeat: Infinity, ease: "easeOut" }
   },
-  vibrate: {
-    x: [0, -2, 2, -2, 2, 0],
-    transition: { duration: 0.5, repeat: Infinity, repeatDelay: 2 }
+  6: { // Material - vibrate
+    x: [0, -1, 1, -1, 1, 0],
+    transition: { duration: 0.5, repeat: Infinity, repeatDelay: 3 }
   }
 }
 
 export default function DailyMantra() {
-  const [selectedMantra, setSelectedMantra] = useState(0)
+  const [mantra, setMantra] = useState<Mantra | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [completing, setCompleting] = useState(false)
   const [showMicroAction, setShowMicroAction] = useState(false)
-  
-  const currentMantra = mantras[selectedMantra]
-  const randomAction = currentMantra.microActions[
-    Math.floor(Math.random() * currentMantra.microActions.length)
-  ]
+  const [showReflection, setShowReflection] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Cambiar mantra cada 10 segundos
-    const interval = setInterval(() => {
-      setSelectedMantra((prev) => (prev + 1) % mantras.length)
-      setShowMicroAction(false)
-    }, 10000)
-    
-    return () => clearInterval(interval)
+    fetchDailyMantra()
   }, [])
+
+  const fetchDailyMantra = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch('/api/mantras')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch mantra')
+      }
+
+      const data = await response.json()
+      if (data.mantra) {
+        setMantra(data.mantra)
+      }
+    } catch (err) {
+      console.error('Error fetching mantra:', err)
+      setError('No se pudo cargar el mantra del día')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const completeMantra = async () => {
+    if (!mantra || mantra.is_completed) return
+
+    try {
+      setCompleting(true)
+      const response = await fetch('/api/mantras', {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to complete mantra')
+      }
+
+      // Update local state
+      setMantra({ ...mantra, is_completed: true })
+      setShowReflection(true)
+      
+      // Hide reflection after 3 seconds
+      setTimeout(() => {
+        setShowReflection(false)
+      }, 3000)
+    } catch (err) {
+      console.error('Error completing mantra:', err)
+    } finally {
+      setCompleting(false)
+    }
+  }
+
+  const getMantraText = (content: { es?: string; en?: string }) => {
+    return content.es || content.en || ''
+  }
+
+  const getCategoryName = (name: { es?: string; en?: string }) => {
+    return name.es || name.en || 'Equilibrio'
+  }
+
+  const getRitualName = (categoryId: number) => {
+    return ritualNames[categoryId]?.es || 'Ritual Diario'
+  }
+
+  const getRandomAction = (categoryId: number) => {
+    const actions = microActions[categoryId] || []
+    return actions[Math.floor(Math.random() * actions.length)]
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-2xl mx-auto p-6">
+        <div className="card-soft bg-white/5 backdrop-blur-sm">
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin text-textSecondary" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !mantra) {
+    return null // Silently fail if no mantra available
+  }
+
+  const randomAction = getRandomAction(mantra.category_id)
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
-      <AnimatePresence mode="wait">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative"
+      >
+        {/* Tarjeta principal */}
         <motion.div
-          key={currentMantra.key}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
-          className="relative"
+          className={`card-soft text-white relative overflow-hidden ${categoryGradients[mantra.category_id] || 'from-gray-600 to-gray-700'}`}
+          style={{
+            background: `linear-gradient(135deg, ${mantra.category_color}80, ${mantra.category_color}40)`
+          }}
+          animate={movementVariants[mantra.category_id] || {}}
         >
-          {/* Tarjeta principal */}
-          <motion.div
-            className={`card-soft bg-gradient-to-br ${currentMantra.bgGradient} text-white relative overflow-hidden`}
-            animate={movementVariants[currentMantra.movement as keyof typeof movementVariants]}
-          >
-            {/* Patrón de fondo */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45" />
-            </div>
+          {/* Patrón de fondo */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45" />
+          </div>
 
-            {/* Contenido */}
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
+          {/* Contenido */}
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
                 <motion.div
                   className="p-3 bg-white/20 rounded-full backdrop-blur-sm"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {currentMantra.icon}
+                  {categoryIcons[mantra.category_id] || <Sparkles className="w-5 h-5" />}
                 </motion.div>
                 <div>
-                  <p className="text-sm opacity-90">{currentMantra.label}</p>
-                  <h3 className="text-xl font-bold">{currentMantra.ritualName}</h3>
+                  <p className="text-sm opacity-90">{getCategoryName(mantra.category_name)}</p>
+                  <h3 className="text-xl font-bold">{getRitualName(mantra.category_id)}</h3>
                 </div>
               </div>
-
-              {/* Mantra */}
-              <motion.p
-                className="text-2xl font-serif italic mb-6 leading-relaxed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                "{currentMantra.mantra}"
-              </motion.p>
-
-              {/* Microacción sugerida */}
+              
+              {/* Status Badge */}
               <motion.div
-                className="mt-4 p-4 bg-white/10 rounded-xl backdrop-blur-sm"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: showMicroAction ? 'auto' : 0, opacity: showMicroAction ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  mantra.is_completed 
+                    ? 'bg-green-500/30 text-green-100'
+                    : 'bg-white/20 text-white/80'
+                }`}
               >
-                {showMicroAction && (
-                  <div>
-                    <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Microacción para hoy:
-                    </p>
-                    <p className="text-lg">{randomAction}</p>
-                  </div>
-                )}
+                {mantra.is_completed ? '✓ Completado' : 'Pendiente'}
               </motion.div>
+            </div>
 
-              {/* Botón de acción */}
+            {/* Mantra */}
+            <motion.p
+              className="text-2xl font-serif italic mb-6 leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              &ldquo;{getMantraText(mantra.content)}&rdquo;
+            </motion.p>
+
+            {mantra.author && (
+              <p className="text-sm opacity-80 mb-4">— {mantra.author}</p>
+            )}
+
+            {/* Microacción sugerida */}
+            <AnimatePresence>
+              {showMicroAction && (
+                <motion.div
+                  className="mb-4 p-4 bg-white/10 rounded-xl backdrop-blur-sm"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Microacción para hoy:
+                  </p>
+                  <p className="text-lg">{randomAction}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Botones de acción */}
+            <div className="flex gap-2">
               <motion.button
                 onClick={() => setShowMicroAction(!showMicroAction)}
-                className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors text-sm font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {showMicroAction ? 'Ocultar' : 'Mostrar microacción'}
+                {showMicroAction ? 'Ocultar acción' : 'Ver microacción'}
               </motion.button>
-            </div>
-          </motion.div>
 
-          {/* Indicadores de navegación */}
-          <div className="flex justify-center gap-2 mt-6">
-            {mantras.map((mantra, index) => (
-              <motion.button
-                key={mantra.key}
-                onClick={() => {
-                  setSelectedMantra(index)
-                  setShowMicroAction(false)
-                }}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === selectedMantra ? 'w-8' : ''
-                }`}
-                style={{
-                  backgroundColor: index === selectedMantra ? mantra.color : `${mantra.color}40`
-                }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              />
-            ))}
+              {!mantra.is_completed && (
+                <motion.button
+                  onClick={completeMantra}
+                  disabled={completing}
+                  className="flex-1 px-4 py-2 bg-white/30 hover:bg-white/40 rounded-full backdrop-blur-sm transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {completing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Reflexionando...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <Check className="w-4 h-4" />
+                      He reflexionado sobre esto
+                    </span>
+                  )}
+                </motion.button>
+              )}
+            </div>
           </div>
+
+          {/* Reflection Overlay */}
+          <AnimatePresence>
+            {showReflection && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-gradient-to-br from-white/90 to-white/80 backdrop-blur-md
+                           rounded-2xl flex items-center justify-center z-20"
+              >
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  className="text-center text-gray-800 p-6"
+                >
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1 }}
+                    className="w-16 h-16 mx-auto mb-3"
+                    style={{ color: mantra.category_color }}
+                  >
+                    <Sparkles className="w-full h-full" />
+                  </motion.div>
+                  <h3 className="text-lg font-serif font-bold mb-1">
+                    ¡Excelente!
+                  </h3>
+                  <p className="text-sm opacity-90">
+                    La reflexión nutre tu crecimiento
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
-      </AnimatePresence>
+      </motion.div>
     </div>
   )
 }

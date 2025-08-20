@@ -10,9 +10,23 @@ const nextConfig: NextConfig = {
   experimental: {
     // Permite hostnames personalizados en desarrollo
     serverActions: {
-      allowedOrigins: ['axis6.dev:6789', 'localhost:6789'],
+      allowedOrigins: ['axis6.dev:6789', 'localhost:6789', 'axis6.app'],
     },
   },
+  
+  // Configuración para Cloudflare Pages
+  ...(process.env.CF_PAGES && {
+    output: 'standalone',
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '**',
+        },
+      ],
+      unoptimized: true, // Cloudflare Pages no soporta optimización de imágenes de Next.js
+    },
+  }),
   
   // Headers de seguridad y CORS
   async headers() {
