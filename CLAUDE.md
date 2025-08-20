@@ -13,12 +13,15 @@ AXIS6 is a gamified wellness tracker that helps users maintain balance across 6 
 
 ## Development Commands
 ```bash
-npm run dev          # Start development server
+npm run dev          # Start development server on http://localhost:6789
 npm run build        # Production build
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run test         # Run tests (when configured)
 ```
+
+## IMPORTANT: Development URL
+**ALWAYS use http://localhost:6789 for development** - The project is configured to run on port 6789, not the default 3000.
 
 ## Project Structure
 ```
@@ -57,11 +60,47 @@ All tables use the prefix `axis6_` for multi-tenant isolation:
 6. **Mobile Responsive**: Optimized for all devices
 7. **Dark Theme**: Navy-based color scheme from design system
 
-## Design System
-- **Primary Colors**: Navy (#0A0E1A), Teal (#65D39A), Lavender (#9B8AE6)
-- **Category Colors**: Physical (Teal), Mental (Lavender), Emotional (Coral), Social (Blue), Spiritual (Turquoise), Material (Yellow)
-- **Typography**: Satoshi font family
-- **Components**: Dark cards with subtle borders, smooth animations
+## 🎨 AXIS6 Brand & UI Kit (v1)
+
+### Brand Identity
+- **Slogan**: "Seis ejes. Un solo tú. No rompas tu Axis."
+- **Logo**: Circular segmented design with 6 phases
+- **Philosophy**: Balance between introspection and dynamism
+
+### Color Palette
+| Eje | Color Base | Hex | Usage |
+|-----|------------|-----|--------|
+| **Físico** | Verde Lima | #A6C26F | Exercise, health, nutrition |
+| **Mental** | Azul Petróleo | #365D63 | Learning, productivity |
+| **Emocional** | Coral Profundo | #D36C50 | Mood, stress management |
+| **Social** | Ciruela | #6F3D56 | Relationships, connections |
+| **Espiritual** | Azul Medianoche | #2C3E50 | Meditation, purpose |
+| **Propósito** | Naranja Tierra | #C85729 | Goals, achievements |
+| **Neutrales** | Marfil / Arena | #F2E9DC / #E0D2BD | Backgrounds, cards |
+
+### Typography System
+- **Headlines/Brand**: Serif font (Playfair Display or similar) - Elegant, classic
+- **UI Text**: Sans-serif (Inter, Satoshi) - Modern, geometric
+- **Body/Journaling**: High-legibility sans-serif with proper line height
+- **Micro-text**: Optimized for small sizes (12px minimum)
+
+### Iconography
+- **Style**: Minimalist linear icons
+- **Weight**: Consistent 2px stroke
+- **Geometry**: Based on circular grid
+- **Symbols**: Abstract representations for each axis
+  - Físico: Flowing lines (movement)
+  - Mental: Geometric brain pattern
+  - Emocional: Heart with energy waves
+  - Social: Connected dots
+  - Espiritual: Mandala pattern
+  - Propósito: Target with arrow
+
+### Visual Elements
+- **Textures**: Soft gradients, noise overlays
+- **Shapes**: Flowing curves for streaks, concentric circles for progress
+- **Patterns**: Half-moon shapes, organic waves
+- **Effects**: Subtle shadows, glass morphism on light backgrounds
 
 ## Environment Variables
 ```env

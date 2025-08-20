@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -21,21 +22,43 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
+    // Client-side validation
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden')
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres')
+      setLoading(false)
+      return
+    }
+
     try {
-      // Registrar usuario
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Santo_Domingo'
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          confirmPassword,
+          name 
+        }),
       })
 
-      if (error) throw error
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          const retryAfter = data.retryAfter || 3600 // Default to 1 hour
+          throw new Error(`${data.error}. Intenta de nuevo en ${Math.ceil(retryAfter / 60)} minutos.`)
+        }
+        throw new Error(data.error || 'Error al crear la cuenta')
+      }
 
       setSuccess(true)
       
@@ -52,7 +75,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 to-navy-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-bgPrimary via-marfil to-arena texture-noise flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -61,15 +84,15 @@ export default function RegisterPage() {
       >
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-physical to-spiritual bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-physical via-emotional to-social bg-clip-text text-transparent mb-2">
             AXIS6
           </h1>
-          <p className="text-gray-400">Comienza tu viaje hacia el equilibrio</p>
+          <p className="text-textSecondary">Comienza tu viaje hacia el equilibrio</p>
         </div>
 
         {/* Register Form */}
-        <div className="bg-navy-900/50 backdrop-blur-lg rounded-2xl border border-white/10 p-8">
-          <h2 className="text-2xl font-semibold text-white mb-6">Crear Cuenta</h2>
+        <div className="glass-premium rounded-2xl p-8">
+          <h2 className="text-2xl font-serif font-semibold text-textPrimary mb-6">Crear Cuenta</h2>
           
           {error && (
             <motion.div
@@ -134,12 +157,29 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
                 className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 disabled={loading || success}
               />
-              <p className="mt-1 text-xs text-gray-500">Mínimo 6 caracteres</p>
+              <p className="mt-1 text-xs text-gray-500">Mínimo 8 caracteres, debe incluir mayúsculas, minúsculas y números</p>
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                Confirmar Contraseña
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={8}
+                className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
+                placeholder="Repite tu contraseña"
+                disabled={loading || success}
+              />
             </div>
 
             <button
@@ -183,6 +223,13 @@ export default function RegisterPage() {
               <span className="text-material"> Material</span>.
             </p>
           </div>
+        </div>
+
+        {/* Back to home link */}
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
+            ← Volver al inicio
+          </Link>
         </div>
       </motion.div>
     </div>

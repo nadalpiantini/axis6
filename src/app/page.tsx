@@ -5,23 +5,23 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 
 const categories = [
-  { name: 'Física', color: '#65D39A', icon: '💪', description: 'Ejercicio, salud y nutrición' },
-  { name: 'Mental', color: '#9B8AE6', icon: '🧠', description: 'Aprendizaje y productividad' },
-  { name: 'Emocional', color: '#FF8B7D', icon: '❤️', description: 'Estado de ánimo y estrés' },
-  { name: 'Social', color: '#6AA6FF', icon: '👥', description: 'Relaciones y conexiones' },
-  { name: 'Espiritual', color: '#4ECDC4', icon: '✨', description: 'Meditación y propósito' },
-  { name: 'Material', color: '#FFD166', icon: '💼', description: 'Finanzas y recursos' }
+  { name: 'Física', color: '#A6C26F', icon: '🌿', description: 'Ejercicio, salud y nutrición' },
+  { name: 'Mental', color: '#365D63', icon: '🧠', description: 'Aprendizaje y productividad' },
+  { name: 'Emocional', color: '#D36C50', icon: '❤️', description: 'Estado de ánimo y estrés' },
+  { name: 'Social', color: '#6F3D56', icon: '🤝', description: 'Relaciones y conexiones' },
+  { name: 'Espiritual', color: '#2C3E50', icon: '🧿', description: 'Meditación y propósito' },
+  { name: 'Material', color: '#C85729', icon: '🎯', description: 'Finanzas y recursos' }
 ]
 
 export default function HomePage() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 to-navy-900">
+    <div className="min-h-screen bg-gradient-to-br from-bgPrimary via-marfil to-arena texture-noise concentric-circles">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-navy-900/50 to-navy-950" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-marfil/30 to-arena/50" />
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
@@ -31,17 +31,17 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-physical via-mental to-spiritual bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6">
+              <span className="bg-gradient-to-r from-physical via-emotional to-social bg-clip-text text-transparent">
                 AXIS6
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-300 mb-4">
-              Seis ejes. Un solo tú. No rompas tu Axis.
+            <p className="text-xl md:text-2xl text-textPrimary font-serif italic mb-4">
+              &ldquo;Seis ejes. Un solo tú. No rompas tu Axis.&rdquo;
             </p>
             
-            <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg text-textSecondary mb-12 max-w-2xl mx-auto">
               Alcanza el equilibrio perfecto en las 6 dimensiones de tu vida. 
               Rastrea tu progreso diario, construye hábitos duraderos y conviértete 
               en la mejor versión de ti mismo.

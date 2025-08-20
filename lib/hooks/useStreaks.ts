@@ -71,7 +71,6 @@ export function useStreaks(userId: string | undefined) {
 
       setStreaks(formattedStreaks)
     } catch (error) {
-      console.error('Error loading streaks:', error)
     } finally {
       setLoading(false)
     }

@@ -20,13 +20,26 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (error) throw error
+      const data = await response.json()
 
+      if (!response.ok) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          const retryAfter = data.retryAfter || 900 // Default to 15 minutes
+          throw new Error(`${data.error}. Intenta de nuevo en ${Math.ceil(retryAfter / 60)} minutos.`)
+        }
+        throw new Error(data.error || 'Error al iniciar sesión')
+      }
+
+      // Successful login - redirect to dashboard
       router.push('/dashboard')
     } catch (error: any) {
       setError(error.message || 'Error al iniciar sesión')
@@ -76,14 +89,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
+                className="w-full px-4 py-3 bg-white/70 border border-arena/30 rounded-lg text-textPrimary placeholder-textMuted focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
                 placeholder="tu@email.com"
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-textSecondary mb-2">
                 Contraseña
               </label>
               <input
@@ -92,7 +105,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
+                minLength={6}
+                className="w-full px-4 py-3 bg-white/70 border border-arena/30 rounded-lg text-textPrimary placeholder-textMuted focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
                 placeholder="••••••••"
                 disabled={loading}
               />
@@ -101,7 +115,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-physical to-mental text-white font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-physical focus:ring-offset-2 focus:ring-offset-navy-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-gradient-to-r from-physical to-emotional text-white font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-physical focus:ring-offset-2 focus:ring-offset-marfil transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -118,13 +132,20 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-400">
+            <p className="text-textSecondary">
               ¿No tienes cuenta?{' '}
-              <Link href="/register" className="text-physical hover:text-mental transition-colors">
+              <Link href="/register" className="text-physical hover:text-emotional transition-colors font-medium">
                 Regístrate
               </Link>
             </p>
           </div>
+        </div>
+
+        {/* Back to home link */}
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-textSecondary hover:text-textPrimary transition-colors text-sm">
+            ← Volver al inicio
+          </Link>
         </div>
       </motion.div>
     </div>

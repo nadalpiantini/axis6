@@ -17,12 +17,54 @@ interface HexagonChartProps {
 }
 
 const categories = [
-  { key: 'physical', label: 'Física', color: '#65D39A', angle: 0 },
-  { key: 'mental', label: 'Mental', color: '#9B8AE6', angle: 60 },
-  { key: 'emotional', label: 'Emocional', color: '#FF8B7D', angle: 120 },
-  { key: 'social', label: 'Social', color: '#6AA6FF', angle: 180 },
-  { key: 'spiritual', label: 'Espiritual', color: '#4ECDC4', angle: 240 },
-  { key: 'material', label: 'Material', color: '#FFD166', angle: 300 }
+  { 
+    key: 'physical', 
+    label: 'Movimiento Vivo', 
+    shortLabel: 'Físico',
+    color: '#C85729', // Rojo Terracota
+    mantra: 'Hoy habito mi cuerpo con ternura',
+    angle: 0 
+  },
+  { 
+    key: 'mental', 
+    label: 'Claridad Interna', 
+    shortLabel: 'Mental',
+    color: '#6B7280', // Azul Humo/Ceniza
+    mantra: 'Hoy hago espacio para pensar menos',
+    angle: 60 
+  },
+  { 
+    key: 'emotional', 
+    label: 'Expresión Creadora', 
+    shortLabel: 'Arte',
+    color: '#A78BFA', // Lavanda/Violeta (cambiado a Arte)
+    mantra: 'Hoy no creo para mostrar, creo para liberar',
+    angle: 120 
+  },
+  { 
+    key: 'social', 
+    label: 'Vínculo Espejo', 
+    shortLabel: 'Social',
+    color: '#10B981', // Verde Menta Suave
+    mantra: 'Hoy me vinculo sin desaparecer',
+    angle: 180 
+  },
+  { 
+    key: 'spiritual', 
+    label: 'Presencia Elevada', 
+    shortLabel: 'Espiritual',
+    color: '#4C1D95', // Índigo Nebuloso
+    mantra: 'Hoy me encuentro más allá del hacer',
+    angle: 240 
+  },
+  { 
+    key: 'material', 
+    label: 'Sustento Terrenal', 
+    shortLabel: 'Material',
+    color: '#B45309', // Marrón Dorado
+    mantra: 'Hoy me sostengo, no me demuestro',
+    angle: 300 
+  }
 ]
 
 export default function HexagonChart({ 
@@ -143,14 +185,14 @@ export default function HexagonChart({
         {/* Gradient definitions */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#65D39A" />
-            <stop offset="50%" stopColor="#9B8AE6" />
-            <stop offset="100%" stopColor="#4ECDC4" />
+            <stop offset="0%" stopColor="#4ECCA3" />
+            <stop offset="50%" stopColor="#A78BFA" />
+            <stop offset="100%" stopColor="#34D399" />
           </linearGradient>
           <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#65D39A" />
-            <stop offset="50%" stopColor="#9B8AE6" />
-            <stop offset="100%" stopColor="#4ECDC4" />
+            <stop offset="0%" stopColor="#4ECCA3" />
+            <stop offset="50%" stopColor="#A78BFA" />
+            <stop offset="100%" stopColor="#34D399" />
           </linearGradient>
         </defs>
       </svg>
@@ -178,8 +220,9 @@ export default function HexagonChart({
             <span 
               className="text-xs font-medium"
               style={{ color: cat.color }}
+              title={cat.mantra}
             >
-              {cat.label}
+              {cat.shortLabel}
             </span>
             <span className="text-xs text-gray-400">
               {value}%

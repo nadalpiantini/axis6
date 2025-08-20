@@ -1,0 +1,56 @@
+# Configuración de Cloudflare Pages para AXIS6
+name = "axis6-app"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Directorio de salida del build
+pages_build_output_dir = ".vercel/output/static"
+
+# Variables de entorno para producción
+[vars]
+NODE_ENV = "production"
+
+# Configuración de funciones (para API routes)
+[[compatibility_flags]]
+nodejs_compat = true
+
+# Configuración de KV Namespaces (si necesitas caché persistente)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# Configuración de Durable Objects (si necesitas estado persistente)
+# [[durable_objects.bindings]]
+# name = "COUNTER"
+# class_name = "Counter"
+# script_name = "counter"
+
+# Configuración de R2 (si necesitas almacenamiento de archivos)
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "axis6-uploads"
+
+# Rutas que deben ser manejadas como funciones
+# Las API routes de Next.js serán automáticamente detectadas
+[build]
+command = "npx @cloudflare/next-on-pages"
+
+[build.upload]
+# Reglas para excluir archivos del upload
+rules = [
+  { type = "CompiledStatic", globs = ["**/*.map"], exclude = true }
+]
+
+# Configuración de desarrollo local
+[dev]
+port = 8788
+local_protocol = "http"
+
+# Configuración de preview/staging
+[env.preview]
+vars = { NODE_ENV = "preview" }
+
+# Configuración de producción
+[env.production]
+vars = { NODE_ENV = "production" }
+route = { pattern = "axis6.app", custom_domain = true }

@@ -1,21 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#0A0E1A",
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://axis6.sujeto10.com' : 'http://localhost:3000'),
   title: "AXIS6 - Equilibrio en 6 Ejes",
   description: "Alcanza el equilibrio perfecto en las 6 dimensiones de tu vida. Rastrea tu progreso diario y conviértete en tu mejor versión.",
   keywords: "bienestar, equilibrio, hábitos, productividad, salud mental, desarrollo personal",
   authors: [{ name: "AXIS6 Team" }],
   manifest: "/manifest.json",
-  themeColor: "#0A0E1A",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -61,7 +63,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning={true}>
         {children}
       </body>
     </html>

@@ -71,13 +71,22 @@ git push origin main
 
 ### 3. Variables de Entorno
 
-En Vercel, añade estas variables:
+⚠️ **IMPORTANTE SEGURIDAD**: NUNCA expongas credenciales reales en archivos de documentación o código fuente.
+
+En Vercel, añade estas variables con tus valores reales:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://nqzhxukuvmdlpewqytpv.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xemh4dWt1dm1kbHBld3F5dHB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY2NTk0MDksImV4cCI6MjA2MjIzNTQwOX0.9raKtf_MAUoZ7lUOek4lazhWTfmxPvufW1-al82UHmk
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xemh4dWt1dm1kbHBld3F5dHB2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjY1OTQwOSwiZXhwIjoyMDYyMjM1NDA5fQ.KUbJb8fCHADnITIhr-x8R49_BsmicsYAzW9qG2YlTFA
-DEEPSEEK_API_KEY=sk-361a8f41990e4e9bb145646596ecd16b
+# ⚠️ ESTOS SON PLACEHOLDERS - USA TUS VALORES REALES
+NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase_aqui
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key_aqui
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_aqui
+DEEPSEEK_API_KEY=tu_api_key_aqui
+
+# Para obtener estos valores:
+# 1. Ve a tu proyecto en Supabase Dashboard
+# 2. Settings > API
+# 3. Copia los valores de "Project URL" y "API Keys"
+# 4. NUNCA compartas el service_role_key públicamente
 ```
 
 ### 4. Configuración de Build
