@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIS6 - Ejecutar Migraciones</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0A0E1A 0%, #1A1F36 100%);
+            color: #E5E7EB;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #65D39A;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .step {
+            background: rgba(26, 31, 54, 0.5);
+            border: 1px solid rgba(101, 211, 154, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .step-number {
+            background: #65D39A;
+            color: #0A0E1A;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        pre {
+            background: #0A0E1A;
+            border: 1px solid #2A2F46;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #65D39A;
+            color: #0A0E1A;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover {
+            background: #4EBC83;
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background: #9B8AE6;
+        }
+        .link-btn {
+            display: inline-block;
+            background: #6AA6FF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+        .link-btn:hover {
+            background: #5595EE;
+            transform: translateY(-2px);
+        }
+        .success-msg {
+            background: rgba(101, 211, 154, 0.1);
+            border: 1px solid #65D39A;
+            color: #65D39A;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .warning {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid #FFD166;
+            color: #FFD166;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AXIS6 - Ejecutar Migraciones en Supabase</h1>
+        
+        <div class="warning">
+            ⚠️ <strong>Importante:</strong> Estas migraciones deben ejecutarse en el SQL Editor de tu proyecto Supabase.
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2>Abrir SQL Editor</h2>
+            </div>
+            <p>Haz clic en el siguiente enlace para abrir el SQL Editor de tu proyecto:</p>
+            <a href="https://supabase.com/dashboard/project/nqzhxukuvmdlpewqytpv/sql/new" target="_blank" class="link-btn">
+                Abrir SQL Editor
+            </a>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2>Ejecutar Migración Principal</h2>
+            </div>
+            <p>Copia y ejecuta este SQL para crear todas las tablas con prefijo axis6_:</p>
+            <pre id="migration1"><code>-- AXIS6 Database Schema
+-- All tables use prefix 'axis6_' for multi-tenant isolation
+
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create profiles table (extends Supabase Auth)
+CREATE TABLE IF NOT EXISTS axis6_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  timezone TEXT DEFAULT 'America/Santo_Domingo',
+  onboarded BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create categories table (the 6 axes)
+CREATE TABLE IF NOT EXISTS axis6_categories (
+  id SERIAL PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL,
+  name JSONB NOT NULL,
+  description JSONB,
+  color TEXT NOT NULL,
+  icon TEXT NOT NULL,
+  position INT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Insert the 6 core categories
+INSERT INTO axis6_categories (slug, name, description, color, icon, position) VALUES
+  ('physical', 
+   '{"es": "Física", "en": "Physical"}',
+   '{"es": "Ejercicio, salud y nutrición", "en": "Exercise, health, and nutrition"}',
+   '#65D39A', 'activity', 1),
+  ('mental',
+   '{"es": "Mental", "en": "Mental"}',
+   '{"es": "Aprendizaje, enfoque y productividad", "en": "Learning, focus, and productivity"}',
+   '#9B8AE6', 'brain', 2),
+  ('emotional',
+   '{"es": "Emocional", "en": "Emotional"}',
+   '{"es": "Estado de ánimo y manejo del estrés", "en": "Mood and stress management"}',
+   '#FF8B7D', 'heart', 3),
+  ('social',
+   '{"es": "Social", "en": "Social"}',
+   '{"es": "Relaciones y conexiones", "en": "Relationships and connections"}',
+   '#6AA6FF', 'users', 4),
+  ('spiritual',
+   '{"es": "Espiritual", "en": "Spiritual"}',
+   '{"es": "Meditación, propósito y mindfulness", "en": "Meditation, purpose, and mindfulness"}',
+   '#4ECDC4', 'sparkles', 5),
+  ('material',
+   '{"es": "Material", "en": "Material"}',
+   '{"es": "Finanzas, carrera y recursos", "en": "Finance, career, and resources"}',
+   '#FFD166', 'briefcase', 6)
+ON CONFLICT (slug) DO NOTHING;
+
+-- Create check-ins table
+CREATE TABLE IF NOT EXISTS axis6_checkins (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES axis6_profiles(id) ON DELETE CASCADE,
+  category_id INT NOT NULL REFERENCES axis6_categories(id),
+  completed_at DATE NOT NULL,
+  notes TEXT,
+  mood INT CHECK (mood BETWEEN 1 AND 5),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, category_id, completed_at)
+);
+
+-- Create streaks table
+CREATE TABLE IF NOT EXISTS axis6_streaks (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES axis6_profiles(id) ON DELETE CASCADE,
+  category_id INT NOT NULL REFERENCES axis6_categories(id),
+  current_streak INT DEFAULT 0,
+  longest_streak INT DEFAULT 0,
+  last_checkin DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, category_id)
+);
+
+-- Create daily stats table
+CREATE TABLE IF NOT EXISTS axis6_daily_stats (
+  user_id UUID NOT NULL REFERENCES axis6_profiles(id) ON DELETE CASCADE,
+  date DATE NOT NULL,
+  completion_rate DECIMAL(3,2),
+  categories_completed INT DEFAULT 0,
+  total_mood INT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY(user_id, date)
+);
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_checkins_user_date ON axis6_checkins(user_id, completed_at);
+CREATE INDEX IF NOT EXISTS idx_streaks_user ON axis6_streaks(user_id);
+CREATE INDEX IF NOT EXISTS idx_daily_stats_user_date ON axis6_daily_stats(user_id, date DESC);
+
+-- Enable Row Level Security
+ALTER TABLE axis6_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE axis6_checkins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE axis6_streaks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE axis6_daily_stats ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for profiles
+CREATE POLICY "Users can view their own profile"
+  ON axis6_profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile"
+  ON axis6_profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own profile"
+  ON axis6_profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- RLS Policies for check-ins
+CREATE POLICY "Users can view their own check-ins"
+  ON axis6_checkins FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create their own check-ins"
+  ON axis6_checkins FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own check-ins"
+  ON axis6_checkins FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own check-ins"
+  ON axis6_checkins FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- RLS Policies for streaks
+CREATE POLICY "Users can view their own streaks"
+  ON axis6_streaks FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage their own streaks"
+  ON axis6_streaks FOR ALL
+  USING (auth.uid() = user_id);
+
+-- RLS Policies for daily stats
+CREATE POLICY "Users can view their own stats"
+  ON axis6_daily_stats FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage their own stats"
+  ON axis6_daily_stats FOR ALL
+  USING (auth.uid() = user_id);
+
+-- Function to update timestamps
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Triggers for updated_at
+CREATE TRIGGER update_axis6_profiles_updated_at BEFORE UPDATE ON axis6_profiles
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_axis6_checkins_updated_at BEFORE UPDATE ON axis6_checkins
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_axis6_streaks_updated_at BEFORE UPDATE ON axis6_streaks
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Function to calculate streaks
+CREATE OR REPLACE FUNCTION axis6_calculate_streak(p_user_id UUID, p_category_id INT)
+RETURNS void AS $$
+DECLARE
+  v_dates DATE[];
+  v_current_streak INT := 0;
+  v_longest_streak INT := 0;
+  v_temp_streak INT := 0;
+  v_last_date DATE := NULL;
+  v_date DATE;
+BEGIN
+  SELECT ARRAY_AGG(completed_at ORDER BY completed_at)
+  INTO v_dates
+  FROM axis6_checkins
+  WHERE user_id = p_user_id AND category_id = p_category_id;
+
+  IF v_dates IS NULL THEN
+    DELETE FROM axis6_streaks 
+    WHERE user_id = p_user_id AND category_id = p_category_id;
+    RETURN;
+  END IF;
+
+  FOREACH v_date IN ARRAY v_dates
+  LOOP
+    IF v_last_date IS NULL OR v_date = v_last_date + INTERVAL '1 day' THEN
+      v_temp_streak := v_temp_streak + 1;
+    ELSE
+      v_temp_streak := 1;
+    END IF;
+    
+    IF v_temp_streak > v_longest_streak THEN
+      v_longest_streak := v_temp_streak;
+    END IF;
+    
+    v_last_date := v_date;
+  END LOOP;
+
+  IF v_last_date >= CURRENT_DATE - INTERVAL '1 day' THEN
+    v_current_streak := v_temp_streak;
+  ELSE
+    v_current_streak := 0;
+  END IF;
+
+  INSERT INTO axis6_streaks (user_id, category_id, current_streak, longest_streak, last_checkin)
+  VALUES (p_user_id, p_category_id, v_current_streak, v_longest_streak, v_last_date)
+  ON CONFLICT (user_id, category_id)
+  DO UPDATE SET
+    current_streak = v_current_streak,
+    longest_streak = v_longest_streak,
+    last_checkin = v_last_date,
+    updated_at = NOW();
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update daily stats
+CREATE OR REPLACE FUNCTION axis6_update_daily_stats(p_user_id UUID, p_date DATE)
+RETURNS void AS $$
+DECLARE
+  v_completed INT;
+  v_total_mood INT;
+  v_completion_rate DECIMAL(3,2);
+BEGIN
+  SELECT COUNT(DISTINCT category_id), SUM(mood)
+  INTO v_completed, v_total_mood
+  FROM axis6_checkins
+  WHERE user_id = p_user_id AND completed_at = p_date;
+
+  v_completion_rate := v_completed::DECIMAL / 6;
+
+  INSERT INTO axis6_daily_stats (user_id, date, completion_rate, categories_completed, total_mood)
+  VALUES (p_user_id, p_date, v_completion_rate, v_completed, v_total_mood)
+  ON CONFLICT (user_id, date)
+  DO UPDATE SET
+    completion_rate = v_completion_rate,
+    categories_completed = v_completed,
+    total_mood = v_total_mood,
+    created_at = NOW();
+END;
+$$ LANGUAGE plpgsql;</code><button class="copy-btn" onclick="copyToClipboard('migration1')">Copiar SQL</button></pre>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2>Ejecutar Trigger de Autenticación</h2>
+            </div>
+            <p>Después de la primera migración, ejecuta este SQL para el trigger de auth:</p>
+            <pre id="migration2"><code>-- Trigger to auto-create AXIS6 profile on user signup
+CREATE OR REPLACE FUNCTION public.axis6_handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.axis6_profiles (id, name, timezone)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
+    COALESCE(NEW.raw_user_meta_data->>'timezone', 'America/Santo_Domingo')
+  )
+  ON CONFLICT (id) DO NOTHING;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS axis6_on_auth_user_created ON auth.users;
+
+CREATE TRIGGER axis6_on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.axis6_handle_new_user();
+
+GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO postgres, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO postgres, service_role;</code><button class="copy-btn" onclick="copyToClipboard('migration2')">Copiar SQL</button></pre>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2>Verificar Tablas</h2>
+            </div>
+            <p>Abre el Table Editor para verificar que se crearon las tablas:</p>
+            <a href="https://supabase.com/dashboard/project/nqzhxukuvmdlpewqytpv/editor" target="_blank" class="link-btn">
+                Abrir Table Editor
+            </a>
+            <p>Deberías ver estas tablas con prefijo axis6_:</p>
+            <ul>
+                <li>axis6_profiles</li>
+                <li>axis6_categories (con 6 categorías)</li>
+                <li>axis6_checkins</li>
+                <li>axis6_streaks</li>
+                <li>axis6_daily_stats</li>
+            </ul>
+        </div>
+
+        <div class="success-msg" id="successMsg">
+            ✅ ¡Migraciones copiadas! Ahora pégalas en el SQL Editor de Supabase.
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.querySelector('code').innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const button = element.querySelector('.copy-btn');
+                button.textContent = '✓ Copiado!';
+                button.classList.add('copied');
+                
+                document.getElementById('successMsg').style.display = 'block';
+                
+                setTimeout(() => {
+                    button.textContent = 'Copiar SQL';
+                    button.classList.remove('copied');
+                }, 3000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+    </script>
+</body>
+</html>
