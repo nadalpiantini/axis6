@@ -11,8 +11,7 @@ pages_build_output_dir = ".vercel/output/static"
 NODE_ENV = "production"
 
 # Configuración de funciones (para API routes)
-[[compatibility_flags]]
-nodejs_compat = true
+# nodejs_compat ya está habilitado arriba en compatibility_flags
 
 # Configuración de KV Namespaces (si necesitas caché persistente)
 # [[kv_namespaces]]
