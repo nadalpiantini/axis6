@@ -2,7 +2,6 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
@@ -10,6 +9,25 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ['nvpnhqhjttgwfwvkgmpk.supabase.co'],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/auth/login',
+        permanent: true,
+      },
+      {
+        source: '/register',
+        destination: '/auth/register',
+        permanent: true,
+      },
+      {
+        source: '/signup',
+        destination: '/auth/register',
+        permanent: true,
+      },
+    ]
   },
   async headers() {
     return [
