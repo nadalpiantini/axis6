@@ -1,34 +1,16 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Configuración del servidor de desarrollo
-  devIndicators: {
-    position: 'bottom-right',
-  },
-  
-  // Configuración para permitir el hostname personalizado
+  reactStrictMode: true,
+  swcMinify: true,
   experimental: {
-    // Permite hostnames personalizados en desarrollo
     serverActions: {
-      allowedOrigins: ['axis6.dev:6789', 'localhost:6789', 'axis6.app'],
+      bodySizeLimit: '2mb',
     },
   },
-  
-  // Configuración para Cloudflare Pages
-  ...(process.env.CF_PAGES && {
-    output: 'standalone',
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: '**',
-        },
-      ],
-      unoptimized: true, // Cloudflare Pages no soporta optimización de imágenes de Next.js
-    },
-  }),
-  
-  // Headers de seguridad y CORS
+  images: {
+    domains: ['nvpnhqhjttgwfwvkgmpk.supabase.co'],
+  },
   async headers() {
     return [
       {
@@ -39,13 +21,25 @@ const nextConfig: NextConfig = {
             value: 'on'
           },
           {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
+            value: 'DENY'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
           },
         ],
       },
-    ];
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
