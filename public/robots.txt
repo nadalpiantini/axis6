@@ -1,0 +1,22 @@
+# AXIS6 Robots.txt
+# https://axis6.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://axis6.app/sitemap.xml
+
+# Disallow admin/api routes
+Disallow: /api/
+Disallow: /_next/
+Disallow: /auth/callback
+
+# Allow search engines to index everything else
+Allow: /dashboard
+Allow: /login
+Allow: /register
+Allow: /stats
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

@@ -61,7 +61,7 @@ Abre http://localhost:3000
 - [ ] Implementar gamificación (badges, logros)
 
 ### Configuración de Producción
-- [ ] Configurar dominio axis6.sujeto10.com en Vercel
+- [ ] Configurar dominio axis6.app en Cloudflare Pages
 - [ ] Actualizar las URLs de redirect en Supabase Auth
 - [ ] Configurar variables de entorno en Vercel
 - [ ] Implementar monitoreo y analytics

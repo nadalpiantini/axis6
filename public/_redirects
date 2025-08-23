@@ -1,0 +1,12 @@
+# Cloudflare Pages Redirects
+
+# Redirect from old domain to new domain
+https://axis6.sujeto10.com/* https://axis6.app/:splat 301!
+http://axis6.sujeto10.com/* https://axis6.app/:splat 301!
+
+# Redirect www to non-www
+https://www.axis6.app/* https://axis6.app/:splat 301!
+http://www.axis6.app/* https://axis6.app/:splat 301!
+
+# Force HTTPS
+http://axis6.app/* https://axis6.app/:splat 301!

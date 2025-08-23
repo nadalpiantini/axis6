@@ -13,7 +13,7 @@
 ⏳ **Pendiente (10%)**:
 - Ejecutar migraciones en Supabase
 - Deploy en Vercel
-- Configurar dominio axis6.sujeto10.com
+- Configurar dominio axis6.app
 
 ## 🔧 Configuración de Supabase
 
@@ -105,7 +105,7 @@ Click en **"Deploy"** y espera ~2-3 minutos.
 ### 1. En Vercel
 
 1. Ve a **Settings > Domains**
-2. Añade `axis6.sujeto10.com`
+2. Añade `axis6.app`
 3. Vercel te dará registros DNS
 
 ### 2. En tu Proveedor DNS
@@ -129,7 +129,7 @@ Value: 76.76.21.21
 ### 3. Verificar
 
 - Espera 5-30 minutos para propagación DNS
-- Verifica en: https://axis6.sujeto10.com
+- Verifica en: https://axis6.app
 
 ## ✅ Testing Post-Deploy
 
@@ -183,7 +183,7 @@ npm run start
 ## 🎉 ¡Listo!
 
 Tu app está ahora en producción en:
-- **URL Principal**: https://axis6.sujeto10.com
+- **URL Principal**: https://axis6.app
 - **URL Vercel**: https://axis6-mvp.vercel.app
 
 ## 📱 Próximos Pasos

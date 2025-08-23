@@ -1,16 +1,17 @@
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.cloudflare.com https://*.axis6.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.axis6.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
-  X-DNS-Prefetch-Control: on
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
 
-/manifest.json
-  Content-Type: application/manifest+json
-  Cache-Control: public, max-age=3600
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
 
 /*.png
   Cache-Control: public, max-age=31536000, immutable
@@ -21,20 +22,24 @@
 /*.jpeg
   Cache-Control: public, max-age=31536000, immutable
 
-/*.webp
+/*.gif
   Cache-Control: public, max-age=31536000, immutable
 
 /*.svg
   Cache-Control: public, max-age=31536000, immutable
 
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
 
-/_next/static/*
-  Cache-Control: public, max-age=31536000, immutable
+/manifest.json
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/manifest+json
 
-/_next/image*
-  Cache-Control: public, max-age=60
+/robots.txt
+  Cache-Control: public, max-age=0, must-revalidate
 
-/api/*
-  Cache-Control: no-store, must-revalidate
+/sitemap.xml
+  Cache-Control: public, max-age=0, must-revalidate

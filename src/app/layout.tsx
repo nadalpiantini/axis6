@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://axis6.sujeto10.com' : 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://axis6.app' : 'http://localhost:6789'),
   title: "AXIS6 - Equilibrio en 6 Ejes",
   description: "Alcanza el equilibrio perfecto en las 6 dimensiones de tu vida. Rastrea tu progreso diario y conviértete en tu mejor versión.",
   keywords: "bienestar, equilibrio, hábitos, productividad, salud mental, desarrollo personal",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: "Seis ejes. Un solo tú. No rompas tu Axis.",
     type: "website",
     locale: "es_ES",
-    url: "https://axis6.sujeto10.com",
+    url: "https://axis6.app",
     siteName: "AXIS6",
     images: [
       {

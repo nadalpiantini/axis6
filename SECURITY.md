@@ -3,7 +3,7 @@
 ## 🚨 Reporting Security Vulnerabilities
 
 If you discover a security vulnerability, please **DO NOT** open a public issue. 
-Instead, send details to: security@axis6.sujeto10.com
+Instead, send details to: security@axis6.app
 
 ## 🛡️ Security Best Practices
 
@@ -219,4 +219,4 @@ Before merging any PR, ensure:
 
 **Last Updated**: January 20, 2025
 **Version**: 1.0.1
-**Contact**: security@axis6.sujeto10.com
+**Contact**: security@axis6.app
