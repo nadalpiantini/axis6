@@ -11,10 +11,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     
     try {
       const { createClient } = await import('@/lib/supabase/client')
@@ -27,7 +29,17 @@ export default function LoginPage() {
 
       if (error) {
         console.error('Login error:', error)
-        alert(error.message)
+        
+        // Handle specific error cases with user-friendly messages
+        if (error.message.toLowerCase().includes('invalid login credentials')) {
+          setError('Invalid email or password. Please check your credentials and try again.')
+        } else if (error.message.toLowerCase().includes('rate limit')) {
+          setError('Too many login attempts. Please wait a minute before trying again.')
+        } else if (error.message.toLowerCase().includes('email not confirmed')) {
+          setError('Please check your email to confirm your account before logging in.')
+        } else {
+          setError(error.message)
+        }
         return
       }
 
@@ -37,7 +49,7 @@ export default function LoginPage() {
       }
     } catch (error) {
       console.error('Login failed:', error)
-      alert('Login failed. Please try again.')
+      setError('Login failed. Please check your internet connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -57,36 +69,46 @@ export default function LoginPage() {
             <p className="text-gray-400">Continue your balance journey</p>
           </div>
 
+          {error && (
+            <div role="alert" className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
                   placeholder="your@email.com"
+                  aria-label="Email"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
                   placeholder="••••••••"
+                  aria-label="Password"
                   required
                 />
               </div>

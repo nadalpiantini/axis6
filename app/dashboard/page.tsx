@@ -51,13 +51,13 @@ const DashboardHeader = memo(({
           <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             AXIS6
           </h1>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
             <Flame className="w-4 h-4 text-orange-400" />
             <span className="text-gray-300">Racha: {currentStreak} días</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4" data-testid="user-menu">
           <Link 
             href="/settings" 
             className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
@@ -116,7 +116,7 @@ const HexagonVisualization = memo(({
   )
 
   return (
-    <div className="flex justify-center mb-8">
+    <div className="flex justify-center mb-8" data-testid="hexagon-chart">
       <svg width="300" height="300" viewBox="0 0 300 300" role="img" aria-label={`Progreso hexagonal: ${axes.filter(a => a.completed).length} de 6 ejes completados`}>
         {/* Background hexagon */}
         <polygon
@@ -176,6 +176,8 @@ const HexagonVisualization = memo(({
                 whileTap={{ scale: 0.95 }}
                 role="button"
                 aria-label={`${axis.name}: ${axis.completed ? 'completado' : 'no completado'}`}
+                data-testid={`category-${axis.name.toLowerCase()}`}
+                data-category={axis.name.toLowerCase()}
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -239,6 +241,8 @@ const MemoizedCategoryCard = memo(({
           : 'bg-white/5 hover:bg-white/10 border-white/10'
       } border`}
       aria-pressed={axis.completed}
+      data-testid={`category-card-${axis.name.toLowerCase()}`}
+      data-checked={axis.completed}
     >
       <div className="flex items-center gap-3">
         <div className={`p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
@@ -399,7 +403,7 @@ export default function DashboardPageV2() {
                 />
 
                 {/* Axes List */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4" data-testid="category-cards">
                   {axes.map((axis) => (
                     <MemoizedCategoryCard
                       key={axis.id}

@@ -84,19 +84,97 @@ export function useToggleCheckIn(userId: string | undefined) {
       const previousCheckins = queryClient.getQueryData<CheckIn[]>(['checkins', 'today', userId])
       
       // Optimistically update
-      queryClient.setQueryData<CheckIn[]>(['checkins', 'today', userId], (old = []) => {
-        if (completed) {
-          return [...old, {
-            id: `temp-${Date.now()}`,
-            user_id: userId!,
-            category_id: categoryId,
-            completed_at: new Date().toISOString(),
-            created_at: new Date().toISOString()
-          }]
-        } else {
-          return old.filter(c => c.category_id !== categoryId)
+      queryClient.setQueryData<CheckIn[]>(
+        ['checkins', 'today', userId],
+        (old = []) => {
+          if (completed) {
+            // Add new checkin optimistically
+            const optimisticCheckin: CheckIn = {
+              id: `optimistic-${Date.now()}`,
+              user_id: userId!,
+              category_id: categoryId,
+              completed_at: new Date().toISOString(),
+              created_at: new Date().toISOString()
+            }
+            return [...old.filter(c => c.category_id !== categoryId), optimisticCheckin]
+          } else {
+            // Remove checkin optimistically
+            return old.filter(c => c.category_id !== categoryId)
+          }
         }
-      })
+      )
+      
+      // Return context for rollback
+      return { previousCheckins }
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousCheckins) {
+        queryClient.setQueryData(['checkins', 'today', userId], context.previousCheckins)
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
+      queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
+    }
+  })
+}
+
+// New hook for batch operations
+export function useBatchCheckIn(userId: string | undefined) {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (updates: CheckInInput[]) => {
+      if (!userId) throw new Error('User ID required')
+      
+      // Process all updates in parallel
+      const results = await Promise.allSettled(
+        updates.map(input => toggleCheckIn(input, userId))
+      )
+      
+      // Check for any failures
+      const failures = results.filter(r => r.status === 'rejected')
+      if (failures.length > 0) {
+        throw new Error(`${failures.length} operations failed`)
+      }
+      
+      return results
+    },
+    onMutate: async (updates) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['checkins', 'today', userId] })
+      
+      // Snapshot previous value
+      const previousCheckins = queryClient.getQueryData<CheckIn[]>(['checkins', 'today', userId])
+      
+      // Apply all optimistic updates
+      queryClient.setQueryData<CheckIn[]>(
+        ['checkins', 'today', userId],
+        (old = []) => {
+          let newCheckins = [...old]
+          
+          updates.forEach(({ categoryId, completed }) => {
+            if (completed) {
+              // Remove any existing and add new
+              newCheckins = newCheckins.filter(c => c.category_id !== categoryId)
+              newCheckins.push({
+                id: `optimistic-${categoryId}-${Date.now()}`,
+                user_id: userId!,
+                category_id: categoryId,
+                completed_at: new Date().toISOString(),
+                created_at: new Date().toISOString()
+              })
+            } else {
+              // Remove checkin
+              newCheckins = newCheckins.filter(c => c.category_id !== categoryId)
+            }
+          })
+          
+          return newCheckins
+        }
+      )
       
       return { previousCheckins }
     },
@@ -107,7 +185,7 @@ export function useToggleCheckIn(userId: string | undefined) {
       }
     },
     onSettled: () => {
-      // Refetch after mutation
+      // Refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
       queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
     }

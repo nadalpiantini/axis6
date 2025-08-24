@@ -87,10 +87,17 @@ export const test = base.extend<TestFixtures>({
     await registerPage.goto('/auth/register');
     await registerPage.register(testUser.email, testUser.password, testUser.name);
     
-    // Wait for redirect to dashboard
-    await TestUtils.waitForNavigation(page, '/dashboard');
+    // Wait for navigation to either onboarding or dashboard
+    await page.waitForURL(/\/(dashboard|auth\/onboarding)/, { timeout: 15000 });
     
-    // Verify we're logged in
+    // Handle onboarding if present
+    if (page.url().includes('onboarding')) {
+      // Skip onboarding by navigating directly to dashboard
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
+    }
+    
+    // Verify we're logged in and on dashboard
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.verifyDashboardLoaded();
     

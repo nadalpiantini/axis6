@@ -41,6 +41,9 @@ export default function LandingPage() {
             <div className="mb-6 flex justify-center">
               <LogoFull size="xl" priority className="max-w-sm md:max-w-md" />
             </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              Balance Your Life with AXIS6
+            </h1>
             <p className="text-xl md:text-2xl mb-4 text-gray-300">
               Six axes. One you. Don't break your Axis.
             </p>

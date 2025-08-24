@@ -306,3 +306,435 @@ The app uses dark mode by default for:
 3. Maintain 60fps for animations
 4. Test on real devices for touch feedback
 5. Ensure text remains readable at all sizes
+
+---
+
+# AXIS6 Dashboard UI - Current Implementation (PRESERVED)
+
+## Current Dashboard Layout
+The dashboard is perfect as-is with its clean, minimalist design. This section documents the exact current implementation to preserve what works.
+
+### Header Component
+```typescript
+// Current implementation - TO BE PRESERVED
+<header className="glass border-b border-white/10">
+  <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="flex items-center gap-4">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+        AXIS6  <!-- TO BE REPLACED WITH: <LogoIcon size="md" /> -->
+      </h1>
+      <div className="flex items-center gap-2 text-sm">
+        <Flame className="w-4 h-4 text-orange-400" />
+        <span className="text-gray-300">Streak: {currentStreak} days</span>
+      </div>
+    </div>
+  </div>
+</header>
+```
+
+### Hexagon Visualization (KEEP EXACTLY AS IS)
+The hexagon is the heart of the app. Current implementation:
+- 300x300 SVG viewBox
+- 6 category nodes at hexagon vertices
+- Glass morphism effects
+- Animated completion states
+- Click/tap to toggle completion
+
+```css
+/* Current hexagon styles - DO NOT CHANGE */
+.hexagon-node {
+  r: 25px;
+  fill: completed ? category.color : 'rgba(255,255,255,0.1)';
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+```
+
+### Category Cards (PRESERVE CURRENT DESIGN)
+```typescript
+// Current category card implementation
+<motion.button className={`p-4 rounded-xl transition-all min-h-[56px] ${
+  axis.completed 
+    ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
+    : 'bg-white/5 hover:bg-white/10 border-white/10'
+} border`}>
+```
+
+---
+
+# AXIS6 Subtask Enhancement Design (NEW FEATURES)
+
+## Overview
+Add task management capabilities while maintaining the clean, minimalist aesthetic. All new features should be subtle and non-intrusive.
+
+## 1. Logo Integration
+
+### Header Logo Update
+```typescript
+// Replace text "AXIS6" with logo component
+import { LogoIcon } from '@/components/ui/Logo'
+
+<div className="flex items-center gap-4">
+  <LogoIcon size="md" className="w-10 h-10" />
+  <div className="flex items-center gap-2 text-sm">
+    <Flame className="w-4 h-4 text-orange-400" />
+    <span className="text-gray-300">Streak: {currentStreak} days</span>
+  </div>
+</div>
+```
+
+## 2. Subtask UI Components
+
+### Corner Action Buttons (Subtle Enhancement)
+Add tiny action buttons to hexagon nodes without disrupting the clean design:
+
+```css
+.hexagon-action-button {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: -8px;
+  right: -8px;
+  
+  /* Glass morphism style */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  
+  /* Hidden by default */
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  
+  /* Show on hover */
+  .hexagon-node:hover & {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hexagon-action-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+```
+
+### Task Drawer Component
+Slide-out panel from the right side:
+
+```typescript
+interface TaskDrawerProps {
+  category: Category
+  isOpen: boolean
+  onClose: () => void
+}
+
+// Visual specifications
+const TaskDrawer = {
+  width: '400px',
+  background: 'glass effect matching current cards',
+  slideFrom: 'right',
+  overlay: 'rgba(0, 0, 0, 0.4)',
+  animation: 'slide-in 0.3s ease-out'
+}
+```
+
+## 3. Database Schema for Tasks
+
+### New Tables
+```sql
+-- Tasks table for all categories
+CREATE TABLE axis6_tasks (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES axis6_profiles(id) ON DELETE CASCADE,
+  category_id INT NOT NULL REFERENCES axis6_categories(id),
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  completed BOOLEAN DEFAULT FALSE,
+  completed_at TIMESTAMPTZ,
+  due_date DATE,
+  priority INT DEFAULT 0, -- 0: low, 1: medium, 2: high
+  contact_id INT REFERENCES axis6_contacts(id), -- For social tasks
+  metadata JSONB, -- Store genre, book title, exercise type, etc.
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Contacts for social tasks
+CREATE TABLE axis6_contacts (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES axis6_profiles(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  phone VARCHAR(50),
+  last_interaction DATE,
+  interaction_count INT DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Task templates for quick suggestions
+CREATE TABLE axis6_task_templates (
+  id SERIAL PRIMARY KEY,
+  category_id INT NOT NULL REFERENCES axis6_categories(id),
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  suggested_metadata JSONB,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX idx_tasks_user_category ON axis6_tasks(user_id, category_id);
+CREATE INDEX idx_tasks_completed ON axis6_tasks(user_id, completed);
+CREATE INDEX idx_contacts_user ON axis6_contacts(user_id);
+```
+
+## 4. Task Management by Category
+
+### Physical Tasks
+```typescript
+interface PhysicalTask {
+  type: 'exercise' | 'nutrition' | 'health'
+  routine?: string
+  duration?: number
+  calories?: number
+}
+
+// Example tasks:
+// - "30 min morning run"
+// - "Drink 8 glasses of water"
+// - "Annual check-up appointment"
+```
+
+### Mental Tasks
+```typescript
+interface MentalTask {
+  type: 'learning' | 'reading' | 'skill'
+  bookTitle?: string
+  genre?: string
+  course?: string
+  progress?: number
+}
+
+// Example tasks:
+// - "Read 'Atomic Habits' - Chapter 3"
+// - "Complete JavaScript course module"
+// - "Practice Spanish 15 minutes"
+```
+
+### Emotional Tasks
+```typescript
+interface EmotionalTask {
+  type: 'journal' | 'meditation' | 'gratitude'
+  mood?: 1-5
+  duration?: number
+}
+
+// Example tasks:
+// - "Evening gratitude journal"
+// - "10-minute breathing exercise"
+// - "Call therapist"
+```
+
+### Social Tasks
+```typescript
+interface SocialTask {
+  type: 'contact' | 'event' | 'quality-time'
+  contactId?: number
+  contactName?: string
+  lastContact?: Date
+}
+
+// Example tasks:
+// - "Call Mom"
+// - "Coffee with Sarah"
+// - "Team lunch Friday"
+```
+
+### Spiritual Tasks
+```typescript
+interface SpiritualTask {
+  type: 'meditation' | 'reflection' | 'practice'
+  practice?: string
+  duration?: number
+}
+
+// Example tasks:
+// - "Morning meditation"
+// - "Purpose reflection journal"
+// - "Yoga practice"
+```
+
+### Material Tasks
+```typescript
+interface MaterialTask {
+  type: 'financial' | 'career' | 'resource'
+  amount?: number
+  deadline?: Date
+}
+
+// Example tasks:
+// - "Review monthly budget"
+// - "Update portfolio"
+// - "Apply for promotion"
+```
+
+## 5. User Interaction Flows
+
+### Adding a Task
+1. Hover over hexagon node → See subtle "+" button
+2. Click "+" → Opens task drawer from right
+3. Quick add with smart suggestions
+4. Auto-categorization based on keywords
+5. Save → Drawer closes, small success animation
+
+### Completing Tasks
+```typescript
+// Swipe gesture for mobile
+onSwipeRight: () => markComplete()
+
+// Click checkbox for desktop
+onClick: () => toggleComplete()
+
+// Bulk actions
+longPress: () => enterSelectionMode()
+```
+
+### Task Suggestions (AI-Powered)
+```typescript
+interface TaskSuggestion {
+  getRecommendations(category: string, history: Task[]): string[]
+  analyzePatterns(tasks: Task[]): InsightReport
+  generateTimeBlocks(tasks: Task[]): TimeBlock[]
+}
+```
+
+## 6. Monthly Wrapped Feature
+
+### Social Wrapped
+```typescript
+interface SocialWrapped {
+  topContacts: Contact[] // Top 5 most contacted
+  totalInteractions: number
+  newConnections: number
+  qualityTime: number // hours spent
+  visualization: 'network-graph'
+}
+```
+
+### Mental Wrapped
+```typescript
+interface MentalWrapped {
+  booksRead: number
+  favoriteGenres: string[]
+  learningHours: number
+  topSkills: string[]
+  visualization: 'progress-chart'
+}
+```
+
+## 7. Visual Design Principles for Tasks
+
+### Maintain Minimalism
+- Tasks hidden by default
+- Show only on intentional interaction
+- Use existing color palette
+- Glass morphism for all overlays
+
+### Micro-interactions
+```css
+/* Task completion animation */
+@keyframes task-complete {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* Drawer slide */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+```
+
+### Progressive Disclosure
+1. Level 1: Just the hexagon (current state)
+2. Level 2: Hover shows "+" button
+3. Level 3: Click opens task drawer
+4. Level 4: Advanced features in settings
+
+## 8. Implementation Phases
+
+### Phase 1: Basic Task CRUD (Week 1)
+- Database schema
+- API endpoints
+- Basic task drawer
+- Add/complete tasks
+
+### Phase 2: Smart Features (Week 2)
+- Contact management
+- Task suggestions
+- Quick add shortcuts
+- Swipe gestures
+
+### Phase 3: Analytics (Week 3)
+- Monthly wrapped
+- Time tracking
+- Pattern analysis
+- Insights dashboard
+
+### Phase 4: AI Integration (Week 4)
+- Smart suggestions
+- Auto-categorization
+- Time block generation
+- Natural language input
+
+## 9. Performance Considerations
+
+### Optimization Strategies
+- Lazy load task drawer component
+- Virtual scrolling for long task lists
+- Debounce search/filter operations
+- Cache frequently accessed data
+- Optimistic UI updates
+
+### Database Indexes
+```sql
+-- Optimize common queries
+CREATE INDEX idx_tasks_due_date ON axis6_tasks(user_id, due_date) WHERE completed = FALSE;
+CREATE INDEX idx_tasks_search ON axis6_tasks USING gin(title gin_trgm_ops);
+CREATE INDEX idx_contacts_search ON axis6_contacts USING gin(name gin_trgm_ops);
+```
+
+## 10. Accessibility for Tasks
+
+### Keyboard Navigation
+- Tab: Navigate between tasks
+- Space/Enter: Toggle completion
+- Escape: Close drawer
+- Ctrl+N: Quick add task
+- Arrow keys: Navigate in drawer
+
+### Screen Reader Support
+```html
+<div role="complementary" aria-label="Task management drawer">
+  <h2 id="task-drawer-title">Physical Tasks</h2>
+  <ul role="list" aria-labelledby="task-drawer-title">
+    <li role="listitem">
+      <button role="checkbox" aria-checked="false">
+        Morning run
+      </button>
+    </li>
+  </ul>
+</div>
+```
+
+## Implementation Notes
+1. All new features must be additive, not destructive
+2. Preserve current UI exactly as users love it
+3. New elements should feel native to existing design
+4. Performance must not degrade with task features
+5. Mobile-first approach for all new components

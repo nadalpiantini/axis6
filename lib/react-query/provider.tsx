@@ -2,11 +2,26 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 
-// Lazy load DevTools only in development
-const ReactQueryDevtools = process.env.NODE_ENV === 'development' 
-  ? require('@tanstack/react-query-devtools').ReactQueryDevtools 
-  : () => null
+// Dynamically import DevTools only in development to avoid SSR issues
+const ReactQueryDevtools = dynamic(
+  () => import('@tanstack/react-query-devtools').then((mod) => ({
+    default: mod.ReactQueryDevtools,
+  })),
+  {
+    ssr: false,
+  }
+)
+
+// Wrapper component that uses the QueryClient from context
+function DevToolsWrapper() {
+  if (process.env.NODE_ENV !== 'development') {
+    return null
+  }
+  
+  return <ReactQueryDevtools initialIsOpen={false} />
+}
 
 export function ReactQueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -29,7 +44,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+      {process.env.NODE_ENV === 'development' && <DevToolsWrapper />}
     </QueryClientProvider>
   )
 }
