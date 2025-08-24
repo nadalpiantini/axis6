@@ -144,10 +144,12 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: isDevelopment ? developmentCSP : productionCSP
-          },
+          // CSP temporarily disabled to fix inline styles/scripts blocking
+          // TODO: Implement hash-based CSP for better security
+          // {
+          //   key: 'Content-Security-Policy',
+          //   value: isDevelopment ? developmentCSP : productionCSP
+          // },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
