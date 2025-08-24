@@ -1,0 +1,85 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - img "AXIS6 - Balance Across 6 Life Dimensions" [ref=e10]
+        - paragraph [ref=e11]: Six axes. One you. Don't break your Axis.
+        - paragraph [ref=e12]: Transform your life by achieving perfect balance across the 6 essential dimensions of human wellbeing.
+      - generic [ref=e13]:
+        - link "Start Free" [ref=e14] [cursor=pointer]:
+          - /url: /auth/register
+          - text: Start Free
+          - img [ref=e15] [cursor=pointer]
+        - link "Sign In" [ref=e17] [cursor=pointer]:
+          - /url: /auth/login
+      - img [ref=e19]:
+        - img [ref=e23]
+        - img [ref=e30]
+        - img [ref=e42]
+        - img [ref=e47]
+        - img [ref=e56]
+        - img [ref=e64]
+        - generic [ref=e68]: YOU
+    - generic [ref=e70]:
+      - heading "Why AXIS6?" [level=2] [ref=e71]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - img [ref=e74]
+          - heading "Gamification" [level=3] [ref=e76]
+          - paragraph [ref=e77]: Transform your personal development into an engaging game
+        - generic [ref=e78]:
+          - img [ref=e79]
+          - heading "Streaks" [level=3] [ref=e82]
+          - paragraph [ref=e83]: Maintain your progress and celebrate every achievement
+        - generic [ref=e84]:
+          - img [ref=e85]
+          - heading "Privacy" [level=3] [ref=e87]
+          - paragraph [ref=e88]: Your data is safe and encrypted
+    - generic [ref=e90]:
+      - heading "The 6 Dimensions of Balance" [level=2] [ref=e91]
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - img [ref=e95]
+          - heading "Spiritual" [level=3] [ref=e98]
+          - paragraph [ref=e99]: Develop and maintain balance in your spiritual dimension.
+        - generic [ref=e100]:
+          - img [ref=e102]
+          - heading "Mental" [level=3] [ref=e110]
+          - paragraph [ref=e111]: Develop and maintain balance in your mental dimension.
+        - generic [ref=e112]:
+          - img [ref=e114]
+          - heading "Emotional" [level=3] [ref=e116]
+          - paragraph [ref=e117]: Develop and maintain balance in your emotional dimension.
+        - generic [ref=e118]:
+          - img [ref=e120]
+          - heading "Social" [level=3] [ref=e125]
+          - paragraph [ref=e126]: Develop and maintain balance in your social dimension.
+        - generic [ref=e127]:
+          - img [ref=e129]
+          - heading "Physical" [level=3] [ref=e133]
+          - paragraph [ref=e134]: Develop and maintain balance in your physical dimension.
+        - generic [ref=e135]:
+          - img [ref=e137]
+          - heading "Material" [level=3] [ref=e140]
+          - paragraph [ref=e141]: Develop and maintain balance in your material dimension.
+    - generic [ref=e144]:
+      - heading "Start your transformation today" [level=2] [ref=e145]
+      - paragraph [ref=e146]: Join thousands of people already balancing their lives with AXIS6
+      - link "Create Free Account" [ref=e147] [cursor=pointer]:
+        - /url: /auth/register
+        - text: Create Free Account
+        - img [ref=e148] [cursor=pointer]
+      - paragraph [ref=e150]: No credit card • Cancel anytime
+    - contentinfo [ref=e151]:
+      - paragraph [ref=e153]: © 2024 AXIS6. All rights reserved.
+  - generic [ref=e154]:
+    - img [ref=e156]
+    - button "Open Tanstack query devtools" [ref=e204] [cursor=pointer]:
+      - img [ref=e205] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e258] [cursor=pointer]:
+    - img [ref=e259] [cursor=pointer]
+  - alert [ref=e262]
+```

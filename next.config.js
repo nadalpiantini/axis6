@@ -108,14 +108,15 @@ const nextConfig = {
   async headers() {
     const isDevelopment = process.env.NODE_ENV === 'development'
     
-    // Base CSP for production (secure)
+    // FIXED CSP for production - allows inline styles/scripts for compatibility
+    // TODO: Future improvement - implement nonce-based or hash-based CSP
     const productionCSP = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co",
+      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
       "frame-src 'self' https://*.supabase.co",
       "worker-src 'self' blob:",
       "child-src 'self' blob:",
@@ -144,12 +145,12 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
-          // CSP temporarily disabled to fix inline styles/scripts blocking
-          // TODO: Implement hash-based CSP for better security
-          // {
-          //   key: 'Content-Security-Policy',
-          //   value: isDevelopment ? developmentCSP : productionCSP
-          // },
+          // CSP re-enabled with 'unsafe-inline' to fix compatibility issues
+          // This allows inline styles/scripts required by Next.js, Framer Motion, and Supabase Auth
+          {
+            key: 'Content-Security-Policy',
+            value: isDevelopment ? developmentCSP : productionCSP
+          },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'

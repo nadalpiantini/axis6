@@ -38,7 +38,13 @@
     "test:e2e:cleanup": "./scripts/run-playwright.sh cleanup",
     "verify:supabase": "node scripts/verify-supabase-config.js",
     "test:auth": "node scripts/test-auth-flow.js",
-    "fix:csp": "echo 'CSP configuration updated. Restart server: npm run dev'"
+    "fix:csp": "echo 'CSP configuration updated. Restart server: npm run dev'",
+    "setup:all": "node scripts/setup-all.js",
+    "setup:dns": "node scripts/configure-dns.js",
+    "setup:vercel": "node scripts/configure-vercel.js",
+    "setup:resend": "node scripts/configure-resend.js",
+    "setup:supabase-email": "node scripts/configure-supabase-email.js",
+    "setup:check": "node scripts/check-status.js"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -99,12 +105,14 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "autoprefixer": "^10.4.14",
+    "dotenv": "^17.2.1",
     "eslint": "^8.45.0",
     "eslint-config-next": "^14.0.0",
     "jest": "^29.6.0",
     "jest-environment-jsdom": "^29.6.0",
     "postcss": "^8.4.31",
     "prettier": "^3.0.0",
+    "sharp": "^0.34.3",
     "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.3.0"

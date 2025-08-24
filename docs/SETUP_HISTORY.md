@@ -1,0 +1,260 @@
+# AXIS6 Setup History & Configuration Log
+
+> Complete history of domain, email, and infrastructure setup for AXIS6 wellness tracker
+
+## 📅 Timeline
+
+### December 2024 - Project Setup
+
+#### Initial Configuration
+- **Framework**: Next.js 14 with App Router
+- **Database**: Supabase (PostgreSQL + Auth)
+- **Hosting**: Vercel
+- **Domain**: axis6.app (registered via Cloudflare)
+- **Email**: Resend (pending configuration)
+
+#### DNS Configuration
+- **Provider**: Cloudflare
+- **Current Status**: 
+  - A record: @ → 216.150.1.1 (Custom Vercel IP)
+  - CNAME: www → 448c20ab6915df48.vercel-dns-016.com
+  - TXT records: Pending (SPF, DKIM, DMARC for email)
+
+## 🔧 Configuration Details
+
+### Environment Variables Configured
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://nvpnhqhjttgwfwvkgmpk.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
+
+# Vercel
+VERCEL_TOKEN=m2RPlc6zKNjpcJHXVhXKDRpN
+VERCEL_TEAM_ID=team_seGJ6iISQxrrc5YlXeRfkltH
+
+# Cloudflare
+CLOUDFLARE_API_TOKEN=_77OyBlTTdAMpY5rEQ2QBTsMZvBJLwqWDTq328pa
+CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a
+
+# Resend (Pending)
+# RESEND_API_KEY=re_xxx
+```
+
+### Automation Scripts Created
+
+1. **setup-all.js** - Master orchestration script
+2. **configure-dns.js** - Cloudflare DNS automation
+3. **configure-vercel.js** - Vercel domain setup
+4. **configure-resend.js** - Email provider configuration
+5. **configure-supabase-email.js** - Email templates and SMTP
+6. **check-status.js** - Configuration verification
+
+## 📊 Current Status
+
+### ✅ Completed
+- [x] Project structure created
+- [x] Supabase database configured
+- [x] Authentication system implemented
+- [x] Vercel deployment configured
+- [x] Domain registered (axis6.app)
+- [x] Basic DNS configuration
+- [x] Automation scripts created
+- [x] Environment variables set
+- [x] SaaS toolkit created
+
+### 🔄 In Progress
+- [ ] Resend email domain verification
+- [ ] SPF/DKIM/DMARC records configuration
+- [ ] SMTP configuration in Supabase
+- [ ] Email template deployment
+
+### ⏳ Pending
+- [ ] DNS propagation (1-24 hours)
+- [ ] Email domain verification
+- [ ] Production email testing
+- [ ] SSL certificate verification
+
+## 🚨 Issues & Resolutions
+
+### Issue 1: DNS Configuration
+**Problem**: Initial DNS records pointing to wrong IPs
+**Solution**: Updated to use custom Vercel IPs provided
+**Status**: Resolved
+
+### Issue 2: Environment Variables
+**Problem**: Missing API tokens for automation
+**Solution**: Generated and added all required tokens
+**Status**: Resolved
+
+### Issue 3: Email Provider Selection
+**Problem**: Needed to choose between SendGrid, AWS SES, Resend
+**Decision**: Chose Resend for better developer experience
+**Rationale**: 
+- Simpler API
+- Better documentation
+- Free tier sufficient
+- Good Supabase integration
+
+## 📝 Decisions & Rationale
+
+### Why Cloudflare for DNS?
+- Better automation API
+- Free tier includes everything needed
+- DDoS protection included
+- Fast propagation
+
+### Why Resend for Email?
+- Developer-friendly API
+- Good free tier (3,000 emails/month)
+- Built on AWS SES (reliable)
+- Easy Supabase integration
+
+### Why Vercel for Hosting?
+- Excellent Next.js integration
+- Automatic deployments
+- Edge functions support
+- Good free tier
+
+### Why Supabase for Backend?
+- Complete auth solution
+- Real-time capabilities
+- Good free tier
+- PostgreSQL (familiar)
+
+## 🔐 Security Measures
+
+1. **Environment Variables**
+   - All sensitive keys in .env.local
+   - Never committed to Git
+   - Different keys for dev/prod
+
+2. **API Security**
+   - Rate limiting configured
+   - CORS properly set
+   - API routes protected
+
+3. **Database Security**
+   - RLS enabled on all tables
+   - Service role key protected
+   - Prepared statements only
+
+4. **Email Security**
+   - SPF records (pending)
+   - DKIM signing (pending)
+   - DMARC policy (pending)
+
+## 📚 Lessons Learned
+
+### What Worked Well
+1. **Automation First**: Creating scripts saved hours
+2. **Documentation as You Go**: This file invaluable for debugging
+3. **Environment Templates**: .env.example files prevent confusion
+4. **Modular Scripts**: Individual scripts easier to debug
+
+### What Could Be Improved
+1. **Earlier DNS Setup**: Should configure DNS before deployment
+2. **Email Testing**: Need staging email environment
+3. **Monitoring Setup**: Should add Sentry earlier
+4. **Database Indexes**: Should create performance indexes upfront
+
+### Tips for Next Time
+1. Set up email provider BEFORE needing it
+2. Configure DNS automation immediately
+3. Create comprehensive .env.example
+4. Document decisions in real-time
+5. Test email flows in development
+6. Set up error tracking day one
+
+## 🚀 Next Steps
+
+### Immediate (Today)
+1. Run `npm run setup:all` to complete automation
+2. Verify DNS propagation
+3. Test email sending
+
+### Short Term (This Week)
+1. Complete Resend verification
+2. Update Supabase SMTP settings
+3. Test full auth flow with emails
+4. Deploy email templates
+
+### Long Term (This Month)
+1. Set up monitoring (Sentry)
+2. Configure analytics
+3. Performance optimization
+4. Load testing
+
+## 📖 References
+
+### Documentation
+- [Cloudflare DNS API](https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-list-dns-records)
+- [Vercel Domains API](https://vercel.com/docs/rest-api/endpoints#domains)
+- [Resend API Docs](https://resend.com/docs/api-reference/introduction)
+- [Supabase Email Auth](https://supabase.com/docs/guides/auth/auth-email)
+
+### Configuration Files
+- `/scripts/` - All automation scripts
+- `/.env.local` - Environment variables
+- `/.env.automation.example` - Template for automation
+- `/docs/DOMAIN-EMAIL-AUTOMATION.md` - Complete guide
+
+### Toolkit Location
+```
+/Users/nadalpiantini/Dev/saas-production-toolkit/
+```
+
+## 🎯 Success Metrics
+
+### Technical Metrics
+- [ ] DNS resolution < 100ms
+- [ ] Email delivery rate > 95%
+- [ ] Page load time < 3s
+- [ ] Lighthouse score > 90
+
+### Business Metrics
+- [ ] User registration working
+- [ ] Password reset functional
+- [ ] Email notifications sending
+- [ ] Domain accessible globally
+
+## 📸 Configuration Snapshots
+
+### DNS Records (Target State)
+```
+Type  Name    Content             Proxy  TTL
+A     @       76.76.21.21         No     Auto
+CNAME www     axis6.app           No     Auto
+TXT   @       v=spf1 include:...  No     Auto
+TXT   _dmarc  v=DMARC1; p=none    No     Auto
+```
+
+### Email Configuration (Target State)
+```
+Provider: Resend
+Domain: axis6.app
+From: noreply@axis6.app
+Reply-To: support@axis6.app
+SMTP: smtp.resend.com:587
+```
+
+## 🏁 Final Checklist
+
+Before considering setup complete:
+
+- [ ] Domain resolves correctly
+- [ ] WWW redirects to apex
+- [ ] SSL certificates active
+- [ ] Email domain verified
+- [ ] Test email sent successfully
+- [ ] Auth emails working
+- [ ] All environment variables set
+- [ ] Monitoring configured
+- [ ] Documentation complete
+- [ ] Toolkit archived for reuse
+
+---
+
+*This document serves as the source of truth for AXIS6 infrastructure setup.*
+*Last updated: December 27, 2024*

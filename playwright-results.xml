@@ -1,0 +1,431 @@
+<testsuites id="" name="" tests="11" failures="10" skipped="0" errors="0" time="34.806898000000004">
+<testsuite name="user-journey.spec.ts" timestamp="2025-08-24T18:27:15.790Z" hostname="chromium" tests="11" failures="10" skipped="0" time="119.07" errors="0">
+<testcase name="AXIS6 Complete User Journey › End-to-End User Journey › complete new user flow: register → onboard → first check-in → streak" classname="user-journey.spec.ts" time="2.647">
+<failure message="user-journey.spec.ts:6:9 complete new user flow: register → onboard → first check-in → streak" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:6:9 › AXIS6 Complete User Journey › End-to-End User Journey › complete new user flow: register → onboard → first check-in → streak 
+
+    Error: expect.toBeVisible: Error: strict mode violation: getByText('AXIS6') resolved to 3 elements:
+        1) <h2 class="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Why AXIS6?</h2> aka getByRole('heading', { name: 'Why AXIS6?' })
+        2) <p class="text-xl text-gray-300 mb-8">Join thousands of people already balancing their …</p> aka getByText('Join thousands of people')
+        3) <p>© 2024 AXIS6. All rights reserved.</p> aka getByText('© 2024 AXIS6. All rights')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('AXIS6')
+
+
+       at ../utils/page-objects.ts:72
+
+      70 |   
+      71 |   async verifyLandingPageLoaded() {
+    > 72 |     await expect(this.heroTitle).toBeVisible();
+         |                                  ^
+      73 |     await expect(this.loginButton).toBeVisible();
+      74 |     await expect(this.registerButton).toBeVisible();
+      75 |     await expect(this.hexagonChart).toBeVisible();
+        at LandingPage.verifyLandingPageLoaded (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:72:34)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:11:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › End-to-End User Journey › returning user flow: login → view progress → continue streak" classname="user-journey.spec.ts" time="12.667">
+<failure message="user-journey.spec.ts:76:9 returning user flow: login → view progress → continue streak" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:76:9 › AXIS6 Complete User Journey › End-to-End User Journey › returning user flow: login → view progress → continue streak 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:81:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Multi-Category Journey › should allow user to check in to multiple categories" classname="user-journey.spec.ts" time="12.613">
+<failure message="user-journey.spec.ts:136:9 should allow user to check in to multiple categories" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:136:9 › AXIS6 Complete User Journey › Multi-Category Journey › should allow user to check in to multiple categories 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Multi-Category Journey › should update hexagon visualization with progress" classname="user-journey.spec.ts" time="12.693">
+<failure message="user-journey.spec.ts:164:9 should update hexagon visualization with progress" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:164:9 › AXIS6 Complete User Journey › Multi-Category Journey › should update hexagon visualization with progress 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Weekly Progress Journey › should show weekly progress patterns" classname="user-journey.spec.ts" time="12.667">
+<failure message="user-journey.spec.ts:187:9 should show weekly progress patterns" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:187:9 › AXIS6 Complete User Journey › Weekly Progress Journey › should show weekly progress patterns 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Error Recovery Journey › user should recover from network interruption" classname="user-journey.spec.ts" time="11.24">
+<failure message="user-journey.spec.ts:210:9 user should recover from network interruption" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:210:9 › AXIS6 Complete User Journey › Error Recovery Journey › user should recover from network interruption 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Error Recovery Journey › user should handle session expiration gracefully" classname="user-journey.spec.ts" time="11.753">
+<failure message="user-journey.spec.ts:251:9 user should handle session expiration gracefully" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:251:9 › AXIS6 Complete User Journey › Error Recovery Journey › user should handle session expiration gracefully 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Progressive Web App Journey › should work as Progressive Web App" classname="user-journey.spec.ts" time="1.857">
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Progressive Web App Journey › should handle offline functionality" classname="user-journey.spec.ts" time="11.734">
+<failure message="user-journey.spec.ts:299:9 should handle offline functionality" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:299:9 › AXIS6 Complete User Journey › Progressive Web App Journey › should handle offline functionality 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Accessibility Journey › should be navigable with keyboard only" classname="user-journey.spec.ts" time="17.194">
+<failure message="user-journey.spec.ts:324:9 should be navigable with keyboard only" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:324:9 › AXIS6 Complete User Journey › Accessibility Journey › should be navigable with keyboard only 
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+      navigated to "http://localhost:6789/terms"
+      navigated to "http://localhost:6789/terms"
+      navigated to "http://localhost:6789/auth/login"
+    ============================================================
+
+      359 |       
+      360 |       // Should reach dashboard
+    > 361 |       await registerPage.page.waitForURL(/\/(dashboard|auth\/onboarding)/);
+          |                               ^
+      362 |       if (registerPage.page.url().includes('onboarding')) {
+      363 |         await registerPage.page.waitForURL('**/dashboard', { timeout: 15000 });
+      364 |       }
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:361:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AXIS6 Complete User Journey › Accessibility Journey › should work with screen reader simulation" classname="user-journey.spec.ts" time="12.005">
+<failure message="user-journey.spec.ts:369:9 should work with screen reader simulation" type="FAILURE">
+<![CDATA[  [chromium] › user-journey.spec.ts:369:9 › AXIS6 Complete User Journey › Accessibility Journey › should work with screen reader simulation 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('textbox', { name: /^password/i })
+
+
+       at ../utils/page-objects.ts:146
+
+      144 |     }
+      145 |     await this.emailInput.fill(email);
+    > 146 |     await this.passwordInput.fill(password);
+          |                              ^
+      147 |     if (await this.confirmPasswordInput.isVisible()) {
+      148 |       await this.confirmPasswordInput.fill(password);
+      149 |     }
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)
+        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

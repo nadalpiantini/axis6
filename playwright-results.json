@@ -1,0 +1,1002 @@
+{
+  "config": {
+    "configFile": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/playwright.config.ts",
+    "rootDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/global-setup.ts",
+    "globalTeardown": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "playwright-results.xml"
+        }
+      ],
+      [
+        "line",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "iPad",
+        "name": "iPad",
+        "testDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 5,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "user-journey.spec.ts",
+      "file": "user-journey.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "AXIS6 Complete User Journey",
+          "file": "user-journey.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "End-to-End User Journey",
+              "file": "user-journey.spec.ts",
+              "line": 5,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "complete new user flow: register → onboard → first check-in → streak",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 2647,
+                          "error": {
+                            "message": "Error: expect.toBeVisible: Error: strict mode violation: getByText('AXIS6') resolved to 3 elements:\n    1) <h2 class=\"text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent\">Why AXIS6?</h2> aka getByRole('heading', { name: 'Why AXIS6?' })\n    2) <p class=\"text-xl text-gray-300 mb-8\">Join thousands of people already balancing their …</p> aka getByText('Join thousands of people')\n    3) <p>© 2024 AXIS6. All rights reserved.</p> aka getByText('© 2024 AXIS6. All rights')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('AXIS6')\u001b[22m\n",
+                            "stack": "Error: expect.toBeVisible: Error: strict mode violation: getByText('AXIS6') resolved to 3 elements:\n    1) <h2 class=\"text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent\">Why AXIS6?</h2> aka getByRole('heading', { name: 'Why AXIS6?' })\n    2) <p class=\"text-xl text-gray-300 mb-8\">Join thousands of people already balancing their …</p> aka getByText('Join thousands of people')\n    3) <p>© 2024 AXIS6. All rights reserved.</p> aka getByText('© 2024 AXIS6. All rights')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('AXIS6')\u001b[22m\n\n    at LandingPage.verifyLandingPageLoaded (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:72:34)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:11:25",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 34,
+                              "line": 72
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:72\n\n  70 |   \n  71 |   async verifyLandingPageLoaded() {\n> 72 |     await expect(this.heroTitle).toBeVisible();\n     |                                  ^\n  73 |     await expect(this.loginButton).toBeVisible();\n  74 |     await expect(this.registerButton).toBeVisible();\n  75 |     await expect(this.hexagonChart).toBeVisible();"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 34,
+                                "line": 72
+                              },
+                              "message": "Error: expect.toBeVisible: Error: strict mode violation: getByText('AXIS6') resolved to 3 elements:\n    1) <h2 class=\"text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent\">Why AXIS6?</h2> aka getByRole('heading', { name: 'Why AXIS6?' })\n    2) <p class=\"text-xl text-gray-300 mb-8\">Join thousands of people already balancing their …</p> aka getByText('Join thousands of people')\n    3) <p>© 2024 AXIS6. All rights reserved.</p> aka getByText('© 2024 AXIS6. All rights')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('AXIS6')\u001b[22m\n\n\n   at ../utils/page-objects.ts:72\n\n  70 |   \n  71 |   async verifyLandingPageLoaded() {\n> 72 |     await expect(this.heroTitle).toBeVisible();\n     |                                  ^\n  73 |     await expect(this.loginButton).toBeVisible();\n  74 |     await expect(this.registerButton).toBeVisible();\n  75 |     await expect(this.hexagonChart).toBeVisible();\n    at LandingPage.verifyLandingPageLoaded (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:72:34)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:11:25"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:16.184Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-46082-d-→-first-check-in-→-streak-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 34,
+                            "line": 72
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-f27f10ef3fb9318e9c3f",
+                  "file": "user-journey.spec.ts",
+                  "line": 6,
+                  "column": 9
+                },
+                {
+                  "title": "returning user flow: login → view progress → continue streak",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 12667,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:81:7",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:81:7"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:16.189Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-f17e1--progress-→-continue-streak-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-2d7243c7215ec225c45b",
+                  "file": "user-journey.spec.ts",
+                  "line": 76,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Multi-Category Journey",
+              "file": "user-journey.spec.ts",
+              "line": 135,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should allow user to check in to multiple categories",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 2,
+                          "status": "failed",
+                          "duration": 12613,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:16.187Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-67fc7-k-in-to-multiple-categories-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-ad2a96a47dae1e069c88",
+                  "file": "user-journey.spec.ts",
+                  "line": 136,
+                  "column": 9
+                },
+                {
+                  "title": "should update hexagon visualization with progress",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "failed",
+                          "duration": 12693,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:16.184Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-30d20-visualization-with-progress-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-cccc106a2b0b1e0517cf",
+                  "file": "user-journey.spec.ts",
+                  "line": 164,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Weekly Progress Journey",
+              "file": "user-journey.spec.ts",
+              "line": 186,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should show weekly progress patterns",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 4,
+                          "status": "failed",
+                          "duration": 12667,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:16.190Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-6045c-ow-weekly-progress-patterns-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-11d9c21833d11bea2071",
+                  "file": "user-journey.spec.ts",
+                  "line": 187,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Error Recovery Journey",
+              "file": "user-journey.spec.ts",
+              "line": 209,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "user should recover from network interruption",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 11240,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:19.397Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-faafb-r-from-network-interruption-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-cc2e3fdc4b7ecd423359",
+                  "file": "user-journey.spec.ts",
+                  "line": 210,
+                  "column": 9
+                },
+                {
+                  "title": "user should handle session expiration gracefully",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 11753,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:29.489Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7c278-ssion-expiration-gracefully-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-6b765246e4c48a4369a6",
+                  "file": "user-journey.spec.ts",
+                  "line": 251,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Progressive Web App Journey",
+              "file": "user-journey.spec.ts",
+              "line": 277,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should work as Progressive Web App",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 4,
+                          "status": "passed",
+                          "duration": 1857,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:29.499Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-0e6488a3cd6ccad9248d",
+                  "file": "user-journey.spec.ts",
+                  "line": 278,
+                  "column": 9
+                },
+                {
+                  "title": "should handle offline functionality",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 3,
+                          "status": "failed",
+                          "duration": 11734,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:29.493Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-7eff3-andle-offline-functionality-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-71a91b8b09537b6c6cf3",
+                  "file": "user-journey.spec.ts",
+                  "line": 299,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Accessibility Journey",
+              "file": "user-journey.spec.ts",
+              "line": 323,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should be navigable with keyboard only",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 2,
+                          "status": "failed",
+                          "duration": 17194,
+                          "error": {
+                            "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/auth/login\"\n============================================================",
+                            "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/auth/login\"\n============================================================\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:361:31",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts",
+                              "column": 31,
+                              "line": 361
+                            },
+                            "snippet": "  359 |       \n  360 |       // Should reach dashboard\n> 361 |       await registerPage.page.waitForURL(/\\/(dashboard|auth\\/onboarding)/);\n      |                               ^\n  362 |       if (registerPage.page.url().includes('onboarding')) {\n  363 |         await registerPage.page.waitForURL('**/dashboard', { timeout: 15000 });\n  364 |       }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts",
+                                "column": 31,
+                                "line": 361
+                              },
+                              "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/terms\"\n  navigated to \"http://localhost:6789/auth/login\"\n============================================================\n\n  359 |       \n  360 |       // Should reach dashboard\n> 361 |       await registerPage.page.waitForURL(/\\/(dashboard|auth\\/onboarding)/);\n      |                               ^\n  362 |       if (registerPage.page.url().includes('onboarding')) {\n  363 |         await registerPage.page.waitForURL('**/dashboard', { timeout: 15000 });\n  364 |       }\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts:361:31"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:29.495Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-63841-avigable-with-keyboard-only-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/user-journey.spec.ts",
+                            "column": 31,
+                            "line": 361
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-c342fa1cdfe445f3dc76",
+                  "file": "user-journey.spec.ts",
+                  "line": 324,
+                  "column": 9
+                },
+                {
+                  "title": "should work with screen reader simulation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 10,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 12005,
+                          "error": {
+                            "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n",
+                            "stack": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)",
+                            "location": {
+                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                              "column": 30,
+                              "line": 146
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                                "column": 30,
+                                "line": 146
+                              },
+                              "message": "TimeoutError: locator.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: /^password/i })\u001b[22m\n\n\n   at ../utils/page-objects.ts:146\n\n  144 |     }\n  145 |     await this.emailInput.fill(email);\n> 146 |     await this.passwordInput.fill(password);\n      |                              ^\n  147 |     if (await this.confirmPasswordInput.isVisible()) {\n  148 |       await this.confirmPasswordInput.fill(password);\n  149 |     }\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:146:30)\n    at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:88:5)"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-24T18:27:31.167Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/user-journey-AXIS6-Complet-c1cbd-th-screen-reader-simulation-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
+                            "column": 30,
+                            "line": 146
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "71a1cccb6623f87e1233-0af24a0a8cea973cbc79",
+                  "file": "user-journey.spec.ts",
+                  "line": 369,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-24T18:27:12.099Z",
+    "duration": 34806.898,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 10,
+    "flaky": 0
+  }
+}

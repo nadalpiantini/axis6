@@ -9,6 +9,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'),
   title: 'AXIS6 - Balance Across 6 Life Dimensions',
   description: 'Transform your life by achieving perfect balance across 6 essential dimensions: Physical, Mental, Emotional, Social, Spiritual, and Material.',
   keywords: 'wellness, balance, productivity, mental health, personal development, habits',
@@ -48,13 +49,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   // Get CSP nonce from headers if available (for future enhancement)
-  const headersList = headers()
+  const headersList = await headers()
   const nonce = headersList.get('x-csp-nonce') || undefined
   
   return (
