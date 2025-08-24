@@ -9,6 +9,14 @@
       "maxDuration": 10
     }
   },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.axis6.app" }],
+      "destination": "https://axis6.app/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
