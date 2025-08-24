@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { ReactQueryProvider } from '@/lib/react-query/provider'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { NotificationToast } from '@/components/ui/NotificationToast'
+import { headers } from 'next/headers'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -52,8 +53,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Get CSP nonce from headers if available (for future enhancement)
+  const headersList = headers()
+  const nonce = headersList.get('x-csp-nonce') || undefined
+  
   return (
     <html lang="en">
+      <head>
+        {/* Additional meta tags for better CSP compatibility */}
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        
+        {/* Preconnect to improve performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://nvpnhqhjttgwfwvkgmpk.supabase.co" />
+        
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="//nvpnhqhjttgwfwvkgmpk.supabase.co" />
+      </head>
       <body 
         className={`${inter.className} antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen`}
         suppressHydrationWarning
@@ -64,6 +84,19 @@ export default function RootLayout({
             {children}
           </AuthProvider>
         </ReactQueryProvider>
+        
+        {/* Supabase auth helper script - conditionally add nonce if available */}
+        {nonce ? (
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Supabase auth state sync helper
+                window.supabaseAuthStateSync = true;
+              `
+            }}
+          />
+        ) : null}
       </body>
     </html>
   )

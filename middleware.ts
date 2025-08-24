@@ -12,32 +12,19 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next()
   const pathname = request.nextUrl.pathname
 
-  // Add comprehensive security headers for all responses
+  // Add request tracking and security headers
   response.headers.set('X-Request-Id', crypto.randomUUID())
   
-  // Security headers
-  response.headers.set('X-Frame-Options', 'DENY')
+  // Let next.config.js handle CSP - remove conflicting headers here
+  // Only set non-CSP security headers in middleware
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-XSS-Protection', '1; mode=block')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()')
   
-  // Content Security Policy
-  const cspDirectives = [
-    "default-src 'self'",
-    "script-src 'self' https://*.supabase.co https://*.vercel-scripts.com",
-    "style-src 'self'",
-    "img-src 'self' data: blob: https:",
-    "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.vercel.com",
-    "frame-src 'self'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    "upgrade-insecure-requests"
-  ]
-  response.headers.set('Content-Security-Policy', cspDirectives.join('; '))
+  // Allow frames from Supabase for auth (less restrictive than DENY)
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  
+  // Supabase-friendly referrer policy
+  response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
   
   // HSTS (only in production)
   if (process.env.NODE_ENV === 'production') {

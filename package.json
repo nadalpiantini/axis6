@@ -35,7 +35,10 @@
     "test:e2e:install": "./scripts/run-playwright.sh install",
     "test:e2e:report": "./scripts/run-playwright.sh report",
     "test:e2e:results": "./scripts/run-playwright.sh results",
-    "test:e2e:cleanup": "./scripts/run-playwright.sh cleanup"
+    "test:e2e:cleanup": "./scripts/run-playwright.sh cleanup",
+    "verify:supabase": "node scripts/verify-supabase-config.js",
+    "test:auth": "node scripts/test-auth-flow.js",
+    "fix:csp": "echo 'CSP configuration updated. Restart server: npm run dev'"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

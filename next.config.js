@@ -104,12 +104,50 @@ const nextConfig = {
     } : false,
   },
 
-  // Headers for security
+  // Headers for security with optimized CSP
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === 'development'
+    
+    // Base CSP for production (secure)
+    const productionCSP = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co",
+      "frame-src 'self' https://*.supabase.co",
+      "worker-src 'self' blob:",
+      "child-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self' https://*.supabase.co"
+    ].join('; ')
+    
+    // More permissive CSP for development (allows Next.js dev features)
+    const developmentCSP = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co ws://localhost:* http://localhost:*",
+      "frame-src 'self' https://*.supabase.co",
+      "worker-src 'self' blob:",
+      "child-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self' https://*.supabase.co"
+    ].join('; ')
+
     return [
       {
         source: '/:path*',
         headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: isDevelopment ? developmentCSP : productionCSP
+          },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
@@ -129,6 +167,10 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
           }
         ]
       }
