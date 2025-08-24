@@ -201,6 +201,40 @@ const nextConfig = {
         '@tanstack/react-query-devtools': false,
       }
     }
+    
+    // Fix for React 19 and Next.js 15 compatibility
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      crypto: false,
+    }
+    
+    // Optimize chunk splitting for better performance
+    if (!isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            commons: {
+              name: 'commons',
+              chunks: 'all',
+              minChunks: 2,
+            },
+            react: {
+              name: 'react',
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      }
+    }
+    
     return config
   },
 }

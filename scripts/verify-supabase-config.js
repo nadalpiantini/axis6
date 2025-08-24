@@ -6,6 +6,8 @@
  * and that all required URLs and settings are correct.
  */
 
+// Load environment variables from .env.local
+require('dotenv').config({ path: '.env.local' })
 const { createClient } = require('@supabase/supabase-js')
 
 // Configuration

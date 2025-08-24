@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - img "AXIS6 - Balance Across 6 Life Dimensions" [ref=e7]
+      - heading "Create Your Account" [level=1] [ref=e8]
+      - paragraph [ref=e9]: Begin your journey toward balance
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Name
+        - generic [ref=e13]:
+          - img [ref=e14]
+          - textbox "Your name" [ref=e17]: Test User 1756060234471
+      - generic [ref=e18]:
+        - generic [ref=e19]: Email
+        - generic [ref=e20]:
+          - img [ref=e21]
+          - textbox "tu@email.com" [active] [ref=e24]: test-1756060234471@playwright-axis6.local
+      - generic [ref=e25]:
+        - generic [ref=e26]: Password
+        - generic [ref=e27]:
+          - img [ref=e28]
+          - textbox "Minimum 8 characters" [ref=e31]
+      - generic [ref=e32]:
+        - checkbox [ref=e33]
+        - generic [ref=e34]:
+          - text: I accept the
+          - link "terms and conditions" [ref=e35] [cursor=pointer]:
+            - /url: /terms
+      - button "Create Free Account" [ref=e36] [cursor=pointer]:
+        - text: Create Free Account
+        - img [ref=e37] [cursor=pointer]
+    - generic [ref=e39]:
+      - text: Already have an account?
+      - link "Sign in" [ref=e40] [cursor=pointer]:
+        - /url: /auth/login
+  - generic [ref=e41]:
+    - img [ref=e43]
+    - button "Open Tanstack query devtools" [ref=e91] [cursor=pointer]:
+      - img [ref=e92] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e145] [cursor=pointer]:
+    - img [ref=e146] [cursor=pointer]
+  - alert [ref=e149]
+```

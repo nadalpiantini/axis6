@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Mail, ArrowLeft } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
+  // Force rebuild
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
