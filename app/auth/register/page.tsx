@@ -28,15 +28,15 @@ export default function RegisterPage() {
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-              Crea tu cuenta
+              Create Your Account
             </h1>
-            <p className="text-gray-400">Comienza tu viaje hacia el equilibrio</p>
+            <p className="text-gray-400">Begin your journey toward balance</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Nombre
+                Name
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -45,7 +45,7 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
-                  placeholder="Tu nombre"
+                  placeholder="Your name"
                   required
                 />
               </div>
@@ -70,7 +70,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Contraseña
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Minimum 8 characters"
                   minLength={8}
                   required
                 />
@@ -89,9 +89,9 @@ export default function RegisterPage() {
             <div className="flex items-center text-sm text-gray-300">
               <input type="checkbox" className="mr-2 rounded" required />
               <span>
-                Acepto los{' '}
+                I accept the{' '}
                 <Link href="/terms" className="text-purple-400 hover:text-purple-300">
-                  términos y condiciones
+                  terms and conditions
                 </Link>
               </span>
             </div>
@@ -101,15 +101,15 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2"
             >
-              {loading ? 'Creando cuenta...' : 'Crear Cuenta Gratis'}
+              {loading ? 'Creating account...' : 'Create Free Account'}
               <ChevronRight className="w-5 h-5" />
             </button>
           </form>
 
           <div className="mt-6 text-center text-gray-400">
-            ¿Ya tienes cuenta?{' '}
+            Already have an account?{' '}
             <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold">
-              Inicia sesión
+              Sign in
             </Link>
           </div>
         </div>

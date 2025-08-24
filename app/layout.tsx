@@ -8,15 +8,15 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AXIS6 - Equilibrio en 6 Dimensiones',
-  description: 'Transforma tu vida alcanzando el equilibrio perfecto en las 6 dimensiones esenciales: Física, Mental, Emocional, Social, Espiritual y Material.',
-  keywords: 'bienestar, equilibrio, productividad, salud mental, desarrollo personal, hábitos',
+  title: 'AXIS6 - Balance Across 6 Life Dimensions',
+  description: 'Transform your life by achieving perfect balance across 6 essential dimensions: Physical, Mental, Emotional, Social, Spiritual, and Material.',
+  keywords: 'wellness, balance, productivity, mental health, personal development, habits',
   authors: [{ name: 'AXIS6' }],
   openGraph: {
-    title: 'AXIS6 - Equilibrio en 6 Dimensiones',
-    description: 'Seis ejes. Un solo tú. No rompas tu Axis.',
+    title: 'AXIS6 - Balance Across 6 Life Dimensions',
+    description: 'Six axes. One you. Don\'t break your Axis.',
     type: 'website',
-    locale: 'es_ES',
+    locale: 'en_US',
     url: 'https://axis6.app',
     siteName: 'AXIS6',
   },
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body 
         className={`${inter.className} antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen`}
         suppressHydrationWarning

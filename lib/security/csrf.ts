@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
-const CSRF_SECRET = process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production'
+const CSRF_SECRET = process.env.CSRF_SECRET || (() => {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('CSRF_SECRET environment variable is required in production')
+  }
+  return 'dev-csrf-secret-not-for-production'
+})()
 const CSRF_TOKEN_LENGTH = 32
 const CSRF_COOKIE_NAME = '__Host-csrf'
 const CSRF_HEADER_NAME = 'x-csrf-token'
@@ -60,11 +65,8 @@ export async function validateCSRF(request: NextRequest): Promise<NextResponse |
     return null
   }
 
-  // Skip CSRF validation in development for easier testing
-  // IMPORTANT: Remove this in production or set strict env check
-  if (process.env.NODE_ENV === 'development' && !process.env.ENFORCE_CSRF) {
-    return null
-  }
+  // CSRF protection is always enforced for security
+  // Development bypass removed to prevent CSRF attacks in all environments
 
   // Get token from request
   const token = getTokenFromRequest(request)

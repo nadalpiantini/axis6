@@ -27,9 +27,9 @@ export default function LoginPage() {
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-              Bienvenido de vuelta
+              Welcome Back
             </h1>
-            <p className="text-gray-400">Continúa tu viaje de equilibrio</p>
+            <p className="text-gray-400">Continue your balance journey</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -44,7 +44,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
-                  placeholder="tu@email.com"
+                  placeholder="your@email.com"
                   required
                 />
               </div>
@@ -52,7 +52,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Contraseña
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -70,10 +70,10 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center text-gray-300">
                 <input type="checkbox" className="mr-2 rounded" />
-                Recuérdame
+                Remember me
               </label>
               <Link href="/auth/forgot" className="text-purple-400 hover:text-purple-300">
-                ¿Olvidaste tu contraseña?
+                Forgot your password?
               </Link>
             </div>
 
@@ -82,15 +82,15 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2"
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {loading ? 'Signing in...' : 'Sign In'}
               <ChevronRight className="w-5 h-5" />
             </button>
           </form>
 
           <div className="mt-6 text-center text-gray-400">
-            ¿No tienes cuenta?{' '}
+            Don't have an account?{' '}
             <Link href="/auth/register" className="text-purple-400 hover:text-purple-300 font-semibold">
-              Regístrate gratis
+              Sign up free
             </Link>
           </div>
         </div>

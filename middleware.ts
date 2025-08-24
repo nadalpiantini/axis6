@@ -25,8 +25,8 @@ export async function middleware(request: NextRequest) {
   // Content Security Policy
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com",
-    "style-src 'self' 'unsafe-inline'",
+    "script-src 'self' https://*.supabase.co https://*.vercel-scripts.com",
+    "style-src 'self'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.vercel.com",

@@ -6,12 +6,12 @@ import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Check }
 import { motion } from 'framer-motion'
 
 const availableAxes = [
-  { id: 'spiritual', name: 'Espiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600', description: 'Meditación, gratitud y propósito de vida' },
-  { id: 'mental', name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600', description: 'Aprendizaje, enfoque y productividad' },
-  { id: 'emotional', name: 'Emocional', icon: Heart, color: 'from-red-400 to-red-600', description: 'Gestión emocional y bienestar psicológico' },
-  { id: 'social', name: 'Social', icon: Users, color: 'from-green-400 to-green-600', description: 'Relaciones, familia y conexiones' },
-  { id: 'physical', name: 'Físico', icon: Target, color: 'from-orange-400 to-orange-600', description: 'Ejercicio, nutrición y salud' },
-  { id: 'material', name: 'Material', icon: Briefcase, color: 'from-yellow-400 to-yellow-600', description: 'Finanzas, carrera y recursos' },
+  { id: 'spiritual', name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600', description: 'Meditation, gratitude, and life purpose' },
+  { id: 'mental', name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600', description: 'Learning, focus, and productivity' },
+  { id: 'emotional', name: 'Emotional', icon: Heart, color: 'from-red-400 to-red-600', description: 'Emotional management and psychological wellbeing' },
+  { id: 'social', name: 'Social', icon: Users, color: 'from-green-400 to-green-600', description: 'Relationships, family, and connections' },
+  { id: 'physical', name: 'Physical', icon: Target, color: 'from-orange-400 to-orange-600', description: 'Exercise, nutrition, and health' },
+  { id: 'material', name: 'Material', icon: Briefcase, color: 'from-yellow-400 to-yellow-600', description: 'Finances, career, and resources' },
 ]
 
 export default function OnboardingPage() {
@@ -46,14 +46,14 @@ export default function OnboardingPage() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-            Personaliza tu AXIS6
+            Customize Your AXIS6
           </h1>
           <p className="text-gray-400">
-            Selecciona las 6 dimensiones que quieres equilibrar en tu vida
+            Select the 6 dimensions you want to balance in your life
           </p>
           <div className="mt-4 flex items-center justify-center gap-2">
             <span className="text-2xl font-bold text-white">{selectedAxes.length}</span>
-            <span className="text-gray-400">/ 6 seleccionadas</span>
+            <span className="text-gray-400">/ 6 selected</span>
           </div>
         </motion.div>
 
@@ -107,7 +107,7 @@ export default function OnboardingPage() {
                 : 'bg-gray-600 cursor-not-allowed opacity-50'
             }`}
           >
-            {loading ? 'Configurando...' : 'Comenzar mi viaje'}
+            {loading ? 'Setting up...' : 'Begin My Journey'}
             <ChevronRight className="w-5 h-5" />
           </button>
         </motion.div>
@@ -118,7 +118,7 @@ export default function OnboardingPage() {
             animate={{ opacity: 1 }}
             className="text-center mt-4 text-green-400"
           >
-            ¡Perfecto! Has seleccionado tus 6 dimensiones
+            Perfect! You've selected your 6 dimensions
           </motion.p>
         )}
       </div>

@@ -7,7 +7,7 @@ AXIS6 is a gamified wellness tracker that helps users maintain balance across 6 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript
 - **Styling**: Tailwind CSS, Framer Motion
 - **Backend**: Supabase (PostgreSQL + Auth + Realtime)
-- **Hosting**: Cloudflare Pages (axis6.app) / Vercel (backup)
+- **Hosting**: Vercel (axis6.app)
 - **UI Components**: Custom hexagon visualization, Lucide icons
 - **Charts**: Recharts for analytics
 

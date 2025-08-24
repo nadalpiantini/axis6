@@ -58,7 +58,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Image
-                  src="/AXIS6 logo.png"
+                  src="/axis6-logo.svg"
                   alt="AXIS6"
                   width={32}
                   height={32}

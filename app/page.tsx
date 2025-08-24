@@ -6,18 +6,18 @@ import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Star, T
 import { motion } from 'framer-motion'
 
 const axes = [
-  { name: 'Espiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },
+  { name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },
   { name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600' },
-  { name: 'Emocional', icon: Heart, color: 'from-red-400 to-red-600' },
+  { name: 'Emotional', icon: Heart, color: 'from-red-400 to-red-600' },
   { name: 'Social', icon: Users, color: 'from-green-400 to-green-600' },
-  { name: 'Físico', icon: Target, color: 'from-orange-400 to-orange-600' },
+  { name: 'Physical', icon: Target, color: 'from-orange-400 to-orange-600' },
   { name: 'Material', icon: Briefcase, color: 'from-yellow-400 to-yellow-600' },
 ]
 
 const features = [
-  { icon: Star, title: 'Gamificación', description: 'Convierte tu desarrollo personal en un juego adictivo' },
-  { icon: TrendingUp, title: 'Rachas', description: 'Mantén tu progreso y celebra cada logro' },
-  { icon: Shield, title: 'Privacidad', description: 'Tus datos están seguros y encriptados' },
+  { icon: Star, title: 'Gamification', description: 'Transform your personal development into an engaging game' },
+  { icon: TrendingUp, title: 'Streaks', description: 'Maintain your progress and celebrate every achievement' },
+  { icon: Shield, title: 'Privacy', description: 'Your data is safe and encrypted' },
 ]
 
 export default function LandingPage() {
@@ -41,10 +41,10 @@ export default function LandingPage() {
               AXIS6
             </h1>
             <p className="text-xl md:text-2xl mb-4 text-gray-300">
-              Seis ejes. Un solo tú. No rompas tu Axis.
+              Six axes. One you. Don't break your Axis.
             </p>
             <p className="text-lg mb-8 text-gray-400 max-w-2xl mx-auto">
-              Transforma tu vida alcanzando el equilibrio perfecto en las 6 dimensiones esenciales del bienestar humano.
+              Transform your life by achieving perfect balance across the 6 essential dimensions of human wellbeing.
             </p>
           </motion.div>
 
@@ -59,13 +59,13 @@ export default function LandingPage() {
               href="/auth/register"
               className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center gap-2"
             >
-              Empieza Gratis <ChevronRight className="w-5 h-5" />
+              Start Free <ChevronRight className="w-5 h-5" />
             </Link>
             <Link
               href="/auth/login"
               className="px-8 py-4 glass rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300"
             >
-              Iniciar Sesión
+              Sign In
             </Link>
           </motion.div>
 
@@ -141,7 +141,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
           >
-            ¿Por qué AXIS6?
+            Why AXIS6?
           </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -175,7 +175,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent"
           >
-            Las 6 Dimensiones del Equilibrio
+            The 6 Dimensions of Balance
           </motion.h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -195,7 +195,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{axis.name}</h3>
                   <p className="text-gray-400 text-sm">
-                    Desarrolla y mantén el equilibrio en tu dimensión {axis.name.toLowerCase()}.
+                    Develop and maintain balance in your {axis.name.toLowerCase()} dimension.
                   </p>
                 </motion.div>
               )
@@ -214,19 +214,19 @@ export default function LandingPage() {
             className="glass rounded-3xl p-12"
           >
             <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Comienza tu transformación hoy
+              Start your transformation today
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Únete a miles de personas que ya están equilibrando sus vidas con AXIS6
+              Join thousands of people already balancing their lives with AXIS6
             </p>
             <Link
               href="/auth/register"
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
             >
-              Crear Cuenta Gratis <ChevronRight className="w-5 h-5" />
+              Create Free Account <ChevronRight className="w-5 h-5" />
             </Link>
             <p className="mt-4 text-sm text-gray-400">
-              Sin tarjeta de crédito • Cancela cuando quieras
+              No credit card • Cancel anytime
             </p>
           </motion.div>
         </div>
@@ -235,7 +235,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-white/10">
         <div className="max-w-6xl mx-auto text-center text-gray-400">
-          <p>&copy; 2024 AXIS6. Todos los derechos reservados.</p>
+          <p>&copy; 2024 AXIS6. All rights reserved.</p>
         </div>
       </footer>
     </div>
