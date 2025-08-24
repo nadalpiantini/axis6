@@ -202,7 +202,7 @@ export default function ShowcasePage() {
                   category={category}
                   isCompleted={index % 2 === 0}
                   streakCount={index * 2 + 1}
-                  onToggle={() => console.log(`Toggle ${category.key}`)}
+                  onToggle={() => {/* No-op for showcase */}}
                 />
               </motion.div>
             ))}

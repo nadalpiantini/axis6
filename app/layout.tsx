@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { ReactQueryProvider } from '@/lib/react-query/provider'
+import { AuthProvider } from '@/components/providers/AuthProvider'
+import { NotificationToast } from '@/components/ui/NotificationToast'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,8 +29,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${inter.className} antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen`}>
-        {children}
+      <body 
+        className={`${inter.className} antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen`}
+        suppressHydrationWarning
+      >
+        <ReactQueryProvider>
+          <AuthProvider>
+            <NotificationToast />
+            {children}
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   )

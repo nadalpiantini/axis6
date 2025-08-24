@@ -47,46 +47,46 @@ const ritualNames: Record<number, { es: string; en: string }> = {
 // Micro-actions for each category
 const microActions: Record<number, string[]> = {
   1: [
-    'Estirarte lentamente al despertar',
-    'Caminar 10 minutos escuchando tu respiración',
-    'Bailar lo que sientes',
-    'Hacer 5 respiraciones profundas',
-    'Automasaje consciente'
+    'Stretch slowly upon waking',
+    'Walk 10 minutes listening to your breath',
+    'Dance what you feel',
+    'Take 5 deep breaths',
+    'Conscious self-massage'
   ],
   2: [
-    'Leer 1 página nutritiva',
-    'Apagar notificaciones por 30 minutos',
-    'Respirar antes de responder',
-    'Anotar una idea',
-    'Hacer una pausa consciente'
+    'Read 1 nourishing page',
+    'Turn off notifications for 30 minutes',
+    'Breathe before responding',
+    'Write down an idea',
+    'Take a conscious pause'
   ],
   3: [
-    'Escribir sin editar tus emociones',
-    'Escuchar música que te mueva',
-    'Expresar gratitud a alguien',
-    'Llorar si lo necesitas',
-    'Abrazar a alguien o a ti mismo'
+    'Write your emotions without editing',
+    'Listen to music that moves you',
+    'Express gratitude to someone',
+    'Cry if you need to',
+    'Hug someone or yourself'
   ],
   4: [
-    'Enviar mensaje auténtico',
-    'Llamar a alguien solo para escuchar',
-    'Poner un límite claro',
-    'Compartir algo vulnerable',
-    'Hacer una pregunta sincera'
+    'Send an authentic message',
+    'Call someone just to listen',
+    'Set a clear boundary',
+    'Share something vulnerable',
+    'Ask a sincere question'
   ],
   5: [
-    'Meditar 3 minutos',
-    'Leer un texto sagrado',
-    'Orar o agradecer',
-    'Mirar el cielo',
-    'Escuchar silencio'
+    'Meditate for 3 minutes',
+    'Read a sacred text',
+    'Pray or give thanks',
+    'Look at the sky',
+    'Listen to silence'
   ],
   6: [
-    'Completar una tarea con presencia',
-    'Revisar finanzas sin miedo',
-    'Organizar tu espacio',
-    'Decidir no producir más hoy',
-    'Dar valor al trabajo invisible'
+    'Complete a task with presence',
+    'Review finances without fear',
+    'Organize your space',
+    'Decide not to produce more today',
+    'Value invisible work'
   ]
 }
 
@@ -150,7 +150,10 @@ export default function DailyMantra() {
         setMantra(data.mantra)
       }
     } catch (err) {
-      console.error('Error fetching mantra:', err)
+      // Log error in development only
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching mantra:', err)
+      }
       setError('No se pudo cargar el mantra del día')
     } finally {
       setLoading(false)
@@ -179,7 +182,10 @@ export default function DailyMantra() {
         setShowReflection(false)
       }, 3000)
     } catch (err) {
-      console.error('Error completing mantra:', err)
+      // Log error in development only
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error completing mantra:', err)
+      }
     } finally {
       setCompleting(false)
     }

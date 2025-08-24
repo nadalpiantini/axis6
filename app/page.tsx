@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Star, TrendingUp, Shield } from 'lucide-react'
+
+import { motion } from 'framer-motion'
 
 const axes = [
   { name: 'Espiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },

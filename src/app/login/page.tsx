@@ -34,15 +34,15 @@ export default function LoginPage() {
         // Handle rate limiting
         if (response.status === 429) {
           const retryAfter = data.retryAfter || 900 // Default to 15 minutes
-          throw new Error(`${data.error}. Intenta de nuevo en ${Math.ceil(retryAfter / 60)} minutos.`)
+          throw new Error(`${data.error}. Try again in ${Math.ceil(retryAfter / 60)} minutes.`)
         }
-        throw new Error(data.error || 'Error al iniciar sesión')
+        throw new Error(data.error || 'Error signing in')
       }
 
       // Successful login - redirect to dashboard
       router.push('/dashboard')
     } catch (error: any) {
-      setError(error.message || 'Error al iniciar sesión')
+      setError(error.message || 'Error signing in')
     } finally {
       setLoading(false)
     }
@@ -61,12 +61,12 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-physical to-spiritual bg-clip-text text-transparent mb-2">
             AXIS6
           </h1>
-          <p className="text-gray-400">Seis ejes. Un solo tú. No rompas tu Axis.</p>
+          <p className="text-gray-400">Six axes. One you. Don't break your Axis.</p>
         </div>
 
         {/* Login Form */}
         <div className="bg-navy-900/50 backdrop-blur-lg rounded-2xl border border-white/10 p-8">
-          <h2 className="text-2xl font-semibold text-white mb-6">Iniciar Sesión</h2>
+          <h2 className="text-2xl font-semibold text-white mb-6">Sign In</h2>
           
           {error && (
             <motion.div
@@ -90,7 +90,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-white/70 border border-arena/30 rounded-lg text-textPrimary placeholder-textMuted focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="tu@email.com"
+                placeholder="you@email.com"
                 disabled={loading}
               />
             </div>
@@ -98,10 +98,10 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label htmlFor="password" className="block text-sm font-medium text-textSecondary">
-                  Contraseña
+                  Password
                 </label>
                 <Link href="/auth/forgot" className="text-sm text-physical hover:text-emotional transition-colors">
-                  ¿Olvidaste tu contraseña?
+                  Forgot your password?
                 </Link>
               </div>
               <input
@@ -128,19 +128,19 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Iniciando sesión...
+                  Signing in...
                 </span>
               ) : (
-                'Iniciar Sesión'
+                'Sign In'
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-textSecondary">
-              ¿No tienes cuenta?{' '}
+              Don't have an account?{' '}
               <Link href="/register" className="text-physical hover:text-emotional transition-colors font-medium">
-                Regístrate
+                Sign Up
               </Link>
             </p>
           </div>
@@ -149,7 +149,7 @@ export default function LoginPage() {
         {/* Back to home link */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-textSecondary hover:text-textPrimary transition-colors text-sm">
-            ← Volver al inicio
+            ← Back to home
           </Link>
         </div>
       </motion.div>

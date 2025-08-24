@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const categories = [
-  { name: 'Física', color: '#A6C26F', icon: '🌿', description: 'Ejercicio, salud y nutrición' },
-  { name: 'Mental', color: '#365D63', icon: '🧠', description: 'Aprendizaje y productividad' },
-  { name: 'Emocional', color: '#D36C50', icon: '❤️', description: 'Estado de ánimo y estrés' },
-  { name: 'Social', color: '#6F3D56', icon: '🤝', description: 'Relaciones y conexiones' },
-  { name: 'Espiritual', color: '#2C3E50', icon: '🧿', description: 'Meditación y propósito' },
-  { name: 'Material', color: '#C85729', icon: '🎯', description: 'Finanzas y recursos' }
+  { name: 'Physical', color: '#A6C26F', icon: '🌿', description: 'Exercise, health and nutrition' },
+  { name: 'Mental', color: '#365D63', icon: '🧠', description: 'Learning and productivity' },
+  { name: 'Emotional', color: '#D36C50', icon: '❤️', description: 'Mood and stress management' },
+  { name: 'Social', color: '#6F3D56', icon: '🤝', description: 'Relationships and connections' },
+  { name: 'Spiritual', color: '#2C3E50', icon: '🧿', description: 'Meditation and purpose' },
+  { name: 'Material', color: '#C85729', icon: '🎯', description: 'Finances and resources' }
 ]
 
 export default function HomePage() {
@@ -38,13 +38,13 @@ export default function HomePage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-textPrimary font-serif italic mb-4">
-              &ldquo;Seis ejes. Un solo tú. No rompas tu Axis.&rdquo;
+              &ldquo;Six axes. One you. Don't break your Axis.&rdquo;
             </p>
             
             <p className="text-lg text-textSecondary mb-12 max-w-2xl mx-auto">
-              Alcanza el equilibrio perfecto en las 6 dimensiones de tu vida. 
-              Rastrea tu progreso diario, construye hábitos duraderos y conviértete 
-              en la mejor versión de ti mismo.
+              Achieve perfect balance across the 6 dimensions of your life. 
+              Track your daily progress, build lasting habits, and become 
+              the best version of yourself.
             </p>
 
             <div className="flex gap-4 justify-center">
@@ -54,7 +54,7 @@ export default function HomePage() {
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-4 bg-gradient-to-r from-physical to-mental text-white font-semibold rounded-full text-lg hover:shadow-lg hover:shadow-physical/25 transition-all"
                 >
-                  Comenzar Ahora
+                  Start Now
                 </motion.button>
               </Link>
               
@@ -64,7 +64,7 @@ export default function HomePage() {
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-4 bg-navy-800/50 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-full text-lg hover:bg-navy-700/50 transition-all"
                 >
-                  Iniciar Sesión
+                  Sign In
                 </motion.button>
               </Link>
             </div>
@@ -80,11 +80,11 @@ export default function HomePage() {
           transition={{ delay: 0.4, duration: 0.8 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-4">
-            Los 6 Ejes de tu Vida
+            The 6 Axes of Your Life
           </h2>
           <p className="text-center text-gray-400 mb-16 max-w-3xl mx-auto">
-            Cada eje representa una dimensión esencial de tu bienestar. 
-            Mantén el equilibrio entre todos para alcanzar tu máximo potencial.
+            Each axis represents an essential dimension of your well-being. 
+            Maintain balance between all to reach your maximum potential.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -145,7 +145,7 @@ export default function HomePage() {
       <div className="bg-navy-900/30 backdrop-blur-sm border-y border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
-            ¿Cómo Funciona?
+            How It Works
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -158,9 +158,9 @@ export default function HomePage() {
               <div className="w-20 h-20 bg-gradient-to-br from-physical to-mental rounded-full flex items-center justify-center text-3xl font-bold text-navy-950 mx-auto mb-4">
                 1
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Check-in Diario</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Daily Check-in</h3>
               <p className="text-gray-400">
-                Marca las áreas en las que trabajaste hoy con un simple click
+                Mark the areas you worked on today with a simple click
               </p>
             </motion.div>
 
@@ -173,9 +173,9 @@ export default function HomePage() {
               <div className="w-20 h-20 bg-gradient-to-br from-emotional to-social rounded-full flex items-center justify-center text-3xl font-bold text-navy-950 mx-auto mb-4">
                 2
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Construye Rachas</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Build Streaks</h3>
               <p className="text-gray-400">
-                Mantén tu streak activo y observa tu progreso crecer día a día
+                Keep your streak active and watch your progress grow day by day
               </p>
             </motion.div>
 
@@ -188,9 +188,9 @@ export default function HomePage() {
               <div className="w-20 h-20 bg-gradient-to-br from-spiritual to-material rounded-full flex items-center justify-center text-3xl font-bold text-navy-950 mx-auto mb-4">
                 3
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Alcanza el Balance</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Achieve Balance</h3>
               <p className="text-gray-400">
-                Visualiza tu equilibrio y mejora donde más lo necesitas
+                Visualize your balance and improve where you need it most
               </p>
             </motion.div>
           </div>
@@ -206,10 +206,10 @@ export default function HomePage() {
           className="bg-gradient-to-r from-physical/20 via-mental/20 to-spiritual/20 rounded-3xl border border-white/10 p-12 text-center"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Comienza tu Viaje hacia el Equilibrio
+            Start Your Journey to Balance
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Únete a miles de personas que ya están transformando sus vidas
+            Join thousands of people already transforming their lives
           </p>
           <Link href="/register">
             <motion.button
@@ -217,7 +217,7 @@ export default function HomePage() {
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 bg-gradient-to-r from-physical to-spiritual text-white font-bold rounded-full text-lg hover:shadow-lg hover:shadow-physical/25 transition-all"
             >
-              Crear Cuenta Gratis
+              Create Free Account
             </motion.button>
           </Link>
         </motion.div>
@@ -227,9 +227,9 @@ export default function HomePage() {
       <footer className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-400">
-            <p className="mb-2">© 2024 AXIS6. Todos los derechos reservados.</p>
+            <p className="mb-2">© 2024 AXIS6. All rights reserved.</p>
             <p className="text-sm">
-              Hecho con ❤️ para ayudarte a alcanzar tu máximo potencial
+              Made with ❤️ to help you reach your maximum potential
             </p>
           </div>
         </div>

@@ -24,13 +24,13 @@ export default function RegisterPage() {
 
     // Client-side validation
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden')
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
 
     if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres')
+      setError('Password must be at least 8 characters')
       setLoading(false)
       return
     }
@@ -55,9 +55,9 @@ export default function RegisterPage() {
         // Handle rate limiting
         if (response.status === 429) {
           const retryAfter = data.retryAfter || 3600 // Default to 1 hour
-          throw new Error(`${data.error}. Intenta de nuevo en ${Math.ceil(retryAfter / 60)} minutos.`)
+          throw new Error(`${data.error}. Try again in ${Math.ceil(retryAfter / 60)} minutes.`)
         }
-        throw new Error(data.error || 'Error al crear la cuenta')
+        throw new Error(data.error || 'Error creating account')
       }
 
       setSuccess(true)
@@ -68,7 +68,7 @@ export default function RegisterPage() {
       }, 3000)
       
     } catch (error: any) {
-      setError(error.message || 'Error al crear la cuenta')
+      setError(error.message || 'Error creating account')
     } finally {
       setLoading(false)
     }
@@ -87,12 +87,12 @@ export default function RegisterPage() {
           <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-physical via-emotional to-social bg-clip-text text-transparent mb-2">
             AXIS6
           </h1>
-          <p className="text-textSecondary">Comienza tu viaje hacia el equilibrio</p>
+          <p className="text-textSecondary">Start your journey to balance</p>
         </div>
 
         {/* Register Form */}
         <div className="glass-premium rounded-2xl p-8">
-          <h2 className="text-2xl font-serif font-semibold text-textPrimary mb-6">Crear Cuenta</h2>
+          <h2 className="text-2xl font-serif font-semibold text-textPrimary mb-6">Create Account</h2>
           
           {error && (
             <motion.div
@@ -110,14 +110,14 @@ export default function RegisterPage() {
               animate={{ opacity: 1, scale: 1 }}
               className="bg-physical/10 border border-physical/20 text-physical px-4 py-3 rounded-lg mb-6"
             >
-              ¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.
+              Account created successfully! Check your email to confirm your account.
             </motion.div>
           )}
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                Nombre
+                Name
               </label>
               <input
                 id="name"
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="Tu nombre"
+                placeholder="Your name"
                 disabled={loading || success}
               />
             </div>
@@ -142,14 +142,14 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="tu@email.com"
+                placeholder="you@email.com"
                 disabled={loading || success}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Contraseña
+                Password
               </label>
               <input
                 id="password"
@@ -159,15 +159,15 @@ export default function RegisterPage() {
                 required
                 minLength={8}
                 className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="Mínimo 8 caracteres"
+                placeholder="Minimum 8 characters"
                 disabled={loading || success}
               />
-              <p className="mt-1 text-xs text-gray-500">Mínimo 8 caracteres, debe incluir mayúsculas, minúsculas y números</p>
+              <p className="mt-1 text-xs text-gray-500">Minimum 8 characters, must include uppercase, lowercase and numbers</p>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                Confirmar Contraseña
+                Confirm Password
               </label>
               <input
                 id="confirmPassword"
@@ -177,7 +177,7 @@ export default function RegisterPage() {
                 required
                 minLength={8}
                 className="w-full px-4 py-3 bg-navy-800/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-physical focus:ring-1 focus:ring-physical transition-colors"
-                placeholder="Repite tu contraseña"
+                placeholder="Repeat your password"
                 disabled={loading || success}
               />
             </div>
@@ -193,33 +193,33 @@ export default function RegisterPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Creando cuenta...
+                  Creating account...
                 </span>
               ) : success ? (
-                'Cuenta creada ✅'
+                'Account created ✅'
               ) : (
-                'Crear Cuenta'
+                'Create Account'
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-400">
-              ¿Ya tienes cuenta?{' '}
+              Already have an account?{' '}
               <Link href="/login" className="text-physical hover:text-mental transition-colors">
-                Inicia sesión
+                Sign in
               </Link>
             </p>
           </div>
 
           <div className="mt-8 pt-6 border-t border-white/10">
             <p className="text-xs text-gray-500 text-center">
-              Al registrarte, aceptas comenzar tu viaje de equilibrio en los 6 ejes de la vida: 
-              <span className="text-physical"> Físico</span>,
+              By signing up, you agree to start your journey of balance in the 6 axes of life: 
+              <span className="text-physical"> Physical</span>,
               <span className="text-mental"> Mental</span>,
-              <span className="text-emotional"> Emocional</span>,
+              <span className="text-emotional"> Emotional</span>,
               <span className="text-social"> Social</span>,
-              <span className="text-spiritual"> Espiritual</span> y
+              <span className="text-spiritual"> Spiritual</span> and
               <span className="text-material"> Material</span>.
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function RegisterPage() {
         {/* Back to home link */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Volver al inicio
+            ← Back to home
           </Link>
         </div>
       </motion.div>

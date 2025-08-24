@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, memo } from 'react'
 
 interface HexagonChartProps {
   data: {
@@ -74,7 +74,7 @@ const categories = [
   }
 ]
 
-export default function HexagonChart({ 
+const HexagonChart = memo(function HexagonChart({ 
   data, 
   size = 300,
   animate = true 
@@ -89,26 +89,35 @@ export default function HexagonChart({
   }, [])
 
   // Calculate hexagon points for the background
-  const hexagonPoints = categories.map((cat) => {
-    const angleRad = (cat.angle * Math.PI) / 180
-    const x = center + radius * Math.cos(angleRad)
-    const y = center + radius * Math.sin(angleRad)
-    return `${x},${y}`
-  }).join(' ')
+  const hexagonPoints = useMemo(() => 
+    categories.map((cat) => {
+      const angleRad = (cat.angle * Math.PI) / 180
+      const x = center + radius * Math.cos(angleRad)
+      const y = center + radius * Math.sin(angleRad)
+      return `${x},${y}`
+    }).join(' '),
+    [center, radius]
+  )
 
   // Calculate data polygon points
-  const dataPoints = categories.map((cat) => {
-    const value = data[cat.key as keyof typeof data] / 100
-    const angleRad = (cat.angle * Math.PI) / 180
-    const x = center + radius * value * Math.cos(angleRad)
-    const y = center + radius * value * Math.sin(angleRad)
-    return { x, y, value }
-  })
+  const dataPoints = useMemo(() => 
+    categories.map((cat) => {
+      const value = data[cat.key as keyof typeof data] / 100
+      const angleRad = (cat.angle * Math.PI) / 180
+      const x = center + radius * value * Math.cos(angleRad)
+      const y = center + radius * value * Math.sin(angleRad)
+      return { x, y, value }
+    }),
+    [data, center, radius]
+  )
 
-  const dataPolygonPoints = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
+  const dataPolygonPoints = useMemo(() => 
+    dataPoints.map(p => `${p.x},${p.y}`).join(' '),
+    [dataPoints]
+  )
 
   // Create grid lines
-  const gridLevels = [0.2, 0.4, 0.6, 0.8, 1]
+  const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])
 
   if (!isClient) {
     return (
@@ -302,8 +311,9 @@ export default function HexagonChart({
             ease: "easeInOut"
           }}
         >
-          {Math.round(
-            Object.values(data).reduce((acc, val) => acc + val, 0) / 6
+          {useMemo(() => 
+            Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
+            [data]
           )}%
         </motion.div>
         <motion.div 
@@ -317,4 +327,8 @@ export default function HexagonChart({
       </motion.div>
     </div>
   )
-}
+})
+
+HexagonChart.displayName = 'HexagonChart'
+
+export default HexagonChart

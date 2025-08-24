@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit, rateLimitConfigs, resetRateLimit } from '@/lib/security/rateLimit'
-import { validateEmail, validatePassword } from '@/lib/security/validation'
+import { loginSchema, validateRequest } from '@/lib/validation/schemas'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   // Apply rate limiting
@@ -11,25 +12,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json()
-    const { email, password } = body
-
-    // Validate email
-    const emailValidation = validateEmail(email)
-    if (!emailValidation.isValid) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, loginSchema)
+    if (validation.error) {
       return NextResponse.json(
-        { error: emailValidation.error },
+        { error: validation.error },
         { status: 400 }
       )
     }
 
-    // Validate password (basic check, not full strength validation for login)
-    if (!password || password.length < 6) {
-      return NextResponse.json(
-        { error: 'Contraseña inválida' },
-        { status: 400 }
-      )
-    }
+    const { email, password } = validation.data!
 
     // Create Supabase client
     const supabase = await createClient()
@@ -42,7 +34,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       // Log failed attempt for security monitoring
-      console.log(`Failed login attempt for email: ${email} at ${new Date().toISOString()}`)
+      logger.security('Failed login attempt', { 
+        action: 'login_failed',
+        metadata: { email: email.substring(0, 3) + '***' } // Partially mask email
+      })
       
       return NextResponse.json(
         { error: 'Credenciales inválidas' },
@@ -54,7 +49,10 @@ export async function POST(request: NextRequest) {
     resetRateLimit(request, data.user?.id)
 
     // Log successful login for monitoring
-    console.log(`Successful login for user: ${data.user?.id} at ${new Date().toISOString()}`)
+    logger.security('Successful login', {
+      userId: data.user?.id,
+      action: 'login_success'
+    })
 
     return NextResponse.json(
       { 
@@ -67,7 +65,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Login error:', error)
+    logger.error('Login error', error)
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

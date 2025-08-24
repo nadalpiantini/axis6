@@ -1,28 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { validatePassword } from '@/lib/security/validation'
+import { resetPasswordSchema, validateRequest } from '@/lib/validation/schemas'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { password, accessToken, refreshToken } = body
-
-    // Validate password
-    const passwordValidation = validatePassword(password)
-    if (!passwordValidation.isValid) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, resetPasswordSchema)
+    if (validation.error) {
       return NextResponse.json(
-        { error: passwordValidation.error },
+        { error: validation.error },
         { status: 400 }
       )
     }
 
-    // Validate required fields
-    if (!accessToken || !refreshToken) {
-      return NextResponse.json(
-        { error: 'Tokens de autenticación requeridos' },
-        { status: 400 }
-      )
-    }
+    const { password, accessToken, refreshToken } = validation.data!
 
     // Create Supabase client
     const supabase = await createClient()
@@ -34,7 +26,9 @@ export async function POST(request: NextRequest) {
     })
 
     if (sessionError || !sessionData.user) {
-      console.log(`Invalid reset tokens used at ${new Date().toISOString()}`)
+      logger.security('Invalid reset tokens used', {
+        action: 'invalid_reset_token'
+      })
       return NextResponse.json(
         { error: 'Enlace de restablecimiento inválido o expirado' },
         { status: 400 }
@@ -47,7 +41,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (updateError) {
-      console.error('Password update error:', updateError)
+      logger.error('Password update error', updateError)
       return NextResponse.json(
         { error: 'Error al actualizar la contraseña' },
         { status: 500 }
@@ -55,7 +49,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Log successful password reset for monitoring
-    console.log(`Password successfully reset for user: ${sessionData.user.id} at ${new Date().toISOString()}`)
+    logger.security('Password successfully reset', {
+      userId: sessionData.user.id,
+      action: 'password_reset_success'
+    })
 
     return NextResponse.json(
       { 
@@ -65,7 +62,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Password reset error:', error)
+    logger.error('Password reset error', error)
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

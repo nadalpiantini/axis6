@@ -13,9 +13,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://axis6.app' : 'http://localhost:6789'),
-  title: "AXIS6 - Equilibrio en 6 Ejes",
-  description: "Alcanza el equilibrio perfecto en las 6 dimensiones de tu vida. Rastrea tu progreso diario y conviértete en tu mejor versión.",
-  keywords: "bienestar, equilibrio, hábitos, productividad, salud mental, desarrollo personal",
+  title: "AXIS6 - Balance in 6 Dimensions",
+  description: "Achieve perfect balance across the 6 dimensions of your life. Track your daily progress and become your best version.",
+  keywords: "wellness, balance, habits, productivity, mental health, personal development",
   authors: [{ name: "AXIS6 Team" }],
   manifest: "/manifest.json",
   appleWebApp: {
@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     title: "AXIS6"
   },
   openGraph: {
-    title: "AXIS6 - Equilibrio en 6 Ejes",
-    description: "Seis ejes. Un solo tú. No rompas tu Axis.",
+    title: "AXIS6 - Balance in 6 Dimensions",
+    description: "Six axes. One you. Don't break your Axis.",
     type: "website",
-    locale: "es_ES",
+    locale: "en_US",
     url: "https://axis6.app",
     siteName: "AXIS6",
     images: [
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AXIS6 - Balance de Vida",
-    description: "Rastrea y balancea las 6 dimensiones de tu vida",
+    title: "AXIS6 - Life Balance",
+    description: "Track and balance the 6 dimensions of your life",
     images: ["/og-image.png"],
   },
   icons: {
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body className={`${inter.className} antialiased`} suppressHydrationWarning={true}>
         {children}
       </body>

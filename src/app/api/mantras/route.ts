@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { completeMantraSchema, validateRequest } from '@/lib/validation/schemas'
+import { withRateLimit, rateLimitConfigs } from '@/lib/security/rateLimit'
+import { logger } from '@/lib/utils/logger'
 
 // Configure edge runtime for Cloudflare Pages compatibility
 export const runtime = 'edge'
@@ -24,7 +27,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (mantraError) {
-      console.error('Error fetching daily mantra:', mantraError)
+      logger.error('Error fetching daily mantra', mantraError)
       return NextResponse.json(
         { error: 'Failed to fetch daily mantra' },
         { status: 500 }
@@ -33,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ mantra })
   } catch (error) {
-    console.error('Unexpected error in mantras API:', error)
+    logger.error('Unexpected error in mantras API', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -42,7 +45,32 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = await withRateLimit(request, rateLimitConfigs.api)
+  if (rateLimitResponse) {
+    return rateLimitResponse
+  }
+
   try {
+    // Validate request body with Zod (optional for mantras)
+    const body = await request.text()
+    if (body) {
+      const validation = await validateRequest(
+        new Request(request.url, {
+          method: 'POST',
+          body: body,
+          headers: request.headers
+        }),
+        completeMantraSchema
+      )
+      if (validation.error) {
+        return NextResponse.json(
+          { error: validation.error },
+          { status: 400 }
+        )
+      }
+    }
+
     const supabase = await createClient()
 
     // Get authenticated user
@@ -60,7 +88,7 @@ export async function POST(request: NextRequest) {
       .rpc('axis6_complete_mantra', { p_user_id: user.id })
 
     if (completeError) {
-      console.error('Error completing mantra:', completeError)
+      logger.error('Error completing mantra', completeError)
       return NextResponse.json(
         { error: 'Failed to complete mantra' },
         { status: 500 }
@@ -69,7 +97,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: result })
   } catch (error) {
-    console.error('Unexpected error in mantras API:', error)
+    logger.error('Unexpected error in mantras API', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

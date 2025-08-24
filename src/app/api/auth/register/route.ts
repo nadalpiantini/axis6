@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withRateLimit, rateLimitConfigs } from '@/lib/security/rateLimit'
-import { validateEmail, validatePassword, validateTextInput } from '@/lib/security/validation'
+import { registerSchema, validateRequest } from '@/lib/validation/schemas'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   // Apply rate limiting
@@ -11,50 +12,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json()
-    const { email, password, confirmPassword, name } = body
-
-    // Validate email
-    const emailValidation = validateEmail(email)
-    if (!emailValidation.isValid) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, registerSchema)
+    if (validation.error) {
       return NextResponse.json(
-        { error: emailValidation.error },
+        { error: validation.error },
         { status: 400 }
       )
     }
 
-    // Validate password
-    const passwordValidation = validatePassword(password)
-    if (!passwordValidation.isValid) {
-      return NextResponse.json(
-        { error: passwordValidation.error },
-        { status: 400 }
-      )
-    }
-
-    // Check passwords match
-    if (password !== confirmPassword) {
-      return NextResponse.json(
-        { error: 'Las contraseñas no coinciden' },
-        { status: 400 }
-      )
-    }
-
-    // Validate name if provided
-    if (name) {
-      const nameValidation = validateTextInput(name, {
-        minLength: 2,
-        maxLength: 100,
-        alphanumericOnly: false,
-        allowSpaces: true
-      })
-      if (!nameValidation.isValid) {
-        return NextResponse.json(
-          { error: `Nombre: ${nameValidation.error}` },
-          { status: 400 }
-        )
-      }
-    }
+    const { email, password, name } = validation.data!
 
     // Create Supabase client
     const supabase = await createClient()
@@ -77,7 +44,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      console.error('Registration error:', error)
+      logger.error('Registration error', error)
       return NextResponse.json(
         { error: 'Error al crear la cuenta. Por favor, intenta de nuevo' },
         { status: 400 }
@@ -85,7 +52,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Log successful registration for monitoring
-    console.log(`New user registered: ${data.user?.id} at ${new Date().toISOString()}`)
+    logger.security('New user registered', {
+      userId: data.user?.id,
+      action: 'registration_success'
+    })
 
     return NextResponse.json(
       { 
@@ -98,7 +68,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Registration error:', error)
+    logger.error('Registration error', error)
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Heart, Brain, Palette, Users, Sun, Briefcase, CheckCircle2, Circle } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 
 interface CategoryCardProps {
   category: {
@@ -102,9 +102,17 @@ const movementAnimations = {
   }
 }
 
-export default function CategoryCard({ category, isCompleted = false, streakCount = 0, onToggle }: CategoryCardProps) {
+const CategoryCard = memo(function CategoryCard({ category, isCompleted = false, streakCount = 0, onToggle }: CategoryCardProps) {
   const [showActions, setShowActions] = useState(false)
   const [selectedAction, setSelectedAction] = useState<number | null>(null)
+  
+  const handleToggleActions = useCallback(() => {
+    setShowActions(prev => !prev)
+  }, [])
+  
+  const handleSelectAction = useCallback((index: number) => {
+    setSelectedAction(prev => prev === index ? null : index)
+  }, [])
   
   const Icon = iconMap[category.icon as keyof typeof iconMap]
   const animation = movementAnimations[category.movement as keyof typeof movementAnimations]
@@ -297,7 +305,7 @@ export default function CategoryCard({ category, isCompleted = false, streakCoun
                     ? `linear-gradient(135deg, ${category.color}, ${category.softColor})`
                     : undefined
                 }}
-                onClick={() => setSelectedAction(selectedAction === index ? null : index)}
+                onClick={() => handleSelectAction(index)}
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -309,7 +317,7 @@ export default function CategoryCard({ category, isCompleted = false, streakCoun
 
         {/* Botón expandir/colapsar - THE RITUAL OS style */}
         <motion.button
-          onClick={() => setShowActions(!showActions)}
+          onClick={handleToggleActions}
           className="w-full mt-4 py-3 text-sm font-semibold rounded-2xl backdrop-blur-sm border border-white/20 transition-all duration-300 relative z-10"
           style={{
             color: category.darkColor,
@@ -335,4 +343,8 @@ export default function CategoryCard({ category, isCompleted = false, streakCoun
       </motion.div>
     </motion.div>
   )
-}
+})
+
+CategoryCard.displayName = 'CategoryCard'
+
+export default CategoryCard
