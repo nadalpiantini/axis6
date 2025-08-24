@@ -58,17 +58,20 @@ Sentry.init({
       const error = hint.originalException
       
       // Filter out authentication errors (expected)
-      if (error && error.message && error.message.includes('unauthorized')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('unauthorized')) {
         return null
       }
       
       // Filter out validation errors (expected)
-      if (error && error.message && error.message.includes('validation')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('validation')) {
         return null
       }
       
       // Filter out rate limit errors (expected)
-      if (error && error.message && error.message.includes('rate limit')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('rate limit')) {
         return null
       }
     }
@@ -78,25 +81,25 @@ Sentry.init({
   
   // Integrations for server-side
   integrations: [
-    // Database integration
-    new Sentry.Integrations.Postgres(),
+    // Temporarily disabled for compatibility
+    // new Sentry.Integrations.Postgres(),
     
     // HTTP integration for API monitoring
-    new Sentry.Integrations.Http({ 
-      tracing: true,
-      breadcrumbs: true
-    }),
+    // new Sentry.Integrations.Http({ 
+    //   tracing: true,
+    //   breadcrumbs: true
+    // }),
     
     // File system integration
-    new Sentry.Integrations.OnUncaughtException({
-      onFatalError: (err) => {
-        console.error('Fatal error:', err)
-        process.exit(1)
-      }
-    }),
+    // new Sentry.Integrations.OnUncaughtException({
+    //   onFatalError: (err) => {
+    //     console.error('Fatal error:', err)
+    //     process.exit(1)
+    //   }
+    // }),
     
     // Express integration (if using Express middleware)
-    new Sentry.Integrations.Express({ app: undefined }),
+    // new Sentry.Integrations.Express({ app: undefined }),
   ],
   
   // Configure beforeBreadcrumb for server
@@ -107,7 +110,7 @@ Sentry.init({
         // Remove sensitive headers
         const sensitiveHeaders = ['authorization', 'cookie', 'x-csrf-token']
         sensitiveHeaders.forEach(header => {
-          if (breadcrumb.data[header]) {
+          if (breadcrumb.data && breadcrumb.data[header]) {
             breadcrumb.data[header] = '[Filtered]'
           }
         })

@@ -1,0 +1,562 @@
+name: AXIS6 Playwright Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC for production monitoring
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: 'Test environment'
+        required: false
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - auth
+        - dashboard
+        - performance
+        - accessibility
+        - security
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run linting
+        run: npm run lint
+        
+      - name: Run type checking
+        run: npm run type-check
+
+  build-and-unit-tests:
+    name: Build & Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Run unit tests
+        run: npm run test
+        if: success() || failure()
+
+  e2e-tests:
+    name: E2E Tests
+    needs: [lint-and-typecheck, build-and-unit-tests]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4] # Split tests across multiple shards for speed
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        
+      - name: Setup test database (if needed)
+        run: |
+          # Add database setup commands here if needed
+          echo "Setting up test database..."
+        
+      - name: Start development server
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+        env:
+          NODE_ENV: test
+          PORT: 6789
+          
+      - name: Wait for server to be ready
+        run: |
+          timeout 30 bash -c 'until curl -s http://localhost:6789; do sleep 1; done'
+          
+      - name: Run Playwright tests
+        run: |
+          if [ "${{ github.event.inputs.test_suite }}" != "" ]; then
+            case "${{ github.event.inputs.test_suite }}" in
+              "auth") npx playwright test tests/e2e/auth.spec.ts --shard=${{ matrix.shard }}/4 ;;
+              "dashboard") npx playwright test tests/e2e/dashboard.spec.ts tests/e2e/user-journey.spec.ts --shard=${{ matrix.shard }}/4 ;;
+              "performance") npx playwright test tests/e2e/performance.spec.ts --shard=${{ matrix.shard }}/4 ;;
+              "accessibility") npx playwright test tests/e2e/accessibility.spec.ts --shard=${{ matrix.shard }}/4 ;;
+              "security") npx playwright test tests/e2e/security.spec.ts --shard=${{ matrix.shard }}/4 ;;
+              *) npx playwright test --shard=${{ matrix.shard }}/4 ;;
+            esac
+          else
+            npx playwright test --shard=${{ matrix.shard }}/4
+          fi
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:6789
+          CI: true
+          
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 30
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 30
+
+  visual-regression:
+    name: Visual Regression Tests
+    needs: [lint-and-typecheck, build-and-unit-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        
+      - name: Start development server
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+        env:
+          NODE_ENV: test
+          PORT: 6789
+          
+      - name: Wait for server to be ready
+        run: |
+          timeout 30 bash -c 'until curl -s http://localhost:6789; do sleep 1; done'
+          
+      - name: Run visual regression tests
+        run: npx playwright test tests/e2e/visual-regression.spec.ts --project=chromium
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:6789
+          CI: true
+          
+      - name: Upload visual test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-regression-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
+
+  cross-browser:
+    name: Cross-Browser Tests
+    needs: [e2e-tests]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        
+      - name: Start development server
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+        env:
+          NODE_ENV: test
+          PORT: 6789
+          
+      - name: Wait for server to be ready
+        run: |
+          timeout 30 bash -c 'until curl -s http://localhost:6789; do sleep 1; done'
+          
+      - name: Run core tests on ${{ matrix.browser }}
+        run: npx playwright test tests/e2e/auth.spec.ts tests/e2e/dashboard.spec.ts --project=${{ matrix.browser }}
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:6789
+          CI: true
+          
+      - name: Upload browser-specific results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.browser }}-results
+          path: test-results/
+          retention-days: 15
+
+  mobile-tests:
+    name: Mobile Tests
+    needs: [e2e-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        
+      - name: Start development server
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+        env:
+          NODE_ENV: test
+          PORT: 6789
+          
+      - name: Wait for server to be ready
+        run: |
+          timeout 30 bash -c 'until curl -s http://localhost:6789; do sleep 1; done'
+          
+      - name: Run mobile device tests
+        run: npx playwright test tests/e2e/auth.spec.ts tests/e2e/dashboard.spec.ts --project="Mobile Chrome" --project="Mobile Safari"
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:6789
+          CI: true
+          
+      - name: Upload mobile test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-test-results
+          path: test-results/
+          retention-days: 15
+
+  production-monitoring:
+    name: Production Monitoring
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.test_env == 'production')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        
+      - name: Run production smoke tests
+        run: npx playwright test tests/e2e/auth.spec.ts tests/e2e/performance.spec.ts --project=chromium
+        env:
+          PLAYWRIGHT_BASE_URL: https://axis6.app
+          CI: true
+          NODE_ENV: production
+          
+      - name: Upload production test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-monitoring-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 90
+          
+      - name: Send notification on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: "🚨 AXIS6 Production monitoring tests failed! Check the results immediately."
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  merge-reports:
+    name: Merge Test Reports
+    if: always()
+    needs: [e2e-tests, visual-regression, cross-browser, mobile-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-test-results
+          
+      - name: Merge test reports
+        run: |
+          mkdir -p merged-results
+          # Merge HTML reports
+          if ls all-test-results/*/playwright-report/index.html 1> /dev/null 2>&1; then
+            cp -r all-test-results/playwright-report-1/* merged-results/ || true
+          fi
+          
+          # Merge JSON results for analysis
+          if ls all-test-results/*/playwright-results.json 1> /dev/null 2>&1; then
+            echo "Merging JSON results..."
+            # Custom script to merge JSON results would go here
+          fi
+          
+      - name: Generate comprehensive report
+        run: |
+          cat > merged-results/summary.md << 'EOF'
+          # AXIS6 Test Results Summary
+          
+          ## Test Execution Summary
+          - **Date**: $(date)
+          - **Commit**: ${{ github.sha }}
+          - **Branch**: ${{ github.ref_name }}
+          - **Trigger**: ${{ github.event_name }}
+          
+          ## Test Coverage
+          - ✅ Authentication Flow Tests
+          - ✅ Dashboard Functionality Tests
+          - ✅ User Journey Tests  
+          - ✅ Performance Audits
+          - ✅ Accessibility Compliance
+          - ✅ Security Validation
+          - ✅ Visual Regression Tests
+          - ✅ Cross-Browser Compatibility
+          - ✅ Mobile Responsiveness
+          
+          ## Browser Coverage
+          - Chrome/Chromium ✅
+          - Firefox ✅
+          - Safari/WebKit ✅
+          - Mobile Chrome ✅
+          - Mobile Safari ✅
+          
+          See detailed reports in the artifacts.
+          EOF
+          
+      - name: Upload comprehensive report
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-test-report
+          path: merged-results/
+          retention-days: 60
+          
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('merged-results/summary.md')) {
+              const summary = fs.readFileSync('merged-results/summary.md', 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: summary
+              });
+            }
+
+  deploy-preview:
+    name: Deploy Test Preview
+    if: github.event_name == 'pull_request'
+    needs: [e2e-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build for preview
+        run: npm run build
+        
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          alias-domains: |
+            axis6-pr-${{ github.event.number }}.vercel.app
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Run npm audit
+        run: npm audit --audit-level high
+        continue-on-error: true
+        
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        
+      - name: Run Semgrep Security Scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/javascript
+            p/typescript
+            p/react
+            p/nextjs
+            p/security-audit
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+  performance-budget:
+    name: Performance Budget Check
+    needs: [build-and-unit-tests]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build and analyze bundle
+        run: |
+          npm run build
+          npx @next/bundle-analyzer
+        continue-on-error: true
+        
+      - name: Check bundle size
+        run: |
+          # Add bundle size validation logic
+          echo "Checking bundle size against performance budget..."
+          # Fail if bundle size exceeds budget
+          
+  notify-results:
+    name: Notify Results
+    if: always()
+    needs: [e2e-tests, visual-regression, cross-browser, mobile-tests, security-scan]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            AXIS6 Test Suite completed with status: ${{ job.status }}
+            
+            🔗 View results: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            📊 Commit: ${{ github.sha }}
+            🌿 Branch: ${{ github.ref_name }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

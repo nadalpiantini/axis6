@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, ChevronRight } from 'lucide-react'
+import { LogoFull } from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -15,10 +16,31 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     
-    // TODO: Implement actual login with Supabase
-    setTimeout(() => {
-      router.push('/dashboard')
-    }, 1000)
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error('Login error:', error)
+        alert(error.message)
+        return
+      }
+
+      if (data.user) {
+        // Login successful, redirect to dashboard
+        router.push('/dashboard')
+      }
+    } catch (error) {
+      console.error('Login failed:', error)
+      alert('Login failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -26,7 +48,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="mb-4 flex justify-center">
+              <LogoFull size="lg" />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">
               Welcome Back
             </h1>
             <p className="text-gray-400">Continue your balance journey</p>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, User, ChevronRight } from 'lucide-react'
+import { LogoFull } from '@/components/ui/Logo'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -16,10 +17,36 @@ export default function RegisterPage() {
     e.preventDefault()
     setLoading(true)
     
-    // TODO: Implement actual registration with Supabase
-    setTimeout(() => {
-      router.push('/auth/onboarding')
-    }, 1000)
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          }
+        }
+      })
+
+      if (error) {
+        console.error('Registration error:', error)
+        alert(error.message)
+        return
+      }
+
+      if (data.user) {
+        // Registration successful, redirect to onboarding
+        router.push('/auth/onboarding')
+      }
+    } catch (error) {
+      console.error('Registration failed:', error)
+      alert('Registration failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -27,7 +54,10 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="mb-4 flex justify-center">
+              <LogoFull size="lg" />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">
               Create Your Account
             </h1>
             <p className="text-gray-400">Begin your journey toward balance</p>

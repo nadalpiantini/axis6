@@ -55,12 +55,14 @@ Sentry.init({
       const error = hint.originalException
       
       // Filter out authentication redirects (expected)
-      if (error && error.message && error.message.includes('redirect')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('redirect')) {
         return null
       }
       
       // Filter out CORS preflight errors (expected)
-      if (error && error.message && error.message.includes('CORS')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('CORS')) {
         return null
       }
     }
@@ -70,11 +72,11 @@ Sentry.init({
   
   // Minimal integrations for edge runtime
   integrations: [
-    // Only basic HTTP integration
-    new Sentry.Integrations.Http({
-      tracing: true,
-      breadcrumbs: false // Disable breadcrumbs for better performance
-    })
+    // Temporarily disabled for compatibility
+    // new Sentry.Integrations.Http({
+    //   tracing: true,
+    //   breadcrumbs: false // Disable breadcrumbs for better performance
+    // })
   ],
   
   // Configure transaction filtering for edge

@@ -146,8 +146,8 @@ export const env = {
   
   // URLs with defaults
   urls: {
-    app: clientEnv.NEXT_PUBLIC_APP_URL || 'http://localhost:6789',
-    supabase: clientEnv.NEXT_PUBLIC_SUPABASE_URL,
+    app: clientEnv?.NEXT_PUBLIC_APP_URL || 'http://localhost:6789',
+    supabase: clientEnv?.NEXT_PUBLIC_SUPABASE_URL || '',
   },
 } as const
 

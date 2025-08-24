@@ -5,7 +5,7 @@
  * to avoid N+1 query problems and improve performance.
  */
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 
 // Types

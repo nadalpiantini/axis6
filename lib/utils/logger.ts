@@ -6,6 +6,7 @@ interface LogMetadata {
   action?: string
   metadata?: Record<string, any>
   timestamp?: string
+  error?: any
 }
 
 class Logger {

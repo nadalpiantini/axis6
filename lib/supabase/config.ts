@@ -44,7 +44,7 @@ export const supabaseConfig = {
   global: {
     // Headers to include with every request
     headers: {
-      'x-app-version': env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
+      'x-app-version': process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
     },
     
     // Fetch configuration

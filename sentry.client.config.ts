@@ -56,12 +56,13 @@ Sentry.init({
       const error = hint.originalException
       
       // Filter out network errors
-      if (error && error.name === 'NetworkError') {
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'NetworkError') {
         return null
       }
       
       // Filter out cancelled requests
-      if (error && error.message && error.message.includes('cancelled')) {
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('cancelled')) {
         return null
       }
     }
@@ -99,19 +100,20 @@ Sentry.init({
   
   // Integrations
   integrations: [
-    new Sentry.BrowserTracing({
-      // Set up automatic route change tracking for Next.js
-      routingInstrumentation: Sentry.nextRouterInstrumentation()
-    }),
-    new Sentry.Replay({
-      // Capture 10% of all sessions
-      sessionSampleRate: 0.1,
-      // Capture 100% of sessions with an error
-      errorSampleRate: 1.0,
-      maskAllText: false,
-      maskAllInputs: false,
-      blockAllMedia: true,
-    }),
+    // Temporarily disabled for compatibility
+    // new Sentry.BrowserTracing({
+    //   // Set up automatic route change tracking for Next.js
+    //   routingInstrumentation: Sentry.nextRouterInstrumentation()
+    // }),
+    // new Sentry.Replay({
+    //   // Capture 10% of all sessions
+    //   sessionSampleRate: 0.1,
+    //   // Capture 100% of sessions with an error
+    //   errorSampleRate: 1.0,
+    //   maskAllText: false,
+    //   maskAllInputs: false,
+    //   blockAllMedia: true,
+    // }),
   ],
   
   // Configure beforeBreadcrumb to filter out noisy breadcrumbs

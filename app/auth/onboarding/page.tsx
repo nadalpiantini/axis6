@@ -1,97 +1,172 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Check } from 'lucide-react'
-import { motion } from 'framer-motion'
-
-const availableAxes = [
-  { id: 'spiritual', name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600', description: 'Meditation, gratitude, and life purpose' },
-  { id: 'mental', name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600', description: 'Learning, focus, and productivity' },
-  { id: 'emotional', name: 'Emotional', icon: Heart, color: 'from-red-400 to-red-600', description: 'Emotional management and psychological wellbeing' },
-  { id: 'social', name: 'Social', icon: Users, color: 'from-green-400 to-green-600', description: 'Relationships, family, and connections' },
-  { id: 'physical', name: 'Physical', icon: Target, color: 'from-orange-400 to-orange-600', description: 'Exercise, nutrition, and health' },
-  { id: 'material', name: 'Material', icon: Briefcase, color: 'from-yellow-400 to-yellow-600', description: 'Finances, career, and resources' },
-]
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronRight, AlertCircle, Loader2, CheckCircle } from 'lucide-react'
+import { LogoFull } from '@/components/ui/Logo'
+import { CategoryCard } from '@/components/onboarding/CategoryCard'
+import { LanguageSelector } from '@/components/onboarding/LanguageSelector'
+import { useOnboarding } from '@/lib/hooks/useOnboarding'
 
 export default function OnboardingPage() {
-  const router = useRouter()
-  const [selectedAxes, setSelectedAxes] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
+  const {
+    categories,
+    selectedCategories,
+    loading,
+    error,
+    language,
+    categoriesLoading,
+    categoriesError,
+    toggleCategory,
+    setLanguage,
+    completeOnboarding,
+    isSelected,
+    canComplete,
+    progress,
+    selectedCount,
+    remainingCount
+  } = useOnboarding()
 
-  const toggleAxis = (axisId: string) => {
-    if (selectedAxes.includes(axisId)) {
-      setSelectedAxes(selectedAxes.filter(id => id !== axisId))
-    } else if (selectedAxes.length < 6) {
-      setSelectedAxes([...selectedAxes, axisId])
+  // Text content based on language
+  const content = {
+    es: {
+      title: 'Personaliza tu AXIS6',
+      subtitle: 'Selecciona las 6 dimensiones que quieres equilibrar en tu vida',
+      selected: 'seleccionadas',
+      beginJourney: 'Comenzar mi Viaje',
+      settingUp: 'Configurando...',
+      perfect: '¡Perfecto! Has seleccionado tus 6 dimensiones',
+      remaining: remainingCount > 0 ? `Selecciona ${remainingCount} más` : '',
+      loadingCategories: 'Cargando dimensiones...',
+      errorTitle: 'Error al cargar las categorías'
+    },
+    en: {
+      title: 'Customize Your AXIS6',
+      subtitle: 'Select the 6 dimensions you want to balance in your life',
+      selected: 'selected',
+      beginJourney: 'Begin My Journey',
+      settingUp: 'Setting up...',
+      perfect: 'Perfect! You\'ve selected your 6 dimensions',
+      remaining: remainingCount > 0 ? `Select ${remainingCount} more` : '',
+      loadingCategories: 'Loading dimensions...',
+      errorTitle: 'Error loading categories'
     }
+  }[language]
+
+  // Loading state
+  if (categoriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="text-center">
+          <LogoFull size="lg" className="mb-6" />
+          <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-4" />
+          <p className="text-gray-400">{content.loadingCategories}</p>
+        </div>
+      </div>
+    )
   }
 
-  const handleSubmit = async () => {
-    if (selectedAxes.length !== 6) return
-    
-    setLoading(true)
-    // TODO: Save selected axes to Supabase
-    setTimeout(() => {
-      router.push('/dashboard')
-    }, 1000)
+  // Error state
+  if (categoriesError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="text-center max-w-md">
+          <LogoFull size="lg" className="mb-6" />
+          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-white mb-2">{content.errorTitle}</h2>
+          <p className="text-gray-400 mb-6">{categoriesError.message}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-5xl">
+        {/* Header with Language Selector */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-            Customize Your AXIS6
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex-1" />
+            <LogoFull size="lg" />
+            <div className="flex-1 flex justify-end">
+              <LanguageSelector 
+                language={language} 
+                onLanguageChange={setLanguage}
+              />
+            </div>
+          </div>
+          
+          <h1 className="text-4xl font-bold text-white mb-2">
+            {content.title}
           </h1>
-          <p className="text-gray-400">
-            Select the 6 dimensions you want to balance in your life
+          <p className="text-gray-400 mb-6">
+            {content.subtitle}
           </p>
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <span className="text-2xl font-bold text-white">{selectedAxes.length}</span>
-            <span className="text-gray-400">/ 6 selected</span>
+          
+          {/* Progress Indicator */}
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-white">{selectedCount}</span>
+              <span className="text-gray-400">/ 6 {content.selected}</span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+            </div>
+            
+            {remainingCount > 0 && (
+              <span className="text-sm text-yellow-400">
+                {content.remaining}
+              </span>
+            )}
           </div>
         </motion.div>
 
+        {/* Categories Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {availableAxes.map((axis, index) => {
-            const Icon = axis.icon
-            const isSelected = selectedAxes.includes(axis.id)
-            
-            return (
-              <motion.div
-                key={axis.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => toggleAxis(axis.id)}
-                className={`relative glass rounded-2xl p-6 cursor-pointer transition-all duration-300 ${
-                  isSelected 
-                    ? 'ring-2 ring-purple-400 bg-white/20' 
-                    : 'hover:bg-white/10'
-                }`}
-              >
-                {isSelected && (
-                  <div className="absolute top-3 right-3 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                )}
-                
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${axis.color} flex items-center justify-center mb-3`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                
-                <h3 className="text-lg font-semibold text-white mb-1">{axis.name}</h3>
-                <p className="text-sm text-gray-400">{axis.description}</p>
-              </motion.div>
-            )
-          })}
+          {categories.map((category, index) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              isSelected={isSelected(category.id)}
+              onClick={() => toggleCategory(category.id)}
+              language={language}
+              animationDelay={index}
+            />
+          ))}
         </div>
 
+        {/* Error Display */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center justify-center gap-2 mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+            >
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              <span className="text-red-400 text-sm">{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Action Button */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -99,28 +174,45 @@ export default function OnboardingPage() {
           className="flex justify-center"
         >
           <button
-            onClick={handleSubmit}
-            disabled={selectedAxes.length !== 6 || loading}
-            className={`px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 transition-all duration-300 ${
-              selectedAxes.length === 6
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg hover:shadow-purple-500/50'
+            onClick={completeOnboarding}
+            disabled={!canComplete || loading}
+            className={`
+              px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 
+              transition-all duration-300 min-w-[200px]
+              ${canComplete && !loading
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg hover:shadow-purple-500/50 hover:scale-105'
                 : 'bg-gray-600 cursor-not-allowed opacity-50'
-            }`}
+              }
+            `}
           >
-            {loading ? 'Setting up...' : 'Begin My Journey'}
-            <ChevronRight className="w-5 h-5" />
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {content.settingUp}
+              </>
+            ) : (
+              <>
+                {content.beginJourney}
+                <ChevronRight className="w-5 h-5" />
+              </>
+            )}
           </button>
         </motion.div>
 
-        {selectedAxes.length === 6 && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center mt-4 text-green-400"
-          >
-            Perfect! You've selected your 6 dimensions
-          </motion.p>
-        )}
+        {/* Success Message */}
+        <AnimatePresence>
+          {canComplete && !loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center justify-center gap-2 mt-6 text-green-400"
+            >
+              <CheckCircle className="w-5 h-5" />
+              <span>{content.perfect}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

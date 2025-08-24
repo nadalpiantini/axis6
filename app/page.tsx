@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Star, TrendingUp, Shield } from 'lucide-react'
+import { LogoFull } from '@/components/ui/Logo'
 
 import { motion } from 'framer-motion'
 
@@ -37,9 +38,9 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-              AXIS6
-            </h1>
+            <div className="mb-6 flex justify-center">
+              <LogoFull size="xl" priority className="max-w-sm md:max-w-md" />
+            </div>
             <p className="text-xl md:text-2xl mb-4 text-gray-300">
               Six axes. One you. Don't break your Axis.
             </p>

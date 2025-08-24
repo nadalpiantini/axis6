@@ -4,13 +4,13 @@ import { createClient } from '@/lib/supabase/client'
 export interface CheckIn {
   id: string
   user_id: string
-  category_id: string
+  category_id: number
   completed_at: string
   created_at: string
 }
 
 interface CheckInInput {
-  categoryId: string
+  categoryId: number
   completed: boolean
 }
 

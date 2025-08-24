@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       Sentry.withScope((scope) => {
         scope.setTag('errorBoundary', true)
         scope.setContext('errorInfo', errorInfo)
-        scope.setContext('errorId', this.state.errorId)
+        scope.setContext('errorId', { id: this.state.errorId })
         Sentry.captureException(error)
       })
     }

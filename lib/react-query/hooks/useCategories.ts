@@ -2,13 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 
 export interface Category {
-  id: string
-  name: string
-  name_es: string
-  position: number
+  id: number
+  slug: string
+  name: Record<string, string> // JSONB multilingual data
+  description?: Record<string, string>
   color: string
   icon: string
-  description?: string
+  position: number
+  created_at: string
 }
 
 async function fetchCategories(): Promise<Category[]> {
@@ -19,7 +20,17 @@ async function fetchCategories(): Promise<Category[]> {
     .order('position')
 
   if (error) throw error
-  return data || []
+  
+  // Transform the data to ensure proper typing for JSONB fields
+  const categories = (data || []).map(category => ({
+    ...category,
+    name: typeof category.name === 'string' ? JSON.parse(category.name) : category.name,
+    description: category.description 
+      ? (typeof category.description === 'string' ? JSON.parse(category.description) : category.description)
+      : undefined
+  })) as Category[]
+  
+  return categories
 }
 
 export function useCategories() {

@@ -17,7 +17,25 @@
     "db:reset": "supabase db reset",
     "type-check": "tsc --noEmit",
     "test:redis": "tsx scripts/test-redis.ts",
-    "verify:production": "tsx scripts/verify-production.ts"
+    "verify:production": "tsx scripts/verify-production.ts",
+    "test:performance": "node scripts/test-index-effectiveness.js",
+    "test:concurrent": "node scripts/test-index-effectiveness.js --concurrent",
+    "db:monitor": "echo 'Run the SQL queries in scripts/performance-monitoring.sql in Supabase Dashboard'",
+    "db:optimize": "echo 'Deploy manual_performance_indexes.sql in Supabase Dashboard > SQL Editor'",
+    "test:e2e": "./scripts/run-playwright.sh all",
+    "test:e2e:auth": "./scripts/run-playwright.sh auth",
+    "test:e2e:dashboard": "./scripts/run-playwright.sh dashboard",
+    "test:e2e:performance": "./scripts/run-playwright.sh performance",
+    "test:e2e:accessibility": "./scripts/run-playwright.sh accessibility",
+    "test:e2e:security": "./scripts/run-playwright.sh security",
+    "test:e2e:visual": "./scripts/run-playwright.sh visual",
+    "test:e2e:mobile": "./scripts/run-playwright.sh mobile",
+    "test:e2e:cross-browser": "./scripts/run-playwright.sh cross-browser",
+    "test:e2e:debug": "./scripts/run-playwright.sh debug",
+    "test:e2e:install": "./scripts/run-playwright.sh install",
+    "test:e2e:report": "./scripts/run-playwright.sh report",
+    "test:e2e:results": "./scripts/run-playwright.sh results",
+    "test:e2e:cleanup": "./scripts/run-playwright.sh cleanup"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -68,6 +86,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.0",

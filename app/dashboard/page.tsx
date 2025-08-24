@@ -88,13 +88,13 @@ const HexagonVisualization = memo(({
   isToggling 
 }: {
   axes: Array<{
-    id: string
+    id: number
     name: string
     color: string
     icon: string
     completed: boolean
   }>
-  onToggleAxis: (id: string) => void
+  onToggleAxis: (id: number) => void
   isToggling: boolean
 }) => {
   const showAnimations = usePreferencesStore(state => state.showAnimations)
@@ -216,7 +216,7 @@ const MemoizedCategoryCard = memo(({
   isToggling 
 }: {
   axis: {
-    id: string
+    id: number
     name: string
     color: string
     icon: string
@@ -278,14 +278,14 @@ export default function DashboardPageV2() {
 
   // Calculate derived state with memoization
   const completedCategoryIds = useMemo(
-    () => new Set(checkins.map(c => c.category_id)),
+    () => new Set(checkins.map(c => Number(c.category_id))),
     [checkins]
   )
   
   const axes = useMemo(
     () => categories.map(cat => ({
       id: cat.id,
-      name: locale === 'es' ? (cat.name_es || cat.name) : cat.name,
+      name: locale === 'es' ? (cat.name?.es || cat.name?.en || cat.slug) : (cat.name?.en || cat.name?.es || cat.slug),
       color: cat.color,
       icon: cat.icon,
       completed: completedCategoryIds.has(cat.id)
@@ -304,7 +304,7 @@ export default function DashboardPageV2() {
   )
 
   // Handlers with useCallback for optimization
-  const handleToggleAxis = useCallback((axisId: string) => {
+  const handleToggleAxis = useCallback((axisId: number) => {
     const axis = axes.find(a => a.id === axisId)
     if (axis) {
       toggleCheckIn.mutate(
