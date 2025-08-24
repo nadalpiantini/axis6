@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, ChevronRight } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
+import { shouldBypassRateLimit } from '@/lib/test-config'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -33,7 +34,7 @@ export default function LoginPage() {
         // Handle specific error cases with user-friendly messages
         if (error.message.toLowerCase().includes('invalid login credentials')) {
           setError('Invalid email or password. Please check your credentials and try again.')
-        } else if (error.message.toLowerCase().includes('rate limit')) {
+        } else if (!shouldBypassRateLimit() && error.message.toLowerCase().includes('rate limit')) {
           setError('Too many login attempts. Please wait a minute before trying again.')
         } else if (error.message.toLowerCase().includes('email not confirmed')) {
           setError('Please check your email to confirm your account before logging in.')
@@ -84,6 +85,7 @@ export default function LoginPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="email"
+                  data-testid="email-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -103,6 +105,7 @@ export default function LoginPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="password"
+                  data-testid="password-input"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -126,6 +129,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
+              data-testid="login-submit"
               disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2"
             >

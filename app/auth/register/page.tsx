@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, User, ChevronRight } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
+import { shouldBypassRateLimit, shouldBypassEmailConfirmation } from '@/lib/test-config'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -21,8 +22,8 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
     
-    // Check if still rate limited
-    if (rateLimitedUntil && Date.now() < rateLimitedUntil) {
+    // Check if still rate limited (bypass in test mode)
+    if (!shouldBypassRateLimit() && rateLimitedUntil && Date.now() < rateLimitedUntil) {
       const remainingSeconds = Math.ceil((rateLimitedUntil - Date.now()) / 1000)
       setError(`Please wait ${remainingSeconds} seconds before trying again`)
       setLoading(false)
@@ -74,8 +75,8 @@ export default function RegisterPage() {
           return
         }
         
-        // Handle rate limiting specifically
-        if (error.message.toLowerCase().includes('rate limit')) {
+        // Handle rate limiting specifically (bypass in test mode)
+        if (!shouldBypassRateLimit() && error.message.toLowerCase().includes('rate limit')) {
           // Set rate limit for 60 seconds
           const cooldownTime = Date.now() + 60000
           setRateLimitedUntil(cooldownTime)
@@ -141,6 +142,7 @@ export default function RegisterPage() {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="name"
+                  data-testid="name-input"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -160,6 +162,7 @@ export default function RegisterPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="email"
+                  data-testid="email-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -179,6 +182,7 @@ export default function RegisterPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="password"
+                  data-testid="password-input"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -199,6 +203,7 @@ export default function RegisterPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="confirmPassword"
+                  data-testid="confirm-password-input"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -223,6 +228,7 @@ export default function RegisterPage() {
 
             <button
               type="submit"
+              data-testid="register-submit"
               disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2"
             >

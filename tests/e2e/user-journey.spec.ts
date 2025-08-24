@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/auth-fixtures';
+import { test, expect } from '../fixtures/auth-fixtures-v2';
 
 test.describe('AXIS6 Complete User Journey', () => {
   test.setTimeout(60000); // Increase timeout for all tests in this suite

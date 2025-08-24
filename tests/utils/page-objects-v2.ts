@@ -248,11 +248,11 @@ export class RegisterPage extends BasePage {
     // Fill password fields
     const passwordFields = await this.page.locator('input[type="password"]').all();
     if (passwordFields.length > 0) {
-      await this.fillWithRetry(this.page.locator(passwordFields[0]), password);
+      await this.fillWithRetry(passwordFields[0], password);
       
       // Fill confirm password if exists
       if (passwordFields.length > 1) {
-        await this.fillWithRetry(this.page.locator(passwordFields[1]), password);
+        await this.fillWithRetry(passwordFields[1], password);
       }
     }
     

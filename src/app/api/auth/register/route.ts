@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      logger.error('Registration error', error)
+      console.error('Registration error', error)
       return NextResponse.json(
         { error: 'Error al crear la cuenta. Por favor, intenta de nuevo' },
         { status: 400 }
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    logger.error('Registration error', error)
+    console.error('Registration error', error)
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

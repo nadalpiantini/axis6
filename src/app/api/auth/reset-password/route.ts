@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (updateError) {
-      logger.error('Password update error', updateError)
+      console.error('Password update error', updateError)
       return NextResponse.json(
         { error: 'Error al actualizar la contraseña' },
         { status: 500 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    logger.error('Password reset error', error)
+    console.error('Password reset error', error)
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

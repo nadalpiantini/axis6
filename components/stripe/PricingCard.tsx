@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AXIS6_PRICING, type PricingTier } from '@/lib/stripe';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, Loader2 } from 'lucide-react';
 
@@ -78,7 +78,7 @@ export default function PricingCard({
             Current Plan
           </Button>
         ) : tier === 'FREE' ? (
-          <Button className="w-full" variant="outline" disabled>
+          <Button className="w-full" variant="secondary" disabled>
             Always Free
           </Button>
         ) : (

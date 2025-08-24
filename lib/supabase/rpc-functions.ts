@@ -4,13 +4,13 @@ import type { Database } from '@/types/supabase'
 type Category = Database['public']['Tables']['axis6_categories']['Row']
 type CheckIn = Database['public']['Tables']['axis6_checkins']['Row']
 type Streak = Database['public']['Tables']['axis6_streaks']['Row']
-type DailyStat = Database['public']['Tables']['axis6_daily_stats']['Row']
+// type DailyStat = Database['public']['Tables']['axis6_daily_stats']['Row']
 
 export interface DashboardData {
   categories: Category[]
   todayCheckins: CheckIn[]
   streaks: Streak[]
-  dailyStats: DailyStat | null
+  dailyStats: any | null
   weeklyStats: {
     date: string
     completion_rate: number

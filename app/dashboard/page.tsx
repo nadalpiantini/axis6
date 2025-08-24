@@ -27,6 +27,7 @@ import {
 
 // Components
 import { AxisIcon } from '@/components/icons'
+import { LogoIcon } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
 import { ErrorBoundary } from '@/components/error/ErrorBoundary'
@@ -48,9 +49,7 @@ const DashboardHeader = memo(({
     <header className="glass border-b border-white/10" role="banner">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            AXIS6
-          </h1>
+          <LogoIcon size="md" className="w-10 h-10" />
           <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
             <Flame className="w-4 h-4 text-orange-400" />
             <span className="text-gray-300">Racha: {currentStreak} días</span>

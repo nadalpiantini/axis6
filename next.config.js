@@ -104,6 +104,67 @@ const nextConfig = {
     } : false,
   },
 
+  // Bundle analyzer
+  ...(process.env.ANALYZE === 'true' && {
+    experimental: {
+      bundlePagesRouterDependencies: true,
+    },
+  }),
+
+  // Webpack optimizations
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Bundle analyzer
+    if (process.env.ANALYZE) {
+      const BundleAnalyzerPlugin = require('@next/bundle-analyzer')({
+        enabled: process.env.ANALYZE === 'true'
+      })
+      config.plugins.push(new BundleAnalyzerPlugin)
+    }
+
+    // Optimization for production
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Vendor chunk
+          vendor: {
+            name: 'vendors',
+            chunks: 'all',
+            test: /node_modules/,
+            priority: 20
+          },
+          // Common chunk
+          common: {
+            name: 'commons',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 10,
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          // React chunk
+          react: {
+            name: 'react',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            priority: 30
+          },
+          // Supabase chunk
+          supabase: {
+            name: 'supabase',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            priority: 25
+          }
+        }
+      }
+    }
+
+    return config
+  },
+
   // Headers for security with optimized CSP
   async headers() {
     const isDevelopment = process.env.NODE_ENV === 'development'

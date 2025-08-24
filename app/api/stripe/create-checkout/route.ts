@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user from Supabase
-    const supabase = createClient();
+    const supabase = await createClient();
     const cookieStore = cookies();
     
     const { data: { user }, error: authError } = await supabase.auth.getUser();

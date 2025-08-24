@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log structured error
-    logger.error('Client Error Report', undefined, {
+    console.error('Client Error Report', undefined, {
       metadata: sanitizedError
     })
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     )
     
   } catch (error) {
-    logger.error('Error processing error report', error)
+    console.error('Error processing error report', error)
     return NextResponse.json(
       { error: 'Failed to process error report' },
       { status: 500 }
@@ -99,7 +99,7 @@ async function sendToMonitoringService(errorData: any) {
     })
     */
   } catch (monitoringError) {
-    logger.error('Failed to send to monitoring service', monitoringError)
+    console.error('Failed to send to monitoring service', monitoringError)
     // Don't throw here - we don't want to fail the error reporting
   }
 }

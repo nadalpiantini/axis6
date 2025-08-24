@@ -6,7 +6,7 @@ import { useStripe } from '@/lib/hooks/useStripe';
 import { AXIS6_PRICING } from '@/lib/stripe';
 import PricingCard from '@/components/stripe/PricingCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 
