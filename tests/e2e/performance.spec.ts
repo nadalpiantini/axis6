@@ -329,7 +329,7 @@ test.describe('AXIS6 Performance Audits', () => {
       await authenticatedPage.verifyDashboardLoaded();
       
       // Go offline
-      await authenticatedPage.page.setOffline(true);
+      await authenticatedPage.page.context().setOffline(true);
       
       // Page should still function for cached content
       await authenticatedPage.page.reload();
@@ -349,7 +349,7 @@ test.describe('AXIS6 Performance Audits', () => {
       }
       
       // Restore online
-      await authenticatedPage.page.setOffline(false);
+      await authenticatedPage.page.context().setOffline(false);
     });
   });
 

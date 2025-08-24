@@ -152,7 +152,7 @@ test.describe('AXIS6 Authentication Flow', () => {
         const emailInput = loginPage.page.getByRole('textbox', { name: /email/i });
         await expect(emailInput).toBeVisible();
       } else {
-        test.skip('Forgot password link not available');
+        test.skip('Forgot password link not available', () => {});
       }
     });
     
@@ -176,7 +176,7 @@ test.describe('AXIS6 Authentication Flow', () => {
         const successMessage = page.locator('[role="status"], .success, [class*="success"]');
         await expect(successMessage).toBeVisible();
       } else {
-        test.skip('Password reset form not available');
+        test.skip('Password reset form not available', () => {});
       }
     });
   });

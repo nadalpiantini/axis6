@@ -444,7 +444,8 @@ test.describe('AXIS6 Security Audits', () => {
       
       try {
         // Register user in first context
-        const registerPage1 = new registerPage.constructor(page1);
+        const RegisterPageClass = Object.getPrototypeOf(registerPage).constructor;
+        const registerPage1 = new RegisterPageClass(page1);
         await registerPage1.goto('/auth/register');
         await registerPage1.register(testUser.email, testUser.password, testUser.name);
         
