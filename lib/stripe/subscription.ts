@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export interface SubscriptionStatus {
   isPremium: boolean;
@@ -12,7 +12,7 @@ export interface SubscriptionStatus {
  */
 export async function getUserSubscriptionStatus(): Promise<SubscriptionStatus | null> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return null;
@@ -66,7 +66,7 @@ export async function hasFeatureAccess(featureKey: string): Promise<boolean> {
  */
 export async function getUserBillingHistory(limit = 10) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return [];

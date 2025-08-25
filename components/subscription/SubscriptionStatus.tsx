@@ -98,7 +98,7 @@ export default function SubscriptionStatus() {
 
             <Button
               onClick={openBillingPortal}
-              variant="outline"
+              variant="secondary"
               className="w-full"
               disabled={isLoading}
             >

@@ -21,6 +21,7 @@ interface SubscriptionStatus {
   status: string;
   is_premium: boolean;
   subscription: SubscriptionData | null;
+  features?: string[];
 }
 
 export function useStripe() {
