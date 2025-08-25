@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
 import { Trophy, Target, Star, Calendar, Flame, Award, Crown, Medal, Zap, TrendingUp } from 'lucide-react'
-import { LogoFull } from '@/components/ui/Logo'
+import { LogoIcon } from '@/components/ui/Logo'
 
 interface Streak {
   id: string
@@ -279,7 +279,7 @@ export default function AchievementsPage() {
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Logo */}
         <div className="flex justify-center mb-4 sm:mb-6">
-          <LogoFull size="md" className="h-12 sm:h-16" />
+          <LogoIcon size="md" className="h-10" />
         </div>
         
         {/* Header */}

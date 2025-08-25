@@ -19,7 +19,7 @@ import {
   TrendingDown
 } from 'lucide-react'
 import Link from 'next/link'
-import { LogoFull } from '@/components/ui/Logo'
+import { LogoIcon } from '@/components/ui/Logo'
 
 // Types
 interface AnalyticsData {
@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           {/* Logo Section */}
           <div className="flex justify-center mb-3 sm:mb-4">
-            <LogoFull size="md" className="h-12 sm:h-16" />
+            <LogoIcon size="md" className="h-10" />
           </div>
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

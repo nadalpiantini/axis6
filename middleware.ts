@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 // Protected routes that require authentication
-const protectedRoutes = ['/dashboard', '/settings', '/stats']
+const protectedRoutes = ['/dashboard', '/settings', '/stats', '/profile', '/analytics', '/achievements']
 
 // Public routes that don't require authentication
 const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']

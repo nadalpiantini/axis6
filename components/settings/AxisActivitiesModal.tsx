@@ -273,11 +273,11 @@ export function AxisActivitiesModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[80vh] overflow-hidden z-50"
+            className="fixed inset-4 sm:inset-8 lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 w-auto lg:w-full lg:max-w-2xl max-h-[90vh] lg:max-h-[80vh] overflow-hidden z-50"
           >
             <div className="glass rounded-2xl">
               {/* Header */}
-              <div className="p-6 border-b border-white/10">
+              <div className="p-4 sm:p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div 
@@ -291,10 +291,10 @@ export function AxisActivitiesModal({
                       />
                     </div>
                     <div>
-                      <h2 className="text-xl font-semibold text-white">
+                      <h2 className="text-lg sm:text-xl font-semibold text-white">
                         {axis.name} Activities
                       </h2>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-xs sm:text-sm text-gray-400">
                         Customize your daily activities for this axis
                       </p>
                     </div>
@@ -309,7 +309,7 @@ export function AxisActivitiesModal({
               </div>
 
               {/* Content */}
-              <div className="p-6 max-h-[50vh] overflow-y-auto">
+              <div className="p-4 sm:p-6 max-h-[60vh] sm:max-h-[50vh] overflow-y-auto">
                 {isLoading ? (
                   <div className="text-center py-8">
                     <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-2" />
@@ -343,7 +343,7 @@ export function AxisActivitiesModal({
                                 <Sparkles className="w-3 h-3" />
                                 <span>Quick suggestions (tap to use):</span>
                               </div>
-                              <div className="grid grid-cols-3 gap-2">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                 {displayedSuggestions.map((suggestion, index) => (
                                   <motion.button
                                     key={`${suggestion}-${index}`}
@@ -353,7 +353,7 @@ export function AxisActivitiesModal({
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleSuggestionClick(suggestion, index)}
-                                    className="px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-gray-300 hover:text-white transition-all"
+                                    className="px-2 sm:px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-gray-300 hover:text-white transition-all text-center"
                                     type="button"
                                   >
                                     {suggestion}
@@ -371,7 +371,7 @@ export function AxisActivitiesModal({
                               activity_name: e.target.value 
                             }))}
                             placeholder="Activity name (e.g., 'Go for a run')"
-                            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400"
+                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400"
                             autoFocus
                           />
                           <textarea
@@ -381,14 +381,14 @@ export function AxisActivitiesModal({
                               description: e.target.value 
                             }))}
                             placeholder="Description (optional)"
-                            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 resize-none"
+                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 resize-none"
                             rows={2}
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={handleSave}
                               disabled={createActivity.isPending || updateActivity.isPending}
-                              className="flex-1 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                              className="flex-1 py-2 sm:py-3 text-sm sm:text-base bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
                               {(createActivity.isPending || updateActivity.isPending) ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -399,7 +399,7 @@ export function AxisActivitiesModal({
                             </button>
                             <button
                               onClick={handleCancel}
-                              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+                              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
                             >
                               Cancel
                             </button>
@@ -481,10 +481,10 @@ export function AxisActivitiesModal({
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-white/10">
+              <div className="p-4 sm:p-6 border-t border-white/10">
                 <button
                   onClick={onClose}
-                  className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                  className="w-full py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
                 >
                   Done
                 </button>

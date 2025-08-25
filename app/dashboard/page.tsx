@@ -377,7 +377,7 @@ export default function DashboardPageV2() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
           {/* Logo Section */}
           <div className="flex justify-center mb-4 sm:mb-6">
-            <LogoFull size="lg" className="h-16 sm:h-24 md:h-32 lg:h-40" priority />
+            <LogoFull size="lg" className="h-16" priority />
           </div>
           
           {/* Welcome Section */}

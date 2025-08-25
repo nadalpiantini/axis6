@@ -20,17 +20,58 @@ import {
   Loader2,
   Edit3,
   Save,
-  X
+  X,
+  Brain,
+  Heart,
+  Users,
+  Target,
+  Sparkles,
+  Star
 } from 'lucide-react'
-import { LogoFull } from '@/components/ui/Logo'
+import { LogoIcon } from '@/components/ui/Logo'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks'
+import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
+import { TemperamentResults } from '@/components/psychology/TemperamentResults'
 
 interface UserProfile {
   email: string
   name: string
   created_at: string
+}
+
+interface TemperamentProfile {
+  id: string
+  primary_temperament: string
+  secondary_temperament: string
+  temperament_scores: {
+    sanguine: number
+    choleric: number
+    melancholic: number
+    phlegmatic: number
+  }
+  personality_insights: {
+    strengths: string[]
+    challenges: string[]
+    recommendations: string[]
+    work_style: string
+    social_style: string
+    decision_style: string
+  }
+  completed_at: string
+}
+
+interface TemperamentResult {
+  primary_temperament: string
+  secondary_temperament: string
+  scores: {
+    sanguine: number
+    choleric: number
+    melancholic: number
+    phlegmatic: number
+  }
+  total_responses: number
 }
 
 export default function ProfilePage() {
@@ -40,9 +81,13 @@ export default function ProfilePage() {
   const { data: checkins = [] } = useTodayCheckins(user?.id)
   
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [temperamentProfile, setTemperamentProfile] = useState<TemperamentProfile | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false)
+  const [showResults, setShowResults] = useState(false)
+  const [assessmentResult, setAssessmentResult] = useState<TemperamentResult | null>(null)
   const [notification, setNotification] = useState<{
     show: boolean
     type: 'success' | 'error'
@@ -53,6 +98,8 @@ export default function ProfilePage() {
     if (user) {
       const fetchProfile = async () => {
         const supabase = createClient()
+        
+        // Fetch basic profile
         const { data: profileData } = await supabase
           .from('axis6_profiles')
           .select('*')
@@ -73,6 +120,17 @@ export default function ProfilePage() {
             created_at: user.created_at || new Date().toISOString()
           })
           setEditedName(user.email?.split('@')[0] || 'User')
+        }
+
+        // Fetch temperament profile
+        const { data: temperamentData } = await supabase
+          .from('axis6_temperament_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+
+        if (temperamentData) {
+          setTemperamentProfile(temperamentData)
         }
       }
       fetchProfile()
@@ -192,6 +250,69 @@ export default function ProfilePage() {
     router.push('/auth/login')
   }
 
+  const handleStartAssessment = () => {
+    setShowQuestionnaire(true)
+  }
+
+  const handleAssessmentComplete = (result: TemperamentResult) => {
+    setAssessmentResult(result)
+    setShowQuestionnaire(false)
+    setShowResults(true)
+    
+    // Refresh temperament profile
+    if (user) {
+      const fetchTemperamentProfile = async () => {
+        const supabase = createClient()
+        const { data: temperamentData } = await supabase
+          .from('axis6_temperament_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+
+        if (temperamentData) {
+          setTemperamentProfile(temperamentData)
+        }
+      }
+      fetchTemperamentProfile()
+    }
+  }
+
+  const handleResultsContinue = () => {
+    setShowResults(false)
+    showNotification('success', 'Your psychological profile has been updated! You will now receive personalized recommendations.')
+  }
+
+  const temperamentData = {
+    sanguine: {
+      name: 'Sanguine',
+      subtitle: 'The Enthusiast',
+      color: '#FF6B6B',
+      icon: Users,
+      bgGradient: 'from-red-500/20 to-pink-500/20'
+    },
+    choleric: {
+      name: 'Choleric',
+      subtitle: 'The Leader',
+      color: '#4ECDC4',
+      icon: Target,
+      bgGradient: 'from-teal-500/20 to-cyan-500/20'
+    },
+    melancholic: {
+      name: 'Melancholic',
+      subtitle: 'The Analyst', 
+      color: '#45B7D1',
+      icon: Brain,
+      bgGradient: 'from-blue-500/20 to-indigo-500/20'
+    },
+    phlegmatic: {
+      name: 'Phlegmatic',
+      subtitle: 'The Peacemaker',
+      color: '#96CEB4',
+      icon: Heart,
+      bgGradient: 'from-green-500/20 to-emerald-500/20'
+    }
+  }
+
   if (userLoading) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
@@ -226,7 +347,7 @@ export default function ProfilePage() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <LogoFull size="md" className="h-10" priority />
+            <LogoIcon size="md" className="h-10" priority />
           </div>
           
           <div className="flex items-center gap-4">
@@ -258,6 +379,104 @@ export default function ProfilePage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Information */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Psychological Profile Section */}
+            <div className="glass rounded-2xl p-6">
+              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                <Brain className="w-6 h-6 text-purple-400" />
+                Psychological Profile
+              </h2>
+              
+              {temperamentProfile ? (
+                <div className="space-y-4">
+                  {/* Primary Temperament Display */}
+                  <div className={`p-4 rounded-xl bg-gradient-to-r ${temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.bgGradient}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-white/20">
+                        {(() => {
+                          const TempIcon = temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.icon || Brain
+                          return (
+                            <TempIcon 
+                              className="w-5 h-5" 
+                              style={{ color: temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.color }}
+                            />
+                          )
+                        })()}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white">
+                          {temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.name || temperamentProfile.primary_temperament}
+                        </h3>
+                        <p className="text-sm text-gray-200">
+                          {temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.subtitle}
+                        </p>
+                      </div>
+                      <div className="ml-auto">
+                        <div 
+                          className="px-3 py-1 rounded-full text-sm font-bold text-white"
+                          style={{ backgroundColor: temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.color }}
+                        >
+                          {Math.round(temperamentProfile.temperament_scores[temperamentProfile.primary_temperament as keyof typeof temperamentProfile.temperament_scores] * 100)}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Insights */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                      <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
+                        <Star className="w-3 h-3" />
+                        Strengths
+                      </h4>
+                      <p className="text-xs text-gray-300">
+                        {temperamentProfile.personality_insights.strengths?.slice(0, 2).join(', ')}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                      <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
+                      <p className="text-xs text-gray-300">
+                        {temperamentProfile.personality_insights.work_style?.slice(0, 40)}...
+                      </p>
+                    </div>
+                    <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                      <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
+                      <p className="text-xs text-gray-300">
+                        {temperamentProfile.personality_insights.social_style?.slice(0, 40)}...
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-gray-400">
+                      Completed on {new Date(temperamentProfile.completed_at).toLocaleDateString()}
+                    </p>
+                    <button
+                      onClick={handleStartAssessment}
+                      className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      Retake Assessment
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="mb-4">
+                    <Sparkles className="w-12 h-12 text-purple-400 mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-white mb-2">Discover Your Temperament</h3>
+                    <p className="text-gray-400 text-sm max-w-md mx-auto">
+                      Take our psychological assessment to get personalized wellness recommendations based on the four temperaments system.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleStartAssessment}
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+                  >
+                    Take Personality Assessment
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* User Details */}
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Account Information</h2>
@@ -445,6 +664,24 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Psychology Modals */}
+      {showQuestionnaire && user && (
+        <TemperamentQuestionnaire
+          userId={user.id}
+          onComplete={handleAssessmentComplete}
+          onClose={() => setShowQuestionnaire(false)}
+          language="en"
+        />
+      )}
+
+      {showResults && assessmentResult && (
+        <TemperamentResults
+          result={assessmentResult}
+          onContinue={handleResultsContinue}
+          onClose={() => setShowResults(false)}
+        />
+      )}
 
       {/* Notifications */}
       {notification.show && (
