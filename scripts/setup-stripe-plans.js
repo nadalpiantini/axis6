@@ -31,73 +31,59 @@ async function setupStripePlans() {
     console.log('📦 Creating AXIS6 Premium product...');
     const product = await stripe.products.create({
       name: 'AXIS6 Premium',
-      description: 'Advanced wellness tracking with analytics and insights across all 6 life dimensions',
+      description: 'Unlock your full wellness potential with advanced tracking, insights, and personalized guidance across all 6 life dimensions',
       images: [], // Add product images URLs here when available
       metadata: {
         app: 'axis6',
         tier: 'premium',
-        version: '1.0',
+        version: '2.0',
       },
     });
 
     console.log(`✅ Product created: ${product.id}`);
 
-    // Create Monthly Price
-    console.log('💰 Creating monthly pricing...');
+    // Create Single Flat Price - $6/month
+    console.log('💰 Creating flat monthly pricing...');
     const monthlyPrice = await stripe.prices.create({
       product: product.id,
-      unit_amount: 999, // $9.99 in cents
+      unit_amount: 600, // $6.00 in cents
       currency: 'usd',
       recurring: {
         interval: 'month',
       },
       metadata: {
         billing_period: 'monthly',
-        plan_name: 'Premium Monthly',
+        plan_name: 'Premium',
       },
     });
 
     console.log(`✅ Monthly price created: ${monthlyPrice.id}`);
 
-    // Create Annual Price (with 2 months free)
-    console.log('💰 Creating annual pricing...');
-    const annualPrice = await stripe.prices.create({
-      product: product.id,
-      unit_amount: 9999, // $99.99 in cents (2 months free)
-      currency: 'usd',
-      recurring: {
-        interval: 'year',
-      },
-      metadata: {
-        billing_period: 'annual',
-        plan_name: 'Premium Annual',
-        discount: '2 months free',
-      },
-    });
-
-    console.log(`✅ Annual price created: ${annualPrice.id}`);
-
     // Display configuration info
     console.log('\n🎉 Stripe setup complete!');
     console.log('\n📋 Add these to your .env.local file:');
     console.log(`STRIPE_PREMIUM_PRODUCT_ID=${product.id}`);
-    console.log(`STRIPE_PREMIUM_PRICE_ID=${monthlyPrice.id}`);
-    console.log(`STRIPE_PREMIUM_ANNUAL_PRICE_ID=${annualPrice.id}`);
+    console.log(`NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID=${monthlyPrice.id}`);
 
     console.log('\n🔗 Stripe Dashboard Links:');
     console.log(`Product: https://dashboard.stripe.com/products/${product.id}`);
     console.log(`Monthly Price: https://dashboard.stripe.com/prices/${monthlyPrice.id}`);
-    console.log(`Annual Price: https://dashboard.stripe.com/prices/${annualPrice.id}`);
 
     console.log('\n📊 Plan Summary:');
-    console.log('• Premium Monthly: $9.99/month');
-    console.log('• Premium Annual: $99.99/year (save $20)');
-    console.log('• Features: Advanced analytics, goal tracking, data export, priority support');
+    console.log('• Premium: $6/month flat rate');
+    console.log('• Features:');
+    console.log('  - Unlimited history (vs 30 days)');
+    console.log('  - Advanced analytics & insights');
+    console.log('  - Goal setting & tracking');
+    console.log('  - Data export (CSV/PDF)');
+    console.log('  - Psychological profiling');
+    console.log('  - Activity suggestions');
+    console.log('  - Priority support');
+    console.log('  - Early access to new features');
 
     return {
       product,
       monthlyPrice,
-      annualPrice,
     };
 
   } catch (error) {

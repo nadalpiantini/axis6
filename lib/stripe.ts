@@ -13,11 +13,12 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export const AXIS6_PRICING = {
   FREE: {
     name: 'Free',
-    description: 'Basic tracking for all 6 dimensions',
+    description: 'Start your wellness journey',
     features: [
-      'Daily check-ins across all 6 dimensions',
+      'Daily check-ins (all 6 dimensions)',
       'Basic streak tracking',
       'Personal dashboard',
+      '30-day history',
       'Mobile responsive design'
     ],
     price: 0,
@@ -25,17 +26,20 @@ export const AXIS6_PRICING = {
   },
   PREMIUM: {
     name: 'Premium',
-    description: 'Advanced analytics and insights',
+    description: 'Unlock your full potential',
     features: [
-      'All Free features',
-      'Advanced analytics and insights',
-      'Goal setting and tracking',
-      'Data export capabilities',
+      'Everything in Free',
+      'Unlimited history',
+      'Advanced analytics & insights',
+      'Goal setting & tracking',
+      'Data export (CSV/PDF)',
+      'Psychological profiling',
+      'Activity suggestions',
       'Priority support',
-      'Custom categories (coming soon)'
+      'Early access to new features'
     ],
-    price: 9.99,
-    stripePriceId: process.env.STRIPE_PREMIUM_PRICE_ID,
+    price: 6,
+    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
     stripeProductId: process.env.STRIPE_PREMIUM_PRODUCT_ID,
   }
 } as const;

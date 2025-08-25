@@ -14,17 +14,13 @@ import { LogoFull } from '@/components/ui/Logo';
 export default function PricingPage() {
   const router = useRouter();
   const { subscriptionStatus, createCheckoutSession, isLoading } = useStripe();
-  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
 
-  // This would come from environment variables or be fetched from your backend
-  const priceIds = {
-    monthly: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || 'price_monthly_placeholder',
-    annual: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_ANNUAL_PRICE_ID || 'price_annual_placeholder',
-  };
+  // Single flat price - $6/month
+  const premiumPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || 'price_monthly_placeholder';
 
-  const handleUpgrade = async (priceId: string) => {
+  const handleUpgrade = async () => {
     try {
-      await createCheckoutSession(priceId);
+      await createCheckoutSession(premiumPriceId);
     } catch (error) {
       console.error('Upgrade failed:', error);
     }
@@ -58,27 +54,11 @@ export default function PricingPage() {
             Balance your life across all 6 dimensions with the right plan for you
           </p>
 
-          {/* Billing Toggle */}
+          {/* Simple pricing badge */}
           <div className="flex items-center justify-center mb-8">
-            <div className="bg-white rounded-lg p-1 shadow-md">
-              <Button
-                variant={billingInterval === 'monthly' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setBillingInterval('monthly')}
-                className="px-4 py-2"
-              >
-                Monthly
-              </Button>
-              <Button
-                variant={billingInterval === 'annual' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setBillingInterval('annual')}
-                className="px-4 py-2"
-              >
-                Annual
-                <Badge variant="secondary" className="ml-2">Save 17%</Badge>
-              </Button>
-            </div>
+            <Badge className="bg-green-100 text-green-800 px-4 py-2 text-lg">
+              Special Launch Price: Just $6/month
+            </Badge>
           </div>
         </div>
 
@@ -91,7 +71,7 @@ export default function PricingPage() {
           
           <PricingCard
             tier="PREMIUM"
-            priceId={priceIds[billingInterval]}
+            priceId={premiumPriceId}
             isCurrentPlan={isPremium}
             onUpgrade={handleUpgrade}
           />
@@ -152,9 +132,19 @@ export default function PricingPage() {
                     <td className="py-3 px-4 text-center">✅</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-3 px-4">Custom categories (coming soon)</td>
+                    <td className="py-3 px-4">Psychological profiling</td>
                     <td className="py-3 px-4 text-center">❌</td>
                     <td className="py-3 px-4 text-center">✅</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 px-4">Activity suggestions</td>
+                    <td className="py-3 px-4 text-center">❌</td>
+                    <td className="py-3 px-4 text-center">✅</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 px-4">Unlimited history</td>
+                    <td className="py-3 px-4 text-center">30 days</td>
+                    <td className="py-3 px-4 text-center">Unlimited</td>
                   </tr>
                 </tbody>
               </table>

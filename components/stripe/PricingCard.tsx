@@ -10,7 +10,7 @@ interface PricingCardProps {
   tier: PricingTier;
   priceId?: string;
   isCurrentPlan?: boolean;
-  onUpgrade?: (priceId: string) => Promise<void>;
+  onUpgrade?: () => Promise<void>;
 }
 
 export default function PricingCard({ 
@@ -23,11 +23,11 @@ export default function PricingCard({
   const plan = AXIS6_PRICING[tier];
 
   const handleUpgrade = async () => {
-    if (!priceId || !onUpgrade || isLoading) return;
+    if (!onUpgrade || isLoading) return;
 
     setIsLoading(true);
     try {
-      await onUpgrade(priceId);
+      await onUpgrade();
     } catch (error) {
       console.error('Upgrade error:', error);
     } finally {
@@ -85,7 +85,7 @@ export default function PricingCard({
           <Button 
             className="w-full bg-blue-600 hover:bg-blue-700" 
             onClick={handleUpgrade}
-            disabled={isLoading || !priceId}
+            disabled={isLoading}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Processing...' : 'Upgrade to Premium'}
