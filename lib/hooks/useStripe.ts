@@ -58,6 +58,10 @@ export function useStripe() {
     setError(null);
 
     try {
+      // Check if price ID is a placeholder
+      if (!priceId || priceId.includes('placeholder')) {
+        throw new Error('Billing is not configured. Please contact support.');
+      }
       const response = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: {

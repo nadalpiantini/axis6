@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { stripe, stripeEnabled } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
+  // Check if Stripe is configured
+  if (!stripeEnabled) {
+    return NextResponse.json(
+      { error: 'Billing features are not configured. Please contact support.' },
+      { status: 503 }
+    );
+  }
+
   try {
     // Get authenticated user
     const supabase = await createClient();
