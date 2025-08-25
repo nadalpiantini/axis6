@@ -77,7 +77,12 @@ export class PersonalityAnalyzer {
       const profile: EnhancedPersonalityProfile = {
         primary_temperament: aiAnalysis.primary_temperament,
         secondary_temperament: aiAnalysis.secondary_temperament,
-        temperament_scores: aiAnalysis.scores,
+        temperament_scores: {
+          sanguine: aiAnalysis.scores.sanguine || 0,
+          choleric: aiAnalysis.scores.choleric || 0,
+          melancholic: aiAnalysis.scores.melancholic || 0,
+          phlegmatic: aiAnalysis.scores.phlegmatic || 0
+        },
         personality_insights: {
           ...aiAnalysis.insights,
           ...enhancedInsights

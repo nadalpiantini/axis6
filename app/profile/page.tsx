@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks'
 import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
+import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
 import { TemperamentResults } from '@/components/psychology/TemperamentResults'
 
 interface UserProfile {
@@ -88,6 +89,7 @@ export default function ProfilePage() {
   const [showQuestionnaire, setShowQuestionnaire] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [assessmentResult, setAssessmentResult] = useState<TemperamentResult | null>(null)
+  const [useAIEnhanced, setUseAIEnhanced] = useState(true) // Default to AI-enhanced
   const [notification, setNotification] = useState<{
     show: boolean
     type: 'success' | 'error'
@@ -467,12 +469,27 @@ export default function ProfilePage() {
                       Take our psychological assessment to get personalized wellness recommendations based on the four temperaments system.
                     </p>
                   </div>
-                  <button
-                    onClick={handleStartAssessment}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
-                  >
-                    Take Personality Assessment
-                  </button>
+                  
+                  <div className="flex flex-col items-center gap-3">
+                    <button
+                      onClick={handleStartAssessment}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all flex items-center gap-2"
+                    >
+                      <span>Take Personality Assessment</span>
+                      {useAIEnhanced && <Sparkles className="w-4 h-4" />}
+                    </button>
+                    
+                    <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useAIEnhanced}
+                        onChange={(e) => setUseAIEnhanced(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0"
+                      />
+                      <span>Use AI-Enhanced Assessment</span>
+                      <Sparkles className="w-3 h-3 text-purple-400" />
+                    </label>
+                  </div>
                 </div>
               )}
             </div>
@@ -667,12 +684,22 @@ export default function ProfilePage() {
 
       {/* Psychology Modals */}
       {showQuestionnaire && user && (
-        <TemperamentQuestionnaire
-          userId={user.id}
-          onComplete={handleAssessmentComplete}
-          onClose={() => setShowQuestionnaire(false)}
-          language="en"
-        />
+        useAIEnhanced ? (
+          <EnhancedTemperamentQuestionnaire
+            userId={user.id}
+            onComplete={handleAssessmentComplete}
+            onClose={() => setShowQuestionnaire(false)}
+            language="en"
+            useAI={true}
+          />
+        ) : (
+          <TemperamentQuestionnaire
+            userId={user.id}
+            onComplete={handleAssessmentComplete}
+            onClose={() => setShowQuestionnaire(false)}
+            language="en"
+          />
+        )
       )}
 
       {showResults && assessmentResult && (
