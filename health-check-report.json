@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-08-25T22:40:06.962Z",
+  "baseUrl": "https://axis6.app",
+  "summary": {
+    "totalChecks": 10,
+    "passed": 8,
+    "failed": 2,
+    "warnings": 3
+  },
+  "results": [
+    {
+      "name": "Database Connectivity",
+      "status": "PASS",
+      "duration": "139ms",
+      "timestamp": "2025-08-25T22:40:05.764Z"
+    },
+    {
+      "name": "SSL Certificate",
+      "status": "PASS",
+      "duration": "151ms",
+      "timestamp": "2025-08-25T22:40:05.915Z"
+    },
+    {
+      "name": "Performance Metrics",
+      "status": "PASS",
+      "duration": "255ms",
+      "timestamp": "2025-08-25T22:40:06.170Z"
+    },
+    {
+      "name": "Security Headers",
+      "status": "PASS",
+      "duration": "157ms",
+      "timestamp": "2025-08-25T22:40:06.327Z"
+    },
+    {
+      "name": "CDN & Caching",
+      "status": "PASS",
+      "duration": "83ms",
+      "timestamp": "2025-08-25T22:40:06.411Z"
+    },
+    {
+      "name": "Circuit Breakers",
+      "status": "PASS",
+      "duration": "121ms",
+      "timestamp": "2025-08-25T22:40:06.532Z"
+    },
+    {
+      "name": "Monitoring Systems",
+      "status": "PASS",
+      "duration": "241ms",
+      "timestamp": "2025-08-25T22:40:06.773Z"
+    },
+    {
+      "name": "Error Rates",
+      "status": "PASS",
+      "duration": "188ms",
+      "timestamp": "2025-08-25T22:40:06.961Z"
+    }
+  ],
+  "errors": [
+    {
+      "check": "Website Accessibility",
+      "error": "Request to / timed out",
+      "duration": "5023ms"
+    },
+    {
+      "check": "API Health Check",
+      "error": "API health check failed: System health is undefined",
+      "duration": "2618ms"
+    }
+  ],
+  "warnings": [
+    "Response not compressed (no content-encoding header)",
+    "Monitoring system check failed: Monitoring endpoint returned 404",
+    "Analytics endpoint requires authentication (expected)"
+  ],
+  "systemInfo": {
+    "nodeVersion": "v22.18.0",
+    "platform": "darwin"
+  }
+}

@@ -14,10 +14,10 @@ export class LoginPage {
   constructor(page: Page) {
     this.page = page;
     
-    // Form elements
-    this.emailInput = page.locator('input[type="email"]').or(page.locator('input[name="email"]'));
-    this.passwordInput = page.locator('input[type="password"]').or(page.locator('input[name="password"]'));
-    this.loginButton = page.locator('button[type="submit"]').or(page.locator('button', { hasText: /login|iniciar/i }));
+    // Form elements using data-testid attributes
+    this.emailInput = page.locator('[data-testid="email-input"]').or(page.locator('input[id="email"]')).or(page.locator('input[type="email"]'));
+    this.passwordInput = page.locator('[data-testid="password-input"]').or(page.locator('input[id="password"]')).or(page.locator('input[type="password"]'));
+    this.loginButton = page.locator('[data-testid="login-submit"]').or(page.locator('button[type="submit"]')).or(page.locator('button', { hasText: /sign in|login|iniciar/i }));
     
     // Navigation links
     this.forgotPasswordLink = page.locator('a', { hasText: /forgot|olvidé|recuperar/i });

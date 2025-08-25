@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS axis6_time_blocks (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   date DATE NOT NULL,
-  category_id INTEGER NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
+  category_id UUID NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
   activity_id INTEGER REFERENCES axis6_axis_activities(id) ON DELETE SET NULL,
   activity_name VARCHAR(255) NOT NULL, -- Store name in case activity is deleted
   start_time TIME NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS axis6_activity_logs (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   activity_id INTEGER REFERENCES axis6_axis_activities(id) ON DELETE SET NULL,
-  category_id INTEGER NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
+  category_id UUID NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
   activity_name VARCHAR(255) NOT NULL, -- Store name in case activity is deleted
   started_at TIMESTAMPTZ NOT NULL,
   ended_at TIMESTAMPTZ,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS axis6_activity_logs (
 CREATE TABLE IF NOT EXISTS axis6_daily_time_summary (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   date DATE NOT NULL,
-  category_id INTEGER NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
+  category_id UUID NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
   planned_minutes INTEGER DEFAULT 0,
   actual_minutes INTEGER DEFAULT 0,
   completion_rate DECIMAL(5,2),
@@ -110,7 +110,7 @@ CREATE POLICY "Users can manage own time summary" ON axis6_daily_time_summary
 CREATE OR REPLACE FUNCTION get_my_day_data(p_user_id UUID, p_date DATE)
 RETURNS TABLE (
   time_block_id INTEGER,
-  category_id INTEGER,
+  category_id UUID,
   category_name TEXT,
   category_color TEXT,
   category_icon TEXT,
@@ -155,7 +155,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Function to calculate daily time distribution
 CREATE OR REPLACE FUNCTION calculate_daily_time_distribution(p_user_id UUID, p_date DATE)
 RETURNS TABLE (
-  category_id INTEGER,
+  category_id UUID,
   category_name TEXT,
   category_color TEXT,
   planned_minutes INTEGER,
@@ -204,7 +204,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE FUNCTION start_activity_timer(
   p_user_id UUID,
   p_activity_id INTEGER,
-  p_category_id INTEGER,
+  p_category_id UUID,
   p_activity_name VARCHAR(255),
   p_time_block_id INTEGER DEFAULT NULL
 )

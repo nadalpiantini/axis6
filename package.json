@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev -p 6789",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "next lint",
     "analyze": "ANALYZE=true npm run build",
     "analyze:clean": "rm -rf .next/analyze",
@@ -49,7 +49,15 @@
     "setup:vercel": "node scripts/configure-vercel.js",
     "setup:resend": "node scripts/configure-resend.js",
     "setup:supabase-email": "node scripts/configure-supabase-email.js",
-    "setup:check": "node scripts/check-status.js"
+    "setup:check": "node scripts/check-status.js",
+    "production:health": "node scripts/production-health-check.js",
+    "production:deploy": "npm run build:production && npm run verify:production",
+    "production:monitor": "node scripts/monitoring-dashboard.js",
+    "production:optimize": "npm run clean:console && npm run build && npm run analyze",
+    "cache:warm": "node scripts/warm-cache.js",
+    "cache:clear": "node scripts/clear-cache.js",
+    "security:audit": "node scripts/security-audit.js",
+    "security:validate": "node scripts/validate-security-config.js"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -63,6 +71,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-popover": "^1.1.4",
     "@radix-ui/react-progress": "^1.1.2",
+    "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.1.4",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.1.1",
@@ -98,6 +107,7 @@
     "recharts": "^2.15.0",
     "resend": "^6.0.1",
     "tailwind-merge": "^2.6.0",
+    "web-vitals": "^5.1.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.8"
   },

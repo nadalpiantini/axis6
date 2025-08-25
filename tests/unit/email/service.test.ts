@@ -43,7 +43,7 @@ describe('Email Service', () => {
       
       const config = getEmailConfig()
       expect(config.configured).toBe(false)
-      expect(config.hasApiKey).toBe(false)
+      expect(config.apiKey).toBe(false)
     })
 
     it('should detect when email is properly configured', () => {
@@ -54,7 +54,7 @@ describe('Email Service', () => {
       
       const config = getEmailConfig()
       expect(config.configured).toBe(true)
-      expect(config.hasApiKey).toBe(true)
+      expect(config.apiKey).toBe(true)
       expect(config.fromEmail).toBe('test@axis6.app')
     })
 
@@ -150,15 +150,16 @@ describe('Email Service', () => {
   })
 
   describe('email configuration details', () => {
-    it('should provide environment information', () => {
+    it('should provide basic configuration properties', () => {
       const config = getEmailConfig()
-      expect(config).toHaveProperty('environment')
-      expect(['development', 'test', 'production']).toContain(config.environment)
+      expect(config).toHaveProperty('configured')
+      expect(config).toHaveProperty('apiKey')
+      expect(config).toHaveProperty('fromEmail')
     })
 
     it('should indicate API key availability', () => {
       const config = getEmailConfig()
-      expect(typeof config.hasApiKey).toBe('boolean')
+      expect(typeof config.apiKey).toBe('boolean')
     })
   })
 })

@@ -17,12 +17,12 @@ export class RegisterPage {
   constructor(page: Page) {
     this.page = page;
     
-    // Form elements
-    this.nameInput = page.locator('input[name="name"]').or(page.locator('input[placeholder*="name"]')).or(page.locator('input').first());
-    this.emailInput = page.locator('input[type="email"]').or(page.locator('input[name="email"]'));
-    this.passwordInput = page.locator('input[type="password"]').first();
-    this.confirmPasswordInput = page.locator('input[type="password"]').last();
-    this.registerButton = page.locator('button[type="submit"]').or(page.locator('button', { hasText: /register|registro|crear/i }));
+    // Form elements using data-testid attributes
+    this.nameInput = page.locator('[data-testid="name-input"]').or(page.locator('input[id="name"]'));
+    this.emailInput = page.locator('[data-testid="email-input"]').or(page.locator('input[id="email"]')).or(page.locator('input[type="email"]'));
+    this.passwordInput = page.locator('[data-testid="password-input"]').or(page.locator('input[id="password"]'));
+    this.confirmPasswordInput = page.locator('[data-testid="confirm-password-input"]').or(page.locator('input[id="confirmPassword"]'));
+    this.registerButton = page.locator('button[type="submit"]').or(page.locator('button', { hasText: /register|registro|crear|create/i }));
     
     // Navigation and additional elements
     this.loginLink = page.locator('a[href*="/auth/login"]').or(page.locator('a', { hasText: /login|iniciar/i }));
@@ -67,20 +67,21 @@ export class RegisterPage {
   }
 
   async fillEmail(email: string) {
+    await this.emailInput.waitFor({ state: 'visible' });
     await this.emailInput.clear();
     await this.emailInput.fill(email);
   }
 
   async fillPassword(password: string) {
+    await this.passwordInput.waitFor({ state: 'visible' });
     await this.passwordInput.clear();
     await this.passwordInput.fill(password);
   }
 
   async fillConfirmPassword(password: string) {
-    if (await this.confirmPasswordInput.isVisible() && await this.confirmPasswordInput.count() > 1) {
-      await this.confirmPasswordInput.clear();
-      await this.confirmPasswordInput.fill(password);
-    }
+    await this.confirmPasswordInput.waitFor({ state: 'visible' });
+    await this.confirmPasswordInput.clear();
+    await this.confirmPasswordInput.fill(password);
   }
 
   async acceptTermsIfPresent() {

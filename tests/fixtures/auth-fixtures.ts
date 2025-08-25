@@ -4,6 +4,7 @@ import {
   LoginPage, 
   RegisterPage, 
   DashboardPage, 
+  ProfilePage,
   TestUtils 
 } from '../utils/page-objects';
 
@@ -35,6 +36,7 @@ type TestFixtures = {
   loginPage: LoginPage;
   registerPage: RegisterPage;
   dashboardPage: DashboardPage;
+  profilePage: ProfilePage;
   testUtils: TestUtils;
   testUser: {
     email: string;
@@ -62,6 +64,11 @@ export const test = base.extend<TestFixtures>({
   dashboardPage: async ({ page }, use) => {
     const dashboardPage = new DashboardPage(page);
     await use(dashboardPage);
+  },
+
+  profilePage: async ({ page }, use) => {
+    const profilePage = new ProfilePage(page);
+    await use(profilePage);
   },
 
   testUtils: async ({ page }, use) => {

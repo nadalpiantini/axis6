@@ -1,8 +1,9 @@
 /**
- * Input Validation Utilities
+ * Production Security Validation System
  * 
- * Provides comprehensive input validation and sanitization
- * to prevent injection attacks and ensure data integrity.
+ * Provides comprehensive input validation, sanitization, and security checks
+ * to prevent injection attacks, ensure data integrity, and protect against
+ * advanced security threats in production environments.
  */
 
 // Email validation regex (RFC 5322 compliant)
@@ -339,4 +340,643 @@ export function validateAll(
     isValid: errors.length === 0,
     errors
   }
+}
+
+/**
+ * Advanced security validation patterns for production
+ */
+
+// Additional XSS patterns for comprehensive protection
+const ADVANCED_XSS_PATTERNS = [
+  /data:text\/html/gi,
+  /vbscript:/gi,
+  /livescript:/gi,
+  /mocha:/gi,
+  /charset=/gi,
+  /window\./gi,
+  /document\./gi,
+  /eval\(/gi,
+  /expression\(/gi,
+  /url\(/gi,
+  /@import/gi
+]
+
+// Directory traversal patterns
+const DIRECTORY_TRAVERSAL_PATTERNS = [
+  /\.\.[\/\\]/g,
+  /\.\.[\/\\]\.\./g,
+  /%2e%2e[\/\\]/gi,
+  /%2e%2e%2f/gi,
+  /\.\.%2f/gi,
+  /\.\.\\/g
+]
+
+// Command injection patterns
+const COMMAND_INJECTION_PATTERNS = [
+  /[;&|`$(){}[\]]/g,
+  /\$\(/g,
+  /`([^`]*)`/g,
+  /\|\s*(cat|ls|pwd|whoami|id|uname)/gi,
+  /(chmod|chown|rm|mv|cp)\s/gi
+]
+
+// LDAP injection patterns
+const LDAP_INJECTION_PATTERNS = [
+  /[()&|!=><]/g,
+  /\*[^*]*\*/g,
+  /\\\\/g
+]
+
+interface AdvancedValidationOptions {
+  checkXSS?: boolean
+  checkSQLInjection?: boolean
+  checkDirectoryTraversal?: boolean
+  checkCommandInjection?: boolean
+  checkLDAPInjection?: boolean
+  maxDepth?: number
+  allowedTags?: string[]
+  allowedAttributes?: string[]
+  rateLimit?: number
+}
+
+interface SecurityThreat {
+  type: 'xss' | 'sql_injection' | 'directory_traversal' | 'command_injection' | 'ldap_injection' | 'rate_limit' | 'suspicious_pattern'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  pattern?: string
+}
+
+/**
+ * Advanced security validation with threat detection
+ */
+export function validateSecure(
+  input: string,
+  options: AdvancedValidationOptions = {}
+): ValidationResult & { threats: SecurityThreat[] } {
+  const threats: SecurityThreat[] = []
+  
+  const {
+    checkXSS = true,
+    checkSQLInjection = true,
+    checkDirectoryTraversal = true,
+    checkCommandInjection = true,
+    checkLDAPInjection = true,
+    maxDepth = 10
+  } = options
+  
+  if (!input) {
+    return { isValid: true, sanitized: '', threats: [] }
+  }
+  
+  // Check for advanced XSS attempts
+  if (checkXSS) {
+    const xssThreats = detectAdvancedXSS(input)
+    threats.push(...xssThreats)
+  }
+  
+  // Check for SQL injection
+  if (checkSQLInjection) {
+    const sqlThreats = detectSQLInjection(input)
+    threats.push(...sqlThreats)
+  }
+  
+  // Check for directory traversal
+  if (checkDirectoryTraversal) {
+    const traversalThreats = detectDirectoryTraversal(input)
+    threats.push(...traversalThreats)
+  }
+  
+  // Check for command injection
+  if (checkCommandInjection) {
+    const commandThreats = detectCommandInjection(input)
+    threats.push(...commandThreats)
+  }
+  
+  // Check for LDAP injection
+  if (checkLDAPInjection) {
+    const ldapThreats = detectLDAPInjection(input)
+    threats.push(...ldapThreats)
+  }
+  
+  // Check for nested object attacks
+  const depthThreats = checkObjectDepth(input, maxDepth)
+  threats.push(...depthThreats)
+  
+  // Check for suspicious patterns
+  const suspiciousThreats = detectSuspiciousPatterns(input)
+  threats.push(...suspiciousThreats)
+  
+  // Determine if input is valid based on threat severity
+  const criticalThreats = threats.filter(t => t.severity === 'critical')
+  const highThreats = threats.filter(t => t.severity === 'high')
+  
+  if (criticalThreats.length > 0) {
+    return {
+      isValid: false,
+      error: 'Critical security threat detected',
+      threats
+    }
+  }
+  
+  if (highThreats.length > 0) {
+    return {
+      isValid: false,
+      error: 'High security threat detected',
+      threats
+    }
+  }
+  
+  // Sanitize input with advanced protection
+  const sanitized = advancedSanitize(input, options)
+  
+  return {
+    isValid: true,
+    sanitized,
+    threats
+  }
+}
+
+/**
+ * Detect advanced XSS attempts
+ */
+function detectAdvancedXSS(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  // Check original XSS patterns
+  for (const pattern of XSS_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'xss',
+        severity: 'high',
+        description: 'Standard XSS pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  // Check advanced XSS patterns
+  for (const pattern of ADVANCED_XSS_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'xss',
+        severity: 'critical',
+        description: 'Advanced XSS pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  // Check for encoded payloads
+  try {
+    const decoded = decodeURIComponent(input)
+    if (decoded !== input) {
+      const decodedThreats = detectAdvancedXSS(decoded)
+      if (decodedThreats.length > 0) {
+        threats.push({
+          type: 'xss',
+          severity: 'high',
+          description: 'Encoded XSS payload detected'
+        })
+      }
+    }
+  } catch (e) {
+    // Ignore decode errors
+  }
+  
+  return threats
+}
+
+/**
+ * Detect SQL injection attempts
+ */
+function detectSQLInjection(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  for (const pattern of SQL_INJECTION_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'sql_injection',
+        severity: 'critical',
+        description: 'SQL injection pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  // Check for advanced SQL injection techniques
+  const advancedPatterns = [
+    /\bUNION\b.*\bSELECT\b/gi,
+    /\bWAITFOR\s+DELAY\b/gi,
+    /\bBENCHMARK\b\s*\(/gi,
+    /\bSLEEP\b\s*\(/gi,
+    /\bLOAD_FILE\b\s*\(/gi,
+    /\bINTO\s+OUTFILE\b/gi
+  ]
+  
+  for (const pattern of advancedPatterns) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'sql_injection',
+        severity: 'critical',
+        description: 'Advanced SQL injection technique detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  return threats
+}
+
+/**
+ * Detect directory traversal attempts
+ */
+function detectDirectoryTraversal(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  for (const pattern of DIRECTORY_TRAVERSAL_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'directory_traversal',
+        severity: 'high',
+        description: 'Directory traversal pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  return threats
+}
+
+/**
+ * Detect command injection attempts
+ */
+function detectCommandInjection(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  for (const pattern of COMMAND_INJECTION_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'command_injection',
+        severity: 'critical',
+        description: 'Command injection pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  return threats
+}
+
+/**
+ * Detect LDAP injection attempts
+ */
+function detectLDAPInjection(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  for (const pattern of LDAP_INJECTION_PATTERNS) {
+    if (pattern.test(input)) {
+      threats.push({
+        type: 'ldap_injection',
+        severity: 'medium',
+        description: 'LDAP injection pattern detected',
+        pattern: pattern.toString()
+      })
+    }
+  }
+  
+  return threats
+}
+
+/**
+ * Check for object depth attacks (prototype pollution protection)
+ */
+function checkObjectDepth(input: string, maxDepth: number): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  try {
+    if (input.includes('{') || input.includes('[')) {
+      const parsed = JSON.parse(input)
+      const depth = getObjectDepth(parsed)
+      
+      if (depth > maxDepth) {
+        threats.push({
+          type: 'suspicious_pattern',
+          severity: 'medium',
+          description: `Object depth (${depth}) exceeds maximum allowed (${maxDepth})`
+        })
+      }
+      
+      // Check for prototype pollution patterns
+      if (hasPrototypePollution(parsed)) {
+        threats.push({
+          type: 'suspicious_pattern',
+          severity: 'critical',
+          description: 'Prototype pollution attempt detected'
+        })
+      }
+    }
+  } catch (e) {
+    // Not valid JSON, ignore
+  }
+  
+  return threats
+}
+
+/**
+ * Detect suspicious patterns
+ */
+function detectSuspiciousPatterns(input: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+  
+  // Check for excessive repetition (possible DoS attempt)
+  const repetitionMatch = input.match(/(.{10,})\1{10,}/g)
+  if (repetitionMatch) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'medium',
+      description: 'Excessive pattern repetition detected (possible DoS attempt)'
+    })
+  }
+  
+  // Check for binary data
+  const binaryPattern = /[\x00-\x08\x0E-\x1F\x7F-\xFF]{10,}/
+  if (binaryPattern.test(input)) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'medium',
+      description: 'Binary data detected in text input'
+    })
+  }
+  
+  // Check for extremely long input (possible buffer overflow)
+  if (input.length > 10000) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'high',
+      description: `Input length (${input.length}) exceeds safe limits`
+    })
+  }
+  
+  return threats
+}
+
+/**
+ * Advanced sanitization with comprehensive protection
+ */
+function advancedSanitize(input: string, options: AdvancedValidationOptions): string {
+  let sanitized = input
+  
+  // Remove null bytes and control characters
+  sanitized = sanitized.replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+  
+  // Decode common encodings to catch obfuscated attacks
+  try {
+    sanitized = decodeURIComponent(sanitized)
+  } catch (e) {
+    // Keep original if decode fails
+  }
+  
+  // Remove dangerous HTML tags
+  if (!options.allowedTags || options.allowedTags.length === 0) {
+    sanitized = sanitized.replace(/<[^>]*>/g, '')
+  } else {
+    // Allow only specified tags
+    const tagPattern = new RegExp(`<(?!\/?(?:${options.allowedTags.join('|')})\b)[^>]*>`, 'gi')
+    sanitized = sanitized.replace(tagPattern, '')
+  }
+  
+  // Escape remaining HTML entities
+  sanitized = sanitized
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;')
+  
+  // Remove JavaScript protocol
+  sanitized = sanitized.replace(/javascript:/gi, '')
+  
+  // Remove data URLs
+  sanitized = sanitized.replace(/data:[^;]*;base64,/gi, '')
+  
+  // Clean up whitespace
+  sanitized = sanitized.replace(/\s+/g, ' ').trim()
+  
+  return sanitized
+}
+
+/**
+ * Get object depth for prototype pollution protection
+ */
+function getObjectDepth(obj: any, depth = 0): number {
+  if (depth > 100) return depth // Prevent infinite recursion
+  
+  if (obj === null || typeof obj !== 'object') {
+    return depth
+  }
+  
+  let maxDepth = depth
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const currentDepth = getObjectDepth(obj[key], depth + 1)
+      maxDepth = Math.max(maxDepth, currentDepth)
+    }
+  }
+  
+  return maxDepth
+}
+
+/**
+ * Check for prototype pollution patterns
+ */
+function hasPrototypePollution(obj: any): boolean {
+  if (typeof obj !== 'object' || obj === null) return false
+  
+  // Check for dangerous keys
+  const dangerousKeys = ['__proto__', 'constructor', 'prototype']
+  
+  for (const key of dangerousKeys) {
+    if (key in obj) {
+      return true
+    }
+  }
+  
+  // Recursively check nested objects
+  for (const value of Object.values(obj)) {
+    if (typeof value === 'object' && value !== null) {
+      if (hasPrototypePollution(value)) {
+        return true
+      }
+    }
+  }
+  
+  return false
+}
+
+/**
+ * Validate file upload security
+ */
+export function validateFileUpload(
+  file: File,
+  options: {
+    maxSize?: number
+    allowedTypes?: string[]
+    allowedExtensions?: string[]
+    scanForMalware?: boolean
+  } = {}
+): ValidationResult & { threats: SecurityThreat[] } {
+  const threats: SecurityThreat[] = []
+  const {
+    maxSize = 5 * 1024 * 1024, // 5MB
+    allowedTypes = ['image/jpeg', 'image/png', 'image/webp'],
+    allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'],
+    scanForMalware = true
+  } = options
+  
+  // Check file size
+  if (file.size > maxSize) {
+    return {
+      isValid: false,
+      error: `File size (${Math.round(file.size / 1024)}KB) exceeds maximum allowed (${Math.round(maxSize / 1024)}KB)`,
+      threats: [{
+        type: 'suspicious_pattern',
+        severity: 'medium',
+        description: 'File size exceeds limits'
+      }]
+    }
+  }
+  
+  // Check MIME type
+  if (!allowedTypes.includes(file.type)) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'high',
+      description: `Disallowed MIME type: ${file.type}`
+    })
+  }
+  
+  // Check file extension
+  const extension = file.name.toLowerCase().split('.').pop()
+  if (!extension || !allowedExtensions.includes(`.${extension}`)) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'high',
+      description: `Disallowed file extension: .${extension}`
+    })
+  }
+  
+  // Check for double extensions
+  const doubleExtensionPattern = /\.[^.]+\.[^.]+$/
+  if (doubleExtensionPattern.test(file.name)) {
+    threats.push({
+      type: 'suspicious_pattern',
+      severity: 'high',
+      description: 'Double file extension detected'
+    })
+  }
+  
+  // Basic malware patterns in filename
+  const suspiciousPatterns = [
+    /\.(exe|bat|cmd|com|pif|scr|vbs|js)$/i,
+    /\.(php|asp|aspx|jsp|cfm)$/i,
+    /__MACOSX/,
+    /desktop\.ini/i,
+    /thumbs\.db/i
+  ]
+  
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(file.name)) {
+      threats.push({
+        type: 'suspicious_pattern',
+        severity: 'critical',
+        description: 'Suspicious filename pattern detected'
+      })
+    }
+  }
+  
+  const criticalThreats = threats.filter(t => t.severity === 'critical')
+  const highThreats = threats.filter(t => t.severity === 'high')
+  
+  if (criticalThreats.length > 0) {
+    return {
+      isValid: false,
+      error: 'Critical security threat in file upload',
+      threats
+    }
+  }
+  
+  if (highThreats.length > 0) {
+    return {
+      isValid: false,
+      error: 'High security threat in file upload',
+      threats
+    }
+  }
+  
+  return {
+    isValid: true,
+    sanitized: file.name,
+    threats
+  }
+}
+
+/**
+ * Production security audit logger
+ */
+export function logSecurityEvent(
+  event: 'validation_failure' | 'threat_detected' | 'file_upload_blocked' | 'rate_limit_exceeded',
+  details: {
+    threats?: SecurityThreat[]
+    userAgent?: string
+    ip?: string
+    userId?: string
+    input?: string
+    timestamp?: number
+  }
+) {
+  const logEntry = {
+    event,
+    timestamp: details.timestamp || Date.now(),
+    severity: details.threats?.some(t => t.severity === 'critical') ? 'critical' :
+              details.threats?.some(t => t.severity === 'high') ? 'high' : 'medium',
+    ...details,
+    // Don't log the actual input for security reasons, just its characteristics
+    inputLength: details.input?.length,
+    inputHash: details.input ? hashString(details.input) : undefined,
+    input: undefined // Remove actual input from logs
+  }
+  
+  // In production, this would send to your security monitoring system
+  console.warn('SECURITY EVENT:', JSON.stringify(logEntry))
+  
+  // Send to monitoring API if available
+  if (typeof window !== 'undefined') {
+    fetch('/api/monitoring', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'security',
+        severity: logEntry.severity === 'critical' ? 'critical' : 'high',
+        service: 'validation',
+        message: `Security event: ${event}`,
+        data: logEntry
+      })
+    }).catch(() => {
+      // Ignore monitoring errors
+    })
+  }
+}
+
+/**
+ * Simple hash function for logging purposes
+ */
+function hashString(str: string): string {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16)
 }

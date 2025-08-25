@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/badge'
@@ -244,13 +244,13 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <currentStepComponent
-                  onComplete={completeCurrentStep}
-                  onNext={goToNextStep}
-                  userData={state.userData}
-                  generateInsights={generateAIInsights}
-                  isGeneratingInsights={state.isGeneratingInsights}
-                />
+{React.createElement(currentStepComponent, {
+                  onComplete: completeCurrentStep,
+                  onNext: goToNextStep,
+                  userData: state.userData,
+                  generateInsights: generateAIInsights,
+                  isGeneratingInsights: state.isGeneratingInsights
+                })}
               </motion.div>
             )}
           </AnimatePresence>
