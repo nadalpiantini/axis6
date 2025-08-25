@@ -208,38 +208,38 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       {/* Header */}
       <header className="glass border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           {/* Logo Section */}
-          <div className="flex justify-center mb-4">
-            <LogoFull size="xl" className="h-16" />
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <LogoFull size="md" className="h-12 sm:h-16" />
           </div>
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <Link
                 href="/dashboard"
-                className="p-2 hover:bg-white/10 rounded-lg transition flex items-center gap-2"
+                className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition flex items-center gap-1 sm:gap-2"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
               </Link>
-              <div>
-                <h1 className="text-2xl font-bold flex items-center gap-3">
-                  <TrendingUp className="w-8 h-8 text-purple-400" />
+              <div className="flex-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2 sm:gap-3">
+                  <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
                   Your Analytics
                 </h1>
-                <p className="text-gray-400">
-                  Insights and progress analysis for the last {analytics.overview.period}
+                <p className="text-xs sm:text-sm text-gray-400">
+                  Insights for the last {analytics.overview.period}
                 </p>
               </div>
             </div>
             
             {/* Controls */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <select
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
+                className="px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
               >
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
@@ -250,16 +250,16 @@ export default function AnalyticsPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleExport('csv')}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">CSV</span>
                 </button>
                 <button
                   onClick={() => handleExport('json')}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">JSON</span>
                 </button>
               </div>
@@ -268,63 +268,63 @@ export default function AnalyticsPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="glass rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <Target className="w-8 h-8 text-green-400" />
-              <h3 className="font-semibold">Total Check-ins</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
+              <h3 className="text-sm sm:text-base font-semibold">Total Check-ins</h3>
             </div>
-            <p className="text-3xl font-bold text-green-400">{analytics.overview.totalCheckins}</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-2xl sm:text-3xl font-bold text-green-400">{analytics.overview.totalCheckins}</p>
+            <p className="text-xs sm:text-sm text-gray-400">
               {Math.round(analytics.overview.totalCheckins / Math.max(analytics.overview.totalDays, 1) * 10) / 10} per day avg
             </p>
           </div>
           
-          <div className="glass rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <Calendar className="w-8 h-8 text-blue-400" />
-              <h3 className="font-semibold">Active Days</h3>
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
+              <h3 className="text-sm sm:text-base font-semibold">Active Days</h3>
             </div>
-            <p className="text-3xl font-bold text-blue-400">
+            <p className="text-2xl sm:text-3xl font-bold text-blue-400">
               {analytics.overview.daysWithData}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-400">
               {analytics.overview.dataCompleteness}% of {analytics.overview.period}
             </p>
           </div>
           
-          <div className="glass rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <BarChart3 className="w-8 h-8 text-purple-400" />
-              <h3 className="font-semibold">Completion Rate</h3>
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
+              <h3 className="text-sm sm:text-base font-semibold">Completion Rate</h3>
             </div>
-            <p className="text-3xl font-bold text-purple-400">
+            <p className="text-2xl sm:text-3xl font-bold text-purple-400">
               {Math.round(analytics.overview.averageCompletionRate * 100)}%
             </p>
-            <p className="text-sm text-gray-400">Average daily completion</p>
+            <p className="text-xs sm:text-sm text-gray-400">Average daily completion</p>
           </div>
           
-          <div className="glass rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <Flame className="w-8 h-8 text-orange-400" />
-              <h3 className="font-semibold">Current Streak</h3>
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
+              <h3 className="text-sm sm:text-base font-semibold">Current Streak</h3>
             </div>
-            <p className="text-3xl font-bold text-orange-400">
+            <p className="text-2xl sm:text-3xl font-bold text-orange-400">
               {analytics.streakAnalysis.totalCurrentStreak}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-400">
               {analytics.streakAnalysis.activeStreaks} categories active
             </p>
           </div>
         </div>
 
         {/* Category Performance */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          <div className="glass rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <PieChart className="w-6 h-6 text-purple-400" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+              <PieChart className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
               Category Performance
             </h3>
             <div className="space-y-4">
@@ -348,9 +348,9 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="glass rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Flame className="w-6 h-6 text-orange-400" />
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+              <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
               Current Streaks
             </h3>
             <div className="space-y-4">
@@ -374,10 +374,10 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Best/Worst Performance */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          <div className="glass rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 text-green-400">
-              <TrendingUp className="w-6 h-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-green-400">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
               Best Performance Days
             </h3>
             <div className="space-y-3">
@@ -397,9 +397,9 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="glass rounded-xl p-6">
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 text-red-400">
-              <TrendingDown className="w-6 h-6" />
+          <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-red-400">
+              <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
               Areas for Improvement
             </h3>
             <div className="space-y-3">
@@ -421,12 +421,12 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Insights and Recommendations */}
-        <div className="glass rounded-xl p-6">
-          <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <Award className="w-6 h-6 text-yellow-400" />
+        <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+            <Award className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
             Insights & Recommendations
           </h3>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-4">
               <h4 className="font-semibold text-purple-400">🎯 Your Strengths</h4>
               <ul className="space-y-2 text-gray-300">

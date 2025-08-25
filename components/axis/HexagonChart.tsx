@@ -80,12 +80,26 @@ const HexagonChart = memo(function HexagonChart({
   animate = true 
 }: HexagonChartProps) {
   const [isClient, setIsClient] = useState(false)
-  const center = size / 2
-  const radius = size * 0.4
+  const [windowWidth, setWindowWidth] = useState(0)
+  
+  // Responsive size based on screen width
+  const responsiveSize = useMemo(() => {
+    if (windowWidth < 640) return Math.min(windowWidth - 48, 280) // Mobile
+    if (windowWidth < 768) return 350 // Tablet
+    return size // Desktop
+  }, [windowWidth, size])
+  
+  const center = responsiveSize / 2
+  const radius = responsiveSize * 0.4
   const labelDistance = radius * 1.3
 
   useEffect(() => {
     setIsClient(true)
+    setWindowWidth(window.innerWidth)
+    
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   // Calculate hexagon points for the background
@@ -122,19 +136,18 @@ const HexagonChart = memo(function HexagonChart({
   if (!isClient) {
     return (
       <div 
-        style={{ width: size, height: size }} 
-        className="bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-3xl animate-pulse backdrop-blur-sm" 
+        className="w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-3xl animate-pulse backdrop-blur-sm mx-auto" 
       />
     )
   }
 
   return (
-    <div className="relative ritual-card concentric-organic" style={{ width: size, height: size }}>
+    <div className="relative ritual-card concentric-organic w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px] mx-auto">
       <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        className="transform relative z-10"
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${responsiveSize} ${responsiveSize}`}
+        className="transform relative z-10 w-full h-auto"
       >
         {/* THE RITUAL OS - Organic grid lines */}
         {gridLevels.map((level, idx) => (
@@ -270,7 +283,7 @@ const HexagonChart = memo(function HexagonChart({
             }}
           >
             <motion.span 
-              className="text-xs font-semibold px-2 py-1 rounded-full bg-white/80 border border-white/40 mb-1"
+              className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-white/80 border border-white/40 mb-0.5 sm:mb-1"
               style={{ color: cat.color }}
               title={cat.mantra}
               whileHover={{ 
@@ -281,7 +294,7 @@ const HexagonChart = memo(function HexagonChart({
               {cat.shortLabel}
             </motion.span>
             <span 
-              className="text-xs text-gray-600/80 font-medium px-1.5 py-0.5 rounded bg-white/60"
+              className="text-[10px] sm:text-xs text-gray-600/80 font-medium px-1 sm:px-1.5 py-0.5 rounded bg-white/60"
             >
               {value}%
             </span>
@@ -297,7 +310,7 @@ const HexagonChart = memo(function HexagonChart({
         transition={{ delay: 2 }}
       >
         <motion.div 
-          className="text-4xl font-serif font-bold bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border border-white/40"
+          className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg border border-white/40"
           style={{ 
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(244,228,222,0.8) 100%)',
             color: '#A86847'
@@ -317,7 +330,7 @@ const HexagonChart = memo(function HexagonChart({
           )}%
         </motion.div>
         <motion.div 
-          className="text-sm text-gray-600/80 font-medium mt-2 px-3 py-1 rounded-full bg-white/70"
+          className="text-xs sm:text-sm text-gray-600/80 font-medium mt-1 sm:mt-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5 }}

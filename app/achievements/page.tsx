@@ -276,26 +276,26 @@ export default function AchievementsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <LogoFull size="xl" className="h-16" />
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <LogoFull size="md" className="h-12 sm:h-16" />
         </div>
         
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Trophy className="h-8 w-8 text-yellow-400" />
-            <h1 className="text-4xl font-bold">Achievements</h1>
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Achievements</h1>
           </div>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto px-4">
             Celebrate your progress and discover new goals to achieve
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <Card className="bg-slate-800/50 border-slate-700 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <Trophy className="h-8 w-8 text-yellow-400" />
               <div>

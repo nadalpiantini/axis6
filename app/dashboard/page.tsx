@@ -47,34 +47,37 @@ const DashboardHeader = memo(({
 }) => {
   return (
     <header className="glass border-b border-white/10" role="banner">
-      <div className="max-w-7xl mx-auto px-4 py-1.5 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
-          <Flame className="w-4 h-4 text-orange-400" />
-          <span className="text-gray-300 font-medium">Streak: {currentStreak} days</span>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between">
+        <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm" data-testid="streak-counter">
+          <Flame className="w-3 h-3 sm:w-4 sm:h-4 text-orange-400" />
+          <span className="text-gray-300 font-medium">
+            <span className="hidden sm:inline">Streak: </span>
+            <span>{currentStreak}<span className="hidden sm:inline"> days</span></span>
+          </span>
         </div>
         
-        <div className="flex items-center gap-2" data-testid="user-menu">
+        <div className="flex items-center gap-1 sm:gap-2" data-testid="user-menu">
           <Link 
             href="/profile" 
-            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-1.5 sm:p-2 min-w-[32px] sm:min-w-[36px] min-h-[32px] sm:min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Go to profile"
           >
-            <User className="w-5 h-5" aria-hidden="true" />
+            <User className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
           </Link>
           <Link 
             href="/settings" 
-            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-1.5 sm:p-2 min-w-[32px] sm:min-w-[36px] min-h-[32px] sm:min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Go to settings"
           >
-            <Settings className="w-5 h-5" aria-hidden="true" />
+            <Settings className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
           </Link>
           <button 
             onClick={onLogout} 
-            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-1.5 sm:p-2 min-w-[32px] sm:min-w-[36px] min-h-[32px] sm:min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Sign out"
             type="button"
           >
-            <LogOut className="w-5 h-5" aria-hidden="true" />
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -119,8 +122,8 @@ const HexagonVisualization = memo(({
   )
 
   return (
-    <div className="flex justify-center mb-8" data-testid="hexagon-chart">
-      <svg width="400" height="400" viewBox="0 0 400 400" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
+    <div className="flex justify-center mb-4 sm:mb-8" data-testid="hexagon-chart">
+      <svg className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" viewBox="0 0 400 400" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
         {/* Background hexagon */}
         <polygon
           points={createHexagonPath(160, 200, 200)}
@@ -238,7 +241,7 @@ const MemoizedCategoryCard = memo(({
       whileTap={showAnimations ? { scale: 0.98 } : undefined}
       onClick={onToggle}
       disabled={isToggling}
-      className={`p-4 rounded-xl transition-all min-h-[56px] ${
+      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] ${
         axis.completed 
           ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
           : 'bg-white/5 hover:bg-white/10 border-white/10'
@@ -247,17 +250,17 @@ const MemoizedCategoryCard = memo(({
       data-testid={`category-card-${axis.name.toLowerCase()}`}
       data-checked={axis.completed}
     >
-      <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className={`p-1.5 sm:p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
           <AxisIcon 
             axis={axis.icon}
-            size={20}
+            size={18}
             color={axis.color}
             custom
             animated={showAnimations && axis.completed}
           />
         </div>
-        <span className={`font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
+        <span className={`text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
           {axis.name}
         </span>
       </div>
@@ -351,7 +354,7 @@ export default function DashboardPageV2() {
     return (
       <div className="min-h-screen text-white">
         <DashboardHeader currentStreak={0} onLogout={handleLogout} />
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <SkeletonDashboard />
         </div>
       </div>
@@ -371,18 +374,18 @@ export default function DashboardPageV2() {
       <div className="min-h-screen text-white">
         <DashboardHeader currentStreak={currentStreak} onLogout={handleLogout} />
 
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
           {/* Logo Section */}
-          <div className="flex justify-center mb-6">
-            <LogoFull size="3xl" className="h-40" priority />
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <LogoFull size="lg" className="h-16 sm:h-24 md:h-32 lg:h-40" priority />
           </div>
           
           {/* Welcome Section */}
-          <main className="mb-8" role="main">
-            <h1 className="text-3xl font-bold mb-2 text-center">
+          <main className="mb-4 sm:mb-8" role="main">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-center">
               Hello, {user.email?.split('@')[0]}! 👋
             </h1>
-            <p className="text-gray-400 text-center">
+            <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center">
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -393,13 +396,13 @@ export default function DashboardPageV2() {
           </main>
 
           {/* Main Grid */}
-          <div className="grid lg:grid-cols-3 gap-8" role="region" aria-label="Main dashboard panel">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8" role="region" aria-label="Main dashboard panel">
             {/* Hexagon Section */}
             <div className="lg:col-span-2">
-              <div className="glass rounded-2xl p-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-semibold">Your Progress Today</h3>
-                  <span className="text-sm text-gray-400">
+              <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold">Your Progress Today</h3>
+                  <span className="text-xs sm:text-sm text-gray-400">
                     {completedCount}/6 completed
                   </span>
                 </div>
@@ -411,7 +414,7 @@ export default function DashboardPageV2() {
                 />
 
                 {/* Axes List */}
-                <div className="grid grid-cols-2 gap-4" data-testid="category-cards">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4" data-testid="category-cards">
                   {axes.map((axis) => (
                     <MemoizedCategoryCard
                       key={axis.id}
@@ -425,47 +428,47 @@ export default function DashboardPageV2() {
             </div>
 
             {/* Stats Section */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Quick Stats */}
-              <div className="glass rounded-2xl p-6">
-                <h3 className="text-lg font-semibold mb-4">Statistics</h3>
-                <div className="space-y-4">
+              <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Current streak</span>
-                    <span className="text-xl font-bold text-orange-400">
+                    <span className="text-sm sm:text-base text-gray-400">Current streak</span>
+                    <span className="text-lg sm:text-xl font-bold text-orange-400">
                       {currentStreak} days
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Best streak</span>
-                    <span className="text-xl font-bold text-purple-400">
+                    <span className="text-sm sm:text-base text-gray-400">Best streak</span>
+                    <span className="text-lg sm:text-xl font-bold text-purple-400">
                       {longestStreak} days
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Completed today</span>
-                    <span className="text-xl font-bold">{completedCount}/6</span>
+                    <span className="text-sm sm:text-base text-gray-400">Completed today</span>
+                    <span className="text-lg sm:text-xl font-bold">{completedCount}/6</span>
                   </div>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <Link 
                   href="/analytics"
-                  className="glass rounded-xl p-4 min-h-[56px] flex items-center justify-between hover:bg-white/5 transition"
+                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
                   aria-label="View complete progress analysis"
                 >
                   <span>View Complete Analysis</span>
-                  <TrendingUp className="w-5 h-5 text-purple-400" aria-hidden="true" />
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" aria-hidden="true" />
                 </Link>
                 <Link 
                   href="/achievements"
-                  className="glass rounded-xl p-4 min-h-[56px] flex items-center justify-between hover:bg-white/5 transition"
+                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
                   aria-label="View your achievements and recognitions"
                 >
                   <span>Achievements</span>
-                  <Trophy className="w-5 h-5 text-yellow-400" aria-hidden="true" />
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" aria-hidden="true" />
                 </Link>
               </div>
             </div>
