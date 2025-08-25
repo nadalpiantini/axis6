@@ -2,24 +2,33 @@ import { z } from 'zod'
 
 // Environment variables validation
 const envSchema = z.object({
-  DEEPSEEK_API_KEY: z.string().min(1),
+  DEEPSEEK_API_KEY: z.string().optional(),
   DEEPSEEK_API_URL: z.string().url().default('https://api.deepseek.com/v1'),
-  AI_FEATURES_ENABLED: z.string().transform(v => v === 'true').default('true'),
+  AI_FEATURES_ENABLED: z.string().transform(v => v === 'true').default('false'),
   AI_CACHE_TTL: z.string().transform(Number).default('3600')
 })
 
 // Parse and validate environment variables
 const getConfig = () => {
   try {
+    const apiKey = process.env['DEEPSEEK_API_KEY']
+    const aiEnabled = apiKey ? (process.env['AI_FEATURES_ENABLED'] || 'true') : 'false'
+    
     return envSchema.parse({
-      DEEPSEEK_API_KEY: process.env['DEEPSEEK_API_KEY'],
+      DEEPSEEK_API_KEY: apiKey,
       DEEPSEEK_API_URL: process.env['DEEPSEEK_API_URL'] || 'https://api.deepseek.com/v1',
-      AI_FEATURES_ENABLED: process.env['AI_FEATURES_ENABLED'] || 'true',
+      AI_FEATURES_ENABLED: aiEnabled,
       AI_CACHE_TTL: process.env['AI_CACHE_TTL'] || '3600'
     })
   } catch (error) {
-    console.error('DeepSeek configuration error:', error)
-    throw new Error('Invalid DeepSeek configuration')
+    console.warn('DeepSeek configuration warning:', error)
+    // Return safe defaults when configuration fails
+    return {
+      DEEPSEEK_API_KEY: undefined,
+      DEEPSEEK_API_URL: 'https://api.deepseek.com/v1',
+      AI_FEATURES_ENABLED: false,
+      AI_CACHE_TTL: 3600
+    }
   }
 }
 
@@ -46,7 +55,7 @@ export interface DeepSeekResponse {
 }
 
 export class DeepSeekClient {
-  private apiKey: string
+  private apiKey?: string
   private apiUrl: string
   private isEnabled: boolean
   private cacheMap: Map<string, { data: any; timestamp: number }> = new Map()
@@ -56,8 +65,12 @@ export class DeepSeekClient {
     const config = getConfig()
     this.apiKey = config.DEEPSEEK_API_KEY
     this.apiUrl = config.DEEPSEEK_API_URL
-    this.isEnabled = config.AI_FEATURES_ENABLED
+    this.isEnabled = config.AI_FEATURES_ENABLED && !!config.DEEPSEEK_API_KEY
     this.cacheTTL = config.AI_CACHE_TTL * 1000 // Convert to milliseconds
+    
+    if (!this.apiKey && process.env.NODE_ENV !== 'production') {
+      console.info('ℹ️  DeepSeek AI features disabled - DEEPSEEK_API_KEY not configured')
+    }
   }
 
   private getCacheKey(messages: ChatMessage[], temperature?: number): string {
@@ -93,8 +106,8 @@ export class DeepSeekClient {
       stream?: boolean
     } = {}
   ): Promise<DeepSeekResponse> {
-    if (!this.isEnabled) {
-      throw new Error('AI features are disabled')
+    if (!this.isEnabled || !this.apiKey) {
+      throw new Error('DeepSeek AI features are disabled or not configured')
     }
 
     // Check cache first

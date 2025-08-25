@@ -1,0 +1,149 @@
+import { Page, Locator } from '@playwright/test';
+
+export class RegisterPage {
+  public readonly page: Page;
+  public readonly nameInput: Locator;
+  public readonly emailInput: Locator;
+  public readonly passwordInput: Locator;
+  public readonly confirmPasswordInput: Locator;
+  public readonly registerButton: Locator;
+  public readonly loginLink: Locator;
+  public readonly termsCheckbox: Locator;
+  public readonly termsLink: Locator;
+  public readonly errorMessage: Locator;
+  public readonly successMessage: Locator;
+  public readonly loadingSpinner: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    
+    // Form elements
+    this.nameInput = page.locator('input[name="name"]').or(page.locator('input[placeholder*="name"]')).or(page.locator('input').first());
+    this.emailInput = page.locator('input[type="email"]').or(page.locator('input[name="email"]'));
+    this.passwordInput = page.locator('input[type="password"]').first();
+    this.confirmPasswordInput = page.locator('input[type="password"]').last();
+    this.registerButton = page.locator('button[type="submit"]').or(page.locator('button', { hasText: /register|registro|crear/i }));
+    
+    // Navigation and additional elements
+    this.loginLink = page.locator('a[href*="/auth/login"]').or(page.locator('a', { hasText: /login|iniciar/i }));
+    this.termsCheckbox = page.locator('input[type="checkbox"]');
+    this.termsLink = page.locator('a', { hasText: /terms|términos|condiciones/i });
+    
+    // Feedback messages
+    this.errorMessage = page.locator('[data-testid="error-message"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    this.successMessage = page.locator('[data-testid="success-message"]').or(page.locator('.success'));
+    this.loadingSpinner = page.locator('[data-testid="loading"]').or(page.locator('.loading')).or(page.locator('.spinner'));
+  }
+
+  async goto() {
+    await this.page.goto('/auth/register');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async verifyRegisterForm() {
+    await this.emailInput.waitFor({ state: 'visible' });
+    await this.passwordInput.waitFor({ state: 'visible' });
+    await this.registerButton.waitFor({ state: 'visible' });
+    
+    return true;
+  }
+
+  async register(email: string, password: string, name?: string) {
+    if (name) {
+      await this.fillName(name);
+    }
+    await this.fillEmail(email);
+    await this.fillPassword(password);
+    await this.fillConfirmPassword(password);
+    await this.acceptTermsIfPresent();
+    await this.clickRegister();
+  }
+
+  async fillName(name: string) {
+    if (await this.nameInput.isVisible()) {
+      await this.nameInput.clear();
+      await this.nameInput.fill(name);
+    }
+  }
+
+  async fillEmail(email: string) {
+    await this.emailInput.clear();
+    await this.emailInput.fill(email);
+  }
+
+  async fillPassword(password: string) {
+    await this.passwordInput.clear();
+    await this.passwordInput.fill(password);
+  }
+
+  async fillConfirmPassword(password: string) {
+    if (await this.confirmPasswordInput.isVisible() && await this.confirmPasswordInput.count() > 1) {
+      await this.confirmPasswordInput.clear();
+      await this.confirmPasswordInput.fill(password);
+    }
+  }
+
+  async acceptTermsIfPresent() {
+    try {
+      if (await this.termsCheckbox.isVisible()) {
+        await this.termsCheckbox.check();
+      }
+    } catch {
+      // Terms checkbox not present, continue
+    }
+  }
+
+  async clickRegister() {
+    await this.registerButton.click();
+    
+    // Wait for either navigation or error message
+    await Promise.race([
+      this.page.waitForURL(/\/(dashboard|auth)/),
+      this.errorMessage.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null),
+      this.page.waitForLoadState('networkidle')
+    ]);
+  }
+
+  async clickLoginLink() {
+    await this.loginLink.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async getErrorMessage(): Promise<string | null> {
+    try {
+      await this.errorMessage.waitFor({ state: 'visible', timeout: 3000 });
+      return await this.errorMessage.textContent();
+    } catch {
+      return null;
+    }
+  }
+
+  async waitForRegistrationSuccess() {
+    // Wait for either dashboard navigation or success message
+    await Promise.race([
+      this.page.waitForURL(/\/(dashboard|auth)/, { timeout: 15000 }),
+      this.successMessage.waitFor({ state: 'visible', timeout: 15000 })
+    ]);
+  }
+
+  async isLoading(): Promise<boolean> {
+    try {
+      await this.loadingSpinner.waitFor({ state: 'visible', timeout: 1000 });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async waitForFormReady() {
+    await this.verifyRegisterForm();
+    // Ensure no loading state
+    await this.loadingSpinner.waitFor({ state: 'hidden' }).catch(() => {});
+  }
+
+  async validatePasswordMatch(): Promise<boolean> {
+    const password = await this.passwordInput.inputValue();
+    const confirmPassword = await this.confirmPasswordInput.inputValue();
+    return password === confirmPassword;
+  }
+}
