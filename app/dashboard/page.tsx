@@ -47,16 +47,13 @@ const DashboardHeader = memo(({
 }) => {
   return (
     <header className="glass border-b border-white/10" role="banner">
-      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-        <div className="flex flex-col items-center flex-1">
-          <LogoFull size="xl" className="h-20" priority />
-          <div className="flex items-center gap-2 text-sm mt-1" data-testid="streak-counter">
-            <Flame className="w-4 h-4 text-orange-400" />
-            <span className="text-gray-300 font-medium">Streak: {currentStreak} days</span>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-1.5 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
+          <Flame className="w-4 h-4 text-orange-400" />
+          <span className="text-gray-300 font-medium">Streak: {currentStreak} days</span>
         </div>
         
-        <div className="flex items-center gap-2 absolute right-4 top-1/2 -translate-y-1/2" data-testid="user-menu">
+        <div className="flex items-center gap-2" data-testid="user-menu">
           <Link 
             href="/profile" 
             className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
@@ -375,12 +372,17 @@ export default function DashboardPageV2() {
         <DashboardHeader currentStreak={currentStreak} onLogout={handleLogout} />
 
         <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Logo Section */}
+          <div className="flex justify-center mb-6">
+            <LogoFull size="3xl" className="h-40" priority />
+          </div>
+          
           {/* Welcome Section */}
           <main className="mb-8" role="main">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold mb-2 text-center">
               Hello, {user.email?.split('@')[0]}! 👋
             </h1>
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-center">
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 

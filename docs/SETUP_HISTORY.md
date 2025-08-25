@@ -256,5 +256,22 @@ Before considering setup complete:
 
 ---
 
+## 📝 Change History
+
+### August 25, 2025 - Deployment Clarification
+- **Issue**: Documentation and scripts incorrectly referenced Cloudflare Pages deployment
+- **Resolution**: Updated all references to clarify Vercel-only deployment
+- **Changes Made**:
+  - Updated `CLAUDE.md` deployment section to remove Cloudflare deployment references
+  - Completely rewrote `DEPLOYMENT.md` to reflect Vercel-only deployment
+  - Updated script comments in `configure-dns.js` and `setup-all.js` to clarify DNS-only purpose
+  - Removed outdated `CLOUDFLARE_SETUP.md` file
+- **Current State**: 
+  - Deployment: **Vercel only** (axis6.app and axis6.sujeto10.com)
+  - DNS: Cloudflare (for DNS management only, pointing to Vercel)
+  - MCP Cloudflare: Retained for DNS management purposes
+
+---
+
 *This document serves as the source of truth for AXIS6 infrastructure setup.*
-*Last updated: December 27, 2024*
+*Last updated: August 25, 2025*
