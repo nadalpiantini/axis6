@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-08-25T14:43:43.723Z",
+  "summary": {
+    "total": 22,
+    "passed": 8,
+    "failed": 14,
+    "warnings": 0
+  },
+  "passRate": 36,
+  "status": "NEEDS_WORK",
+  "recommendations": [
+    "Fix failing tests before production deployment",
+    "Increase test coverage and fix critical issues"
+  ]
+}

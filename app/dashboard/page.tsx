@@ -4,7 +4,7 @@ import { memo, useMemo, useCallback, lazy, Suspense } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Flame, Settings, LogOut, TrendingUp, Trophy } from 'lucide-react'
+import { Flame, Settings, LogOut, TrendingUp, Trophy, User } from 'lucide-react'
 
 // React Query hooks
 import { 
@@ -49,7 +49,7 @@ const DashboardHeader = memo(({
     <header className="glass border-b border-white/10" role="banner">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <LogoFull size="md" className="h-10" priority />
+          <LogoFull size="2xl" className="h-32" priority />
           <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
             <Flame className="w-4 h-4 text-orange-400" />
             <span className="text-gray-300">Streak: {currentStreak} days</span>
@@ -57,6 +57,13 @@ const DashboardHeader = memo(({
         </div>
         
         <div className="flex items-center gap-4" data-testid="user-menu">
+          <Link 
+            href="/profile" 
+            className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            aria-label="Go to profile"
+          >
+            <User className="w-5 h-5" aria-hidden="true" />
+          </Link>
           <Link 
             href="/settings" 
             className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
@@ -288,12 +295,12 @@ export default function DashboardPageV2() {
   const axes = useMemo(
     () => categories.map(cat => ({
       id: cat.id,
-      name: locale === 'es' ? (cat.name?.es || cat.name?.en || cat.slug) : (cat.name?.en || cat.name?.es || cat.slug),
+      name: cat.name?.en || cat.slug,
       color: cat.color,
       icon: cat.icon,
       completed: completedCategoryIds.has(cat.id)
     })),
-    [categories, completedCategoryIds, locale]
+    [categories, completedCategoryIds]
   )
 
   const currentStreak = useMemo(

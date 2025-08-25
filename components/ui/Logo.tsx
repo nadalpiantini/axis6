@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 interface LogoProps {
   variant?: 'full' | 'icon' | 'icon-alt'
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
   className?: string
   priority?: boolean
 }
@@ -15,6 +15,8 @@ const sizeMap = {
   md: { width: 48, height: 48 },
   lg: { width: 64, height: 64 },
   xl: { width: 128, height: 128 },
+  '2xl': { width: 192, height: 192 },
+  '3xl': { width: 256, height: 256 },
 }
 
 const fullLogoSizes = {
@@ -22,6 +24,8 @@ const fullLogoSizes = {
   md: { width: 120, height: 48 },
   lg: { width: 160, height: 64 },
   xl: { width: 320, height: 128 },
+  '2xl': { width: 480, height: 192 },
+  '3xl': { width: 640, height: 256 },
 }
 
 export function Logo({ 

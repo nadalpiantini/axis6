@@ -32,6 +32,26 @@ export default function ForgotPasswordPage() {
         return
       }
 
+      // Send custom password reset email (optional - Supabase handles the reset link)
+      try {
+        await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'password-reset',
+            data: {
+              name: email.split('@')[0], // Use email prefix as name fallback
+              email: email,
+              resetUrl: `${window.location.origin}/auth/reset-password`
+            },
+            skipAuth: true
+          })
+        })
+      } catch (emailError) {
+        console.warn('Failed to send custom password reset email:', emailError)
+        // Don't block the flow for email failures
+      }
+
       setSuccess(true)
     } catch (error) {
       console.error('Password reset failed:', error)

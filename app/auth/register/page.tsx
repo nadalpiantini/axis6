@@ -165,6 +165,25 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
+        // Send welcome email (fire and forget)
+        try {
+          await fetch('/api/email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'welcome',
+              data: {
+                name: name,
+                email: email
+              },
+              skipAuth: true
+            })
+          })
+        } catch (emailError) {
+          console.warn('Failed to send welcome email:', emailError)
+          // Don't block registration flow for email failures
+        }
+
         // Check if we have a session (email confirmations disabled) or not (enabled)
         if (data.session) {
           // Direct login - email confirmations are disabled

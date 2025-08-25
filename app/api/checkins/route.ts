@@ -1,0 +1,228 @@
+import { createClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server'
+
+// GET /api/checkins - Get user's check-ins
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    
+    // Get user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get query parameters
+    const { searchParams } = new URL(request.url)
+    const date = searchParams.get('date')
+    const categoryId = searchParams.get('categoryId')
+    
+    let query = supabase
+      .from('axis6_checkins')
+      .select(`
+        *,
+        axis6_categories (
+          id,
+          name,
+          slug,
+          color,
+          icon
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('completed_at', { ascending: false })
+
+    // Filter by date if provided
+    if (date) {
+      query = query.eq('completed_at', date)
+    }
+
+    // Filter by category if provided
+    if (categoryId) {
+      query = query.eq('category_id', categoryId)
+    }
+
+    const { data: checkins, error } = await query
+    
+    if (error) {
+      console.error('Error fetching check-ins:', error)
+      return NextResponse.json({ error: 'Failed to fetch check-ins' }, { status: 500 })
+    }
+
+    return NextResponse.json({ checkins })
+
+  } catch (error) {
+    console.error('Check-ins API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// POST /api/checkins - Create or toggle check-in
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    
+    // Get user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { categoryId, completed, mood, notes } = body
+
+    if (!categoryId) {
+      return NextResponse.json({ error: 'Category ID is required' }, { status: 400 })
+    }
+
+    const today = new Date().toISOString().split('T')[0]
+
+    if (completed) {
+      // Create check-in
+      const { data: checkin, error } = await supabase
+        .from('axis6_checkins')
+        .upsert({
+          user_id: user.id,
+          category_id: categoryId,
+          completed_at: today,
+          mood: mood || 5,
+          notes: notes || null,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error creating check-in:', error)
+        return NextResponse.json({ error: 'Failed to create check-in' }, { status: 500 })
+      }
+
+      // Update streak using RPC function
+      await supabase.rpc('axis6_calculate_streak_optimized', {
+        p_user_id: user.id,
+        p_category_id: categoryId
+      })
+
+      return NextResponse.json({ checkin, message: 'Check-in completed successfully' })
+
+    } else {
+      // Remove check-in
+      const { error } = await supabase
+        .from('axis6_checkins')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('category_id', categoryId)
+        .eq('completed_at', today)
+
+      if (error) {
+        console.error('Error removing check-in:', error)
+        return NextResponse.json({ error: 'Failed to remove check-in' }, { status: 500 })
+      }
+
+      // Update streak
+      await supabase.rpc('axis6_calculate_streak_optimized', {
+        p_user_id: user.id,
+        p_category_id: categoryId
+      })
+
+      return NextResponse.json({ message: 'Check-in removed successfully' })
+    }
+
+  } catch (error) {
+    console.error('Check-ins POST API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// PUT /api/checkins - Update existing check-in
+export async function PUT(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    
+    // Get user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { categoryId, date, mood, notes } = body
+
+    if (!categoryId || !date) {
+      return NextResponse.json({ error: 'Category ID and date are required' }, { status: 400 })
+    }
+
+    const { data: checkin, error } = await supabase
+      .from('axis6_checkins')
+      .update({
+        mood: mood,
+        notes: notes,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', user.id)
+      .eq('category_id', categoryId)
+      .eq('completed_at', date)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error updating check-in:', error)
+      return NextResponse.json({ error: 'Failed to update check-in' }, { status: 500 })
+    }
+
+    return NextResponse.json({ checkin, message: 'Check-in updated successfully' })
+
+  } catch (error) {
+    console.error('Check-ins PUT API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// DELETE /api/checkins - Delete specific check-in
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    
+    // Get user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const categoryId = searchParams.get('categoryId')
+    const date = searchParams.get('date')
+
+    if (!categoryId || !date) {
+      return NextResponse.json({ error: 'Category ID and date are required' }, { status: 400 })
+    }
+
+    const { error } = await supabase
+      .from('axis6_checkins')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('category_id', categoryId)
+      .eq('completed_at', date)
+
+    if (error) {
+      console.error('Error deleting check-in:', error)
+      return NextResponse.json({ error: 'Failed to delete check-in' }, { status: 500 })
+    }
+
+    // Update streak after deletion
+    await supabase.rpc('axis6_calculate_streak_optimized', {
+      p_user_id: user.id,
+      p_category_id: categoryId
+    })
+
+    return NextResponse.json({ message: 'Check-in deleted successfully' })
+
+  } catch (error) {
+    console.error('Check-ins DELETE API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
