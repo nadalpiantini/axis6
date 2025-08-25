@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, AlertCircle, Loader2, CheckCircle } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
 import { CategoryCard } from '@/components/onboarding/CategoryCard'
-import { LanguageSelector } from '@/components/onboarding/LanguageSelector'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
 
 export default function OnboardingPage() {
@@ -13,11 +12,9 @@ export default function OnboardingPage() {
     selectedCategories,
     loading,
     error,
-    language,
     categoriesLoading,
     categoriesError,
     toggleCategory,
-    setLanguage,
     completeOnboarding,
     isSelected,
     canComplete,
@@ -26,31 +23,18 @@ export default function OnboardingPage() {
     remainingCount
   } = useOnboarding()
 
-  // Text content based on language
+  // English content only
   const content = {
-    es: {
-      title: 'Personaliza tu AXIS6',
-      subtitle: 'Selecciona las 6 dimensiones que quieres equilibrar en tu vida',
-      selected: 'seleccionadas',
-      beginJourney: 'Comenzar mi Viaje',
-      settingUp: 'Configurando...',
-      perfect: '¡Perfecto! Has seleccionado tus 6 dimensiones',
-      remaining: remainingCount > 0 ? `Selecciona ${remainingCount} más` : '',
-      loadingCategories: 'Cargando dimensiones...',
-      errorTitle: 'Error al cargar las categorías'
-    },
-    en: {
-      title: 'Customize Your AXIS6',
-      subtitle: 'Select the 6 dimensions you want to balance in your life',
-      selected: 'selected',
-      beginJourney: 'Begin My Journey',
-      settingUp: 'Setting up...',
-      perfect: 'Perfect! You\'ve selected your 6 dimensions',
-      remaining: remainingCount > 0 ? `Select ${remainingCount} more` : '',
-      loadingCategories: 'Loading dimensions...',
-      errorTitle: 'Error loading categories'
-    }
-  }[language]
+    title: 'Customize Your AXIS6',
+    subtitle: 'Select the 6 dimensions you want to balance in your life',
+    selected: 'selected',
+    beginJourney: 'Begin My Journey',
+    settingUp: 'Setting up...',
+    perfect: 'Perfect! You\'ve selected your 6 dimensions',
+    remaining: remainingCount > 0 ? `Select ${remainingCount} more` : '',
+    loadingCategories: 'Loading dimensions...',
+    errorTitle: 'Error loading categories'
+  }
 
   // Loading state
   if (categoriesLoading) {
@@ -78,7 +62,7 @@ export default function OnboardingPage() {
             onClick={() => window.location.reload()}
             className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
           >
-            Reintentar
+            Try Again
           </button>
         </div>
       </div>
@@ -94,15 +78,8 @@ export default function OnboardingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex-1" />
+          <div className="flex justify-center mb-6">
             <LogoFull size="lg" />
-            <div className="flex-1 flex justify-end">
-              <LanguageSelector 
-                language={language} 
-                onLanguageChange={setLanguage}
-              />
-            </div>
           </div>
           
           <h1 className="text-4xl font-bold text-white mb-2">
@@ -145,7 +122,7 @@ export default function OnboardingPage() {
               category={category}
               isSelected={isSelected(category.id)}
               onClick={() => toggleCategory(category.id)}
-              language={language}
+              language="en"
               animationDelay={index}
             />
           ))}

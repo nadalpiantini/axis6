@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, User, ChevronRight } from 'lucide-react'
+import { Mail, Lock, User, ChevronRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
 import { shouldBypassRateLimit, shouldBypassEmailConfirmation } from '@/lib/test-config'
+import { PasswordStrength } from '@/components/auth/PasswordStrength'
+import { validateEmail, validateName, validatePasswordMatch } from '@/lib/validation/auth'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -15,12 +17,54 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [newsletterSubscribe, setNewsletterSubscribe] = useState(false)
   const [rateLimitedUntil, setRateLimitedUntil] = useState<number | null>(null)
+
+  // Real-time validation helpers
+  const validateField = (field: string, value: string) => {
+    const errors = { ...fieldErrors }
+    
+    switch (field) {
+      case 'name':
+        const nameValidation = validateName(value)
+        if (!nameValidation.isValid) {
+          errors.name = nameValidation.error!
+        } else {
+          delete errors.name
+        }
+        break
+      case 'email':
+        const emailValidation = validateEmail(value)
+        if (!emailValidation.isValid) {
+          errors.email = emailValidation.error!
+        } else {
+          delete errors.email
+        }
+        break
+      case 'confirmPassword':
+        if (value && password) {
+          const matchValidation = validatePasswordMatch(password, value)
+          if (!matchValidation.isValid) {
+            errors.confirmPassword = matchValidation.error!
+          } else {
+            delete errors.confirmPassword
+          }
+        }
+        break
+    }
+    
+    setFieldErrors(errors)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setFieldErrors({})
     
     // Check if still rate limited (bypass in test mode)
     if (!shouldBypassRateLimit() && rateLimitedUntil && Date.now() < rateLimitedUntil) {
@@ -30,9 +74,34 @@ export default function RegisterPage() {
       return
     }
     
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
+    // Validate all fields
+    const errors: Record<string, string> = {}
+    
+    const nameValidation = validateName(name)
+    if (!nameValidation.isValid) {
+      errors.name = nameValidation.error!
+    }
+    
+    const emailValidation = validateEmail(email)
+    if (!emailValidation.isValid) {
+      errors.email = emailValidation.error!
+    }
+    
+    if (password.length < 8) {
+      errors.password = 'Password must be at least 8 characters'
+    }
+    
+    const passwordMatchValidation = validatePasswordMatch(password, confirmPassword)
+    if (!passwordMatchValidation.isValid) {
+      errors.confirmPassword = passwordMatchValidation.error!
+    }
+    
+    if (!termsAccepted) {
+      errors.terms = 'You must accept the terms and conditions'
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       setLoading(false)
       return
     }
@@ -47,6 +116,7 @@ export default function RegisterPage() {
         options: {
           data: {
             name,
+            newsletter_subscribed: newsletterSubscribe,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
@@ -128,8 +198,11 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div role="alert" className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300">
-              {error}
+            <div role="alert" className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <p className="text-red-300">{error}</p>
+              </div>
             </div>
           )}
 
@@ -145,13 +218,28 @@ export default function RegisterPage() {
                   data-testid="name-input"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
+                  onChange={(e) => {
+                    setName(e.target.value)
+                    validateField('name', e.target.value)
+                  }}
+                  onBlur={(e) => validateField('name', e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
+                    fieldErrors.name 
+                      ? 'border-red-500/50 focus:border-red-400' 
+                      : 'border-white/20 focus:border-purple-400'
+                  }`}
                   placeholder="Your name"
                   aria-label="Name"
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   required
                 />
               </div>
+              {fieldErrors.name && (
+                <p id="name-error" className="mt-1 text-xs text-red-400">
+                  {fieldErrors.name}
+                </p>
+              )}
             </div>
 
             <div>
@@ -165,13 +253,28 @@ export default function RegisterPage() {
                   data-testid="email-input"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
-                  placeholder="tu@email.com"
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    validateField('email', e.target.value)
+                  }}
+                  onBlur={(e) => validateField('email', e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
+                    fieldErrors.email 
+                      ? 'border-red-500/50 focus:border-red-400' 
+                      : 'border-white/20 focus:border-purple-400'
+                  }`}
+                  placeholder="your@email.com"
                   aria-label="Email"
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   required
                 />
               </div>
+              {fieldErrors.email && (
+                <p id="email-error" className="mt-1 text-xs text-red-400">
+                  {fieldErrors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -183,16 +286,45 @@ export default function RegisterPage() {
                 <input
                   id="password"
                   data-testid="password-input"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    if (confirmPassword) {
+                      validateField('confirmPassword', confirmPassword)
+                    }
+                  }}
+                  className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
+                    fieldErrors.password 
+                      ? 'border-red-500/50 focus:border-red-400' 
+                      : 'border-white/20 focus:border-purple-400'
+                  }`}
                   placeholder="Minimum 8 characters"
                   aria-label="Password"
+                  aria-invalid={!!fieldErrors.password}
+                  aria-describedby="password-requirements"
                   minLength={8}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+              {fieldErrors.password && (
+                <p className="mt-1 text-xs text-red-400">
+                  {fieldErrors.password}
+                </p>
+              )}
+              {password && (
+                <div className="mt-3" id="password-requirements">
+                  <PasswordStrength password={password} />
+                </div>
+              )}
             </div>
 
             <div>
@@ -204,33 +336,92 @@ export default function RegisterPage() {
                 <input
                   id="confirmPassword"
                   data-testid="confirm-password-input"
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-purple-400 text-white placeholder-gray-400"
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value)
+                    validateField('confirmPassword', e.target.value)
+                  }}
+                  onBlur={(e) => validateField('confirmPassword', e.target.value)}
+                  className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
+                    fieldErrors.confirmPassword 
+                      ? 'border-red-500/50 focus:border-red-400' 
+                      : 'border-white/20 focus:border-purple-400'
+                  }`}
                   placeholder="Confirm your password"
                   aria-label="Confirm Password"
+                  aria-invalid={!!fieldErrors.confirmPassword}
+                  aria-describedby={fieldErrors.confirmPassword ? 'confirm-password-error' : undefined}
                   minLength={8}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+              {fieldErrors.confirmPassword && (
+                <p id="confirm-password-error" className="mt-1 text-xs text-red-400">
+                  {fieldErrors.confirmPassword}
+                </p>
+              )}
             </div>
 
-            <div className="flex items-center text-sm text-gray-300">
-              <input type="checkbox" className="mr-2 rounded" required />
-              <span>
-                I accept the{' '}
-                <Link href="/terms" className="text-purple-400 hover:text-purple-300">
-                  terms and conditions
-                </Link>
-              </span>
+            <div className="space-y-3">
+              <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={termsAccepted}
+                  onChange={(e) => {
+                    setTermsAccepted(e.target.checked)
+                    if (fieldErrors.terms) {
+                      const errors = { ...fieldErrors }
+                      delete errors.terms
+                      setFieldErrors(errors)
+                    }
+                  }}
+                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500" 
+                  required 
+                />
+                <span>
+                  I accept the{' '}
+                  <Link href="/terms" className="text-purple-400 hover:text-purple-300 underline">
+                    terms and conditions
+                  </Link>
+                  {' '}and{' '}
+                  <Link href="/privacy" className="text-purple-400 hover:text-purple-300 underline">
+                    privacy policy
+                  </Link>
+                </span>
+              </label>
+              {fieldErrors.terms && (
+                <p className="text-xs text-red-400 ml-6">
+                  {fieldErrors.terms}
+                </p>
+              )}
+              
+              <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={newsletterSubscribe}
+                  onChange={(e) => setNewsletterSubscribe(e.target.checked)}
+                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500" 
+                />
+                <span>
+                  Send me tips and updates to help me maintain balance (optional)
+                </span>
+              </label>
             </div>
 
             <button
               type="submit"
               data-testid="register-submit"
-              disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2"
+              disabled={loading || Object.keys(fieldErrors).length > 0}
+              className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Create Free Account'}
               <ChevronRight className="w-5 h-5" />

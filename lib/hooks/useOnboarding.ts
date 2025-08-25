@@ -9,7 +9,6 @@ export interface OnboardingState {
   selectedCategories: number[]
   loading: boolean
   error: string | null
-  language: 'es' | 'en'
 }
 
 export function useOnboarding() {
@@ -19,8 +18,7 @@ export function useOnboarding() {
   const [state, setState] = useState<OnboardingState>({
     selectedCategories: [],
     loading: false,
-    error: null,
-    language: 'es' // Default to Spanish, could be dynamic later
+    error: null
   })
 
   const toggleCategory = (categoryId: number) => {
@@ -39,15 +37,12 @@ export function useOnboarding() {
     })
   }
 
-  const setLanguage = (language: 'es' | 'en') => {
-    setState(prev => ({ ...prev, language }))
-  }
 
   const completeOnboarding = async () => {
     if (state.selectedCategories.length !== 6) {
       setState(prev => ({ 
         ...prev, 
-        error: 'Debes seleccionar exactamente 6 dimensiones para continuar' 
+        error: 'You must select exactly 6 dimensions to continue' 
       }))
       return
     }
@@ -61,7 +56,7 @@ export function useOnboarding() {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       
       if (userError || !user) {
-        throw new Error('Usuario no autenticado')
+        throw new Error('User not authenticated')
       }
 
       // Create or update user profile
@@ -69,13 +64,13 @@ export function useOnboarding() {
         .from('axis6_profiles')
         .upsert({
           id: user.id,
-          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Usuario',
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
           onboarded: true,
           updated_at: new Date().toISOString()
         })
 
       if (profileError) {
-        throw new Error('Error al crear el perfil de usuario')
+        throw new Error('Error creating user profile')
       }
 
       // Initialize streaks for selected categories
@@ -103,7 +98,7 @@ export function useOnboarding() {
       console.error('Onboarding failed:', error)
       setState(prev => ({ 
         ...prev, 
-        error: error instanceof Error ? error.message : 'Error durante el proceso de configuración',
+        error: error instanceof Error ? error.message : 'Error during setup process',
         loading: false 
       }))
     }
@@ -122,7 +117,6 @@ export function useOnboarding() {
     selectedCategories: state.selectedCategories,
     loading: state.loading,
     error: state.error,
-    language: state.language,
     
     // Loading states
     categoriesLoading,
@@ -130,7 +124,6 @@ export function useOnboarding() {
     
     // Actions
     toggleCategory,
-    setLanguage,
     completeOnboarding,
     
     // Helpers

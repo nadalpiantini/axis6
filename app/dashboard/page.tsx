@@ -27,7 +27,7 @@ import {
 
 // Components
 import { AxisIcon } from '@/components/icons'
-import { LogoIcon } from '@/components/ui/Logo'
+import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
 import { ErrorBoundary } from '@/components/error/ErrorBoundary'
@@ -49,10 +49,10 @@ const DashboardHeader = memo(({
     <header className="glass border-b border-white/10" role="banner">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <LogoIcon size="md" className="w-10 h-10" priority />
+          <LogoFull size="md" className="h-10" priority />
           <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
             <Flame className="w-4 h-4 text-orange-400" />
-            <span className="text-gray-300">Racha: {currentStreak} días</span>
+            <span className="text-gray-300">Streak: {currentStreak} days</span>
           </div>
         </div>
         
@@ -60,14 +60,14 @@ const DashboardHeader = memo(({
           <Link 
             href="/settings" 
             className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
-            aria-label="Ir a configuración"
+            aria-label="Go to settings"
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
           </Link>
           <button 
             onClick={onLogout} 
             className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
-            aria-label="Cerrar sesión"
+            aria-label="Sign out"
             type="button"
           >
             <LogOut className="w-5 h-5" aria-hidden="true" />
@@ -116,7 +116,7 @@ const HexagonVisualization = memo(({
 
   return (
     <div className="flex justify-center mb-8" data-testid="hexagon-chart">
-      <svg width="300" height="300" viewBox="0 0 300 300" role="img" aria-label={`Progreso hexagonal: ${axes.filter(a => a.completed).length} de 6 ejes completados`}>
+      <svg width="300" height="300" viewBox="0 0 300 300" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
         {/* Background hexagon */}
         <polygon
           points={createHexagonPath(120, 150, 150)}
@@ -174,7 +174,7 @@ const HexagonVisualization = memo(({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 role="button"
-                aria-label={`${axis.name}: ${axis.completed ? 'completado' : 'no completado'}`}
+                aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
                 data-testid={`category-${axis.name.toLowerCase()}`}
                 data-category={axis.name.toLowerCase()}
                 tabIndex={0}
@@ -320,14 +320,14 @@ export default function DashboardPageV2() {
             addNotification({
               type: 'success',
               message: axis.completed 
-                ? `${axis.name} desmarcado` 
-                : `¡${axis.name} completado!`
+                ? `${axis.name} unchecked` 
+                : `${axis.name} completed!`
             })
           },
           onError: () => {
             addNotification({
               type: 'error',
-              message: 'Error al actualizar. Intenta de nuevo.'
+              message: 'Error updating. Please try again.'
             })
           }
         }
@@ -371,7 +371,7 @@ export default function DashboardPageV2() {
           {/* Welcome Section */}
           <main className="mb-8" role="main">
             <h1 className="text-3xl font-bold mb-2">
-              ¡Hola, {user.email?.split('@')[0]}! 👋
+              Hello, {user.email?.split('@')[0]}! 👋
             </h1>
             <p className="text-gray-400">
               {new Date().toLocaleDateString('en-US', { 
@@ -384,14 +384,14 @@ export default function DashboardPageV2() {
           </main>
 
           {/* Main Grid */}
-          <div className="grid lg:grid-cols-3 gap-8" role="region" aria-label="Panel de control principal">
+          <div className="grid lg:grid-cols-3 gap-8" role="region" aria-label="Main dashboard panel">
             {/* Hexagon Section */}
             <div className="lg:col-span-2">
               <div className="glass rounded-2xl p-8">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-semibold">Tu Progreso de Hoy</h3>
+                  <h3 className="text-xl font-semibold">Your Progress Today</h3>
                   <span className="text-sm text-gray-400">
-                    {completedCount}/6 completados
+                    {completedCount}/6 completed
                   </span>
                 </div>
 
@@ -419,22 +419,22 @@ export default function DashboardPageV2() {
             <div className="space-y-6">
               {/* Quick Stats */}
               <div className="glass rounded-2xl p-6">
-                <h3 className="text-lg font-semibold mb-4">Estadísticas</h3>
+                <h3 className="text-lg font-semibold mb-4">Statistics</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Racha actual</span>
+                    <span className="text-gray-400">Current streak</span>
                     <span className="text-xl font-bold text-orange-400">
-                      {currentStreak} días
+                      {currentStreak} days
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Mejor racha</span>
+                    <span className="text-gray-400">Best streak</span>
                     <span className="text-xl font-bold text-purple-400">
-                      {longestStreak} días
+                      {longestStreak} days
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Completado hoy</span>
+                    <span className="text-gray-400">Completed today</span>
                     <span className="text-xl font-bold">{completedCount}/6</span>
                   </div>
                 </div>
@@ -445,17 +445,17 @@ export default function DashboardPageV2() {
                 <Link 
                   href="/analytics"
                   className="glass rounded-xl p-4 min-h-[56px] flex items-center justify-between hover:bg-white/5 transition"
-                  aria-label="Ver análisis completo de tu progreso"
+                  aria-label="View complete progress analysis"
                 >
-                  <span>Ver Análisis Completo</span>
+                  <span>View Complete Analysis</span>
                   <TrendingUp className="w-5 h-5 text-purple-400" aria-hidden="true" />
                 </Link>
                 <Link 
                   href="/achievements"
                   className="glass rounded-xl p-4 min-h-[56px] flex items-center justify-between hover:bg-white/5 transition"
-                  aria-label="Ver tus logros y reconocimientos"
+                  aria-label="View your achievements and recognitions"
                 >
-                  <span>Logros</span>
+                  <span>Achievements</span>
                   <Trophy className="w-5 h-5 text-yellow-400" aria-hidden="true" />
                 </Link>
               </div>

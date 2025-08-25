@@ -8,113 +8,113 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-// Datos de ejemplo para el sistema ritualizado
+// Example data for the ritualized system
 const categories = [
   {
     key: 'physical',
-    label: 'Físico',
-    ritualName: 'Movimiento Vivo',
+    label: 'Physical',
+    ritualName: 'Living Movement',
     color: '#C85729',
     softColor: '#FED7AA',
     darkColor: '#7C2D12',
     icon: 'heart',
-    mantra: 'Hoy habito mi cuerpo con ternura',
+    mantra: 'Today I inhabit my body with tenderness',
     microActions: [
-      'Caminar 10 minutos escuchando tu respiración',
-      'Estirarte lentamente al despertar',
-      'Bailar lo que sientes',
-      'Hacer 5 respiraciones profundas',
-      'Automasaje consciente'
+      'Walk 10 minutes listening to your breathing',
+      'Stretch slowly when waking up',
+      'Dance what you feel',
+      'Take 5 deep breaths',
+      'Conscious self-massage'
     ],
     movement: 'latido'
   },
   {
     key: 'mental',
     label: 'Mental',
-    ritualName: 'Claridad Interna',
+    ritualName: 'Inner Clarity',
     color: '#6B7280',
     softColor: '#E5E7EB',
     darkColor: '#374151',
     icon: 'brain',
-    mantra: 'Hoy hago espacio para pensar menos',
+    mantra: 'Today I make space to think less',
     microActions: [
-      'Leer 1 página nutritiva',
-      'Apagar notificaciones por 30 minutos',
-      'Respirar antes de responder',
-      'Anotar una idea',
-      'Hacer una pausa consciente'
+      'Read 1 nourishing page',
+      'Turn off notifications for 30 minutes',
+      'Breathe before responding',
+      'Write down one idea',
+      'Take a conscious pause'
     ],
     movement: 'fade'
   },
   {
     key: 'art',
-    label: 'Arte',
-    ritualName: 'Expresión Creadora',
+    label: 'Art',
+    ritualName: 'Creative Expression',
     color: '#A78BFA',
     softColor: '#EDE9FE',
     darkColor: '#6B21A8',
     icon: 'palette',
-    mantra: 'Hoy no creo para mostrar, creo para liberar',
+    mantra: 'Today I create not to show, but to liberate',
     microActions: [
-      'Escribir sin editar',
-      'Pintar o colorear',
-      'Grabar un audio personal',
-      'Improvisar una melodía',
-      'Compartir algo imperfecto'
+      'Write without editing',
+      'Paint or color',
+      'Record a personal audio',
+      'Improvise a melody',
+      'Share something imperfect'
     ],
     movement: 'expand'
   },
   {
     key: 'social',
     label: 'Social',
-    ritualName: 'Vínculo Espejo',
+    ritualName: 'Mirror Bond',
     color: '#10B981',
     softColor: '#D1FAE5',
     darkColor: '#047857',
     icon: 'users',
-    mantra: 'Hoy me vinculo sin desaparecer',
+    mantra: 'Today I connect without disappearing',
     microActions: [
-      'Enviar mensaje auténtico',
-      'Llamar a alguien solo para escuchar',
-      'Poner un límite claro',
-      'Compartir algo vulnerable',
-      'Hacer una pregunta sincera'
+      'Send an authentic message',
+      'Call someone just to listen',
+      'Set a clear boundary',
+      'Share something vulnerable',
+      'Ask a sincere question'
     ],
     movement: 'wave'
   },
   {
     key: 'spiritual',
-    label: 'Espiritual',
-    ritualName: 'Presencia Elevada',
+    label: 'Spiritual',
+    ritualName: 'Elevated Presence',
     color: '#4C1D95',
     softColor: '#E9D5FF',
     darkColor: '#2E1065',
     icon: 'sun',
-    mantra: 'Hoy me encuentro más allá del hacer',
+    mantra: 'Today I find myself beyond doing',
     microActions: [
-      'Meditar 3 minutos',
-      'Leer un texto sagrado',
-      'Orar o agradecer',
-      'Mirar el cielo',
-      'Escuchar silencio'
+      'Meditate for 3 minutes',
+      'Read a sacred text',
+      'Pray or give thanks',
+      'Look at the sky',
+      'Listen to silence'
     ],
     movement: 'pulse'
   },
   {
     key: 'material',
     label: 'Material',
-    ritualName: 'Sustento Terrenal',
+    ritualName: 'Earthly Sustenance',
     color: '#B45309',
     softColor: '#FEF3C7',
     darkColor: '#78350F',
     icon: 'briefcase',
-    mantra: 'Hoy me sostengo, no me demuestro',
+    mantra: 'Today I sustain myself, I do not prove myself',
     microActions: [
-      'Completar una tarea con presencia',
-      'Revisar finanzas sin miedo',
-      'Organizar tu espacio',
-      'Decidir no producir más hoy',
-      'Dar valor al trabajo invisible'
+      'Complete a task with presence',
+      'Review finances without fear',
+      'Organize your space',
+      'Decide not to produce more today',
+      'Value invisible work'
     ],
     movement: 'vibrate'
   }
@@ -145,10 +145,10 @@ export default function ShowcasePage() {
               </Link>
               <div>
                 <h1 className="text-2xl font-serif font-bold text-textPrimary">
-                  Sistema AXIS6 Ritualizado
+                  AXIS6 Ritualized System
                 </h1>
                 <p className="text-sm text-textSecondary">
-                  Seis dimensiones. Un solo tú. No rompas tu Axis.
+                  Six dimensions. One you. Don't break your Axis.
                 </p>
               </div>
             </div>
@@ -167,10 +167,10 @@ export default function ShowcasePage() {
         >
           <div className="mb-6">
             <h2 className="text-xl font-serif font-bold text-textPrimary mb-2">
-              Mantras Diarios
+              Daily Mantras
             </h2>
             <p className="text-sm text-textSecondary">
-              Rotación automática cada 10 segundos con animaciones únicas por eje
+              Automatic rotation every 10 seconds with unique animations per axis
             </p>
           </div>
           <DailyMantra />
@@ -184,10 +184,10 @@ export default function ShowcasePage() {
         >
           <div className="mb-6">
             <h2 className="text-xl font-serif font-bold text-textPrimary mb-2">
-              Tarjetas de Categoría
+              Category Cards
             </h2>
             <p className="text-sm text-textSecondary">
-              Tarjetas interactivas con microacciones y animaciones personalizadas
+              Interactive cards with micro-actions and personalized animations
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -217,10 +217,10 @@ export default function ShowcasePage() {
         >
           <div className="mb-6">
             <h2 className="text-xl font-serif font-bold text-textPrimary mb-2">
-              Gráfico Hexagonal
+              Hexagonal Chart
             </h2>
             <p className="text-sm text-textSecondary">
-              Visualización del balance con los nuevos colores y nombres ritualizados
+              Balance visualization with new colors and ritualized names
             </p>
           </div>
           <div className="flex justify-center bg-white/80 backdrop-blur-sm rounded-2xl p-8">
@@ -237,10 +237,10 @@ export default function ShowcasePage() {
         >
           <div className="mb-6">
             <h2 className="text-xl font-serif font-bold text-textPrimary mb-2">
-              Iconos Animados
+              Animated Icons
             </h2>
             <p className="text-sm text-textSecondary">
-              Iconos SVG personalizados con animaciones que reflejan la esencia de cada eje
+              Custom SVG icons with animations that reflect the essence of each axis
             </p>
           </div>
           <AxisIconGrid />
@@ -255,10 +255,10 @@ export default function ShowcasePage() {
         >
           <div className="mb-6">
             <h2 className="text-xl font-serif font-bold text-textPrimary mb-2">
-              Paleta de Colores
+              Color Palette
             </h2>
             <p className="text-sm text-textSecondary">
-              Colores ritualizados que evocan las emociones correctas
+              Ritualized colors that evoke the right emotions
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

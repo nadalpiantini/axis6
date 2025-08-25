@@ -108,7 +108,7 @@ All tables use the prefix `axis6_` for multi-tenant isolation:
 ## 🎨 AXIS6 Brand & UI Kit (v1)
 
 ### Brand Identity
-- **Slogan**: "Seis ejes. Un solo tú. No rompas tu Axis."
+- **Slogan**: "Six axes. One you. Don't break your Axis."
 - **Logo**: Circular segmented design with 6 phases
 - **Philosophy**: Balance between introspection and dynamism
 
