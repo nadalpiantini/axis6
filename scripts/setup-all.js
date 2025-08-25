@@ -102,7 +102,7 @@ async function checkEnvironment() {
 }
 
 async function setupDNS() {
-  logStep(1, 'Configuring Cloudflare DNS');
+  logStep(1, 'Configuring DNS records in Cloudflare (pointing to Vercel)');
   
   try {
     const manager = new CloudflareDNSManager(
@@ -111,7 +111,7 @@ async function setupDNS() {
     );
     
     await manager.configureDNS();
-    log('\n✅ DNS configuration complete', 'green');
+    log('\n✅ DNS configuration complete (pointing to Vercel)', 'green');
     return true;
   } catch (error) {
     log(`\n❌ DNS configuration failed: ${error.message}`, 'red');
@@ -229,7 +229,7 @@ async function main() {
   logSection('🚀 AXIS6 Complete Setup Automation');
   
   console.log('This script will automatically configure:');
-  console.log('  • Cloudflare DNS records');
+  console.log('  • DNS records in Cloudflare (pointing to Vercel)');
   console.log('  • Vercel domain and redirects');
   console.log('  • Resend email domain');
   console.log('  • Supabase email templates and SMTP');

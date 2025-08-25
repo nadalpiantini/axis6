@@ -47,33 +47,33 @@ const DashboardHeader = memo(({
 }) => {
   return (
     <header className="glass border-b border-white/10" role="banner">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <LogoFull size="2xl" className="h-32" priority />
-          <div className="flex items-center gap-2 text-sm" data-testid="streak-counter">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+        <div className="flex flex-col items-center flex-1">
+          <LogoFull size="xl" className="h-20" priority />
+          <div className="flex items-center gap-2 text-sm mt-1" data-testid="streak-counter">
             <Flame className="w-4 h-4 text-orange-400" />
-            <span className="text-gray-300">Streak: {currentStreak} days</span>
+            <span className="text-gray-300 font-medium">Streak: {currentStreak} days</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-4" data-testid="user-menu">
+        <div className="flex items-center gap-2 absolute right-4 top-1/2 -translate-y-1/2" data-testid="user-menu">
           <Link 
             href="/profile" 
-            className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Go to profile"
           >
             <User className="w-5 h-5" aria-hidden="true" />
           </Link>
           <Link 
             href="/settings" 
-            className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Go to settings"
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
           </Link>
           <button 
             onClick={onLogout} 
-            className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
             aria-label="Sign out"
             type="button"
           >

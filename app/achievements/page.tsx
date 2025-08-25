@@ -116,8 +116,8 @@ export default function AchievementsPage() {
       // Streak Achievements
       {
         id: 'first-streak',
-        title: 'Primera Racha',
-        description: 'Completa tu primera racha de 1 día',
+        title: 'First Streak',
+        description: 'Complete your first 1-day streak',
         icon: <Flame className="h-5 w-5" />,
         category: 'streak',
         requirement: 1,
@@ -127,8 +127,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'week-warrior',
-        title: 'Guerrero Semanal',
-        description: 'Mantén una racha de 7 días',
+        title: 'Week Warrior',
+        description: 'Maintain a 7-day streak',
         icon: <Target className="h-5 w-5" />,
         category: 'streak',
         requirement: 7,
@@ -138,8 +138,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'monthly-master',
-        title: 'Maestro Mensual',
-        description: 'Mantén una racha de 30 días',
+        title: 'Monthly Master',
+        description: 'Maintain a 30-day streak',
         icon: <Crown className="h-5 w-5" />,
         category: 'streak',
         requirement: 30,
@@ -149,8 +149,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'centurion',
-        title: 'Centurión',
-        description: 'Mantén una racha de 100 días',
+        title: 'Centurion',
+        description: 'Maintain a 100-day streak',
         icon: <Medal className="h-5 w-5" />,
         category: 'streak',
         requirement: 100,
@@ -162,8 +162,8 @@ export default function AchievementsPage() {
       // Completion Achievements
       {
         id: 'first-checkin',
-        title: 'Primer Paso',
-        description: 'Completa tu primer check-in',
+        title: 'First Step',
+        description: 'Complete your first check-in',
         icon: <Star className="h-5 w-5" />,
         category: 'completion',
         requirement: 1,
@@ -173,8 +173,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'dedicated',
-        title: 'Dedicado',
-        description: 'Completa 50 check-ins',
+        title: 'Dedicated',
+        description: 'Complete 50 check-ins',
         icon: <Zap className="h-5 w-5" />,
         category: 'completion',
         requirement: 50,
@@ -184,8 +184,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'committed',
-        title: 'Comprometido',
-        description: 'Completa 200 check-ins',
+        title: 'Committed',
+        description: 'Complete 200 check-ins',
         icon: <Trophy className="h-5 w-5" />,
         category: 'completion',
         requirement: 200,
@@ -195,8 +195,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'axis-master',
-        title: 'Maestro del AXIS',
-        description: 'Completa 500 check-ins',
+        title: 'AXIS Master',
+        description: 'Complete 500 check-ins',
         icon: <Award className="h-5 w-5" />,
         category: 'completion',
         requirement: 500,
@@ -230,8 +230,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'active-month',
-        title: 'Mes Activo',
-        description: 'Mantente activo por 30 días diferentes',
+        title: 'Active Month',
+        description: 'Stay active for 30 different days',
         icon: <Calendar className="h-5 w-5" />,
         category: 'milestone',
         requirement: 30,
@@ -241,8 +241,8 @@ export default function AchievementsPage() {
       },
       {
         id: 'perfectionist',
-        title: 'Perfeccionista',
-        description: 'Completa todas las categorías en un solo día',
+        title: 'Perfectionist',
+        description: 'Complete all categories in a single day',
         icon: <Star className="h-5 w-5" />,
         category: 'special',
         requirement: 1,
@@ -267,23 +267,23 @@ export default function AchievementsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Trophy className="h-8 w-8 text-yellow-400" />
-            <h1 className="text-4xl font-bold">Logros</h1>
+            <h1 className="text-4xl font-bold">Achievements</h1>
           </div>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            Celebra tu progreso y descubre nuevos objetivos por alcanzar
+            Celebrate your progress and discover new goals to achieve
           </p>
         </div>
 
@@ -294,7 +294,7 @@ export default function AchievementsPage() {
               <Trophy className="h-8 w-8 text-yellow-400" />
               <div>
                 <p className="text-2xl font-bold text-white">{unlockedAchievements.length}</p>
-                <p className="text-sm text-slate-400">Logros Desbloqueados</p>
+                <p className="text-sm text-slate-400">Unlocked Achievements</p>
               </div>
             </div>
           </Card>
@@ -304,7 +304,7 @@ export default function AchievementsPage() {
               <Target className="h-8 w-8 text-blue-400" />
               <div>
                 <p className="text-2xl font-bold text-white">{completionRate}%</p>
-                <p className="text-sm text-slate-400">Completado</p>
+                <p className="text-sm text-slate-400">Completed</p>
               </div>
             </div>
           </Card>
@@ -314,7 +314,7 @@ export default function AchievementsPage() {
               <Flame className="h-8 w-8 text-orange-400" />
               <div>
                 <p className="text-2xl font-bold text-white">{Math.max(...streaks.map(s => s.longest_streak), 0)}</p>
-                <p className="text-sm text-slate-400">Racha Más Larga</p>
+                <p className="text-sm text-slate-400">Longest Streak</p>
               </div>
             </div>
           </Card>
@@ -333,7 +333,7 @@ export default function AchievementsPage() {
         {/* Progress Bar */}
         <Card className="bg-slate-800/50 border-slate-700 p-6 mb-8">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xl font-semibold">Progreso General</h2>
+            <h2 className="text-xl font-semibold">Overall Progress</h2>
             <span className="text-lg font-bold">{completionRate}%</span>
           </div>
           <div className="w-full bg-slate-700 rounded-full h-4">
@@ -343,7 +343,7 @@ export default function AchievementsPage() {
             ></div>
           </div>
           <p className="text-sm text-slate-400 mt-2">
-            {unlockedAchievements.length} de {achievements.length} logros desbloqueados
+            {unlockedAchievements.length} of {achievements.length} achievements unlocked
           </p>
         </Card>
 
@@ -352,7 +352,7 @@ export default function AchievementsPage() {
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <Star className="h-6 w-6 text-yellow-400" />
-              Logros Desbloqueados
+              Unlocked Achievements
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {unlockedAchievements.map((achievement) => (
@@ -380,7 +380,7 @@ export default function AchievementsPage() {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-green-400 font-medium">
-                        ¡Completado!
+                        Completed!
                       </span>
                       <span className="text-xs text-slate-400">
                         {achievement.current}/{achievement.requirement}
@@ -398,7 +398,7 @@ export default function AchievementsPage() {
           <div>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <Target className="h-6 w-6 text-slate-400" />
-              Por Desbloquear
+              To Unlock
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {lockedAchievements.map((achievement) => (
@@ -426,7 +426,7 @@ export default function AchievementsPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-slate-400">
-                          Progreso
+                          Progress
                         </span>
                         <span className="text-sm text-slate-400">
                           {achievement.current}/{achievement.requirement}

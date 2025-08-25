@@ -47,7 +47,7 @@ npm run verify:supabase # Verify Supabase configuration
 
 # Setup & Configuration
 npm run setup:all    # Complete project setup
-npm run setup:dns    # Configure Cloudflare DNS
+npm run setup:dns    # Configure DNS records in Cloudflare
 npm run setup:vercel # Configure Vercel deployment
 npm run setup:resend # Configure Resend email (pending)
 npm run setup:check  # Check all services status
@@ -207,13 +207,12 @@ CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a
 
 ## Deployment & Infrastructure
 - **Hosting**: Vercel (automatic deployment on push to main)
-- **Primary Domain**: axis6.app (via Cloudflare)
+- **Primary Domain**: axis6.app
 - **Secondary Domain**: axis6.sujeto10.com
-- **DNS**: Cloudflare (configured with `npm run setup:dns`)
-- **CDN**: Cloudflare proxy enabled
+- **DNS Management**: Cloudflare (for DNS records only, configured with `npm run setup:dns`)
 - **Database**: Supabase cloud (nvpnhqhjttgwfwvkgmpk.supabase.co)
 - **Environment Variables**: Configured in Vercel dashboard
-- **SSL**: Automatic via Vercel/Cloudflare
+- **SSL**: Automatic via Vercel
 
 ## Known Issues & Workarounds
 1. **CSP Temporarily Disabled**: Content Security Policy is commented out in next.config.js due to conflicts with inline styles/scripts from Next.js and Supabase Auth. TODO: Implement hash-based CSP.
@@ -234,7 +233,7 @@ CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a
 
 ### Setup Scripts
 - `scripts/setup-all.js` - Complete project setup automation
-- `scripts/configure-dns.js` - Cloudflare DNS configuration
+- `scripts/configure-dns.js` - DNS records configuration (Cloudflare DNS management)
 - `scripts/configure-vercel.js` - Vercel deployment setup
 - `scripts/check-status.js` - Check all services status
 

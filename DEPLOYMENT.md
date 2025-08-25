@@ -1,226 +1,249 @@
-# 🚀 AXIS6 MVP - Guía de Deployment
+# 🚀 AXIS6 MVP - Deployment Guide
 
-## 📋 Resumen de Configuración
+## 📋 Deployment Overview
 
-Este proyecto está configurado para deployment dual:
+This project is deployed exclusively on **Vercel** with automatic deployments on push to main branch.
 
-1. **Cloudflare Pages**: `axis6.app` (Producción)
-2. **Vercel**: `axis6.sujeto10.com` (Staging/Backup)
+- **Production URL**: `axis6.app`
+- **Secondary URL**: `axis6.sujeto10.com`
+- **Platform**: Vercel (NOT Cloudflare Pages)
+- **DNS Management**: Cloudflare (for DNS records only)
 
-## 🌐 Cloudflare Pages Setup
+## ⚡ Vercel Deployment Setup
 
-### Prerrequisitos
+### Prerequisites
 
-1. Cuenta de Cloudflare activa
-2. Dominio `axis6.app` configurado en Cloudflare
-3. Node.js 18+ instalado localmente
+1. Vercel account with project connected
+2. Domain configured in Vercel dashboard
+3. Environment variables set in Vercel
 
-### Variables de Entorno Requeridas
+### Required Environment Variables
 
-En Cloudflare Pages Dashboard, configurar:
+Configure these in Vercel Dashboard → Settings → Environment Variables:
 
 ```bash
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://nvpnhqhjttgwfwvkgmpk.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
-# ⚠️ SENSITIVE: Configure como encrypted
+# ⚠️ SENSITIVE: Mark as encrypted
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=https://axis6.app
 NODE_ENV=production
 
-# Optional API Keys
-DEEPSEEK_API_KEY=sk-your-api-key-here
+# Infrastructure (for DNS management scripts only)
+VERCEL_TOKEN=your-vercel-token
+VERCEL_TEAM_ID=team_seGJ6iISQxrrc5YlXeRfkltH
+CLOUDFLARE_API_TOKEN=your-cloudflare-token  # Only for DNS management
+CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a  # Only for DNS management
 
-# Rate Limiting (optional)
-RATE_LIMIT_MAX_REQUESTS=100
-RATE_LIMIT_WINDOW_MS=60000
+# Email (Pending Integration)
+# RESEND_API_KEY=re_your_key_here
 ```
 
-### Deployment Manual
+### Automatic Deployment
+
+Vercel automatically deploys when you:
+1. Push to `main` branch
+2. Create a pull request (preview deployment)
+3. Manually trigger deployment from Vercel dashboard
 
 ```bash
-# 1. Build y test local
-npm run build
-npm run build:cloudflare
+# Push to main for production deployment
+git push origin main
 
-# 2. Preview local con Wrangler
-npm run preview:cloudflare
-
-# 3. Deploy a Cloudflare Pages
-npm run deploy:cloudflare
-```
-
-### Configuración Automática (GitHub Actions)
-
-El proyecto incluye GitHub Action en `.github/workflows/cloudflare-deploy.yml` que se ejecuta automáticamente en:
-
-- Push a `main` branch
-- Pull requests (preview deploy)
-- Workflow manual dispatch
-
-#### Secrets requeridos en GitHub:
-
-```bash
-CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
-CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-```
-
-## ⚡ Vercel Setup (Staging)
-
-### Variables de Entorno
-
-En Vercel Dashboard, configurar las mismas variables que Cloudflare pero con:
-
-```bash
-NEXT_PUBLIC_APP_URL=https://axis6.sujeto10.com
-NODE_ENV=production
-```
-
-### Deployment
-
-```bash
-# Automatic deployment en push a main
-# Manual deployment:
+# Manual deployment (requires Vercel CLI)
 vercel --prod
 ```
 
-## 🔧 Build Scripts Disponibles
+## 🌐 DNS Configuration
+
+Cloudflare is used **ONLY for DNS management**, not for deployment or hosting.
+
+### DNS Records Setup
+
+Run the automated DNS configuration:
+
+```bash
+npm run setup:dns
+```
+
+This configures DNS records in Cloudflare to point to Vercel:
+- A record → Vercel's IP address
+- CNAME records → Vercel's domain
+- TXT records for domain verification
+
+### Manual DNS Configuration
+
+If you prefer to configure manually in Cloudflare dashboard:
+
+1. **A Record**:
+   - Name: `@`
+   - Content: `76.76.21.21` (Vercel's IP)
+   - Proxy: OFF (Important: Let Vercel handle SSL)
+
+2. **CNAME Record**:
+   - Name: `www`
+   - Content: `cname.vercel-dns.com`
+   - Proxy: OFF
+
+## 🔧 Build and Deployment Scripts
 
 ```bash
 # Development
-npm run dev              # Puerto 6789 (localhost)
-npm run dev:custom       # axis6.dev:6789 (hostname custom)
+npm run dev              # Local development on port 6789
 
-# Production Builds
-npm run build            # Next.js standard build
-npm run build:cloudflare # Cloudflare Pages optimized build
-npm run preview:cloudflare # Preview local con Wrangler
+# Production Build
+npm run build            # Standard Next.js build for Vercel
+npm run start            # Start production server locally
 
 # Deployment
-npm run deploy:cloudflare # Full deploy a Cloudflare Pages
+git push origin main     # Automatic deployment via Vercel
+vercel --prod           # Manual deployment with Vercel CLI
+
+# Setup & Verification
+npm run setup:vercel    # Configure Vercel domain settings
+npm run setup:dns       # Configure DNS records in Cloudflare
+npm run setup:check     # Verify all services are configured
 ```
 
-## 📁 Estructura de Archivos de Deployment
+## 📁 Deployment Configuration Files
 
 ```
 axis6-mvp/
-├── wrangler.toml                    # Cloudflare Pages config
-├── vercel.json                      # Vercel config
-├── next.config.ts                   # Next.js config con CF compatibility
-├── public/_headers                  # Cloudflare headers config
-├── .github/
-│   └── workflows/
-│       └── cloudflare-deploy.yml    # GitHub Actions CI/CD
-├── .env.example                     # Template de variables
-└── .env.local                       # Variables locales (git ignored)
+├── vercel.json                      # Vercel configuration
+├── next.config.ts                   # Next.js configuration
+├── .env.example                     # Environment variables template
+└── scripts/
+    ├── configure-vercel.js          # Vercel domain configuration
+    └── configure-dns.js             # DNS records configuration
 ```
 
-## 🔒 Configuración de Seguridad
+## 🔒 Security Configuration
 
-### Headers de Seguridad
+### Headers Configuration
 
-Configurados en:
-- `public/_headers` (Cloudflare)
-- `vercel.json` (Vercel)
+Security headers are configured in `vercel.json`:
 
-Incluye:
-- Content Security Policy (CSP)
-- Strict Transport Security (HSTS)
-- X-Frame-Options, X-Content-Type-Options
-- Permissions Policy
+```json
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
+      ]
+    }
+  ]
+}
+```
 
-### Variables Sensibles
+### Environment Variables Security
 
-⚠️ **NUNCA commitear**:
+⚠️ **NEVER commit**:
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `DEEPSEEK_API_KEY`
-- Cualquier API key o token
+- `VERCEL_TOKEN`
+- `CLOUDFLARE_API_TOKEN`
+- `RESEND_API_KEY`
 
-✅ **Público (OK para commitear)**:
+✅ **Safe to expose** (prefixed with `NEXT_PUBLIC_`):
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_APP_URL`
 
-## 🚨 Edge Runtime Considerations
-
-Las API routes están configuradas con `export const runtime = 'edge'` para compatibilidad con Cloudflare Pages.
-
-### Limitaciones de Edge Runtime:
-
-1. **No todas las APIs de Node.js están disponibles**
-2. **Supabase SSR funciona pero con algunas limitaciones**
-3. **Timeouts más estrictos**
-4. **Bundle size limits**
-
-### API Routes Configuradas:
-
-- `/api/auth/login` - Edge Runtime ✅
-- `/api/auth/register` - Edge Runtime ✅
-- `/api/mantras` - Edge Runtime ✅
-
-## 📊 Monitoreo y Performance
-
-### Cloudflare Analytics
-
-- Web Analytics automático
-- Core Web Vitals tracking
-- Security insights
+## 📊 Monitoring
 
 ### Vercel Analytics
 
-- Función de monitoring integrada
-- Performance metrics
+- Built-in analytics in Vercel dashboard
+- Real User Monitoring (Web Vitals)
+- Function execution metrics
 - Error tracking
+
+### Performance Monitoring
+
+- Vercel automatically tracks Core Web Vitals
+- Check performance in Vercel dashboard → Analytics
+- Set up alerts for performance degradation
 
 ## 🐛 Troubleshooting
 
-### Build Errors
+### Common Issues
 
+#### Build Failures
 ```bash
-# Error: Edge Runtime incompatible
-# Solución: Verificar que todas las API routes exporten runtime = 'edge'
-
-# Error: Environment variables not found
-# Solución: Verificar configuración en dashboard del provider
-
-# Error: Supabase connection
-# Solución: Verificar URLs y keys de Supabase
+# Clear cache and rebuild
+rm -rf .next node_modules
+npm install
+npm run build
 ```
 
-### Development Issues
+#### Environment Variables Not Working
+- Verify variables are set in Vercel dashboard
+- Check for typos in variable names
+- Ensure `NEXT_PUBLIC_` prefix for client-side variables
 
+#### Domain Not Working
 ```bash
-# Puerto 6789 ocupado
-npm run dev:safe
+# Verify DNS configuration
+npm run setup:check
 
-# Cache issues
-rm -rf .next && npm run build
-
-# Dependencies issues
-rm -rf node_modules package-lock.json && npm install
+# Check DNS propagation
+nslookup axis6.app
+dig axis6.app
 ```
 
-## 🔄 Proceso de Release
+#### Deployment Not Triggering
+- Check Vercel GitHub integration
+- Verify branch protection rules
+- Check Vercel deployment settings
 
-1. **Desarrollo**: Feature branches → PR to main
-2. **Testing**: Preview deploys automáticos en PRs
-3. **Staging**: Auto-deploy a Vercel en merge a main
-4. **Production**: Auto-deploy a Cloudflare Pages en merge a main
+## 🔄 Deployment Workflow
 
-## 📞 Soporte
+1. **Development**: Work in feature branches
+2. **Testing**: Create PR for preview deployment
+3. **Review**: Test preview URL from Vercel
+4. **Production**: Merge to main for automatic deployment
 
-Para issues de deployment:
-1. Check build logs en GitHub Actions
-2. Verificar variables de entorno
-3. Review Cloudflare/Vercel dashboards
-4. Check este archivo de documentación
+### Branch Strategy
+
+```
+main (production) → axis6.app
+  ↑
+feature branches → Preview deployments
+```
+
+## 📞 Support
+
+### Deployment Issues
+
+1. Check Vercel deployment logs
+2. Verify environment variables
+3. Check DNS configuration with `npm run setup:check`
+4. Review this documentation
+
+### Resources
+
+- [Vercel Documentation](https://vercel.com/docs)
+- [Next.js Deployment](https://nextjs.org/docs/deployment)
+- Vercel Dashboard: Check project settings
+- DNS Status: Use `npm run setup:check`
 
 ---
 
-**Última actualización**: Configuración dual Cloudflare Pages + Vercel con CI/CD automático
+**Important Note**: This project deploys **ONLY on Vercel**. Cloudflare is used exclusively for DNS management, not for hosting or deployment.
+
+**Last Updated**: Project configured for Vercel-only deployment

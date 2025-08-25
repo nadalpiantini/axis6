@@ -2,7 +2,8 @@
 
 /**
  * AXIS6 DNS Configuration Script
- * Configures Cloudflare DNS records for axis6.app
+ * Configures DNS records in Cloudflare to point to Vercel deployment
+ * Note: Cloudflare is used ONLY for DNS management, not for hosting
  */
 
 require('dotenv').config({ path: '.env.local' });
@@ -116,7 +117,7 @@ class CloudflareDNSManager {
   }
 
   async configureDNS() {
-    console.log('🌐 Configuring Cloudflare DNS for axis6.app...\n');
+    console.log('🌐 Configuring DNS records in Cloudflare (pointing to Vercel)...\n');
 
     try {
       // Get zone ID
