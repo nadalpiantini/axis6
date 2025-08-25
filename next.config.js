@@ -112,7 +112,7 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 
 
-  // Webpack optimizations
+  // Webpack optimizations (consolidated)
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Bundle analyzer
     if (process.env.ANALYZE === 'true') {
@@ -128,28 +128,25 @@ const nextConfig = {
       )
     }
 
-    // Terser plugin for better minification
+    // Remove React Query devtools from production builds
     if (!dev && !isServer) {
-      const TerserPlugin = require('terser-webpack-plugin')
-      config.optimization.minimizer = [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: true,
-              drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-            },
-            mangle: true,
-            format: {
-              comments: false,
-            },
-          },
-          extractComments: false,
-        }),
-      ]
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@tanstack/react-query-devtools': false,
+      }
+    }
+    
+    // Fix for React 19 and Next.js 15 compatibility
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      crypto: false,
     }
 
-    // Optimization for production
+    // Let Next.js handle Terser optimization by default
+
+    // Optimize chunk splitting for better performance
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -164,7 +161,7 @@ const nextConfig = {
             priority: 20
           },
           // Common chunk
-          common: {
+          commons: {
             name: 'commons',
             minChunks: 2,
             chunks: 'all',
@@ -177,7 +174,8 @@ const nextConfig = {
             name: 'react',
             chunks: 'all',
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-            priority: 30
+            priority: 30,
+            reuseExistingChunk: true,
           },
           // Supabase chunk
           supabase: {
@@ -279,51 +277,6 @@ const nextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789',
   },
 
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Remove React Query devtools from production builds
-    if (!dev && !isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@tanstack/react-query-devtools': false,
-      }
-    }
-    
-    // Fix for React 19 and Next.js 15 compatibility
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      path: false,
-      crypto: false,
-    }
-    
-    // Optimize chunk splitting for better performance
-    if (!isServer) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            default: false,
-            vendors: false,
-            commons: {
-              name: 'commons',
-              chunks: 'all',
-              minChunks: 2,
-            },
-            react: {
-              name: 'react',
-              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-              priority: 20,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-      }
-    }
-    
-    return config
-  },
 }
 
 // Temporarily disable PWA for Next.js 15 compatibility
