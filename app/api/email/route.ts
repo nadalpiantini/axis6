@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/email/config - Get email configuration status
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { getEmailConfig } = await import('@/lib/email/service')
     const config = getEmailConfig()

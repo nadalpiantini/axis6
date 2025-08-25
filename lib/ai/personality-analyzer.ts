@@ -78,10 +78,10 @@ export class PersonalityAnalyzer {
         primary_temperament: aiAnalysis.primary_temperament,
         secondary_temperament: aiAnalysis.secondary_temperament,
         temperament_scores: {
-          sanguine: aiAnalysis.scores.sanguine || 0,
-          choleric: aiAnalysis.scores.choleric || 0,
-          melancholic: aiAnalysis.scores.melancholic || 0,
-          phlegmatic: aiAnalysis.scores.phlegmatic || 0
+          sanguine: aiAnalysis.scores['sanguine'] || 0,
+          choleric: aiAnalysis.scores['choleric'] || 0,
+          melancholic: aiAnalysis.scores['melancholic'] || 0,
+          phlegmatic: aiAnalysis.scores['phlegmatic'] || 0
         },
         personality_insights: {
           ...aiAnalysis.insights,
@@ -230,23 +230,23 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
 
     input.responses.forEach(r => {
       if (r.selectedTemperament) {
-        temperamentCounts[r.selectedTemperament]++
+        (temperamentCounts as any)[r.selectedTemperament]++
       }
     })
 
     // Calculate scores
     const total = input.responses.length || 1
     const scores = {
-      sanguine: temperamentCounts.sanguine / total,
-      choleric: temperamentCounts.choleric / total,
-      melancholic: temperamentCounts.melancholic / total,
-      phlegmatic: temperamentCounts.phlegmatic / total
+      sanguine: (temperamentCounts['sanguine'] || 0) / total,
+      choleric: (temperamentCounts['choleric'] || 0) / total,
+      melancholic: (temperamentCounts['melancholic'] || 0) / total,
+      phlegmatic: (temperamentCounts['phlegmatic'] || 0) / total
     }
 
     // Determine primary and secondary
     const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1])
-    const primary = sorted[0][0]
-    const secondary = sorted[1][0]
+    const primary = sorted[0]?.[0] || 'sanguine'
+    const secondary = sorted[1]?.[0] || 'phlegmatic'
 
     return {
       primary_temperament: primary,
@@ -261,7 +261,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
   /**
    * Get basic insights for fallback
    */
-  private getBasicInsights(primary: string, secondary: string): any {
+  private getBasicInsights(primary: string, _secondary: string): any {
     const insights = {
       sanguine: {
         strengths: ['enthusiasm', 'creativity', 'social connection', 'optimism'],
@@ -298,7 +298,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
     }
 
     const primaryInsights = insights[primary as keyof typeof insights] || insights.sanguine
-    const secondaryInsights = insights[secondary as keyof typeof insights]
+    // const secondaryInsights = insights[secondary as keyof typeof insights]
 
     return {
       ...primaryInsights,

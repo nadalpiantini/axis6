@@ -31,11 +31,11 @@ class RedisRateLimiter {
 
   constructor() {
     // Initialize Redis only if environment variables are available
-    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    if (process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDIS_REST_TOKEN']) {
       try {
         this.redis = new Redis({
-          url: process.env.UPSTASH_REDIS_REST_URL,
-          token: process.env.UPSTASH_REDIS_REST_TOKEN,
+          url: process.env['UPSTASH_REDIS_REST_URL'],
+          token: process.env['UPSTASH_REDIS_REST_TOKEN'],
         })
         logger.info('Redis rate limiter initialized')
       } catch (error) {
@@ -74,7 +74,7 @@ class RedisRateLimiter {
         return this.memoryRateLimit(windowKey, config, now)
       }
     } catch (error) {
-      logger.error('Rate limit check failed', error as Error, { identifier, config })
+      logger.error(`Rate limit check failed for ${identifier}`, error as Error)
       
       // Fail open - allow request if rate limiting fails
       return {
@@ -235,18 +235,14 @@ export const rateLimiter = new RedisRateLimiter()
  * Middleware helper for rate limiting
  */
 export async function applyRateLimit(
-  request: Request,
+  _request: Request,
   identifier: string,
   config: RateLimitConfig
 ): Promise<Response | null> {
   const result = await rateLimiter.checkLimit(identifier, config)
   
   if (!result.allowed) {
-    logger.security('Rate limit exceeded', {
-      identifier,
-      limit: result.limit,
-      retryAfter: result.retryAfter
-    })
+    logger.warn(`Rate limit exceeded for ${identifier}: ${result.limit} requests`)
     
     return new Response('Too Many Requests', {
       status: 429,

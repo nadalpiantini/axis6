@@ -69,7 +69,7 @@ export function withErrorHandling(
       const response = await handler(req, context)
       
       // Log successful requests in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         const duration = Date.now() - startTime
         console.log(`✅ ${method} ${path} - ${response.status} (${duration}ms)`)
         
@@ -92,7 +92,7 @@ export function withErrorHandling(
       // Create structured error response
       const apiError: ApiError = {
         error: getErrorMessage(error),
-        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        details: process.env['NODE_ENV'] === 'development' ? error.stack : undefined,
         errorId,
         timestamp: new Date().toISOString(),
         path,
@@ -162,13 +162,13 @@ function getErrorMessage(error: any): string {
       case '23502':
         return 'Required field is missing'
       default:
-        return process.env.NODE_ENV === 'development' 
+        return process.env['NODE_ENV'] === 'development' 
           ? `Database error: ${error.message}` 
           : 'Database operation failed'
     }
   }
   
-  return process.env.NODE_ENV === 'development' 
+  return process.env['NODE_ENV'] === 'development' 
     ? error.message || 'Unknown error occurred'
     : 'Internal server error'
 }
@@ -288,9 +288,9 @@ export async function withDatabaseErrorHandling<T>(
 
 // Rate limiting helper
 export function checkRateLimit(
-  identifier: string, 
-  requests: number, 
-  windowMs: number
+  _identifier: string, 
+  _requests: number, 
+  _windowMs: number
 ): boolean {
   // This would integrate with your rate limiting service (Redis, etc.)
   // For now, return true (no rate limiting)
@@ -299,7 +299,7 @@ export function checkRateLimit(
 
 // Request logging helper
 export function logRequest(req: NextRequest, details?: any) {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     const url = new URL(req.url)
     console.log(`📨 ${req.method} ${url.pathname}${url.search}`, details ? { ...details } : '')
   }

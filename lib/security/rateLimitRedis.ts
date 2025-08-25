@@ -12,10 +12,10 @@ import { NextRequest, NextResponse } from 'next/server'
 // Initialize Redis client
 // For local development, you can use a local Redis instance
 // For production, use Upstash Redis or similar
-const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+const redis = process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDIS_REST_TOKEN']
   ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      url: process.env['UPSTASH_REDIS_REST_URL'],
+      token: process.env['UPSTASH_REDIS_REST_TOKEN'],
     })
   : null
 

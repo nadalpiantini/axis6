@@ -96,12 +96,12 @@ export function isBrowser(): boolean {
  * Check if we're in development mode
  */
 export function isDevelopment(): boolean {
-  return process.env.NODE_ENV === 'development'
+  return process.env['NODE_ENV'] === 'development'
 }
 
 /**
  * Check if we're in production mode
  */
 export function isProduction(): boolean {
-  return process.env.NODE_ENV === 'production'
+  return process.env['NODE_ENV'] === 'production'
 }

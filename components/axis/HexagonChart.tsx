@@ -218,7 +218,7 @@ const HexagonChart = memo(function HexagonChart({
             cx={point.x}
             cy={point.y}
             r="6"
-            fill={categories[idx].color}
+            fill={categories[idx]?.color || '#666'}
             stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="3"
             initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
@@ -234,7 +234,7 @@ const HexagonChart = memo(function HexagonChart({
               repeatDelay: 3
             }}
             style={{
-              filter: `drop-shadow(0 2px 8px ${categories[idx].color}40)`
+              filter: `drop-shadow(0 2px 8px ${categories[idx]?.color || '#666'}40)`
             }}
           />
         ))}

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, User, ChevronRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
-import { shouldBypassRateLimit, shouldBypassEmailConfirmation } from '@/lib/test-config'
+import { shouldBypassRateLimit } from '@/lib/test-config'
 import { PasswordStrength } from '@/components/auth/PasswordStrength'
 import { validateEmail, validateName, validatePasswordMatch } from '@/lib/validation/auth'
 
@@ -32,26 +32,26 @@ export default function RegisterPage() {
       case 'name':
         const nameValidation = validateName(value)
         if (!nameValidation.isValid) {
-          errors.name = nameValidation.error!
+          errors['name'] = nameValidation.error!
         } else {
-          delete errors.name
+          delete errors['name']
         }
         break
       case 'email':
         const emailValidation = validateEmail(value)
         if (!emailValidation.isValid) {
-          errors.email = emailValidation.error!
+          errors['email'] = emailValidation.error!
         } else {
-          delete errors.email
+          delete errors['email']
         }
         break
       case 'confirmPassword':
         if (value && password) {
           const matchValidation = validatePasswordMatch(password, value)
           if (!matchValidation.isValid) {
-            errors.confirmPassword = matchValidation.error!
+            errors['confirmPassword'] = matchValidation.error!
           } else {
-            delete errors.confirmPassword
+            delete errors['confirmPassword']
           }
         }
         break
@@ -79,25 +79,25 @@ export default function RegisterPage() {
     
     const nameValidation = validateName(name)
     if (!nameValidation.isValid) {
-      errors.name = nameValidation.error!
+      errors['name'] = nameValidation.error!
     }
     
     const emailValidation = validateEmail(email)
     if (!emailValidation.isValid) {
-      errors.email = emailValidation.error!
+      errors['email'] = emailValidation.error!
     }
     
     if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters'
+      errors['password'] = 'Password must be at least 8 characters'
     }
     
     const passwordMatchValidation = validatePasswordMatch(password, confirmPassword)
     if (!passwordMatchValidation.isValid) {
-      errors.confirmPassword = passwordMatchValidation.error!
+      errors['confirmPassword'] = passwordMatchValidation.error!
     }
     
     if (!termsAccepted) {
-      errors.terms = 'You must accept the terms and conditions'
+      errors['terms'] = 'You must accept the terms and conditions'
     }
     
     if (Object.keys(errors).length > 0) {
@@ -208,7 +208,7 @@ export default function RegisterPage() {
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
             <div className="mb-4 flex justify-center">
-              <LogoFull size="lg" />
+              <LogoFull size="lg" priority />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
               Create Your Account
@@ -243,20 +243,20 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('name', e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors.name 
+                    fieldErrors['name'] 
                       ? 'border-red-500/50 focus:border-red-400' 
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Your name"
                   aria-label="Name"
-                  aria-invalid={!!fieldErrors.name}
-                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                  aria-invalid={!!fieldErrors['name']}
+                  aria-describedby={fieldErrors['name'] ? 'name-error' : undefined}
                   required
                 />
               </div>
-              {fieldErrors.name && (
+              {fieldErrors['name'] && (
                 <p id="name-error" className="mt-1 text-xs text-red-400">
-                  {fieldErrors.name}
+                  {fieldErrors['name']}
                 </p>
               )}
             </div>
@@ -278,20 +278,20 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('email', e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors.email 
+                    fieldErrors['email'] 
                       ? 'border-red-500/50 focus:border-red-400' 
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="your@email.com"
                   aria-label="Email"
-                  aria-invalid={!!fieldErrors.email}
-                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                  aria-invalid={!!fieldErrors['email']}
+                  aria-describedby={fieldErrors['email'] ? 'email-error' : undefined}
                   required
                 />
               </div>
-              {fieldErrors.email && (
+              {fieldErrors['email'] && (
                 <p id="email-error" className="mt-1 text-xs text-red-400">
-                  {fieldErrors.email}
+                  {fieldErrors['email']}
                 </p>
               )}
             </div>
@@ -314,13 +314,13 @@ export default function RegisterPage() {
                     }
                   }}
                   className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors.password 
+                    fieldErrors['password'] 
                       ? 'border-red-500/50 focus:border-red-400' 
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Minimum 8 characters"
                   aria-label="Password"
-                  aria-invalid={!!fieldErrors.password}
+                  aria-invalid={!!fieldErrors['password']}
                   aria-describedby="password-requirements"
                   minLength={8}
                   required
@@ -334,9 +334,9 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {fieldErrors.password && (
+              {fieldErrors['password'] && (
                 <p className="mt-1 text-xs text-red-400">
-                  {fieldErrors.password}
+                  {fieldErrors['password']}
                 </p>
               )}
               {password && (
@@ -363,14 +363,14 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('confirmPassword', e.target.value)}
                   className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors.confirmPassword 
+                    fieldErrors['confirmPassword'] 
                       ? 'border-red-500/50 focus:border-red-400' 
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Confirm your password"
                   aria-label="Confirm Password"
-                  aria-invalid={!!fieldErrors.confirmPassword}
-                  aria-describedby={fieldErrors.confirmPassword ? 'confirm-password-error' : undefined}
+                  aria-invalid={!!fieldErrors['confirmPassword']}
+                  aria-describedby={fieldErrors['confirmPassword'] ? 'confirm-password-error' : undefined}
                   minLength={8}
                   required
                 />
@@ -383,9 +383,9 @@ export default function RegisterPage() {
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {fieldErrors.confirmPassword && (
+              {fieldErrors['confirmPassword'] && (
                 <p id="confirm-password-error" className="mt-1 text-xs text-red-400">
-                  {fieldErrors.confirmPassword}
+                  {fieldErrors['confirmPassword']}
                 </p>
               )}
             </div>
@@ -397,9 +397,9 @@ export default function RegisterPage() {
                   checked={termsAccepted}
                   onChange={(e) => {
                     setTermsAccepted(e.target.checked)
-                    if (fieldErrors.terms) {
+                    if (fieldErrors['terms']) {
                       const errors = { ...fieldErrors }
-                      delete errors.terms
+                      delete errors['terms']
                       setFieldErrors(errors)
                     }
                   }}
@@ -417,9 +417,9 @@ export default function RegisterPage() {
                   </Link>
                 </span>
               </label>
-              {fieldErrors.terms && (
+              {fieldErrors['terms'] && (
                 <p className="text-xs text-red-400 ml-6">
-                  {fieldErrors.terms}
+                  {fieldErrors['terms']}
                 </p>
               )}
               

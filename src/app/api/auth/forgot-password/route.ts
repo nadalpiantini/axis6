@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       // Log failed attempt for security monitoring
-      logger.security('Failed password reset attempt', {
+      logger.warn('Failed password reset attempt', {
         action: 'password_reset_failed',
         metadata: { email: email.substring(0, 3) + '***' }
       })

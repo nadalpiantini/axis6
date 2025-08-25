@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
@@ -43,12 +42,10 @@ const rarityColors = {
 }
 
 export default function AchievementsPage() {
-  const [user, setUser] = useState<User | null>(null)
   const [streaks, setStreaks] = useState<Streak[]>([])
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [loading, setLoading] = useState(true)
   const [totalCheckins, setTotalCheckins] = useState(0)
-  const [totalDaysActive, setTotalDaysActive] = useState(0)
 
   const supabase = createClient()
 
@@ -64,7 +61,6 @@ export default function AchievementsPage() {
         return
       }
 
-      setUser(user)
 
       // Fetch streaks
       const { data: streaksData } = await supabase
@@ -96,7 +92,6 @@ export default function AchievementsPage() {
 
       setStreaks(streaksData || [])
       setTotalCheckins(checkinsCount || 0)
-      setTotalDaysActive(uniqueDaysCount)
 
       // Generate achievements based on data
       generateAchievements(streaksData || [], checkinsCount || 0, uniqueDaysCount)

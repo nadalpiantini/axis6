@@ -31,7 +31,7 @@ export const WeeklyStatsEmail = ({
   name = 'Usuario',
   stats
 }: WeeklyStatsEmailProps) => {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://axis6.app'
+  const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
   
   const getEncouragementMessage = (completionRate: number) => {
     if (completionRate >= 90) return "¡Increíble! Estás en fuego 🔥"

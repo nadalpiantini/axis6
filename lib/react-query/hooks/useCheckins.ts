@@ -107,7 +107,7 @@ export function useToggleCheckIn(userId: string | undefined) {
       // Return context for rollback
       return { previousCheckins }
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       // Rollback on error
       if (context?.previousCheckins) {
         queryClient.setQueryData(['checkins', 'today', userId], context.previousCheckins)
@@ -178,7 +178,7 @@ export function useBatchCheckIn(userId: string | undefined) {
       
       return { previousCheckins }
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       // Rollback on error
       if (context?.previousCheckins) {
         queryClient.setQueryData(['checkins', 'today', userId], context.previousCheckins)

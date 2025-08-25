@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { rateLimiter, RATE_LIMITS } from '@/lib/rate-limit/redis'
+import { rateLimiter } from '@/lib/rate-limit/redis'
 import { logger } from '@/lib/utils/logger'
 
 interface LogEntry {
@@ -53,10 +53,10 @@ export async function POST(request: NextRequest) {
         logger.warn(`[CLIENT] ${logEntry.message}`, logEntry.context)
         break
       case 'error':
-        logger.error(`[CLIENT] ${logEntry.message}`, undefined, logEntry.context)
+        logger.error(`[CLIENT] ${logEntry.message}`, logEntry.context)
         break
       case 'security':
-        logger.security(`[CLIENT] ${logEntry.message}`, logEntry.context)
+        logger.warn(`[CLIENT SECURITY] ${logEntry.message}`, logEntry.context)
         break
     }
 

@@ -4,8 +4,8 @@
  */
 
 export const isTestEnvironment = () => {
-  return process.env.NODE_ENV === 'test' || 
-         process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined ||
+  return process.env['NODE_ENV'] === 'test' || 
+         process.env['PLAYWRIGHT_TEST_BASE_URL'] !== undefined ||
          typeof window !== 'undefined' && window.localStorage?.getItem('testMode') === 'true';
 };
 

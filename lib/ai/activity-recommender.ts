@@ -95,31 +95,15 @@ export class ActivityRecommender {
   private async generateAIRecommendations(
     input: ActivityRecommendationInput
   ): Promise<PersonalizedActivity[]> {
-    const { categoryName, temperament, preferences, currentMood, language } = input
+    const { categoryName, temperament, preferences, currentMood: _currentMood, language } = input
 
     // Build context for AI
-    const context = this.buildRecommendationContext(input)
+    // const context = this.buildRecommendationContext(input)
 
-    const prompt = `Generate 5 personalized wellness activities for the ${categoryName} dimension.
-
-User Profile:
-- Primary Temperament: ${temperament}
-- Current Mood: ${currentMood ? `${currentMood}/5` : 'neutral'}
-- Energy Level Preference: ${preferences?.energy_level || 'flexible'}
-- Social Setting: ${preferences?.social_preference || 'flexible'}
-- Available Time: ${preferences?.time_available || 'moderate'}
-
-${context}
-
-Requirements:
-1. Activities must be perfectly suited for a ${temperament} personality
-2. Provide variety in difficulty and social settings
-3. Include both traditional and creative options
-4. Consider cultural appropriateness for ${language === 'es' ? 'Spanish-speaking' : 'English-speaking'} users
-5. Make at least 2 activities unique/unconventional for engagement
-
-Format each activity with clear structure and actionable steps.`
-
+    // Note: prompt construction logic commented out but preserved for reference
+    // The prompt would include user profile, context, and requirements
+    // Currently using the deepseekClient's internal prompt generation
+    
     const activities = await deepseekClient.generateActivityRecommendations(
       temperament,
       categoryName,
@@ -147,25 +131,26 @@ Format each activity with clear structure and actionable steps.`
 
   /**
    * Build context from user's past activities and preferences
+   * Currently not used, but preserved for future implementation
    */
-  private buildRecommendationContext(input: ActivityRecommendationInput): string {
-    let context = ''
+  // private _buildRecommendationContext(input: ActivityRecommendationInput): string {
+  //   let context = ''
 
-    if (input.pastActivities && input.pastActivities.length > 0) {
-      const completed = input.pastActivities.filter(a => a.completed)
-      const highRated = input.pastActivities.filter(a => (a.rating || 0) >= 4)
+  //   if (input.pastActivities && input.pastActivities.length > 0) {
+  //     const completed = input.pastActivities.filter(a => a.completed)
+  //     const highRated = input.pastActivities.filter(a => (a.rating || 0) >= 4)
       
-      context += '\nPast Activity Insights:\n'
-      if (completed.length > 0) {
-        context += `- Previously completed: ${completed.slice(0, 3).map(a => a.name).join(', ')}\n`
-      }
-      if (highRated.length > 0) {
-        context += `- Highly rated: ${highRated.slice(0, 3).map(a => a.name).join(', ')}\n`
-      }
-    }
+  //     context += '\nPast Activity Insights:\n'
+  //     if (completed.length > 0) {
+  //       context += `- Previously completed: ${completed.slice(0, 3).map(a => a.name).join(', ')}\n`
+  //     }
+  //     if (highRated.length > 0) {
+  //       context += `- Highly rated: ${highRated.slice(0, 3).map(a => a.name).join(', ')}\n`
+  //     }
+  //   }
 
-    return context
-  }
+  //   return context
+  // }
 
   /**
    * Enhance activities with temperament-specific modifications
@@ -280,7 +265,7 @@ Format each activity with clear structure and actionable steps.`
   /**
    * Generate personalization reason
    */
-  private generateReason(temperament: string, activity: any): string {
+  private generateReason(temperament: string, _activity: any): string {
     const reasons = {
       sanguine: `Perfect for your energetic and social nature. This activity provides the variety and fun you crave while keeping you engaged.`,
       choleric: `Designed to challenge you and track measurable progress. You'll appreciate the efficiency and goal-oriented approach.`,
@@ -382,7 +367,7 @@ Format each activity with clear structure and actionable steps.`
   /**
    * Check if cache is still valid (1 hour TTL)
    */
-  private isCacheValid(key: string): boolean {
+  private isCacheValid(_key: string): boolean {
     // Simple time-based validation
     // In production, track timestamps
     return true

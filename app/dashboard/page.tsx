@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo, useCallback, lazy, Suspense } from 'react'
+import { memo, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -21,8 +21,7 @@ import { useRealtimeDashboard } from '@/lib/hooks/useRealtimeCheckins'
 // Zustand stores
 import { 
   useUIStore, 
-  usePreferencesStore, 
-  useCheckInStore 
+  usePreferencesStore
 } from '@/lib/stores/useAppStore'
 
 // Components
@@ -30,12 +29,6 @@ import { AxisIcon } from '@/components/icons'
 import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
-import { ErrorBoundary } from '@/components/error/ErrorBoundary'
-
-// Lazy loaded components for better performance
-const HexagonChart = lazy(() => import('@/components/axis/HexagonChart'))
-const CategoryCard = lazy(() => import('@/components/axis/CategoryCard'))
-const DailyMantra = lazy(() => import('@/components/axis/DailyMantra'))
 
 // Memoized header component
 const DashboardHeader = memo(({ 
@@ -274,13 +267,12 @@ MemoizedCategoryCard.displayName = 'MemoizedCategoryCard'
 export default function DashboardPageV2() {
   const router = useRouter()
   const { addNotification } = useUIStore()
-  const { locale } = usePreferencesStore()
   
   // Fetch all data in parallel with React Query
   const { data: user, isLoading: userLoading } = useUser()
   const { data: categories = [], isLoading: categoriesLoading } = useCategories()
-  const { data: checkins = [], isLoading: checkinsLoading } = useTodayCheckins(user?.id)
-  const { data: streaks = [], isLoading: streaksLoading } = useStreaks(user?.id)
+  const { data: checkins = [] } = useTodayCheckins(user?.id)
+  const { data: streaks = [] } = useStreaks(user?.id)
   const toggleCheckIn = useToggleCheckIn(user?.id)
   
   // Enable realtime updates for this user
@@ -295,7 +287,7 @@ export default function DashboardPageV2() {
   const axes = useMemo(
     () => categories.map(cat => ({
       id: cat.id,
-      name: cat.name?.en || cat.slug,
+      name: cat.name?.['en'] || cat.slug,
       color: cat.color,
       icon: cat.icon,
       completed: completedCategoryIds.has(cat.id)

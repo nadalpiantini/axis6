@@ -12,10 +12,10 @@ const envSchema = z.object({
 const getConfig = () => {
   try {
     return envSchema.parse({
-      DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
-      DEEPSEEK_API_URL: process.env.DEEPSEEK_API_URL || 'https://api.deepseek.com/v1',
-      AI_FEATURES_ENABLED: process.env.AI_FEATURES_ENABLED || 'true',
-      AI_CACHE_TTL: process.env.AI_CACHE_TTL || '3600'
+      DEEPSEEK_API_KEY: process.env['DEEPSEEK_API_KEY'],
+      DEEPSEEK_API_URL: process.env['DEEPSEEK_API_URL'] || 'https://api.deepseek.com/v1',
+      AI_FEATURES_ENABLED: process.env['AI_FEATURES_ENABLED'] || 'true',
+      AI_CACHE_TTL: process.env['AI_CACHE_TTL'] || '3600'
     })
   } catch (error) {
     console.error('DeepSeek configuration error:', error)

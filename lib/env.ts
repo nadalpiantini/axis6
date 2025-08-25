@@ -83,7 +83,7 @@ function validateServerEnv() {
     console.error(parsed.error.flatten().fieldErrors)
     
     // In production, throw to prevent the app from starting with invalid config
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       throw new Error('Invalid environment variables')
     }
     
@@ -99,18 +99,18 @@ function validateServerEnv() {
  */
 function validateClientEnv() {
   const parsed = clientEnvSchema.safeParse({
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
-    NEXT_PUBLIC_VERCEL_ANALYTICS_ID: process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ID,
+    NEXT_PUBLIC_SUPABASE_URL: process.env['NEXT_PUBLIC_SUPABASE_URL'],
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'],
+    NEXT_PUBLIC_APP_URL: process.env['NEXT_PUBLIC_APP_URL'],
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env['NEXT_PUBLIC_GA_MEASUREMENT_ID'],
+    NEXT_PUBLIC_VERCEL_ANALYTICS_ID: process.env['NEXT_PUBLIC_VERCEL_ANALYTICS_ID'],
   })
   
   if (!parsed.success) {
     console.error('❌ Invalid client environment variables:')
     console.error(parsed.error.flatten().fieldErrors)
     
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       throw new Error('Invalid client environment variables')
     }
   }
@@ -134,9 +134,9 @@ export const env = {
   ...clientEnv,
   
   // Computed values
-  isDevelopment: process.env.NODE_ENV === 'development',
-  isProduction: process.env.NODE_ENV === 'production',
-  isTest: process.env.NODE_ENV === 'test',
+  isDevelopment: process.env['NODE_ENV'] === 'development',
+  isProduction: process.env['NODE_ENV'] === 'production',
+  isTest: process.env['NODE_ENV'] === 'test',
   
   // Feature flags with defaults
   features: {

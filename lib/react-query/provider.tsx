@@ -16,7 +16,7 @@ const ReactQueryDevtools = dynamic(
 
 // Wrapper component that uses the QueryClient from context
 function DevToolsWrapper() {
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env['NODE_ENV'] !== 'development') {
     return null
   }
   
@@ -68,7 +68,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {process.env.NODE_ENV === 'development' && <DevToolsWrapper />}
+      {process.env['NODE_ENV'] === 'development' && <DevToolsWrapper />}
     </QueryClientProvider>
   )
 }

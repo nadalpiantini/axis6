@@ -10,12 +10,10 @@ import {
   Award,
   ArrowLeft,
   Download,
-  Filter,
   BarChart3,
   PieChart,
   Activity,
   Flame,
-  Clock,
   TrendingDown
 } from 'lucide-react'
 import Link from 'next/link'
@@ -76,7 +74,6 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [period, setPeriod] = useState('30')
-  const [selectedCategory, setSelectedCategory] = useState<string>('')
 
   // Fetch analytics data
   const fetchAnalytics = async () => {
@@ -85,8 +82,7 @@ export default function AnalyticsPage() {
       setError(null)
       
       const params = new URLSearchParams({
-        period,
-        ...(selectedCategory && { categoryId: selectedCategory })
+        period
       })
       
       const response = await fetch(`/api/analytics?${params}`)
@@ -153,7 +149,7 @@ export default function AnalyticsPage() {
     if (!userLoading && user) {
       fetchAnalytics()
     }
-  }, [user, userLoading, period, selectedCategory])
+  }, [user, userLoading, period])
 
   // Redirect if not authenticated
   useEffect(() => {

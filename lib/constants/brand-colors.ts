@@ -72,9 +72,14 @@ export const AXIS_COLORS: Record<string, AxisColorScheme> = {
 } as const
 
 // Helper function to get colors by category slug
-export function getAxisColors(slug: string) {
+export function getAxisColors(slug: string): AxisColorScheme {
   const normalizedSlug = slug.toLowerCase().replace(/[_\s]/g, '')
-  return AXIS_COLORS[normalizedSlug] || BRAND_COLORS.neutral
+  return AXIS_COLORS[normalizedSlug] || {
+    primary: BRAND_COLORS.neutral.charcoal,
+    rgb: '44, 62, 80',
+    gradient: 'from-[#2C3E50] to-[#1F2A36]',
+    shadow: 'shadow-[#2C3E50]/30'
+  }
 }
 
 // Color utilities for CSS-in-JS or dynamic styling

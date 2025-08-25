@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Home, Activity, TrendingUp, User, Plus } from 'lucide-react'
+import { Home, Activity, TrendingUp, User, Plus, Calendar } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
@@ -18,6 +18,7 @@ interface FloatingNavProps {
 
 const navItems: NavItem[] = [
   { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5" />, href: '/dashboard' },
+  { id: 'my-day', label: 'Mi Día', icon: <Calendar className="w-5 h-5" />, href: '/my-day' },
   { id: 'activities', label: 'Actividades', icon: <Activity className="w-5 h-5" />, href: '/activities' },
   { id: 'stats', label: 'Estadísticas', icon: <TrendingUp className="w-5 h-5" />, href: '/stats' },
   { id: 'profile', label: 'Perfil', icon: <User className="w-5 h-5" />, href: '/profile' }

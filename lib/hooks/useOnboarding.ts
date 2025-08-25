@@ -64,7 +64,7 @@ export function useOnboarding() {
         .from('axis6_profiles')
         .upsert({
           id: user.id,
-          name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+          name: user.user_metadata?.['name'] || user.email?.split('@')[0] || 'User',
           onboarded: true,
           updated_at: new Date().toISOString()
         })

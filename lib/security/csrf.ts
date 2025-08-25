@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
-const CSRF_SECRET = process.env.CSRF_SECRET || (() => {
-  if (process.env.NODE_ENV === 'production') {
+const CSRF_SECRET = process.env['CSRF_SECRET'] || (() => {
+  if (process.env['NODE_ENV'] === 'production') {
     throw new Error('CSRF_SECRET environment variable is required in production')
   }
   return 'dev-csrf-secret-not-for-production'
@@ -121,7 +121,7 @@ export function setCSRFCookie(response: NextResponse, token: string): void {
     name: CSRF_COOKIE_NAME,
     value: tokenHash,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env['NODE_ENV'] === 'production',
     sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 24 * 7 // 7 days

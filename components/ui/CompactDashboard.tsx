@@ -46,7 +46,7 @@ export default function CompactDashboard({
   completedToday,
   onToggleCategory,
   streaks,
-  user
+  user: _user
 }: CompactDashboardProps) {
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)

@@ -14,8 +14,6 @@ export function updateCheckinsCache(
   queryClient: QueryClient,
   { userId, categoryId, completed }: CacheUpdateOptions
 ) {
-  const today = new Date().toISOString().split('T')[0]
-  
   // Update today's checkins
   queryClient.setQueryData<CheckIn[]>(
     ['checkins', 'today', userId],

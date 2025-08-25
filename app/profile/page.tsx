@@ -124,15 +124,20 @@ export default function ProfilePage() {
           setEditedName(user.email?.split('@')[0] || 'User')
         }
 
-        // Fetch temperament profile
-        const { data: temperamentData } = await supabase
-          .from('axis6_temperament_profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
-
-        if (temperamentData) {
-          setTemperamentProfile(temperamentData)
+        // Fetch temperament profile (check if table exists first)
+        try {
+          const { data: temperamentData, error } = await supabase
+            .from('axis6_temperament_profiles')
+            .select('*')
+            .eq('user_id', user.id)
+            .single()
+          
+          if (!error && temperamentData) {
+            setTemperamentProfile(temperamentData)
+          }
+        } catch (err) {
+          // Table might not exist yet, ignore error
+          console.log('Temperament profile not available')
         }
       }
       fetchProfile()

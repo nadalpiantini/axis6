@@ -122,6 +122,7 @@ export function AxisActivitiesModal({
   // Get random suggestions that haven't been used recently
   const getRandomSuggestions = (count: number = 6) => {
     const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType]
+    if (!availableSuggestions) return []
     const unused = availableSuggestions.filter(s => !usedSuggestions.has(s))
     const pool = unused.length >= count ? unused : availableSuggestions
     
@@ -131,7 +132,7 @@ export function AxisActivitiesModal({
     while (selected.length < count && selected.length < pool.length) {
       const randomIndex = Math.floor(Math.random() * pool.length)
       const suggestion = pool[randomIndex]
-      if (!tempSet.has(suggestion)) {
+      if (suggestion && !tempSet.has(suggestion)) {
         selected.push(suggestion)
         tempSet.add(suggestion)
       }
@@ -154,14 +155,19 @@ export function AxisActivitiesModal({
     
     // Replace the clicked suggestion with a new one
     const newSuggestions = [...displayedSuggestions]
-    const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType].filter(
+    const suggestions = ACTIVITY_SUGGESTIONS[axisType]
+    if (!suggestions) return
+    const availableSuggestions = suggestions.filter(
       s => !displayedSuggestions.includes(s) && s !== suggestion
     )
     
     if (availableSuggestions.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableSuggestions.length)
-      newSuggestions[index] = availableSuggestions[randomIndex]
-      setDisplayedSuggestions(newSuggestions)
+      const newSuggestion = availableSuggestions[randomIndex]
+      if (newSuggestion) {
+        newSuggestions[index] = newSuggestion
+        setDisplayedSuggestions(newSuggestions)
+      }
     }
   }
 
@@ -273,7 +279,7 @@ export function AxisActivitiesModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-4 sm:inset-8 lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 w-auto lg:w-full lg:max-w-2xl max-h-[90vh] lg:max-h-[80vh] overflow-hidden z-50"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] lg:w-full lg:max-w-2xl max-h-[90vh] overflow-hidden z-50"
           >
             <div className="glass rounded-2xl">
               {/* Header */}

@@ -9,7 +9,6 @@ import { useOnboarding } from '@/lib/hooks/useOnboarding'
 export default function OnboardingPage() {
   const {
     categories,
-    selectedCategories,
     loading,
     error,
     categoriesLoading,

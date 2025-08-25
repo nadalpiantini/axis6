@@ -21,7 +21,7 @@ export const PasswordResetEmail = ({
   name = 'Usuario', 
   resetUrl 
 }: PasswordResetEmailProps) => {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://axis6.app'
+  const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
   
   return (
     <Html>

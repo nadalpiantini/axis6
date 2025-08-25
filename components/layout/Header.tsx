@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Bell, Settings, User, LogOut, Sparkles, Menu } from 'lucide-react'
+import { Bell, Settings, User, LogOut, Sparkles } from 'lucide-react'
 
 interface HeaderProps {
   user: any

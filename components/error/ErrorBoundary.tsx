@@ -3,7 +3,7 @@
 import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
-import * as Sentry from '@sentry/nextjs'
+import { reportError } from '@/lib/monitoring/error-tracking'
 
 interface ErrorBoundaryState {
   hasError: boolean
@@ -38,59 +38,31 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
+  override componentDidCatch(error: Error, errorInfo: any) {
     // Log error in development only
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo)
     }
     
-    // Report to Sentry in production
-    if (process.env.NODE_ENV === 'production') {
-      Sentry.withScope((scope) => {
-        scope.setTag('errorBoundary', true)
-        scope.setContext('errorInfo', errorInfo)
-        scope.setContext('errorId', { id: this.state.errorId })
-        Sentry.captureException(error)
-      })
-    }
+    // Use enhanced error tracking system
+    reportError(error, 'high', {
+      component: 'ErrorBoundary',
+      action: 'component_error',
+      url: typeof window !== 'undefined' ? window.location.href : undefined,
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined,
+      metadata: {
+        ...errorInfo,
+        errorId: this.state.errorId,
+        componentStack: errorInfo.componentStack,
+      },
+    })
     
-    // Log to external service (Sentry, etc.)
+    // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
-    
-    // Log structured error for debugging
-    const errorData = {
-      errorId: this.state.errorId,
-      message: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack,
-      timestamp: new Date().toISOString(),
-      url: typeof window !== 'undefined' ? window.location.href : 'server',
-      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server'
-    }
-    
-    // Send to monitoring service
-    this.reportError(errorData)
   }
 
-  private reportError = async (errorData: any) => {
-    try {
-      // Send error to your monitoring endpoint
-      await fetch('/api/errors/report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(errorData)
-      })
-    } catch (reportingError) {
-      // Silently fail in production, log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to report error:', reportingError)
-      }
-    }
-  }
 
   private handleReset = () => {
     this.setState({
@@ -104,7 +76,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     window.location.reload()
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
@@ -154,7 +126,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </Link>
             </div>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env['NODE_ENV'] === 'development' && this.state.error && (
               <details className="mt-6 text-left">
                 <summary className="cursor-pointer text-sm text-gray-400 hover:text-white">
                   Ver detalles del error (desarrollo)
@@ -181,7 +153,7 @@ export function AsyncErrorBoundary({
   children: ReactNode
   onError?: (error: Error) => void 
 }) {
-  const handleError = (error: Error, errorInfo: any) => {
+  const handleError = (error: Error, _errorInfo: any) => {
     if (onError) {
       onError(error)
     }

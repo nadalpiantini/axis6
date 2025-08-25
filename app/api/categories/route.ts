@@ -138,12 +138,12 @@ export async function PUT(request: NextRequest) {
 
     // Only allow updating personal categories
     const updateData: Record<string, any> = {}
-    if (name !== undefined) updateData.name = typeof name === 'string' ? { en: name } : name
-    if (description !== undefined) updateData.description = typeof description === 'string' ? { en: description } : description
-    if (color !== undefined) updateData.color = color
-    if (icon !== undefined) updateData.icon = icon
-    if (isActive !== undefined) updateData.is_active = isActive
-    updateData.updated_at = new Date().toISOString()
+    if (name !== undefined) updateData['name'] = typeof name === 'string' ? { en: name } : name
+    if (description !== undefined) updateData['description'] = typeof description === 'string' ? { en: description } : description
+    if (color !== undefined) updateData['color'] = color
+    if (icon !== undefined) updateData['icon'] = icon
+    if (isActive !== undefined) updateData['is_active'] = isActive
+    updateData['updated_at'] = new Date().toISOString()
 
     const { data: category, error } = await supabase
       .from('axis6_categories')

@@ -2,12 +2,10 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Mail, ChevronRight, ArrowLeft } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
 
 export default function ForgotPasswordPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)

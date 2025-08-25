@@ -1,0 +1,156 @@
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+
+export async function GET(request: Request) {
+  try {
+    const supabase = await createClient()
+    const { searchParams } = new URL(request.url)
+    const date = searchParams.get('date')
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    // Get time blocks for the specified date
+    const { data, error } = await supabase
+      .rpc('get_my_day_data', {
+        p_user_id: user.id,
+        p_date: date || new Date().toISOString().split('T')[0]
+      })
+    
+    if (error) {
+      console.error('Error fetching time blocks:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error('Time blocks GET error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const supabase = await createClient()
+    const body = await request.json()
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    // Create new time block
+    const { data, error } = await supabase
+      .from('axis6_time_blocks')
+      .insert({
+        user_id: user.id,
+        date: body.date,
+        category_id: body.category_id,
+        activity_id: body.activity_id,
+        activity_name: body.activity_name,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        notes: body.notes,
+        status: body.status || 'planned'
+      })
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Error creating time block:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error('Time blocks POST error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const supabase = await createClient()
+    const body = await request.json()
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    // Update time block
+    const { data, error } = await supabase
+      .from('axis6_time_blocks')
+      .update({
+        category_id: body.category_id,
+        activity_id: body.activity_id,
+        activity_name: body.activity_name,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        notes: body.notes,
+        status: body.status
+      })
+      .eq('id', body.id)
+      .eq('user_id', user.id)
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Error updating time block:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error('Time blocks PUT error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const supabase = await createClient()
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    if (!id) {
+      return NextResponse.json({ error: 'ID required' }, { status: 400 })
+    }
+    
+    // Delete time block
+    const { error } = await supabase
+      .from('axis6_time_blocks')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
+    
+    if (error) {
+      console.error('Error deleting time block:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Time blocks DELETE error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}

@@ -33,8 +33,8 @@ export function CategoryCard({
   disabled = false
 }: CategoryCardProps) {
   const brandColors = getAxisColors(category.slug)
-  const name = category.name[language] || category.name.en || category.slug
-  const description = category.description?.[language] || category.description?.en || ''
+  const name = category.name[language] || category.name['en'] || category.slug
+  const description = category.description?.[language] || category.description?.['en'] || ''
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },

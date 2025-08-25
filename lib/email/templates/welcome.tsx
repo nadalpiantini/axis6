@@ -5,7 +5,6 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Link,
   Preview,
   Section,
@@ -18,7 +17,7 @@ interface WelcomeEmailProps {
 }
 
 export const WelcomeEmail = ({ name = 'Usuario' }: WelcomeEmailProps) => {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://axis6.app'
+  const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
   
   return (
     <Html>

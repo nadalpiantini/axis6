@@ -260,7 +260,7 @@ export function TemperamentResults({
                   className="px-3 py-1 rounded-full text-sm font-bold text-white"
                   style={{ backgroundColor: primaryTemp.color }}
                 >
-                  {Math.round(result.scores[result.primary_temperament] * 100)}%
+                  {Math.round((result.scores as any)[result.primary_temperament] * 100)}%
                 </div>
               </div>
             </motion.div>
@@ -306,7 +306,7 @@ export function TemperamentResults({
                     className="px-3 py-1 rounded-full text-sm font-bold text-white"
                     style={{ backgroundColor: secondaryTemp.color }}
                   >
-                    {Math.round(result.scores[result.secondary_temperament] * 100)}%
+                    {Math.round((result.scores as any)[result.secondary_temperament] * 100)}%
                   </div>
                 </div>
               </motion.div>

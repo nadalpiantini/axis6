@@ -183,6 +183,8 @@ export function EnhancedTemperamentQuestionnaire({
 
     const selectedOption = currentQuestion.options[optionIndex]
     
+    if (!selectedOption) return
+    
     // Store response locally with more details
     setResponses(prev => ({
       ...prev,

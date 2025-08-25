@@ -6,6 +6,7 @@
  */
 
 import * as Sentry from '@sentry/nextjs'
+import { initializeErrorTracking } from '@/lib/monitoring/error-tracking'
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -140,3 +141,6 @@ Sentry.setContext('client', {
   url: typeof window !== 'undefined' ? window.location.href : 'unknown',
   timestamp: new Date().toISOString(),
 })
+
+// Initialize enhanced error tracking system
+initializeErrorTracking()

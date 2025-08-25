@@ -71,8 +71,8 @@ export default function SettingsPage() {
         categories.map(cat => ({
           id: cat.id,
           slug: cat.slug,
-          name: cat.name?.en || cat.slug,
-          description: cat.description?.en || '',
+          name: cat.name?.['en'] || cat.slug,
+          description: cat.description?.['en'] || '',
           color: cat.color,
           icon: cat.icon,
           position: cat.position,
@@ -151,8 +151,8 @@ export default function SettingsPage() {
           axis.id === id
             ? {
                 ...axis,
-                name: originalCategory.name?.en || originalCategory.slug,
-                description: originalCategory.description?.en || '',
+                name: originalCategory.name?.['en'] || originalCategory.slug,
+                description: originalCategory.description?.['en'] || '',
                 color: originalCategory.color,
                 icon: originalCategory.icon,
                 isEditing: false

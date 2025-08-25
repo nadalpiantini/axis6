@@ -62,7 +62,7 @@ export default function LoginPage() {
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
             <div className="mb-4 flex justify-center">
-              <LogoFull size="lg" />
+              <LogoFull size="lg" priority />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
               Welcome Back

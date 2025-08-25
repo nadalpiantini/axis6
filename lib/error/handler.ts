@@ -59,7 +59,7 @@ class ErrorHandler {
     this.consoleLog(errorLog)
 
     // Send to external services in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       this.sendToExternalServices(errorLog)
     }
 

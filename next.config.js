@@ -98,27 +98,55 @@ const nextConfig = {
   
   // Production optimizations
   compiler: {
-    // Remove console logs in production (except errors and warnings)
+    // Remove console logs in production (except errors)
     removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
+      exclude: ['error'],
+    } : false,
+    // Enable React compiler optimizations
+    reactRemoveProperties: process.env.NODE_ENV === 'production' ? {
+      properties: ['^data-testid$'],
     } : false,
   },
 
-  // Bundle analyzer
-  ...(process.env.ANALYZE === 'true' && {
-    experimental: {
-      bundlePagesRouterDependencies: true,
-    },
-  }),
+  // Performance optimizations
+  productionBrowserSourceMaps: false,
+
 
   // Webpack optimizations
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Bundle analyzer
-    if (process.env.ANALYZE) {
-      const BundleAnalyzerPlugin = require('@next/bundle-analyzer')({
-        enabled: process.env.ANALYZE === 'true'
-      })
-      config.plugins.push(new BundleAnalyzerPlugin)
+    if (process.env.ANALYZE === 'true') {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html',
+          openAnalyzer: false,
+          generateStatsFile: true,
+          statsFilename: isServer ? '../analyze/server-stats.json' : './analyze/client-stats.json',
+        })
+      )
+    }
+
+    // Terser plugin for better minification
+    if (!dev && !isServer) {
+      const TerserPlugin = require('terser-webpack-plugin')
+      config.optimization.minimizer = [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+            },
+            mangle: true,
+            format: {
+              comments: false,
+            },
+          },
+          extractComments: false,
+        }),
+      ]
     }
 
     // Optimization for production
@@ -165,52 +193,46 @@ const nextConfig = {
     return config
   },
 
-  // Headers for security with optimized CSP
+  // Advanced CSP with hash-based security
   async headers() {
-    const isDevelopment = process.env.NODE_ENV === 'development'
-    
-    // FIXED CSP for production - allows inline styles/scripts for compatibility
-    // TODO: Future improvement - implement nonce-based or hash-based CSP
-    const productionCSP = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co",
-      "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
-      "frame-src 'self' https://*.supabase.co",
-      "worker-src 'self' blob:",
-      "child-src 'self' blob:",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self' https://*.supabase.co"
-    ].join('; ')
-    
-    // More permissive CSP for development (allows Next.js dev features)
-    const developmentCSP = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co",
-      "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://nvpnhqhjttgwfwvkgmpk.supabase.co wss://*.supabase.co ws://localhost:* http://localhost:*",
-      "frame-src 'self' https://*.supabase.co",
-      "worker-src 'self' blob:",
-      "child-src 'self' blob:",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self' https://*.supabase.co"
-    ].join('; ')
+    let cspHeader
+    try {
+      const { getCSPHeader } = await import('./lib/security/csp-hash.ts')
+      cspHeader = getCSPHeader()
+    } catch (error) {
+      // Fallback CSP if module fails to load
+      cspHeader = [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "img-src 'self' data: blob: https://*.supabase.co",
+        "font-src 'self' https://fonts.gstatic.com",
+        "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+        "frame-src 'self' https://*.supabase.co",
+        "worker-src 'self' blob:",
+        "child-src 'self' blob:",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self' https://*.supabase.co"
+      ].join('; ')
+    }
 
     return [
       {
         source: '/:path*',
         headers: [
-          // CSP re-enabled with 'unsafe-inline' to fix compatibility issues
-          // This allows inline styles/scripts required by Next.js, Framer Motion, and Supabase Auth
+          // Hash-based CSP for maximum security
           {
             key: 'Content-Security-Policy',
-            value: isDevelopment ? developmentCSP : productionCSP
+            value: cspHeader
+          },
+          {
+            key: 'X-Content-Security-Policy', // IE compatibility
+            value: cspHeader
+          },
+          {
+            key: 'X-WebKit-CSP', // Webkit compatibility
+            value: cspHeader
           },
           {
             key: 'X-DNS-Prefetch-Control',
@@ -230,11 +252,15 @@ const nextConfig = {
           },
           {
             key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin'
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
+            value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload'
           }
         ]
       }

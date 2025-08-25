@@ -137,7 +137,7 @@ export function useDeleteActivity() {
 
   return useMutation({
     mutationFn: deleteActivity,
-    onSuccess: (_, id) => {
+    onSuccess: () => {
       // Invalidate all activities queries since we don't have user_id here
       queryClient.invalidateQueries({ 
         queryKey: ['axis-activities'] 

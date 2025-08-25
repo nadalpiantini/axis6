@@ -2,9 +2,11 @@ import { Resend } from 'resend'
 import { WelcomeEmail } from './templates/welcome'
 import { PasswordResetEmail } from './templates/password-reset'
 import { WeeklyStatsEmail } from './templates/weekly-stats'
+import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
+import { logger } from '@/lib/utils/logger'
 
 // Initialize Resend only if API key is available
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+const resend = process.env['RESEND_API_KEY'] ? new Resend(process.env['RESEND_API_KEY']) : null
 
 export type EmailType = 'welcome' | 'password-reset' | 'weekly-stats' | 'reminder'
 
@@ -42,10 +44,10 @@ export interface WeeklyStatsEmailData {
 }
 
 class EmailService {
-  private fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@axis6.app'
+  private fromEmail = process.env['RESEND_FROM_EMAIL'] || 'noreply@axis6.app'
   
   async sendWelcome(data: WelcomeEmailData) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env['RESEND_API_KEY']) {
       console.log('📧 [DEV] Welcome email would be sent to:', data.email)
       return { success: true, id: 'dev-mode' }
     }
@@ -71,7 +73,7 @@ class EmailService {
   }
 
   async sendPasswordReset(data: PasswordResetEmailData) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env['RESEND_API_KEY']) {
       console.log('📧 [DEV] Password reset email would be sent to:', data.email)
       console.log('📧 [DEV] Reset URL:', data.resetUrl)
       return { success: true, id: 'dev-mode' }
@@ -101,7 +103,7 @@ class EmailService {
   }
 
   async sendWeeklyStats(data: WeeklyStatsEmailData) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env['RESEND_API_KEY']) {
       console.log('📧 [DEV] Weekly stats email would be sent to:', data.email)
       return { success: true, id: 'dev-mode' }
     }
@@ -130,7 +132,7 @@ class EmailService {
   }
 
   async sendTestEmail(to: string) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env['RESEND_API_KEY']) {
       console.log('📧 [DEV] Test email would be sent to:', to)
       return { success: true, id: 'dev-mode' }
     }
@@ -182,13 +184,13 @@ export const emailService = new EmailService()
 
 // Environment validation
 export const isEmailConfigured = () => {
-  return !!(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL)
+  return !!(process.env['RESEND_API_KEY'] && process.env['RESEND_FROM_EMAIL'])
 }
 
 export const getEmailConfig = () => {
   return {
-    apiKey: !!process.env.RESEND_API_KEY,
-    fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@axis6.app',
+    apiKey: !!process.env['RESEND_API_KEY'],
+    fromEmail: process.env['RESEND_FROM_EMAIL'] || 'noreply@axis6.app',
     configured: isEmailConfigured()
   }
 }

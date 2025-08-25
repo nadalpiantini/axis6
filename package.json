@@ -12,6 +12,10 @@
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true npm run build",
+    "analyze:clean": "rm -rf .next/analyze",
+    "build:production": "NODE_ENV=production npm run build",
+    "clean:console": "node scripts/remove-console-logs.js",
+    "optimize:check": "npm run clean:console && npm run type-check && npm run lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "db:migrate": "supabase migration up",
@@ -93,7 +97,6 @@
     "react-hook-form": "^7.62.0",
     "recharts": "^2.15.0",
     "resend": "^6.0.1",
-    "stripe": "^17.6.0",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.8"
@@ -112,6 +115,7 @@
     "dotenv": "^17.2.1",
     "eslint": "^8.45.0",
     "eslint-config-next": "^14.0.0",
+    "glob": "^11.0.3",
     "jest": "^29.6.0",
     "jest-environment-jsdom": "^29.6.0",
     "postcss": "^8.4.31",
@@ -119,6 +123,8 @@
     "sharp": "^0.34.3",
     "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5.3.0"
+    "terser-webpack-plugin": "^5.3.14",
+    "typescript": "^5.3.0",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }

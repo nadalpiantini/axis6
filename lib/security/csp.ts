@@ -66,7 +66,7 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
     'connect-src': [
       "'self'",
       // API routes
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'}/api/`,
+      `${process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:6789'}/api/`,
       // Supabase
       "https://nvpnhqhjttgwfwvkgmpk.supabase.co",
       "https://*.supabase.co",
@@ -164,7 +164,7 @@ export function logCSPViolation(report: CSPViolationReport): void {
   })
   
   // In production, send to monitoring service
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env['NODE_ENV'] === 'production') {
     // TODO: Send to Sentry or other monitoring service
     // Sentry.captureMessage('CSP Violation', { extra: report })
   }

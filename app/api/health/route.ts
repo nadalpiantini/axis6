@@ -17,8 +17,8 @@ export async function GET() {
   const health = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '2.0.0',
-    environment: process.env.NODE_ENV || 'production',
+    version: process.env['npm_package_version'] || '2.0.0',
+    environment: process.env['NODE_ENV'] || 'production',
     checks: {
       server: 'running',
       csp: {
