@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
+import { LogoFull } from '@/components/ui/Logo';
 
 export default function PricingPage() {
   const router = useRouter();
@@ -34,6 +35,11 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <LogoFull size="xl" className="h-16" />
+        </div>
+        
         {/* Header */}
         <div className="text-center mb-12">
           <Button

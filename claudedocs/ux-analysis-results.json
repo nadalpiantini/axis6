@@ -1,0 +1,144 @@
+{
+  "pages": [
+    {
+      "name": "Landing Page",
+      "url": "http://localhost:6789",
+      "elements": {
+        "ctaButtons": 3,
+        "headings": [
+          "Balance Your Life with AXIS6",
+          "Why AXIS6?",
+          "Gamification",
+          "Streaks",
+          "Privacy",
+          "The 6 Dimensions of Balance",
+          "Spiritual",
+          "Mental",
+          "Emotional",
+          "Social",
+          "Physical",
+          "Material",
+          "Start your transformation today"
+        ],
+        "features": 0,
+        "socialProof": 0
+      },
+      "engagementScore": 7,
+      "notes": "Entry point - critical for first impressions and conversion"
+    },
+    {
+      "name": "Register Page",
+      "elements": {
+        "fields": 6,
+        "passwordStrength": false,
+        "termsAcceptance": true,
+        "socialRegister": 0
+      },
+      "engagementScore": 5,
+      "notes": "Critical conversion point - needs clear value proposition"
+    },
+    {
+      "name": "Analytics",
+      "elements": {
+        "charts": 0,
+        "metrics": 0,
+        "timeFilters": 0,
+        "insights": 0
+      },
+      "engagementScore": 7,
+      "notes": "Progress visualization - key for long-term engagement"
+    },
+    {
+      "name": "Achievements",
+      "elements": {
+        "badges": 0,
+        "progress": 0,
+        "categories": 0,
+        "unlocked": 0
+      },
+      "engagementScore": 9,
+      "notes": "Gamification center - high engagement potential"
+    },
+    {
+      "name": "Profile/Settings",
+      "elements": {
+        "avatar": false,
+        "preferences": 0,
+        "notifications": 0,
+        "exportData": false
+      },
+      "engagementScore": 6,
+      "notes": "Personalization hub - important for retention"
+    }
+  ],
+  "engagementOpportunities": [
+    {
+      "opportunity": "Onboarding Flow Enhancement",
+      "priority": "High",
+      "description": "Add interactive tutorial showing hexagon interaction and first check-in",
+      "hookedElement": "Action - Make first use immediately rewarding"
+    },
+    {
+      "opportunity": "Smart Notifications",
+      "priority": "High",
+      "description": "Personalized push notifications based on user patterns and streak status",
+      "hookedElement": "Trigger - External triggers that become internal over time"
+    },
+    {
+      "opportunity": "Social Features",
+      "priority": "Medium",
+      "description": "Friend connections, shared achievements, community challenges",
+      "hookedElement": "Variable Reward - Social validation and competition"
+    },
+    {
+      "opportunity": "Micro-Interactions",
+      "priority": "Medium",
+      "description": "Animations, haptic feedback, sound effects for check-ins",
+      "hookedElement": "Action - Make the action more satisfying"
+    },
+    {
+      "opportunity": "Personalized Insights",
+      "priority": "Medium",
+      "description": "AI-driven weekly/monthly insights about patterns and improvements",
+      "hookedElement": "Variable Reward - Unpredictable valuable information"
+    },
+    {
+      "opportunity": "Progressive Achievements",
+      "priority": "Medium",
+      "description": "Multi-tier achievement system with surprise rewards",
+      "hookedElement": "Variable Reward - Intermittent reinforcement"
+    },
+    {
+      "opportunity": "Data Export/Sharing",
+      "priority": "Low",
+      "description": "Allow users to export data and share progress externally",
+      "hookedElement": "Investment - Increase perceived value of accumulated data"
+    }
+  ],
+  "hookedModelAnalysis": {
+    "triggers": [
+      "Daily notification reminders (external trigger)",
+      "Streak about to break warning (external trigger)",
+      "Habit formation cue (internal trigger)",
+      "Completion anxiety (internal trigger)"
+    ],
+    "actions": [
+      "Daily check-ins for 6 categories",
+      "Mood rating input",
+      "Notes/reflection entry",
+      "Progress visualization"
+    ],
+    "variableRewards": [
+      "Streak achievements (intermittent)",
+      "Badge unlocking (unpredictable)",
+      "Progress milestones (variable schedule)",
+      "Personalized insights (surprise element)"
+    ],
+    "investment": [
+      "Daily check-in data accumulation",
+      "Personal reflection notes",
+      "Streak building effort",
+      "Profile customization"
+    ]
+  }
+}

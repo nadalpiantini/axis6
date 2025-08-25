@@ -19,6 +19,7 @@ import {
   TrendingDown
 } from 'lucide-react'
 import Link from 'next/link'
+import { LogoFull } from '@/components/ui/Logo'
 
 // Types
 interface AnalyticsData {
@@ -207,7 +208,12 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       {/* Header */}
       <header className="glass border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          {/* Logo Section */}
+          <div className="flex justify-center mb-4">
+            <LogoFull size="xl" className="h-16" />
+          </div>
+          
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link

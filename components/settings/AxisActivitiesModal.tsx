@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, 
@@ -10,7 +10,8 @@ import {
   Save, 
   Loader2,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from 'lucide-react'
 import { AxisIcon } from '@/components/icons'
 import { 
@@ -19,6 +20,46 @@ import {
   useUpdateActivity, 
   useDeleteActivity 
 } from '@/lib/react-query/hooks/useAxisActivities'
+
+// Predefined activity suggestions for each axis
+const ACTIVITY_SUGGESTIONS: Record<string, string[]> = {
+  physical: [
+    'Running', 'Yoga', 'Swimming', 'Cycling', 'Gym workout', 
+    'Tennis', 'Padel', 'Basketball', 'Soccer', 'Walking',
+    'Hiking', 'Dancing', 'Boxing', 'Pilates', 'CrossFit',
+    'Rock climbing', 'Martial arts', 'Stretching', 'Jump rope', 'Rowing'
+  ],
+  mental: [
+    'Reading', 'Meditation', 'Journaling', 'Learning new skill', 'Puzzle solving',
+    'Study session', 'Online course', 'Documentary', 'Podcast', 'Chess',
+    'Coding', 'Writing', 'Research', 'Language learning', 'Memory exercises',
+    'Brain training', 'Creative writing', 'Mind mapping', 'Planning', 'Reviewing notes'
+  ],
+  emotional: [
+    'Deep breathing', 'Gratitude practice', 'Self-reflection', 'Music therapy', 'Art therapy',
+    'Emotional check-in', 'Mindfulness', 'Positive affirmations', 'Therapy session', 'Support group',
+    'Stress relief', 'Mood tracking', 'Self-care ritual', 'Relaxation', 'Expressing feelings',
+    'Boundary setting', 'Self-compassion', 'Emotional release', 'Visualization', 'Progressive relaxation'
+  ],
+  social: [
+    'Call a friend', 'Family dinner', 'Team meeting', 'Social event', 'Date night',
+    'Coffee with colleague', 'Group activity', 'Networking', 'Video call', 'Send thank you note',
+    'Join community', 'Volunteer work', 'Game night', 'Book club', 'Support someone',
+    'Make new connection', 'Reconnect with old friend', 'Team building', 'Social media detox', 'Active listening'
+  ],
+  spiritual: [
+    'Prayer', 'Meditation', 'Nature walk', 'Gratitude journal', 'Volunteer service',
+    'Reading scripture', 'Spiritual study', 'Contemplation', 'Forgiveness practice', 'Acts of kindness',
+    'Mindful breathing', 'Yoga practice', 'Sunset watching', 'Sacred ritual', 'Chanting',
+    'Energy healing', 'Crystal meditation', 'Intention setting', 'Moon gazing', 'Sound bath'
+  ],
+  purpose: [
+    'Goal setting', 'Vision boarding', 'Career planning', 'Skill development', 'Project work',
+    'Mentoring', 'Teaching', 'Creating content', 'Business planning', 'Innovation session',
+    'Strategic thinking', 'Impact assessment', 'Legacy planning', 'Contribution review', 'Mission alignment',
+    'Value clarification', 'Purpose meditation', 'Achievement tracking', 'Milestone celebration', 'Future visioning'
+  ]
+}
 
 interface AxisActivitiesModalProps {
   isOpen: boolean
@@ -60,6 +101,69 @@ export function AxisActivitiesModal({
     type: 'success' | 'error'
     message: string
   }>({ show: false, type: 'success', message: '' })
+  
+  // Track used suggestions to avoid immediate repeats
+  const [usedSuggestions, setUsedSuggestions] = useState<Set<string>>(new Set())
+  const [displayedSuggestions, setDisplayedSuggestions] = useState<string[]>([])
+  
+  // Get the axis type from the icon name
+  const axisType = useMemo(() => {
+    const iconToType: Record<string, string> = {
+      'activity': 'physical',
+      'brain': 'mental',
+      'heart': 'emotional',
+      'users': 'social',
+      'sparkles': 'spiritual',
+      'briefcase': 'purpose'
+    }
+    return iconToType[axis.icon] || 'physical'
+  }, [axis.icon])
+  
+  // Get random suggestions that haven't been used recently
+  const getRandomSuggestions = (count: number = 6) => {
+    const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType]
+    const unused = availableSuggestions.filter(s => !usedSuggestions.has(s))
+    const pool = unused.length >= count ? unused : availableSuggestions
+    
+    const selected: string[] = []
+    const tempSet = new Set(selected)
+    
+    while (selected.length < count && selected.length < pool.length) {
+      const randomIndex = Math.floor(Math.random() * pool.length)
+      const suggestion = pool[randomIndex]
+      if (!tempSet.has(suggestion)) {
+        selected.push(suggestion)
+        tempSet.add(suggestion)
+      }
+    }
+    
+    return selected
+  }
+  
+  // Initialize suggestions when adding new activity
+  useEffect(() => {
+    if (isAddingNew) {
+      setDisplayedSuggestions(getRandomSuggestions())
+    }
+  }, [isAddingNew, axisType])
+  
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion: string, index: number) => {
+    setFormData(prev => ({ ...prev, activity_name: suggestion }))
+    setUsedSuggestions(prev => new Set(prev).add(suggestion))
+    
+    // Replace the clicked suggestion with a new one
+    const newSuggestions = [...displayedSuggestions]
+    const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType].filter(
+      s => !displayedSuggestions.includes(s) && s !== suggestion
+    )
+    
+    if (availableSuggestions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableSuggestions.length)
+      newSuggestions[index] = availableSuggestions[randomIndex]
+      setDisplayedSuggestions(newSuggestions)
+    }
+  }
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ show: true, type, message })
@@ -232,6 +336,33 @@ export function AxisActivitiesModal({
                         className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/30"
                       >
                         <div className="space-y-3">
+                          {/* Suggestions - Only show when adding new */}
+                          {isAddingNew && displayedSuggestions.length > 0 && (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-xs text-gray-400">
+                                <Sparkles className="w-3 h-3" />
+                                <span>Quick suggestions (tap to use):</span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2">
+                                {displayedSuggestions.map((suggestion, index) => (
+                                  <motion.button
+                                    key={`${suggestion}-${index}`}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => handleSuggestionClick(suggestion, index)}
+                                    className="px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-gray-300 hover:text-white transition-all"
+                                    type="button"
+                                  >
+                                    {suggestion}
+                                  </motion.button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
                           <input
                             type="text"
                             value={formData.activity_name}

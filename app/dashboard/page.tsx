@@ -120,10 +120,10 @@ const HexagonVisualization = memo(({
 
   return (
     <div className="flex justify-center mb-8" data-testid="hexagon-chart">
-      <svg width="300" height="300" viewBox="0 0 300 300" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
+      <svg width="400" height="400" viewBox="0 0 400 400" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
         {/* Background hexagon */}
         <polygon
-          points={createHexagonPath(120, 150, 150)}
+          points={createHexagonPath(160, 200, 200)}
           fill="none"
           stroke="rgba(255,255,255,0.1)"
           strokeWidth="2"
@@ -143,7 +143,7 @@ const HexagonVisualization = memo(({
                 duration: showAnimations ? 0.5 : 0,
                 ease: "easeInOut" 
               }}
-              points={createHexagonPath(120, 150, 150)}
+              points={createHexagonPath(160, 200, 200)}
               fill="url(#gradient)"
               stroke="url(#gradient)"
               strokeWidth="2"
@@ -162,15 +162,15 @@ const HexagonVisualization = memo(({
         {/* Axis points */}
         {axes.map((axis, index) => {
           const angle = (Math.PI / 3) * index - Math.PI / 2
-          const x = 150 + 120 * Math.cos(angle)
-          const y = 150 + 120 * Math.sin(angle)
+          const x = 200 + 160 * Math.cos(angle)
+          const y = 200 + 160 * Math.sin(angle)
           
           return (
             <g key={axis.id}>
               <motion.circle
                 cx={x}
                 cy={y}
-                r="25"
+                r="30"
                 fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
                 fillOpacity={axis.completed ? 0.8 : 1}
                 className="cursor-pointer transition-all"
@@ -190,15 +190,15 @@ const HexagonVisualization = memo(({
                 }}
               />
               <foreignObject 
-                x={x - 12} 
-                y={y - 12} 
-                width="24" 
-                height="24"
+                x={x - 14} 
+                y={y - 14} 
+                width="28" 
+                height="28"
                 pointerEvents="none"
               >
                 <AxisIcon 
                   axis={axis.icon}
-                  size={24}
+                  size={28}
                   color={axis.completed ? 'white' : '#9ca3af'}
                   custom
                   animated={showAnimations && axis.completed}

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Metadata } from 'next'
+import { LogoFull } from '@/components/ui/Logo'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - AXIS6',
@@ -10,6 +11,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <LogoFull size="xl" className="h-16" />
+        </div>
+        
         <Link 
           href="/" 
           className="inline-flex items-center text-purple-400 hover:text-purple-300 mb-8"

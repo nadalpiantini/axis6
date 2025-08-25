@@ -23,11 +23,11 @@ export function NotificationToast() {
   const { notifications, removeNotification } = useUIStore()
 
   useEffect(() => {
-    // Auto-remove notifications after 5 seconds
+    // Auto-remove notifications after 2.5 seconds
     const timers = notifications.map(notification => 
       setTimeout(() => {
         removeNotification(notification.id)
-      }, 5000)
+      }, 2500)
     )
 
     return () => {
