@@ -34,6 +34,7 @@ import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
 import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
+import { useToast, ToastContainer } from '@/components/ui/Toast'
 
 
 // Memoized hexagon visualization
@@ -54,8 +55,12 @@ const HexagonVisualization = memo(({
 }) => {
   const showAnimations = usePreferencesStore(state => state.showAnimations)
   
-  const createHexagonPath = useCallback((size: number, centerX: number, centerY: number) => {
+  // Memoize hexagon path calculation
+  const hexagonPath = useMemo(() => {
     const points = []
+    const size = 160
+    const centerX = 200
+    const centerY = 200
     for (let i = 0; i < 6; i++) {
       const angle = (Math.PI / 3) * i - Math.PI / 2
       const x = centerX + size * Math.cos(angle)
@@ -63,19 +68,42 @@ const HexagonVisualization = memo(({
       points.push(`${x},${y}`)
     }
     return points.join(' ')
-  }, [])
+  }, []) // Only calculate once since size is constant
 
-  const completionPercentage = useMemo(
-    () => (axes.filter(a => a.completed).length / axes.length) * 100,
+  // Memoize completion calculation
+  const { completedCount, completionPercentage } = useMemo(
+    () => {
+      const completed = axes.filter(a => a.completed).length
+      return {
+        completedCount: completed,
+        completionPercentage: (completed / axes.length) * 100
+      }
+    },
     [axes]
   )
+  
+  // Memoize axis positions
+  const axisPositions = useMemo(() => {
+    return axes.map((axis, index) => {
+      const angle = (Math.PI / 3) * index - Math.PI / 2
+      const x = 200 + 160 * Math.cos(angle)
+      const y = 200 + 160 * Math.sin(angle)
+      return { ...axis, x, y, angle }
+    })
+  }, [axes])
 
   return (
     <div className="flex justify-center mb-4 sm:mb-8" data-testid="hexagon-chart">
-      <svg className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" viewBox="0 0 400 400" role="img" aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}>
+      <svg 
+        className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" 
+        viewBox="0 0 400 400" 
+        role="img" 
+        aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}
+        style={{ pointerEvents: 'auto' }}
+      >
         {/* Background hexagon */}
         <polygon
-          points={createHexagonPath(160, 200, 200)}
+          points={hexagonPath}
           fill="none"
           stroke="rgba(255,255,255,0.1)"
           strokeWidth="2"
@@ -95,7 +123,7 @@ const HexagonVisualization = memo(({
                 duration: showAnimations ? 0.5 : 0,
                 ease: "easeInOut" 
               }}
-              points={createHexagonPath(160, 200, 200)}
+              points={hexagonPath}
               fill="url(#gradient)"
               stroke="url(#gradient)"
               strokeWidth="2"
@@ -112,30 +140,31 @@ const HexagonVisualization = memo(({
         </defs>
         
         {/* Axis points */}
-        {axes.map((axis, index) => {
-          const angle = (Math.PI / 3) * index - Math.PI / 2
-          const x = 200 + 160 * Math.cos(angle)
-          const y = 200 + 160 * Math.sin(angle)
+        {axisPositions.map((axis) => (
           
-          return (
             <ClickableSVG
               key={axis.id}
               onClick={() => onToggleAxis(axis.id)}
               disabled={isToggling}
-              aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
-              data-testid={`category-${axis.name.toLowerCase()}`}
+              aria-label={`Toggle ${axis.name}: currently ${axis.completed ? 'completed' : 'not completed'}`}
+              data-testid={`hexagon-${axis.name.toLowerCase()}`}
+              showAnimation={true}
+              className="focus:outline-none"
             >
               <circle
-                cx={x}
-                cy={y}
+                cx={axis.x}
+                cy={axis.y}
                 r="30"
                 fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
                 fillOpacity={axis.completed ? 0.8 : 1}
-                className="transition-all"
+                stroke={axis.completed ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}
+                strokeWidth="2"
+                className="transition-all duration-200 hover:stroke-white hover:stroke-[3]"
+                style={{ pointerEvents: 'auto', cursor: 'pointer' }}
               />
               <foreignObject 
-                x={x - 14} 
-                y={y - 14} 
+                x={axis.x - 14} 
+                y={axis.y - 14} 
                 width="28" 
                 height="28"
                 style={{ pointerEvents: 'none' }}
@@ -149,8 +178,7 @@ const HexagonVisualization = memo(({
                 />
               </foreignObject>
             </ClickableSVG>
-          )
-        })}
+        ))}
       </svg>
     </div>
   )
@@ -213,6 +241,7 @@ MemoizedCategoryCard.displayName = 'MemoizedCategoryCard'
 export default function DashboardPageV2() {
   const router = useRouter()
   const { addNotification } = useUIStore()
+  const { toasts, showToast, removeToast } = useToast()
   
   // Fetch all data in parallel with React Query
   const { data: user, isLoading: userLoading, error: userError } = useUser()
@@ -306,17 +335,32 @@ export default function DashboardPageV2() {
         },
         {
           onSuccess: () => {
+            const message = axis.completed 
+              ? `${axis.name} unchecked` 
+              : `${axis.name} completed! 🎉`
+            
+            // Show toast notification
+            showToast(message, 'success', 2500)
+            
+            // Also add to notification store for persistence
             addNotification({
               type: 'success',
-              message: axis.completed 
-                ? `${axis.name} unchecked` 
-                : `${axis.name} completed!`
+              message: message
             })
           },
-          onError: () => {
+          onError: (error) => {
+            const errorMessage = 'Failed to update. Please try again.'
+            
+            // Show error toast
+            showToast(errorMessage, 'error', 4000)
+            
+            // Log error for debugging
+            console.error('Toggle check-in error:', error)
+            
+            // Also add to notification store
             addNotification({
               type: 'error',
-              message: 'Error updating. Please try again.'
+              message: errorMessage
             })
           }
         }
@@ -521,6 +565,9 @@ export default function DashboardPageV2() {
             </div>
           </div>
         </div>
+        
+        {/* Toast Notifications */}
+        <ToastContainer toasts={toasts} onRemove={removeToast} />
       </div>
     </QueryErrorBoundary>
   )

@@ -32,32 +32,58 @@ async function fetchTodayCheckins(userId: string): Promise<CheckIn[]> {
 async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: string) {
   const supabase = createClient()
   
+  // Debug logging
+  console.log('[toggleCheckIn] Starting mutation:', { categoryId, completed, userId })
+  
   if (completed) {
     // Add check-in with proper timestamp
+    const insertData = {
+      user_id: userId,
+      category_id: categoryId,
+      completed_at: new Date().toISOString()  // FIXED: Use full timestamp
+    }
+    
+    console.log('[toggleCheckIn] Inserting check-in:', insertData)
+    
     const { data, error } = await supabase
       .from('axis6_checkins')
-      .insert({
-        user_id: userId,
-        category_id: categoryId,
-        completed_at: new Date().toISOString()  // FIXED: Use full timestamp
-      })
+      .insert(insertData)
       .select()
       .single()
     
-    if (error) throw error
+    if (error) {
+      console.error('[toggleCheckIn] Insert error:', error)
+      throw error
+    }
+    
+    console.log('[toggleCheckIn] Insert success:', data)
     return data
   } else {
     // Remove check-in for today
     const today = new Date().toISOString().split('T')[0]
+    const deleteParams = {
+      user_id: userId,
+      category_id: categoryId,
+      start: `${today}T00:00:00.000Z`,
+      end: `${today}T23:59:59.999Z`
+    }
+    
+    console.log('[toggleCheckIn] Deleting check-in:', deleteParams)
+    
     const { error } = await supabase
       .from('axis6_checkins')
       .delete()
       .eq('user_id', userId)
       .eq('category_id', categoryId)
-      .gte('completed_at', `${today}T00:00:00.000Z`)  // FIXED: Added timezone info
-      .lte('completed_at', `${today}T23:59:59.999Z`)  // FIXED: Added timezone info
+      .gte('completed_at', deleteParams.start)  // FIXED: Added timezone info
+      .lte('completed_at', deleteParams.end)  // FIXED: Added timezone info
     
-    if (error) throw error
+    if (error) {
+      console.error('[toggleCheckIn] Delete error:', error)
+      throw error
+    }
+    
+    console.log('[toggleCheckIn] Delete success')
     return null
   }
 }
@@ -75,7 +101,12 @@ export function useToggleCheckIn(userId: string | undefined) {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (input: CheckInInput) => toggleCheckIn(input, userId!),
+    mutationFn: async (input: CheckInInput) => {
+      if (!userId) {
+        throw new Error('User ID is required for toggle check-in')
+      }
+      return toggleCheckIn(input, userId)
+    },
     onMutate: async ({ categoryId, completed }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['checkins', 'today', userId] })
