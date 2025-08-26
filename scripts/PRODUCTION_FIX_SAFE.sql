@@ -2,7 +2,95 @@
 -- AXIS6 PRODUCTION DATABASE FIX - SAFE VERSION
 -- =====================================================
 -- This script safely handles triggers and constraints
+-- FIXES:
+-- 1. axis6_profiles user_id column issue
+-- 2. completed_at column type in axis6_checkins
+-- 3. Missing temperament tables
 -- =====================================================
+
+-- STEP 0: Fix axis6_profiles table structure (user_id issue)
+-- =====================================================
+DO $$
+DECLARE
+    has_user_id_column BOOLEAN;
+BEGIN
+    -- Check if user_id column exists (wrong structure)
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'axis6_profiles' 
+        AND column_name = 'user_id'
+        AND table_schema = 'public'
+    ) INTO has_user_id_column;
+
+    IF has_user_id_column THEN
+        RAISE NOTICE '⚠️ Found incorrect axis6_profiles structure with user_id column. Fixing...';
+        
+        -- Create backup
+        CREATE TEMP TABLE axis6_profiles_backup AS 
+        SELECT * FROM axis6_profiles;
+        
+        -- Drop existing policies
+        DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON axis6_profiles;
+        DROP POLICY IF EXISTS "Users can update own profile" ON axis6_profiles;
+        DROP POLICY IF EXISTS "Users can insert own profile" ON axis6_profiles;
+        
+        -- Drop and recreate table
+        DROP TABLE IF EXISTS axis6_profiles CASCADE;
+        
+        CREATE TABLE axis6_profiles (
+            id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+            name TEXT,
+            username TEXT UNIQUE,
+            full_name TEXT,
+            avatar_url TEXT,
+            timezone TEXT DEFAULT 'UTC',
+            onboarded BOOLEAN DEFAULT false,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
+        );
+        
+        -- Restore data
+        INSERT INTO axis6_profiles (id, name, username, full_name, avatar_url, timezone, onboarded, created_at, updated_at)
+        SELECT 
+            COALESCE(user_id, id) as id,
+            COALESCE(name, full_name, username, 'User') as name,
+            username,
+            full_name,
+            avatar_url,
+            COALESCE(timezone, 'UTC') as timezone,
+            COALESCE(onboarded, false) as onboarded,
+            created_at,
+            updated_at
+        FROM axis6_profiles_backup
+        ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            username = EXCLUDED.username,
+            full_name = EXCLUDED.full_name,
+            avatar_url = EXCLUDED.avatar_url,
+            timezone = EXCLUDED.timezone,
+            onboarded = EXCLUDED.onboarded,
+            updated_at = NOW();
+        
+        -- Enable RLS
+        ALTER TABLE axis6_profiles ENABLE ROW LEVEL SECURITY;
+        
+        -- Create correct policies
+        CREATE POLICY "Profiles are viewable by everyone" ON axis6_profiles
+            FOR SELECT USING (true);
+        CREATE POLICY "Users can update own profile" ON axis6_profiles
+            FOR UPDATE USING (auth.uid() = id);
+        CREATE POLICY "Users can insert own profile" ON axis6_profiles
+            FOR INSERT WITH CHECK (auth.uid() = id);
+        
+        DROP TABLE IF EXISTS axis6_profiles_backup;
+        RAISE NOTICE '✅ axis6_profiles structure fixed!';
+    ELSE
+        RAISE NOTICE '✅ axis6_profiles structure is already correct';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE '❌ Error fixing axis6_profiles: %', SQLERRM;
+END $$;
 
 -- STEP 1: Safely handle the completed_at column type change
 -- =====================================================
