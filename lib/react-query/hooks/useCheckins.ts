@@ -145,12 +145,21 @@ export function useToggleCheckIn(userId: string | undefined) {
       }
     },
     onSettled: () => {
-      // Always refetch after error or success
+      // AGGRESSIVE CACHE INVALIDATION: Ensure immediate UI updates
+      // Force refetch all related queries for instant visual feedback
       queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
       queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-      // Also invalidate dashboard data for visual updates
       queryClient.invalidateQueries({ queryKey: ['categories'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard-data', userId] })
+      
+      // Also invalidate any parent level queries that might cache axis data
+      queryClient.invalidateQueries({ queryKey: ['user-stats', userId] })
+      queryClient.invalidateQueries({ queryKey: ['daily-summary', userId] })
+      
+      // Force a small delay then refetch to ensure network roundtrip completes
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['checkins', 'today', userId] })
+      }, 100)
     }
   })
 }

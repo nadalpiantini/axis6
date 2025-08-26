@@ -17,6 +17,7 @@ import {
   useToggleCheckIn, 
   useStreaks 
 } from '@/lib/react-query/hooks'
+import { useQueryClient } from '@tanstack/react-query'
 
 // Realtime hooks
 import { useRealtimeDashboard } from '@/lib/hooks/useRealtimeCheckins'
@@ -244,6 +245,9 @@ export default function DashboardPageV2() {
   const { addNotification } = useUIStore()
   const { toasts, showToast, removeToast } = useToast()
   
+  // React Query client for manual invalidation
+  const queryClient = useQueryClient()
+  
   // Fetch all data in parallel with React Query
   const { data: user, isLoading: userLoading, error: userError } = useUser()
   const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useCategories()
@@ -323,19 +327,20 @@ export default function DashboardPageV2() {
     [streaks]
   )
 
-  // Handlers with useCallback for optimization
+  // Handlers with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
     
     const axis = axes.find(a => a.id === axisId)
     if (axis) {
+      // FRONTEND FIX: Use mutateAsync for better control over success/error handling
       toggleCheckIn.mutate(
         {
           categoryId: axisId,
           completed: !axis.completed
         },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
             const message = axis.completed 
               ? `${axis.name} unchecked` 
               : `${axis.name} completed! 🎉`
@@ -348,6 +353,14 @@ export default function DashboardPageV2() {
               type: 'success',
               message: message
             })
+            
+            // CRITICAL FIX: Force immediate refetch of related queries
+            // This ensures visual updates happen immediately
+            queryClient.invalidateQueries({ queryKey: ['checkins', 'today', user?.id] })
+            queryClient.invalidateQueries({ queryKey: ['streaks', user?.id] })
+            
+            // Log success for debugging
+            console.log('✅ Checkin toggle successful:', data)
           },
           onError: (error) => {
             const errorMessage = 'Failed to update. Please try again.'
@@ -355,8 +368,13 @@ export default function DashboardPageV2() {
             // Show error toast
             showToast(errorMessage, 'error', 4000)
             
-            // Log error for debugging
-            console.error('Toggle check-in error:', error)
+            // Log error for debugging with more detail
+            console.error('❌ Toggle check-in error:', {
+              axisId,
+              axisName: axis.name,
+              completed: !axis.completed,
+              error: error.message || error
+            })
             
             // Also add to notification store
             addNotification({
@@ -367,7 +385,7 @@ export default function DashboardPageV2() {
         }
       )
     }
-  }, [axes, toggleCheckIn, addNotification])
+  }, [axes, toggleCheckIn, addNotification, queryClient, user?.id])
 
   const handleLogout = useCallback(async () => {
     const { createClient } = await import('@/lib/supabase/client')
@@ -477,6 +495,7 @@ export default function DashboardPageV2() {
                 </div>
 
                 <HexagonVisualization 
+                  key={`hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`}
                   axes={axes}
                   onToggleAxis={handleToggleAxis}
                   isToggling={toggleCheckIn.isPending}
@@ -486,7 +505,7 @@ export default function DashboardPageV2() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4" data-testid="category-cards">
                   {axes.map((axis) => (
                     <MemoizedCategoryCard
-                      key={axis.id}
+                      key={`${axis.id}-${axis.completed}-${toggleCheckIn.isPending}`}
                       axis={axis}
                       onToggle={() => handleToggleAxis(axis.id)}
                       isToggling={toggleCheckIn.isPending}
