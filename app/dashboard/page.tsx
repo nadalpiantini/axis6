@@ -29,6 +29,7 @@ import { AxisIcon } from '@/components/icons'
 import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
+import { ClickableSVG } from '@/components/ui/ClickableSVG'
 
 // Memoized header component
 const DashboardHeader = memo(({ 
@@ -162,45 +163,37 @@ const HexagonVisualization = memo(({
           const y = 200 + 160 * Math.sin(angle)
           
           return (
-            <g key={axis.id}>
-              <g 
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (!isToggling) {
-                    onToggleAxis(axis.id)
-                  }
-                }}
-                style={{ cursor: 'pointer' }}
+            <ClickableSVG
+              key={axis.id}
+              onClick={() => onToggleAxis(axis.id)}
+              disabled={isToggling}
+              aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
+              data-testid={`category-${axis.name.toLowerCase()}`}
+            >
+              <circle
+                cx={x}
+                cy={y}
+                r="30"
+                fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
+                fillOpacity={axis.completed ? 0.8 : 1}
+                className="transition-all"
+              />
+              <foreignObject 
+                x={x - 14} 
+                y={y - 14} 
+                width="28" 
+                height="28"
+                style={{ pointerEvents: 'none' }}
               >
-                <circle
-                  cx={x}
-                  cy={y}
-                  r="30"
-                  fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
-                  fillOpacity={axis.completed ? 0.8 : 1}
-                  className="transition-all hover:scale-110 active:scale-95"
-                  role="button"
-                  aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
-                  data-testid={`category-${axis.name.toLowerCase()}`}
-                  data-category={axis.name.toLowerCase()}
+                <AxisIcon 
+                  axis={axis.icon}
+                  size={28}
+                  color={axis.completed ? 'white' : '#9ca3af'}
+                  custom
+                  animated={showAnimations && axis.completed}
                 />
-                <foreignObject 
-                  x={x - 14} 
-                  y={y - 14} 
-                  width="28" 
-                  height="28"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  <AxisIcon 
-                    axis={axis.icon}
-                    size={28}
-                    color={axis.completed ? 'white' : '#9ca3af'}
-                    custom
-                    animated={showAnimations && axis.completed}
-                  />
-                </foreignObject>
-              </g>
-            </g>
+              </foreignObject>
+            </ClickableSVG>
           )
         })}
       </svg>
@@ -305,6 +298,8 @@ export default function DashboardPageV2() {
 
   // Handlers with useCallback for optimization
   const handleToggleAxis = useCallback((axisId: number) => {
+    if (toggleCheckIn.isPending) return // Prevent multiple clicks
+    
     const axis = axes.find(a => a.id === axisId)
     if (axis) {
       toggleCheckIn.mutate(

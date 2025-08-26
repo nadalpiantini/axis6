@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
@@ -268,9 +268,10 @@ export default function ProfilePage() {
     router.push('/auth/login')
   }
 
-  const handleStartAssessment = () => {
+  const handleStartAssessment = useCallback(() => {
+    console.log('Starting assessment...')
     setShowQuestionnaire(true)
-  }
+  }, [])
 
   const handleAssessmentComplete = (result: TemperamentResult) => {
     setAssessmentResult(result)
