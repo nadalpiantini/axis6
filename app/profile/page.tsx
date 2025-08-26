@@ -82,6 +82,7 @@ export default function ProfilePage() {
   const { data: checkins = [] } = useTodayCheckins(user?.id)
   
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [profileLoading, setProfileLoading] = useState(true)
   const [temperamentProfile, setTemperamentProfile] = useState<TemperamentProfile | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState('')
@@ -97,8 +98,13 @@ export default function ProfilePage() {
   }>({ show: false, type: 'success', message: '' })
 
   useEffect(() => {
-    if (user) {
-      const fetchProfile = async () => {
+    const fetchProfile = async () => {
+      if (!user) {
+        setProfileLoading(false)
+        return
+      }
+      
+      try {
         const supabase = createClient()
         
         // Fetch basic profile
@@ -139,10 +145,15 @@ export default function ProfilePage() {
           // Table might not exist yet, ignore error
           console.log('Temperament profile not available')
         }
+      } finally {
+        setProfileLoading(false)
       }
+    }
+    
+    if (!userLoading) {
       fetchProfile()
     }
-  }, [user])
+  }, [user, userLoading])
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ show: true, type, message })
@@ -320,7 +331,8 @@ export default function ProfilePage() {
     }
   }
 
-  if (userLoading) {
+  // Handle loading state
+  if (userLoading || profileLoading) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
@@ -331,9 +343,29 @@ export default function ProfilePage() {
     )
   }
 
-  if (!user || !profile) {
+  // Only redirect after all loading is complete and we know there's no user
+  if (!user) {
     router.push('/auth/login')
-    return null
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-4" />
+          <p className="text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If user exists but profile is still null (shouldn't happen with proper loading)
+  if (!profile) {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-4" />
+          <p className="text-gray-400">Setting up profile...</p>
+        </div>
+      </div>
+    )
   }
 
   const currentStreak = Math.max(...streaks.map(s => s.current_streak), 0)

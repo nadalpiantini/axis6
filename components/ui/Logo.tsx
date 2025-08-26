@@ -62,6 +62,12 @@ export function Logo({
         'hover:scale-105',
         className
       )}
+      style={{
+        width: 'auto',
+        height: 'auto',
+        maxWidth: '100%',
+        maxHeight: '100%'
+      }}
     />
   )
 }

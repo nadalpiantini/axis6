@@ -281,14 +281,15 @@ interface AxisIconWrapperProps extends IconProps {
   custom?: boolean
 }
 
-export function AxisIcon({ axis, custom = false, ...props }: AxisIconWrapperProps) {
+export function AxisIcon({ axis, custom = false, animated, ...props }: AxisIconWrapperProps) {
   const IconComponent = getAxisIcon(axis, custom)
   
   if (custom) {
-    return <IconComponent {...props} />
+    // Pass animated to custom icons
+    return <IconComponent animated={animated} {...props} />
   }
   
-  // For Lucide icons
+  // For Lucide icons - only pass supported props (exclude animated)
   const LucideIcon = IconComponent as LucideIcon
   return <LucideIcon size={props.size} color={props.color} className={props.className} />
 }

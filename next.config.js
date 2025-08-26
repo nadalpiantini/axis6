@@ -193,19 +193,23 @@ const nextConfig = {
 
   // Advanced CSP with hash-based security
   async headers() {
-    let cspHeader
-    try {
-      const { getCSPHeader } = await import('./lib/security/csp-hash.ts')
-      cspHeader = getCSPHeader()
-    } catch (error) {
-      // Fallback CSP if module fails to load
-      cspHeader = [
+    // TEMPORARY FIX: Using permissive CSP to fix button interactions in production
+    // TODO: Calculate and add proper hashes for all React event handlers
+    // Original hash-based CSP temporarily disabled - see lib/security/csp-hash.ts
+    
+    // let cspHeader
+    // try {
+    //   const { getCSPHeader } = await import('./lib/security/csp-hash.ts')
+    //   cspHeader = getCSPHeader()
+    // } catch (error) {
+    //   // Fallback CSP if module fails to load
+      const cspHeader = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "img-src 'self' data: blob: https://*.supabase.co",
         "font-src 'self' https://fonts.gstatic.com",
-        "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
         "frame-src 'self' https://*.supabase.co",
         "worker-src 'self' blob:",
         "child-src 'self' blob:",
@@ -213,7 +217,7 @@ const nextConfig = {
         "base-uri 'self'",
         "form-action 'self' https://*.supabase.co"
       ].join('; ')
-    }
+    // }
 
     return [
       {

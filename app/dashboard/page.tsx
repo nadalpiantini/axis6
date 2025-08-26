@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo, useCallback } from 'react'
+import { memo, useMemo, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -163,16 +163,14 @@ const HexagonVisualization = memo(({
           
           return (
             <g key={axis.id}>
-              <motion.circle
+              <circle
                 cx={x}
                 cy={y}
                 r="30"
                 fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
                 fillOpacity={axis.completed ? 0.8 : 1}
-                className="cursor-pointer transition-all"
+                className="cursor-pointer transition-all hover:scale-110 active:scale-95"
                 onClick={() => !isToggling && onToggleAxis(axis.id)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
                 role="button"
                 aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
                 data-testid={`category-${axis.name.toLowerCase()}`}
@@ -190,7 +188,7 @@ const HexagonVisualization = memo(({
                 y={y - 14} 
                 width="28" 
                 height="28"
-                pointerEvents="none"
+                style={{ pointerEvents: 'none' }}
               >
                 <AxisIcon 
                   axis={axis.icon}
@@ -229,12 +227,10 @@ const MemoizedCategoryCard = memo(({
   const showAnimations = usePreferencesStore(state => state.showAnimations)
   
   return (
-    <motion.button
-      whileHover={showAnimations ? { scale: 1.02 } : undefined}
-      whileTap={showAnimations ? { scale: 0.98 } : undefined}
+    <button
       onClick={onToggle}
       disabled={isToggling}
-      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] ${
+      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] hover:scale-[1.02] active:scale-[0.98] ${
         axis.completed 
           ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
           : 'bg-white/5 hover:bg-white/10 border-white/10'
@@ -257,7 +253,7 @@ const MemoizedCategoryCard = memo(({
           {axis.name}
         </span>
       </div>
-    </motion.button>
+    </button>
   )
 })
 
@@ -341,6 +337,13 @@ export default function DashboardPageV2() {
     router.push('/auth/login')
   }, [router])
 
+  // Handle authentication redirect - MUST be before any conditional returns
+  useEffect(() => {
+    if (!userLoading && !user) {
+      router.push('/auth/login')
+    }
+  }, [user, userLoading, router])
+
   // Show loading state
   if (userLoading || categoriesLoading) {
     return (
@@ -353,10 +356,16 @@ export default function DashboardPageV2() {
     )
   }
 
-  // Redirect if not authenticated
+  // Show loading state for authentication check
   if (!user) {
-    router.push('/auth/login')
-    return null
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Verifying access...</p>
+        </div>
+      </div>
+    )
   }
 
   const completedCount = axes.filter(a => a.completed).length

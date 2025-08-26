@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { reportError } from '@/lib/monitoring/error-tracking'
-import { logger } from '@/lib/utils/logger'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,16 +30,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    // Use service role client for registration
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     // Sign up user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
+      email_confirm: true
     })
 
     if (authError) {
-      logger.error('Auth signup failed', { error: authError, email })
+      console.error('Auth signup failed:', authError.message)
       return NextResponse.json(
         { error: authError.message },
         { status: 400 }
@@ -68,14 +77,14 @@ export async function POST(request: NextRequest) {
       ])
 
     if (profileError) {
-      logger.error('Profile creation failed', { error: profileError, userId: authData.user.id })
-      // Don't fail the request if profile creation fails, auth user was created
+      console.error('Profile creation failed:', profileError.message)
+      return NextResponse.json(
+        { error: `Profile creation failed: ${profileError.message}` },
+        { status: 500 }
+      )
     }
 
-    logger.info('User registered successfully', { 
-      userId: authData.user.id, 
-      email: authData.user.email 
-    })
+    console.log('User registered successfully:', authData.user.id)
 
     return NextResponse.json({
       message: 'Registration successful',
@@ -87,15 +96,9 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    logger.error('Registration endpoint error', { error })
-    reportError(error, 'high', {
-      component: 'AuthAPI',
-      action: 'register',
-      url: '/api/auth/register'
-    })
-
+    console.error('Registration endpoint error:', error.message)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error: ${error.message}` },
       { status: 500 }
     )
   }
