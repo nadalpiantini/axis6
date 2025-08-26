@@ -249,19 +249,22 @@ export default function SettingsPage() {
         backUrl="/dashboard"
       />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Main Settings Container */}
+      <div className="max-w-6xl mx-auto px-4 py-8" data-testid="main-settings-container">
         {/* Page Title */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Settings</h1>
           <p className="text-gray-400">Customize your AXIS6 experience and personalize your dimensions</p>
         </div>
 
-        {/* Axis Customization Section */}
-        <div className="glass rounded-2xl p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-6">Customize Your Axes</h2>
-          <p className="text-gray-400 mb-8">
-            Personalize each axis with custom names, descriptions, colors, and icons to match your wellness journey.
-          </p>
+        {/* Settings Sections */}
+        <div className="space-y-8" data-testid="settings-sections">
+          {/* Axis Customization Section */}
+          <div className="glass rounded-2xl p-8" data-testid="axis-customization-section">
+            <h2 className="text-2xl font-semibold mb-6">Customize Your Axes</h2>
+            <p className="text-gray-400 mb-8">
+              Personalize each axis with custom names, descriptions, colors, and icons to match your wellness journey.
+            </p>
 
           <div className="grid lg:grid-cols-2 gap-6">
             {editableAxes.map((axis) => (
@@ -441,6 +444,37 @@ export default function SettingsPage() {
                 )}
               </motion.div>
             ))}
+            </div>
+          </div>
+
+          {/* General Settings Section */}
+          <div className="glass rounded-2xl p-8" data-testid="general-settings-section">
+            <h2 className="text-2xl font-semibold mb-6">General Settings</h2>
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 className="font-medium mb-2">Account Preferences</h3>
+                <p className="text-sm text-gray-400">Manage your account settings and preferences</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 className="font-medium mb-2">Notifications</h3>
+                <p className="text-sm text-gray-400">Control how and when you receive notifications</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Privacy Settings Section */}
+          <div className="glass rounded-2xl p-8" data-testid="privacy-settings-section">
+            <h2 className="text-2xl font-semibold mb-6">Privacy & Security</h2>
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 className="font-medium mb-2">Data Privacy</h3>
+                <p className="text-sm text-gray-400">Control your data sharing and privacy preferences</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 className="font-medium mb-2">Security Settings</h3>
+                <p className="text-sm text-gray-400">Manage your account security and authentication</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

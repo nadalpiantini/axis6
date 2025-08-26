@@ -29,6 +29,7 @@ import {
   Star
 } from 'lucide-react'
 import { LogoIcon } from '@/components/ui/Logo'
+import { ProfileForm } from '@/components/profile/ProfileForm'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -659,9 +660,39 @@ export default function ProfilePage() {
               )}
             </div>
 
+            {/* Profile Form */}
+            <ProfileForm 
+              userId={user.id}
+              initialData={{
+                name: profile.name || '',
+                email: profile.email || '',
+                timezone: 'America/Santo_Domingo'
+              }}
+              onSuccess={() => {
+                showNotification('success', 'Profile updated successfully!')
+                // Refresh profile data
+                const fetchProfile = async () => {
+                  const supabase = createClient()
+                  const { data: profileData } = await supabase
+                    .from('axis6_profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .maybeSingle()
+                  if (profileData) {
+                    setProfile({
+                      email: user.email || '',
+                      name: profileData.name || user.email?.split('@')[0] || 'User',
+                      created_at: user.created_at || new Date().toISOString()
+                    })
+                  }
+                }
+                fetchProfile()
+              }}
+            />
+
             {/* User Details */}
             <div className="glass rounded-2xl p-6">
-              <h2 className="text-xl font-semibold mb-6">Account Information</h2>
+              <h2 className="text-xl font-semibold mb-6">Account Summary</h2>
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between">

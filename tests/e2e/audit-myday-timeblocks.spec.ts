@@ -139,16 +139,19 @@ class MyDayTimeBlocksAuditor {
   async testTimeBlockCreation() {
     console.log('➕ Testing time block creation...');
     
-    // Look for "Add" or "Create" buttons
+    // Look for "Add Block" and other time block creation buttons
     const addButtonSelectors = [
+      '[data-testid="add-time-block-btn"]', // Primary reliable selector
+      'button[aria-label="Add time block"]', // ARIA label selector
+      'button:has-text("Add Block")', // Text-based (may fail on mobile due to hidden text)
+      'button:has(svg[data-lucide="plus"])', // Button with Plus icon
+      'button:has(.lucide-plus)', // Button with Plus icon class
+      '[data-testid*="add"]', // Generic testid fallback
+      'button[aria-label*="add"]', // Generic ARIA fallback
+      'button:has-text("Block")', // Partial text match
       'button:has-text("Add")',
       'button:has-text("Create")',
-      'button:has-text("New")',
-      '[data-testid*="add"]',
-      '[data-testid*="create"]',
-      '.add-time-block',
-      'button[aria-label*="add"]',
-      'button[aria-label*="create"]'
+      '.add-time-block'
     ];
     
     let addButton = null;
@@ -491,7 +494,7 @@ test.describe('SUB-AGENT 3: My Day & Time Blocks Audit', () => {
     
     // Check for basic My Day structure
     const myDayElements = [
-      { selector: 'main, [data-testid="my-day"]', name: 'Main My Day Container' },
+      { selector: '[data-testid="my-day-main"], main', name: 'Main My Day Container' },
       { selector: 'h1, h2, [data-testid*="title"]', name: 'Page Title' },
       { selector: 'button, [role="button"]', name: 'Interactive Buttons' }
     ];
@@ -707,7 +710,7 @@ test.describe('SUB-AGENT 3: My Day & Time Blocks Audit', () => {
       await page.waitForTimeout(1000);
       
       // Check if main elements are still visible
-      const mainContent = page.locator('main, [data-testid="my-day"]');
+      const mainContent = page.locator('[data-testid="my-day-main"], main');
       const isVisible = await mainContent.isVisible();
       
       if (!isVisible) {

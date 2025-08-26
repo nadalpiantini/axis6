@@ -38,6 +38,8 @@ type TestFixtures = {
   dashboardPage: DashboardPage;
   profilePage: ProfilePage;
   testUtils: TestUtils;
+  authenticatedPage: DashboardPage; // Add authenticatedPage fixture
+  utils: TestUtils; // Add utils fixture
   testUser: {
     email: string;
     password: string;
@@ -72,6 +74,27 @@ export const test = base.extend<TestFixtures>({
   },
 
   testUtils: async ({ page }, use) => {
+    const testUtils = new TestUtils(page);
+    await use(testUtils);
+  },
+
+  // Add authenticatedPage fixture - an authenticated dashboard page
+  authenticatedPage: async ({ page, testUser }, use) => {
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+    
+    // Login the user
+    await loginPage.loginUser(testUser.email, testUser.password);
+    
+    // Navigate to dashboard and verify it's loaded
+    await dashboardPage.goto('/dashboard');
+    await dashboardPage.verifyDashboardLoaded();
+    
+    await use(dashboardPage);
+  },
+
+  // Add utils fixture - alias for testUtils
+  utils: async ({ page }, use) => {
     const testUtils = new TestUtils(page);
     await use(testUtils);
   },

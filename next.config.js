@@ -78,7 +78,8 @@ const nextConfig = {
   
   // Enable ESLint during build for code quality
   eslint: {
-    ignoreDuringBuilds: true, // Temporarily disable for deployment
+    ignoreDuringBuilds: false, // Enable strict linting for production
+    dirs: ['app', 'lib', 'components'], // Specify directories to lint
   },
 
   // Image optimization

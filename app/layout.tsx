@@ -4,6 +4,7 @@ import { ReactQueryProvider } from '@/lib/react-query/provider'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { NotificationToast } from '@/components/ui/NotificationToast'
 import { SupabaseErrorBoundary } from '@/components/error/SupabaseErrorBoundary'
+import { Toaster } from 'sonner'
 import { headers } from 'next/headers'
 import './globals.css'
 
@@ -88,6 +89,12 @@ export default async function RootLayout({
           <SupabaseErrorBoundary>
             <AuthProvider>
               <NotificationToast />
+              <Toaster 
+                theme="dark"
+                position="bottom-center"
+                richColors
+                closeButton
+              />
               {children}
             </AuthProvider>
           </SupabaseErrorBoundary>

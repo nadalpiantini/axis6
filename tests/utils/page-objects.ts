@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { ProfilePage } from './page-objects/ProfilePage';
 
 /**
  * Base Page Object for common functionality

@@ -119,6 +119,8 @@ export default function MyDayPage() {
             <button
               onClick={() => setShowPlanMyDay(true)}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all"
+              data-testid="plan-my-day-btn"
+              aria-label="Plan my day"
             >
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Plan My Day</span>
@@ -127,6 +129,8 @@ export default function MyDayPage() {
             <button
               onClick={handleStartTimer}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
+              data-testid="start-timer-btn"
+              aria-label="Start activity timer"
             >
               <Timer className="w-4 h-4" />
               <span className="hidden sm:inline">Start Timer</span>
@@ -135,6 +139,8 @@ export default function MyDayPage() {
             <button
               onClick={() => handleAddTimeBlock()}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+              data-testid="add-time-block-btn"
+              aria-label="Add time block"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Add Block</span>
@@ -144,7 +150,7 @@ export default function MyDayPage() {
       </div>
 
       {/* Main Content */}
-      <main className="pt-32 pb-8 px-4">
+      <main className="pt-32 pb-8 px-4" data-testid="my-day-main">
         <div className="container mx-auto max-w-7xl">
           {/* Date Navigation */}
           <motion.div
@@ -152,7 +158,7 @@ export default function MyDayPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <div className="flex items-center justify-between glass rounded-2xl p-6">
+            <div className="flex items-center justify-between glass rounded-2xl p-6 text-white">
               <button
                 onClick={() => handleDateChange('prev')}
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -184,7 +190,7 @@ export default function MyDayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
-              className="glass rounded-xl p-4"
+              className="glass rounded-xl p-4 text-white"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -203,7 +209,7 @@ export default function MyDayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="glass rounded-xl p-4"
+              className="glass rounded-xl p-4 text-white"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/20 rounded-lg">
@@ -222,7 +228,7 @@ export default function MyDayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="glass rounded-xl p-4"
+              className="glass rounded-xl p-4 text-white"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-500/20 rounded-lg">
@@ -247,7 +253,7 @@ export default function MyDayPage() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass rounded-2xl p-6"
+              className="glass rounded-2xl p-6 text-white"
             >
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-purple-400" />
@@ -267,7 +273,8 @@ export default function MyDayPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="glass rounded-2xl p-6"
+              className="glass rounded-2xl p-6 text-white"
+              data-testid="time-blocks-list"
             >
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-blue-400" />

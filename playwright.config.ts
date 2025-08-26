@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { test } from './tests/fixtures/auth-fixtures';
 
 /**
  * AXIS6 Playwright Configuration
@@ -35,6 +36,9 @@ export default defineConfig({
   expect: {
     timeout: 10 * 1000,
   },
+
+  // Use custom test with fixtures
+  test: test,
   
   // Configure projects for major browsers
   projects: [
