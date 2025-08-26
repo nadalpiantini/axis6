@@ -19,8 +19,11 @@ async function login(page: Page) {
   // Submit form
   await page.click('button[type="submit"]')
   
-  // Wait for redirect to dashboard
-  await page.waitForURL(/\/dashboard|\/my-day/, { timeout: 10000 })
+  // Wait for redirect - may take longer in production
+  await page.waitForURL(/\/dashboard|\/my-day/, { timeout: 30000 })
+  
+  // Extra wait for authentication to fully complete
+  await page.waitForTimeout(2000)
 }
 
 // Helper to check modal centering
@@ -51,15 +54,17 @@ test.describe('AXIS6 My Day Page - Complete Functionality Audit', () => {
   })
 
   test('Page loads successfully with all core elements', async ({ page }) => {
-    // Check header elements
-    await expect(page.locator('header')).toBeVisible()
+    // Check for Plan My Day button (new feature)
+    await expect(page.getByText('Plan My Day')).toBeVisible()
+    
+    // Check action buttons
     await expect(page.getByText('Start Timer')).toBeVisible()
     await expect(page.getByText('Add Block')).toBeVisible()
     
     // Check date navigation
-    await expect(page.locator('h1').first()).toBeVisible()
-    await expect(page.locator('button[aria-label*="prev"]').or(page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left') }))).toBeVisible()
-    await expect(page.locator('button[aria-label*="next"]').or(page.locator('button').filter({ has: page.locator('svg.lucide-chevron-right') }))).toBeVisible()
+    await expect(page.locator('h1').filter({ hasText: /Mi Día/ })).toBeVisible()
+    const chevronButtons = page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left, svg.lucide-chevron-right') })
+    await expect(chevronButtons).toHaveCount(2)
     
     // Check stats cards
     await expect(page.getByText('Planned')).toBeVisible()

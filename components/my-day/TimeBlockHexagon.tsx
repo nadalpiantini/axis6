@@ -209,39 +209,40 @@ export function TimeBlockHexagon({
                 onClick={() => onCategoryClick?.(segment)}
                 className="cursor-pointer"
               />
-            
-            {/* Category icon - Always visible */}
-            <g
-              transform={`translate(${
-                200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 107
-              }, ${
-                200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 107
-              })`}
-            >
-              <foreignObject x="-15" y="-15" width="30" height="30">
-                <div className="flex items-center justify-center w-full h-full">
-                  <AxisIcon
-                    axis={segment.icon}
-                    size={20}
-                    color={segment.actualMinutes > 0 ? "white" : segment.color}
-                  />
-                </div>
-              </foreignObject>
-            </g>
-            
-            {/* Category label - Always visible */}
-            <text
-              x={200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 140}
-              y={200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 140}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="fill-gray-400 text-xs font-medium"
-              style={{ fontSize: '11px' }}
-            >
-              {segment.name?.en || segment.slug}
-            </text>
-          </motion.g>
-        ))}
+              
+              {/* Category icon - Always visible */}
+              <g
+                transform={`translate(${
+                  200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 107
+                }, ${
+                  200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 107
+                })`}
+              >
+                <foreignObject x="-15" y="-15" width="30" height="30">
+                  <div className="flex items-center justify-center w-full h-full">
+                    <AxisIcon
+                      axis={segment.icon}
+                      size={20}
+                      color={segment.actualMinutes > 0 ? "white" : segment.color}
+                    />
+                  </div>
+                </foreignObject>
+              </g>
+              
+              {/* Category label - Always visible */}
+              <text
+                x={200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 140}
+                y={200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 140}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="fill-gray-400 text-xs font-medium"
+                style={{ fontSize: '11px' }}
+              >
+                {segment.name?.en || segment.slug}
+              </text>
+            </motion.g>
+          )
+        })}
         
         {/* Center circle with total time */}
         <motion.circle

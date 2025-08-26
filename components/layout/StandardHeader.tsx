@@ -60,11 +60,12 @@ export const StandardHeader = memo<StandardHeaderProps>(({
   }, [])
 
   useEffect(() => {
-    const handleClickOutside = () => setShowDropdown(false)
     if (showDropdown) {
+      const handleClickOutside = () => setShowDropdown(false)
       document.addEventListener('click', handleClickOutside)
       return () => document.removeEventListener('click', handleClickOutside)
     }
+    return undefined
   }, [showDropdown])
   
   const getGreeting = () => {

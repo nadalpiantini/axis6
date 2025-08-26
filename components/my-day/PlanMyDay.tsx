@@ -156,6 +156,7 @@ export function PlanMyDay({
           user_id: userId,
           date: format(selectedDate, 'yyyy-MM-dd'),
           category_id: block.category_id,
+          activity_id: null,
           activity_name: block.activity_name,
           start_time: block.start_time,
           end_time: endTime,

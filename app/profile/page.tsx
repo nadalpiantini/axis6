@@ -474,7 +474,7 @@ export default function ProfilePage() {
           subtitle={user?.email}
           showBackButton={true}
           backUrl="/dashboard"
-          currentStreak={totalStreak}
+          currentStreak={currentStreak}
         />
 
       <div className="max-w-6xl mx-auto px-4 py-8">

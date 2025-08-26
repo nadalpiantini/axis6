@@ -396,7 +396,7 @@ export default function DashboardPageV2() {
           user={user}
           onLogout={handleLogout}
           currentStreak={currentStreak}
-          completionPercentage={totalCompletedToday === categories.length ? 100 : Math.round((totalCompletedToday / categories.length) * 100)}
+          completionPercentage={completedCount === categories.length ? 100 : Math.round((completedCount / categories.length) * 100)}
           variant="dashboard"
         />
 
