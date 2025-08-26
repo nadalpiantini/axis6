@@ -101,7 +101,15 @@ export default function MyDayPage() {
     sum + cat.actual_minutes, 0) || 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-indigo-950">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-indigo-950"
+      style={{
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        paddingLeft: 'env(safe-area-inset-left, 0px)',
+        paddingRight: 'env(safe-area-inset-right, 0px)'
+      }}
+    >
       {/* Header */}
       <StandardHeader
         user={user}
@@ -113,71 +121,82 @@ export default function MyDayPage() {
       />
       
       {/* Action Bar */}
-      <div className="fixed top-16 left-0 right-0 z-20 glass-premium border-b border-white/10">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-end gap-2 sm:gap-4">
+      <div 
+        className="fixed left-0 right-0 z-20 glass-premium border-b border-white/10"
+        style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
+      >
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center justify-end gap-1 sm:gap-2 lg:gap-4">
             <button
               onClick={() => setShowPlanMyDay(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 min-h-[44px] bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all touch-manipulation active:scale-95"
               data-testid="plan-my-day-btn"
               aria-label="Plan my day"
             >
-              <Sparkles className="w-4 h-4" />
-              <span className="hidden sm:inline">Plan My Day</span>
+              <Sparkles className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline text-sm lg:text-base font-medium">Plan My Day</span>
             </button>
             
             <button
               onClick={handleStartTimer}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 min-h-[44px] bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors touch-manipulation active:scale-95"
               data-testid="start-timer-btn"
               aria-label="Start activity timer"
             >
-              <Timer className="w-4 h-4" />
-              <span className="hidden sm:inline">Start Timer</span>
+              <Timer className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline text-sm lg:text-base font-medium">Start Timer</span>
             </button>
             
             <button
               onClick={() => handleAddTimeBlock()}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 min-h-[44px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors touch-manipulation active:scale-95"
               data-testid="add-time-block-btn"
               aria-label="Add time block"
             >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Add Block</span>
+              <Plus className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline text-sm lg:text-base font-medium">Add Block</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="pt-32 pb-8 px-4" data-testid="my-day-main">
+      <main 
+        className="pb-6 sm:pb-8 px-2 sm:px-4" 
+        data-testid="my-day-main"
+        style={{
+          paddingTop: 'calc(8.5rem + env(safe-area-inset-top, 0px))'
+        }}
+      >
         <div className="container mx-auto max-w-7xl">
           {/* Date Navigation */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-4 sm:mb-6 lg:mb-8"
           >
-            <div className="flex items-center justify-between glass rounded-2xl p-6 text-white">
+            <div className="flex items-center justify-between glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 text-white">
               <button
                 onClick={() => handleDateChange('prev')}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 min-h-[44px] min-w-[44px] hover:bg-white/10 rounded-lg transition-colors touch-manipulation active:scale-95 flex items-center justify-center"
+                aria-label="Previous day"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               
-              <div className="text-center">
-                <h1 className="text-2xl font-bold text-white mb-1">
+              <div className="text-center px-2">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 leading-tight">
                   {isToday(selectedDate) ? 'Today' : format(selectedDate, 'EEEE', { locale: es })}
                 </h1>
-                <p className="text-gray-400">
+                <p className="text-xs sm:text-sm lg:text-base text-gray-400">
                   {format(selectedDate, 'MMMM d, yyyy', { locale: es })}
                 </p>
               </div>
               
               <button
                 onClick={() => handleDateChange('next')}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 min-h-[44px] min-w-[44px] hover:bg-white/10 rounded-lg transition-colors touch-manipulation active:scale-95 flex items-center justify-center"
+                aria-label="Next day"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -185,20 +204,20 @@ export default function MyDayPage() {
           </motion.div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6 lg:mb-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
-              className="glass rounded-xl p-4 text-white"
+              className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-white"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Clock className="w-5 h-5 text-blue-400" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg flex-shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-400">Planned</p>
-                  <p className="text-lg font-semibold text-white">
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white tabular-nums">
                     {Math.floor(totalPlannedMinutes / 60)}h {totalPlannedMinutes % 60}m
                   </p>
                 </div>
@@ -209,15 +228,15 @@ export default function MyDayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="glass rounded-xl p-4 text-white"
+              className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-white"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Play className="w-5 h-5 text-green-400" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg flex-shrink-0">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-400">Actual</p>
-                  <p className="text-lg font-semibold text-white">
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white tabular-nums">
                     {Math.floor(totalActualMinutes / 60)}h {totalActualMinutes % 60}m
                   </p>
                 </div>
@@ -228,15 +247,15 @@ export default function MyDayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="glass rounded-xl p-4 text-white"
+              className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-white"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <BarChart3 className="w-5 h-5 text-purple-400" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg flex-shrink-0">
+                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-400">Efficiency</p>
-                  <p className="text-lg font-semibold text-white">
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white tabular-nums">
                     {totalPlannedMinutes > 0 
                       ? Math.round((totalActualMinutes / totalPlannedMinutes) * 100) 
                       : 0}%
@@ -247,16 +266,16 @@ export default function MyDayPage() {
           </div>
 
           {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {/* Hexagon Visualization */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass rounded-2xl p-6 text-white"
+              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 text-white overflow-hidden"
             >
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-purple-400" />
+              <h2 className="text-sm sm:text-base lg:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
                 Day Overview
               </h2>
               
@@ -273,11 +292,11 @@ export default function MyDayPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="glass rounded-2xl p-6 text-white"
+              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 text-white"
               data-testid="time-blocks-list"
             >
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-400" />
+              <h2 className="text-sm sm:text-base lg:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 Time Blocks
               </h2>
               
@@ -287,12 +306,13 @@ export default function MyDayPage() {
                   <p className="text-gray-400">Loading schedule...</p>
                 </div>
               ) : myDayData && myDayData.length > 0 ? (
-                <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                   {myDayData.map((block: any) => (
                     <motion.div
                       key={block.time_block_id}
-                      whileHover={{ scale: 1.02 }}
-                      className={`p-4 rounded-xl border transition-all ${
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border transition-all touch-manipulation ${
                         block.status === 'active' 
                           ? 'bg-green-500/10 border-green-500/30'
                           : block.status === 'completed'
@@ -300,23 +320,22 @@ export default function MyDayPage() {
                           : 'bg-white/5 border-white/10'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
                           <div 
-                            className="w-3 h-3 rounded-full"
+                            className="w-3 h-3 rounded-full flex-shrink-0"
                             style={{ backgroundColor: block.category_color }}
                           />
-                          <span className="text-sm font-medium text-white">
+                          <span className="text-xs sm:text-sm font-medium text-white truncate">
                             {block.category_name}
                           </span>
                         </div>
-                        <span className="text-xs text-gray-400">
-                          {format(new Date(`2024-01-01 ${block.start_time}`), 'HH:mm')} - 
-                          {format(new Date(`2024-01-01 ${block.end_time}`), 'HH:mm')}
+                        <span className="text-xs text-gray-400 flex-shrink-0 tabular-nums">
+                          {format(new Date(`2024-01-01 ${block.start_time}`), 'HH:mm')}-{format(new Date(`2024-01-01 ${block.end_time}`), 'HH:mm')}
                         </span>
                       </div>
                       
-                      <p className="text-white mb-1">{block.activity_name}</p>
+                      <p className="text-xs sm:text-sm lg:text-base text-white mb-1 line-clamp-2">{block.activity_name}</p>
                       
                       {block.actual_duration > 0 && (
                         <div className="flex items-center gap-2 mt-2">
@@ -328,8 +347,8 @@ export default function MyDayPage() {
                               }}
                             />
                           </div>
-                          <span className="text-xs text-gray-400">
-                            {block.actual_duration}m / {block.duration_minutes}m
+                          <span className="text-xs text-gray-400 tabular-nums flex-shrink-0">
+                            {block.actual_duration}m/{block.duration_minutes}m
                           </span>
                         </div>
                       )}
@@ -340,7 +359,8 @@ export default function MyDayPage() {
                             setActiveTimer(block)
                             handleStartTimer()
                           }}
-                          className="mt-2 text-xs text-green-400 hover:text-green-300 flex items-center gap-1"
+                          className="mt-2 text-xs text-green-400 hover:text-green-300 flex items-center gap-1 min-h-[32px] touch-manipulation active:scale-95 transition-transform"
+                          aria-label={`Start ${block.activity_name}`}
                         >
                           <Play className="w-3 h-3" />
                           Start
@@ -355,7 +375,8 @@ export default function MyDayPage() {
                   <p className="text-gray-400 mb-4">No time blocks scheduled</p>
                   <button
                     onClick={() => handleAddTimeBlock()}
-                    className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+                    className="px-4 py-2 min-h-[44px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors touch-manipulation active:scale-95"
+                    aria-label="Schedule your day"
                   >
                     Schedule Your Day
                   </button>

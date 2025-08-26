@@ -86,7 +86,7 @@
   clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
 }
 
-/* Glass effect */
+/* Enhanced Glass Effects with Mobile Optimization */
 .glass {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(10px);
@@ -94,6 +94,9 @@
   /* Ensure proper minimum dimensions */
   min-height: fit-content;
   min-width: fit-content;
+  /* Hardware acceleration for better mobile performance */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Enhanced glass for better visibility */
@@ -102,34 +105,75 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  /* Mobile performance optimization */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-/* Mobile and tablet-specific optimizations */
+/* ========================================
+   MOBILE-FIRST RESPONSIVE SYSTEM
+======================================== */
+
+/* Safe Area CSS Custom Properties */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+}
+
+/* Base Mobile Optimizations */
+@media (max-width: 1024px) {
+  /* Tablet optimizations */
+  .glass {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(9px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+  }
+}
+
 @media (max-width: 768px) {
+  /* Large mobile/small tablet optimizations */
   .glass {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
+  
+  /* Enhanced touch targets */
+  button, a, .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
 }
 
-/* Mobile-specific optimizations */
 @media (max-width: 640px) {
+  /* Standard mobile optimizations */
   .glass {
     background: rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(6px);
     border: 1px solid rgba(255, 255, 255, 0.35);
   }
   
-  /* Prevent horizontal scroll */
+  /* Prevent horizontal scroll and enhance mobile UX */
   body {
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* Enhanced mobile scrolling */
+    scroll-behavior: smooth;
   }
   
-  /* Better touch targets */
-  button, a {
-    min-height: 44px;
-    min-width: 44px;
+  /* Touch optimization */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Better text rendering on mobile */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   
   /* Chart containers responsive */
@@ -138,7 +182,32 @@
   }
 }
 
-/* CRITICAL: Chart Container Styles for E2E Testing */
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+  .glass {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+  }
+  
+  /* Tighter spacing for very small screens */
+  .chart-container {
+    height: 200px;
+  }
+}
+
+/* ========================================
+   CRITICAL: Chart Container Styles for E2E Testing
+======================================== */
 .recharts-wrapper {
   width: 100%;
   height: 100%;
@@ -238,4 +307,258 @@ svg {
 @keyframes loading {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+/* ========================================
+   MOBILE UTILITY CLASSES
+======================================== */
+
+/* Safe Area Utilities */
+.safe-area-top {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: var(--safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: var(--safe-area-inset-right);
+}
+
+.safe-area-x {
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+}
+
+.safe-area-y {
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-area-all {
+  padding-top: var(--safe-area-inset-top);
+  padding-right: var(--safe-area-inset-right);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
+}
+
+/* Touch Optimization Utilities */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touch-feedback {
+  transition: transform 0.1s ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Typography Utilities */
+.text-mobile-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-mobile-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-mobile-base { font-size: 1rem; line-height: 1.5rem; }
+.text-mobile-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-mobile-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-mobile-2xl { font-size: 1.5rem; line-height: 2rem; }
+
+/* Mobile Spacing Utilities */
+.mobile-padding {
+  padding: 0.75rem;
+}
+
+.mobile-margin {
+  margin: 0.75rem;
+}
+
+/* Mobile Container Utilities */
+.mobile-container {
+  max-width: 100vw;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  overflow-x: hidden;
+}
+
+.mobile-full-width {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+/* Mobile Scrolling Enhancements */
+.mobile-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  /* Hide scrollbar but maintain functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Enhanced Scrollbar Styling for Desktop */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile Performance Utilities */
+.hardware-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.gpu-optimized {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+/* Mobile Interaction States */
+@media (hover: none) {
+  /* Remove hover effects on touch devices */
+  .hover-only:hover {
+    /* Reset hover styles */
+  }
+}
+
+/* Focus Enhancements for Mobile Accessibility */
+.focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.8);
+  outline-offset: 2px;
+}
+
+/* Mobile Modal and Overlay Optimizations */
+.mobile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+}
+
+/* Line Clamping Utilities for Mobile */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* ========================================
+   MOBILE-SPECIFIC ANIMATIONS
+======================================== */
+
+@keyframes mobile-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-mobile-fade-in {
+  animation: mobile-fade-in 0.3s ease-out;
+}
+
+.animate-mobile-slide-up {
+  animation: mobile-slide-up 0.3s ease-out;
+}
+
+/* Mobile-optimized transforms */
+.mobile-transform {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ========================================
+   MOBILE ACCESSIBILITY ENHANCEMENTS
+======================================== */
+
+/* Improved focus indicators for mobile */
+@media (max-width: 640px) {
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 3px solid rgba(139, 92, 246, 0.6);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

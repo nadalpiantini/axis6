@@ -69,7 +69,53 @@ export default async function RootLayout({
       <head>
         {/* Additional meta tags for better CSP compatibility */}
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        
+        {/* Enhanced mobile viewport with safe area and pinch zoom control */}
+        <meta 
+          name="viewport" 
+          content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes, viewport-fit=cover"
+        />
+        
+        {/* Mobile web app capabilities */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="AXIS6" />
+        <meta name="application-name" content="AXIS6" />
+        <meta name="theme-color" content="#1e293b" />
+        <meta name="msapplication-TileColor" content="#1e293b" />
+        <meta name="msapplication-navbutton-color" content="#1e293b" />
+        
+        {/* Prevent text size adjustment on mobile devices */}
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        
+        {/* Touch and gesture optimization */}
+        <meta name="touch-action" content="manipulation" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        
+        {/* Safe area CSS variables setup */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            :root {
+              --safe-area-inset-top: env(safe-area-inset-top, 0px);
+              --safe-area-inset-right: env(safe-area-inset-right, 0px);
+              --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+              --safe-area-inset-left: env(safe-area-inset-left, 0px);
+            }
+            
+            /* Prevent overscroll bounce on iOS */
+            html, body {
+              overscroll-behavior: none;
+              -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Optimize font rendering on mobile */
+            html {
+              -webkit-text-size-adjust: 100%;
+              text-size-adjust: 100%;
+            }
+          `
+        }} />
         
         {/* Preconnect to improve performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,9 +126,39 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//nvpnhqhjttgwfwvkgmpk.supabase.co" />
+        
+        {/* Splash screen for iOS */}
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphoneplus_splash.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphonex_splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphonexr_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/iphonexsmax_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/ipad_splash.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/ipadpro1_splash.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/ipadpro2_splash.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" />
+        <link rel="apple-touch-startup-image" href="/brand/splash/ipadpro3_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" />
       </head>
       <body 
         className={`${inter.className} antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen`}
+        style={{
+          // Mobile-specific body styling with safe area support
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+          paddingLeft: 'env(safe-area-inset-left, 0px)',
+          paddingRight: 'env(safe-area-inset-right, 0px)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          // Prevent text selection on non-text elements
+          WebkitTouchCallout: 'none',
+          WebkitUserSelect: 'none',
+          KhtmlUserSelect: 'none',
+          MozUserSelect: 'none',
+          msUserSelect: 'none',
+          userSelect: 'none',
+          // Enhance touch scrolling
+          WebkitOverflowScrolling: 'touch',
+          // Prevent zoom on input focus (iOS)
+          fontSize: '16px',
+        }}
         suppressHydrationWarning
       >
         <ReactQueryProvider>
@@ -94,6 +170,20 @@ export default async function RootLayout({
                 position="bottom-center"
                 richColors
                 closeButton
+                // Mobile-optimized toast configuration
+                toastOptions={{
+                  style: {
+                    marginBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)',
+                    maxWidth: 'calc(100vw - 2rem)',
+                    fontSize: '14px',
+                    padding: '12px 16px',
+                  },
+                  className: 'touch-manipulation',
+                }}
+                // Ensure toasts are above all content on mobile
+                style={{
+                  zIndex: 9999,
+                }}
               />
               {children}
             </AuthProvider>

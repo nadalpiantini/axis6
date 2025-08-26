@@ -282,15 +282,21 @@ export function AxisActivitiesModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] lg:w-full lg:max-w-2xl max-h-[90vh] overflow-hidden z-50"
+            className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 lg:p-6"
           >
-            <div className="glass rounded-2xl">
+            <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-2xl max-h-[95vh] sm:max-h-[90vh] glass rounded-2xl overflow-hidden flex flex-col"
+                 style={{ 
+                   paddingTop: 'env(safe-area-inset-top, 0px)',
+                   paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                   paddingLeft: 'env(safe-area-inset-left, 0px)',
+                   paddingRight: 'env(safe-area-inset-right, 0px)'
+                 }}>
               {/* Header */}
-              <div className="p-4 sm:p-6 border-b border-white/10">
+              <div className="flex-shrink-0 p-4 sm:p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div 
-                      className="p-2 rounded-lg"
+                      className="p-2 rounded-lg flex-shrink-0"
                       style={{ backgroundColor: axis.color + '20' }}
                     >
                       <AxisIcon 
@@ -299,18 +305,19 @@ export function AxisActivitiesModal({
                         color={axis.color}
                       />
                     </div>
-                    <div>
-                      <h2 className="text-lg sm:text-xl font-semibold text-white">
+                    <div className="min-w-0">
+                      <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
                         {axis.name} Activities
                       </h2>
-                      <p className="text-xs sm:text-sm text-gray-400">
+                      <p className="text-xs sm:text-sm text-gray-400 truncate">
                         Customize your daily activities for this axis
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label="Close modal"
                   >
                     <X className="w-5 h-5 text-gray-400" />
                   </button>
@@ -318,7 +325,12 @@ export function AxisActivitiesModal({
               </div>
 
               {/* Content */}
-              <div className="p-4 sm:p-6 max-h-[60vh] sm:max-h-[50vh] overflow-y-auto">
+              <div className="flex-1 overflow-hidden">
+                <div className="p-4 sm:p-6 h-full overflow-y-auto overscroll-contain"
+                     style={{ 
+                       scrollbarWidth: 'thin',
+                       WebkitOverflowScrolling: 'touch'
+                     }}>
                 {isLoading ? (
                   <div className="text-center py-8">
                     <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-2" />
@@ -330,10 +342,11 @@ export function AxisActivitiesModal({
                     {!isAddingNew && !editingId && (
                       <button
                         onClick={handleAddNew}
-                        className="w-full p-4 border-2 border-dashed border-white/20 rounded-xl hover:border-purple-500/50 hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-gray-400 hover:text-white"
+                        className="w-full p-4 border-2 border-dashed border-white/20 rounded-xl hover:border-purple-500/50 hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-gray-400 hover:text-white min-h-[44px] touch-manipulation"
+                        aria-label="Add new activity"
                       >
                         <Plus className="w-5 h-5" />
-                        Add New Activity
+                        <span className="text-sm sm:text-base">Add New Activity</span>
                       </button>
                     )}
 
@@ -352,7 +365,7 @@ export function AxisActivitiesModal({
                                 <Sparkles className="w-3 h-3" />
                                 <span>Quick suggestions (tap to use):</span>
                               </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {displayedSuggestions.map((suggestion, index) => (
                                   <motion.button
                                     key={`${suggestion}-${index}`}
@@ -362,10 +375,11 @@ export function AxisActivitiesModal({
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleSuggestionClick(suggestion, index)}
-                                    className="px-2 sm:px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-gray-300 hover:text-white transition-all text-center"
+                                    className="px-3 py-2 text-xs sm:text-sm bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-gray-300 hover:text-white transition-all text-center min-h-[44px] touch-manipulation flex items-center justify-center"
                                     type="button"
+                                    aria-label={`Use suggestion: ${suggestion}`}
                                   >
-                                    {suggestion}
+                                    <span className="truncate">{suggestion}</span>
                                   </motion.button>
                                 ))}
                               </div>
@@ -380,8 +394,9 @@ export function AxisActivitiesModal({
                               activity_name: e.target.value 
                             }))}
                             placeholder="Activity name (e.g., 'Go for a run')"
-                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400"
+                            className="w-full px-4 py-3 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 min-h-[44px] touch-manipulation"
                             autoFocus
+                            aria-label="Activity name"
                           />
                           <textarea
                             value={formData.description}
@@ -390,25 +405,28 @@ export function AxisActivitiesModal({
                               description: e.target.value 
                             }))}
                             placeholder="Description (optional)"
-                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 resize-none"
-                            rows={2}
+                            className="w-full px-4 py-3 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 resize-none touch-manipulation"
+                            rows={3}
+                            aria-label="Activity description"
                           />
-                          <div className="flex gap-2">
+                          <div className="flex flex-col sm:flex-row gap-3">
                             <button
                               onClick={handleSave}
                               disabled={createActivity.isPending || updateActivity.isPending}
-                              className="flex-1 py-2 sm:py-3 text-sm sm:text-base bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                              className="flex-1 py-3 text-sm sm:text-base bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center justify-center gap-2 min-h-[44px] touch-manipulation"
+                              aria-label="Save activity"
                             >
                               {(createActivity.isPending || updateActivity.isPending) ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                               ) : (
                                 <Save className="w-4 h-4" />
                               )}
-                              Save
+                              <span>Save</span>
                             </button>
                             <button
                               onClick={handleCancel}
-                              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+                              className="px-6 py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors min-h-[44px] touch-manipulation"
+                              aria-label="Cancel editing"
                             >
                               Cancel
                             </button>
@@ -454,14 +472,16 @@ export function AxisActivitiesModal({
                           <div className="flex items-center gap-1">
                             <button
                               onClick={() => handleEdit(activity)}
-                              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                              aria-label={`Edit ${activity.activity_name}`}
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(activity.id)}
                               disabled={deleteActivity.isPending}
-                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                              aria-label={`Delete ${activity.activity_name}`}
                             >
                               {deleteActivity.isPending ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -476,24 +496,27 @@ export function AxisActivitiesModal({
 
                     {activities.length === 0 && !isAddingNew && (
                       <div className="text-center py-8">
-                        <p className="text-gray-400 mb-4">No activities yet</p>
+                        <p className="text-gray-400 mb-4 text-sm sm:text-base">No activities yet</p>
                         <button
                           onClick={handleAddNew}
-                          className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+                          className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors min-h-[44px] touch-manipulation"
+                          aria-label="Add your first activity"
                         >
-                          Add Your First Activity
+                          <span className="text-sm sm:text-base">Add Your First Activity</span>
                         </button>
                       </div>
                     )}
                   </div>
                 )}
               </div>
+              </div>
 
               {/* Footer */}
-              <div className="p-4 sm:p-6 border-t border-white/10">
+              <div className="flex-shrink-0 p-4 sm:p-6 border-t border-white/10">
                 <button
                   onClick={onClose}
-                  className="w-full py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                  className="w-full py-3 text-sm sm:text-base bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors min-h-[44px] touch-manipulation"
+                  aria-label="Close modal"
                 >
                   Done
                 </button>
@@ -507,21 +530,24 @@ export function AxisActivitiesModal({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  className="absolute bottom-4 left-1/2 -translate-x-1/2"
+                  className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] mx-4"
+                  style={{
+                    maxWidth: 'calc(100vw - 2rem)'
+                  }}
                 >
                   <div className={`
-                    flex items-center gap-2 px-4 py-2 rounded-lg backdrop-blur-md
+                    flex items-center gap-2 px-4 py-3 rounded-lg backdrop-blur-md min-h-[44px]
                     ${notification.type === 'success' 
                       ? 'bg-green-500/20 border border-green-500/50 text-green-400' 
                       : 'bg-red-500/20 border border-red-500/50 text-red-400'
                     }
                   `}>
                     {notification.type === 'success' ? (
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-4 h-4 flex-shrink-0" />
                     ) : (
-                      <AlertCircle className="w-4 h-4" />
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     )}
-                    <span className="text-sm font-medium">{notification.message}</span>
+                    <span className="text-sm font-medium flex-1 text-center">{notification.message}</span>
                   </div>
                 </motion.div>
               )}

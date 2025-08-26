@@ -90,6 +90,17 @@ interface UserPreferences {
   showAnimations: boolean
   setShowAnimations: (show: boolean) => void
   
+  // ADHD-friendly focus mode
+  adhdFocusMode: boolean
+  setAdhdFocusMode: (enabled: boolean) => void
+  
+  // Social features preferences
+  showResonance: boolean
+  setShowResonance: (show: boolean) => void
+  
+  showCommunityMetrics: boolean
+  setShowCommunityMetrics: (show: boolean) => void
+  
   // Mood tracking
   lastMoodSelection: string | null
   setLastMoodSelection: (date: string | null) => void
@@ -122,6 +133,17 @@ export const usePreferencesStore = create<UserPreferences>()(
       showAnimations: true,
       setShowAnimations: (show) => set({ showAnimations: show }),
       
+      // ADHD-friendly focus mode - disabled by default
+      adhdFocusMode: false,
+      setAdhdFocusMode: (enabled) => set({ adhdFocusMode: enabled }),
+      
+      // Social features - enabled by default for subtle social layer
+      showResonance: true,
+      setShowResonance: (show) => set({ showResonance: show }),
+      
+      showCommunityMetrics: true,
+      setShowCommunityMetrics: (show) => set({ showCommunityMetrics: show }),
+      
       lastMoodSelection: null,
       setLastMoodSelection: (date) => set({ lastMoodSelection: date })
     }),
@@ -134,6 +156,9 @@ export const usePreferencesStore = create<UserPreferences>()(
         notifications: state.notifications,
         dashboardLayout: state.dashboardLayout,
         showAnimations: state.showAnimations,
+        adhdFocusMode: state.adhdFocusMode,
+        showResonance: state.showResonance,
+        showCommunityMetrics: state.showCommunityMetrics,
         lastMoodSelection: state.lastMoodSelection
       })
     }
