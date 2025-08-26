@@ -44,7 +44,10 @@ export function useChatRooms(userId?: string) {
         .eq('is_active', true)
         .order('updated_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Failed to fetch chat rooms:', error)
+        throw error
+      }
       return data || []
     },
     enabled: !!userId && !!supabase,

@@ -61,17 +61,38 @@ export default function ChatPage() {
   }
 
   if (error) {
+    console.error('Chat error:', error)
+    // Check if it's a database table missing error
+    const isDatabaseError = error.message?.includes('relation') && error.message?.includes('does not exist')
+    
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <MessageCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">Error loading chat rooms</p>
-          <Button
-            onClick={() => window.location.reload()}
-            className="mt-4 bg-purple-600 hover:bg-purple-700"
-          >
-            Retry
-          </Button>
+          {isDatabaseError ? (
+            <>
+              <h2 className="text-xl font-semibold text-gray-200 mb-2">Chat Coming Soon</h2>
+              <p className="text-gray-400 mb-4">
+                The chat feature is being set up. Please check back shortly.
+              </p>
+              <div className="bg-gray-800 rounded-lg p-4 text-left">
+                <p className="text-sm text-gray-400 mb-2">For administrators:</p>
+                <p className="text-xs text-gray-500">
+                  Database tables need to be deployed. Run the chat enhancement SQL script in Supabase.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-400">Error loading chat rooms</p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-purple-600 hover:bg-purple-700"
+              >
+                Retry
+              </Button>
+            </>
+          )}
         </div>
       </div>
     )
