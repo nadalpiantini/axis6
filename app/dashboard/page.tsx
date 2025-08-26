@@ -37,7 +37,7 @@ import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
 import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
-import { HexagonChartWithResonance } from '@/components/axis/HexagonChartWithResonance'
+import HexagonChartWithResonance from '@/components/axis/HexagonChartWithResonance'
 
 // New Hexagon component wrapper with resonance features
 const HexagonVisualizationWithResonance = memo(({ 
@@ -364,7 +364,7 @@ export default function DashboardPageV2() {
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8">
             {/* Logo Section */}
             <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-              <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" priority />
+              <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" />
             </div>
             
             {/* Welcome Section */}

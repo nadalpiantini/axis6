@@ -25,14 +25,15 @@ AXIS6 is a gamified wellness tracker that helps users maintain balance across 6 
 
 ## Tech Stack
 - **Frontend**: Next.js 15.4.7 (App Router), React 19.1.0, TypeScript 5.3.0
-- **Styling**: Tailwind CSS, Framer Motion
+- **Styling**: Tailwind CSS (mobile-first config), Framer Motion (touch animations)
+- **Mobile Optimization**: CSS environment variables, safe area support, responsive design system
 - **Backend**: Supabase (PostgreSQL + Auth + Realtime)
-- **Hosting**: Vercel (axis6.app)
+- **Hosting**: Vercel (axis6.app) with mobile PWA capabilities
 - **DNS/CDN**: Cloudflare
 - **Email**: Resend (v6.0.1)
 - **UI Components**: Radix UI primitives, custom hexagon visualization, Lucide icons
-- **Charts**: Recharts for analytics
-- **Testing**: Playwright (E2E), Jest (Unit)
+- **Charts**: Recharts for analytics (mobile-responsive)
+- **Testing**: Playwright (E2E + Mobile), Jest (Unit)
 - **State Management**: Zustand, TanStack Query (React Query)
 - **Monitoring**: Sentry, Vercel Analytics
 
@@ -113,21 +114,26 @@ npm run optimize:check     # Run optimization checks (console removal + type che
 ## Project Structure
 ```
 axis6-mvp/
-├── app/                    # Next.js App Router
+├── app/                    # Next.js App Router (mobile-optimized layouts)
 │   ├── (auth)/            # Protected routes (dashboard, settings, stats)
 │   ├── auth/              # Authentication pages (login, register)
-│   ├── api/               # API routes
-│   └── page.tsx           # Landing page
+│   ├── api/               # API routes (constellation, hex-reactions, micro-posts, resonance)
+│   ├── settings/          # Settings subsections (account, focus, notifications, privacy, security)
+│   └── page.tsx           # Landing page (mobile-first design)
 ├── components/
-│   ├── ui/                # Base UI components
-│   ├── axis/              # AXIS6-specific components
+│   ├── ui/                # Base UI components (mobile-responsive)
+│   ├── axis/              # AXIS6-specific components (HexagonChartWithResonance)
+│   ├── settings/          # Settings components (AxisActivitiesModal, SettingsLayout)
+│   ├── chat/              # Chat system components (SearchModal)
+│   ├── constellation/     # Ritual constellation features
 │   └── layout/            # Layout components
 ├── lib/
 │   ├── supabase/          # Supabase client and helpers
 │   ├── utils/             # Utility functions
 │   └── hooks/             # Custom React hooks
+├── hooks/                 # Global hooks (useAdhdMode, useConstellation, useHexagonResonance)
 └── supabase/
-    └── migrations/        # Database migrations
+    └── migrations/        # Database migrations (comprehensive settings, hexagon resonance)
 ```
 
 ## Database Schema (Supabase)
@@ -152,8 +158,43 @@ All tables use the prefix `axis6_` for multi-tenant isolation:
 3. **Hexagon Visualization**: Interactive SVG showing daily progress
 4. **Streak Tracking**: Automatic calculation of current and longest streaks
 5. **Analytics Dashboard**: Personal insights and progress tracking
-6. **Mobile Responsive**: Optimized for all devices
+6. **Mobile-First Design**: Comprehensive mobile optimization with perfect modal centering and responsive layouts
 7. **Dark Theme**: Navy-based color scheme from design system
+
+## 📱 Mobile Optimization (Added 2025-08-26)
+
+### Perfect Modal Centering
+- **AxisActivitiesModal & SearchModal**: Flexbox-based centering system works on all screen sizes (320px - 4K+)
+- **Safe Area Support**: CSS environment variables for notched devices (iPhone X+)
+- **Responsive Constraints**: Modals adapt perfectly to any viewport size
+- **Touch Optimization**: 44px minimum touch targets for accessibility
+
+### Mobile-First Components
+- **HexagonChart**: Dynamic responsive sizing algorithm adapts from mobile to desktop
+- **Dashboard Layout**: Mobile-optimized grid system with responsive padding
+- **My-Day Page**: Touch-friendly time blocks and mobile action bar positioning
+- **Settings Pages**: Card-based responsive layout with enhanced touch targets
+- **Landing Page**: Mobile-first hero section with responsive CTAs
+
+### Advanced Mobile System
+- **Enhanced Tailwind Config**: Mobile-first breakpoints (xs: 375px), touch/mouse detection utilities
+- **Safe Area Utilities**: CSS custom properties for all safe area insets
+- **Mobile Typography**: Optimized font sizes and line heights for mobile readability
+- **Touch Animations**: Hardware-accelerated animations with touch feedback
+- **Performance**: GPU-optimized transforms and will-change properties
+
+### Mobile-Ready Root Layout
+- **PWA Capabilities**: Web app meta tags and splash screens for iOS/Android
+- **Viewport Optimization**: viewport-fit=cover for safe area usage
+- **Touch Gestures**: Optimized touch-action and overscroll behavior
+- **Mobile-Optimized Toasts**: Safe area aware positioning and sizing
+
+### Technical Implementation
+- **CSS Environment Variables**: Full safe area support with fallbacks
+- **Flexbox Centering**: Replace transform-based positioning for perfect alignment
+- **Responsive Breakpoints**: xs/sm/md/lg/xl/2xl with mobile-first approach  
+- **Touch Target Standards**: WCAG compliant 44px minimum sizes
+- **Hardware Acceleration**: transform3d and translateZ(0) for smooth performance
 
 ## 🎨 AXIS6 Brand & UI Kit (v1)
 
@@ -467,9 +508,12 @@ Multi-tier rate limiting across the stack:
 ### Key Development Principles
 1. **Port 6789**: Always use localhost:6789, never localhost:3000
 2. **Database Columns**: Verify column names - `axis6_profiles` uses `id`, others use `user_id`
-3. **Testing**: Run tests before deploying - auth, performance, and E2E tests available
-4. **Security**: RLS enabled on all tables, rate limiting on API routes
-5. **Performance**: 25+ database indexes deployed, use optimized RPC functions
+3. **Mobile-First**: All new components must be mobile-responsive with touch targets ≥44px
+4. **Modal Centering**: Use flexbox centering, never transform-based positioning
+5. **Safe Areas**: Always include CSS environment variables for notched devices
+6. **Testing**: Run tests before deploying - auth, performance, mobile, and E2E tests available
+7. **Security**: RLS enabled on all tables, rate limiting on API routes
+8. **Performance**: 25+ database indexes deployed, use optimized RPC functions
 
 ### Common Gotchas
 - TypeScript errors temporarily ignored for chat routes (TODO in next.config.js)
@@ -477,6 +521,10 @@ Multi-tier rate limiting across the stack:
 - PWA configuration disabled for Next.js 15 compatibility
 - WebSocket auth errors are normal during login (handled gracefully)
 - CSP configuration in next.config.js may need adjustment for new external resources
+- **Mobile Modals**: Always use flexbox centering, not transform positioning
+- **Safe Areas**: Test on notched devices to verify env() variables work correctly
+- **Touch Targets**: Minimum 44px for accessibility - use touch-target utility classes
+- **Responsive Images**: HexagonChart requires windowWidth state for proper sizing
 
 ### Quick Debugging
 - Check browser console for `window.__supabaseError`
@@ -484,3 +532,7 @@ Multi-tier rate limiting across the stack:
 - Run `npm run test:auth` to verify authentication flow
 - Use `npm run analyze` to check bundle size issues
 - TanStack Query DevTools available in development mode
+- **Mobile Issues**: Test on actual devices or Chrome DevTools mobile simulation
+- **Modal Centering**: Verify flexbox centering with different screen sizes
+- **Safe Area**: Check env() variables in Safari Web Inspector on iOS devices
+- **Touch Targets**: Use accessibility inspector to verify 44px minimum sizes

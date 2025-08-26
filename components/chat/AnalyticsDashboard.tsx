@@ -5,7 +5,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { TrendingUp, MessageSquare, Users, Search, Download, Filter, Calendar, Clock, Zap, Heart, FileText, Hash } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/badge'
 import { chatAnalyticsService, ChatAnalytics } from '@/lib/services/chat-analytics'
 import { format, parseISO } from 'date-fns'

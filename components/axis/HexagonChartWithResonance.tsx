@@ -100,9 +100,9 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   const [windowWidth, setWindowWidth] = useState(0)
   
   // Get user data and resonance data
-  const { data: user } = useUser()
+  const { data: user, isLoading: userLoading } = useUser()
   const { data: resonanceData, isLoading: resonanceLoading } = useHexagonResonance(
-    user?.id, 
+    user?.id || '', 
     new Date().toISOString().split('T')[0]
   )
   
@@ -192,7 +192,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   // Create grid lines (same as original)
   const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])
 
-  if (!isClient) {
+  if (!isClient || userLoading) {
     return (
       <div 
         className="w-full max-w-[260px] xs:max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-2xl sm:rounded-3xl animate-pulse backdrop-blur-sm mx-auto" 

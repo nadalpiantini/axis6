@@ -1,7 +1,7 @@
 -- =====================================================
--- AXIS6 EMERGENCY FIX FOR 400/500 ERRORS
+-- AXIS6 FINAL FIX - COMPLETE & IMPROVED VERSION
 -- =====================================================
--- Execute this in Supabase SQL Editor to fix all current errors:
+-- Execute this in Supabase SQL Editor to fix all remaining 400/500 errors:
 -- https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql/new
 -- =====================================================
 
@@ -24,10 +24,14 @@ CREATE TABLE IF NOT EXISTS axis6_checkins (
 
 -- Drop existing unique constraint if it exists (to recreate it properly)
 ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_at_key;
+ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_date_key;
+
+-- Add computed column for date part (if it doesn't exist)
+ALTER TABLE axis6_checkins ADD COLUMN IF NOT EXISTS completed_date DATE GENERATED ALWAYS AS (completed_at::date) STORED;
 
 -- Add the proper unique constraint for ON CONFLICT operations
-ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_at_key 
-    UNIQUE (user_id, category_id, (completed_at::date));
+ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_date_key 
+    UNIQUE (user_id, category_id, completed_date);
 
 -- Add performance indexes
 CREATE INDEX IF NOT EXISTS idx_checkins_user_completed 
@@ -35,6 +39,9 @@ CREATE INDEX IF NOT EXISTS idx_checkins_user_completed
 
 CREATE INDEX IF NOT EXISTS idx_checkins_category_completed 
     ON axis6_checkins(category_id, completed_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_checkins_completed_date 
+    ON axis6_checkins(completed_date);
 
 -- STEP 2: Fix axis6_profiles table structure
 -- =====================================================
@@ -191,10 +198,27 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- STEP 7: Add realtime subscriptions
 -- =====================================================
 
--- Add tables to realtime publication
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_time_blocks;
+-- Add tables to realtime publication (ignore errors if already added)
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_time_blocks;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- STEP 8: Create updated_at triggers
 -- =====================================================
@@ -255,6 +279,12 @@ FROM information_schema.table_constraints
 WHERE table_name = 'axis6_checkins' 
 AND constraint_type = 'UNIQUE';
 
+-- Verify computed column exists
+SELECT column_name, data_type, is_generated, generation_expression
+FROM information_schema.columns 
+WHERE table_name = 'axis6_checkins' 
+AND column_name = 'completed_date';
+
 -- Verify RLS is enabled
 SELECT schemaname, tablename, rowsecurity 
 FROM pg_tables 
@@ -264,3 +294,9 @@ WHERE tablename IN ('axis6_checkins', 'axis6_profiles', 'axis6_time_blocks');
 SELECT routine_name 
 FROM information_schema.routines 
 WHERE routine_name = 'get_my_day_data';
+
+-- Test the unique constraint
+SELECT 'Unique constraint test' as test_name,
+       COUNT(*) as total_checkins,
+       COUNT(DISTINCT (user_id, category_id, completed_date)) as unique_combinations
+FROM axis6_checkins;

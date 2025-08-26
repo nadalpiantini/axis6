@@ -6,7 +6,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { MessageCircle, Plus } from 'lucide-react'
 import { ChatRoomList } from '@/components/chat/ChatRoomList'
 import { ChatRoom } from '@/components/chat/ChatRoom'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { useChatRooms } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
 

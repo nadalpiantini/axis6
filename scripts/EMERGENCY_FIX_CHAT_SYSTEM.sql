@@ -164,6 +164,33 @@ ALTER TABLE axis6_chat_search_analytics ENABLE ROW LEVEL SECURITY;
 -- STEP 4: Create RLS Policies
 -- =====================================================
 
+-- Drop existing policies to recreate them properly
+DROP POLICY IF EXISTS "Users can view accessible rooms" ON axis6_chat_rooms;
+DROP POLICY IF EXISTS "Users can create rooms" ON axis6_chat_rooms;
+DROP POLICY IF EXISTS "Room creators and admins can update rooms" ON axis6_chat_rooms;
+
+DROP POLICY IF EXISTS "Users can view participants in accessible rooms" ON axis6_chat_participants;
+DROP POLICY IF EXISTS "Users can join rooms" ON axis6_chat_participants;
+DROP POLICY IF EXISTS "Users can update their own participation" ON axis6_chat_participants;
+
+DROP POLICY IF EXISTS "Users can view messages in accessible rooms" ON axis6_chat_messages;
+DROP POLICY IF EXISTS "Users can send messages to accessible rooms" ON axis6_chat_messages;
+DROP POLICY IF EXISTS "Users can edit their own messages" ON axis6_chat_messages;
+DROP POLICY IF EXISTS "Users can delete their own messages" ON axis6_chat_messages;
+
+DROP POLICY IF EXISTS "Users can view reactions in accessible rooms" ON axis6_chat_reactions;
+DROP POLICY IF EXISTS "Users can add reactions to accessible messages" ON axis6_chat_reactions;
+DROP POLICY IF EXISTS "Users can remove their own reactions" ON axis6_chat_reactions;
+
+DROP POLICY IF EXISTS "Users can view attachments in accessible rooms" ON axis6_chat_attachments;
+DROP POLICY IF EXISTS "Users can upload attachments to accessible rooms" ON axis6_chat_attachments;
+
+DROP POLICY IF EXISTS "Users can view their own mentions" ON axis6_chat_mentions;
+DROP POLICY IF EXISTS "Users can create mentions in accessible rooms" ON axis6_chat_mentions;
+
+DROP POLICY IF EXISTS "Users can view their own search analytics" ON axis6_chat_search_analytics;
+DROP POLICY IF EXISTS "Users can create their own search analytics" ON axis6_chat_search_analytics;
+
 -- Chat rooms policies
 CREATE POLICY "Users can view accessible rooms" ON axis6_chat_rooms
     FOR SELECT USING (
@@ -370,13 +397,48 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- STEP 6: Add realtime subscriptions
 -- =====================================================
 
--- Add tables to realtime publication
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_rooms;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_participants;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_messages;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_reactions;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_attachments;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_mentions;
+-- Add tables to realtime publication (ignore errors if already added)
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_rooms;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_participants;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_messages;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_reactions;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_attachments;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_chat_mentions;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- STEP 7: Create updated_at triggers
 -- =====================================================

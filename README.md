@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AXIS6 - Balance Across 6 Life Dimensions
 
-## Getting Started
+> "Six axes. One you. Don't break your Axis."
 
-First, run the development server:
+AXIS6 is a gamified wellness tracker that helps users maintain balance across 6 essential life dimensions: Physical, Mental, Emotional, Social, Spiritual, and Material.
+
+🌐 **Live Application**: [axis6.app](https://axis6.app)
+
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your Supabase keys
+
+# Run development server (IMPORTANT: runs on port 6789, not 3000)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Open browser
+open http://localhost:6789
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📱 Mobile-First Design
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+AXIS6 features comprehensive mobile optimization with:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Perfect Modal Centering**: Works flawlessly on all screen sizes (320px - 4K+)
+- **Safe Area Support**: Full support for notched devices (iPhone X+)
+- **Touch Optimization**: 44px minimum touch targets for accessibility
+- **Responsive Layouts**: Mobile-first design across all components
+- **PWA Ready**: Web app capabilities for iOS and Android
 
-## Learn More
+## ✨ Key Features
 
-To learn more about Next.js, take a look at the following resources:
+- ✅ **Daily Check-ins**: Track progress across all 6 life dimensions  
+- ✅ **Interactive Hexagon**: Visual progress representation
+- ✅ **Streak Tracking**: Maintain motivation with streak counters
+- ✅ **Analytics Dashboard**: Personal insights and progress tracking
+- ✅ **Mobile-Responsive**: Optimized for all devices and screen sizes
+- ✅ **Dark Theme**: Professional navy-based color scheme
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS (mobile-first)
+- **Backend**: Supabase (PostgreSQL + Auth + Realtime)
+- **Hosting**: Vercel with automatic deployments
+- **Testing**: Playwright (E2E), Jest (Unit)
 
-## Deploy on Vercel
+## 📊 The 6 Dimensions
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Dimension | Color | Focus Area |
+|-----------|--------|------------|
+| **Physical** | 🟢 #65D39A | Exercise, health, nutrition |
+| **Mental** | 🟣 #9B8AE6 | Learning, focus, productivity |
+| **Emotional** | 🔴 #FF8B7D | Mood, stress management |
+| **Social** | 🔵 #6AA6FF | Relationships, connections |
+| **Spiritual** | 🟡 #4ECDC4 | Meditation, purpose, mindfulness |
+| **Material** | 🟠 #FFD166 | Finance, career, resources |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm run test:e2e          # E2E tests with Playwright
+npm run test              # Unit tests with Jest
+npm run test:e2e:mobile   # Mobile-specific E2E tests
+
+# Authentication & Database
+npm run test:auth         # Test auth flows
+npm run verify:supabase   # Verify database setup
+```
+
+## 🔧 Development
+
+```bash
+# Core commands
+npm run dev               # Development server (port 6789)
+npm run build             # Production build
+npm run type-check        # TypeScript checking
+npm run lint              # ESLint
+
+# Production
+npm run production:health # Health check
+npm run setup:all         # Complete project setup
+```
+
+## 📂 Project Structure
+
+```
+axis6-mvp/
+├── app/                  # Next.js App Router (mobile-optimized)
+├── components/           # React components (responsive)
+│   ├── ui/              # Base components
+│   ├── axis/            # AXIS6-specific components
+│   ├── settings/        # Settings components
+│   └── chat/            # Chat system
+├── lib/                 # Utilities and hooks
+└── supabase/           # Database migrations
+```
+
+## 🚀 Deployment
+
+The application automatically deploys to production when pushing to the `main` branch.
+
+- **Production URL**: [axis6.app](https://axis6.app)
+- **Hosting**: Vercel
+- **Database**: Supabase Cloud
+- **DNS**: Cloudflare
+
+## 📱 Mobile Development
+
+When developing mobile features:
+
+1. **Test on real devices** - Use Safari Web Inspector for iOS
+2. **Verify safe areas** - Check env() variables work correctly
+3. **Touch targets** - Ensure minimum 44px for accessibility
+4. **Modal centering** - Use flexbox, never transform positioning
+
+## 📚 Documentation
+
+For comprehensive development guidance, see [CLAUDE.md](./CLAUDE.md) which includes:
+
+- Detailed setup instructions
+- Architecture documentation
+- Database schema information
+- Performance optimization guide
+- Mobile development best practices
+
+## 🔐 Environment Variables
+
+Required environment variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_APP_URL=http://localhost:6789
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes (ensure mobile responsiveness)
+4. Test thoroughly on mobile devices
+5. Submit a pull request
+
+## 📄 License
+
+Private project - All rights reserved.

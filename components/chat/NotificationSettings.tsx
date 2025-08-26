@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Bell, BellOff, Volume2, VolumeX, Settings, TestTube } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/badge'
 import { notificationService, NotificationPermissionResult } from '@/lib/services/notification-service'
 

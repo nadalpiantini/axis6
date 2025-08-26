@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MoreVertical, Users, Hash, Phone, Video, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { animations } from '@/lib/design-system/theme'
 import { 
   useChatRoom, 

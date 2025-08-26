@@ -1,7 +1,7 @@
 -- =====================================================
--- AXIS6 EMERGENCY FIX FOR 400/500 ERRORS
+-- AXIS6 FINAL FIX FOR REMAINING ISSUES
 -- =====================================================
--- Execute this in Supabase SQL Editor to fix all current errors:
+-- Execute this in Supabase SQL Editor to fix remaining 400/500 errors:
 -- https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql/new
 -- =====================================================
 
@@ -25,9 +25,13 @@ CREATE TABLE IF NOT EXISTS axis6_checkins (
 -- Drop existing unique constraint if it exists (to recreate it properly)
 ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_at_key;
 
--- Add the proper unique constraint for ON CONFLICT operations
-ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_at_key 
-    UNIQUE (user_id, category_id, (completed_at::date));
+-- Add the proper unique constraint for ON CONFLICT operations (FIXED SYNTAX)
+-- First, create a computed column for the date part
+ALTER TABLE axis6_checkins ADD COLUMN IF NOT EXISTS completed_date DATE GENERATED ALWAYS AS (completed_at::date) STORED;
+
+-- Then create the unique constraint on the computed column
+ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_date_key 
+    UNIQUE (user_id, category_id, completed_date);
 
 -- Add performance indexes
 CREATE INDEX IF NOT EXISTS idx_checkins_user_completed 
@@ -191,10 +195,27 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- STEP 7: Add realtime subscriptions
 -- =====================================================
 
--- Add tables to realtime publication
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_time_blocks;
+-- Add tables to realtime publication (ignore errors if already added)
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_time_blocks;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- STEP 8: Create updated_at triggers
 -- =====================================================
