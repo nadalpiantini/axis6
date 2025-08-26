@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const today = new Date().toISOString().split('T')[0]
 
     if (completed) {
-      // Create check-in
+      // Create check-in using upsert with proper conflict resolution
       const { data: checkin, error } = await supabase
         .from('axis6_checkins')
         .upsert({

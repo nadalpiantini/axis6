@@ -32,6 +32,7 @@ import { AxisIcon } from '@/components/icons'
 import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
+import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
 import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
@@ -44,13 +45,13 @@ const HexagonVisualization = memo(({
   isToggling 
 }: {
   axes: Array<{
-    id: number
+    id: string | number
     name: string
     color: string
     icon: string
     completed: boolean
   }>
-  onToggleAxis: (id: number) => void
+  onToggleAxis: (id: string | number) => void
   isToggling: boolean
 }) => {
   const showAnimations = usePreferencesStore(state => state.showAnimations)
@@ -193,7 +194,7 @@ const MemoizedCategoryCard = memo(({
   isToggling 
 }: {
   axis: {
-    id: number
+    id: string | number
     name: string
     color: string
     icon: string
@@ -250,8 +251,8 @@ export default function DashboardPageV2() {
   const { data: streaks = [], error: streaksError } = useStreaks(user?.id)
   const toggleCheckIn = useToggleCheckIn(user?.id)
   
-  // Enable realtime updates for this user
-  useRealtimeDashboard(user?.id)
+  // Enable realtime updates for this user (with connection monitoring)
+  const realtimeStatus = useRealtimeDashboard(user?.id)
 
   // Calculate derived state with memoization
   const completedCategoryIds = useMemo(
@@ -323,7 +324,7 @@ export default function DashboardPageV2() {
   )
 
   // Handlers with useCallback for optimization
-  const handleToggleAxis = useCallback((axisId: number) => {
+  const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
     
     const axis = axes.find(a => a.id === axisId)
@@ -432,7 +433,8 @@ export default function DashboardPageV2() {
 
   return (
     <QueryErrorBoundary>
-      <div className="min-h-screen text-white">
+      <RealtimeErrorBoundary maxRetries={3}>
+        <div className="min-h-screen text-white">
         <StandardHeader
           user={user}
           onLogout={handleLogout}
@@ -496,6 +498,27 @@ export default function DashboardPageV2() {
 
             {/* Stats Section */}
             <div className="space-y-4 sm:space-y-6">
+              {/* Realtime Status (Development Only) */}
+              {process.env.NODE_ENV === 'development' && realtimeStatus && (
+                <div className="glass rounded-lg p-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Realtime</span>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className={`w-2 h-2 rounded-full ${
+                          realtimeStatus.isAnyConnected ? 'bg-green-400' : 'bg-yellow-400'
+                        }`} 
+                      />
+                      <span className={`text-xs ${
+                        realtimeStatus.isAnyConnected ? 'text-green-400' : 'text-yellow-400'
+                      }`}>
+                        {realtimeStatus.isAnyConnected ? 'Connected' : 'Polling'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Daily Mantra */}
               <Suspense fallback={
                 <div className="glass rounded-xl p-4 sm:p-6 animate-pulse">
@@ -566,9 +589,10 @@ export default function DashboardPageV2() {
           </div>
         </div>
         
-        {/* Toast Notifications */}
-        <ToastContainer toasts={toasts} onRemove={removeToast} />
-      </div>
+          {/* Toast Notifications */}
+          <ToastContainer toasts={toasts} onRemove={removeToast} />
+        </div>
+      </RealtimeErrorBoundary>
     </QueryErrorBoundary>
   )
 }

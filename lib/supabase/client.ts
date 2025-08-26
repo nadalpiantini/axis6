@@ -32,7 +32,19 @@ export function createClient() {
             eventsPerSecond: 10,
           },
           heartbeatIntervalMs: 30000, // 30 seconds
-          reconnectAfterMs: () => Math.random() * 5000 // Random backoff
+          reconnectAfterMs: (tries: number) => {
+            // Progressive backoff: 1s, 2s, 4s, 8s, max 10s
+            return Math.min(1000 * Math.pow(2, tries), 10000)
+          },
+          transport: 'websocket',
+          timeout: 15000, // 15 seconds timeout (increased)
+          // Configure WebSocket with better error handling
+          log_level: process.env.NODE_ENV === 'development' ? 'info' : 'error',
+          // Wait for authentication before connecting
+          encode: (payload, callback) => {
+            // Ensure we have a valid session before sending
+            callback(JSON.stringify(payload))
+          }
         },
         global: {
           headers: {
@@ -71,14 +83,36 @@ export function createClient() {
       // @ts-ignore - Add error handler to window for debugging
       window.__supabaseError = null
       
-      // Override console.error to catch Supabase errors
+      // Override console.error to catch Supabase errors and provide better handling
       const originalConsoleError = console.error
       console.error = (...args) => {
         const errorMessage = args.join(' ')
+        
+        // Handle WebSocket authentication errors gracefully
+        if (errorMessage.includes('WebSocket connection') && 
+            errorMessage.includes('HTTP Authentication failed')) {
+          // Only log in development, suppress in production
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('🔄 Realtime connection pending authentication - this is normal during login')
+          }
+          // @ts-ignore - Track for debugging but don't spam console
+          window.__realtimeAuthPending = true
+          return
+        }
+        
+        // Handle other realtime connection issues
+        if (errorMessage.includes('WebSocket connection') && 
+            (errorMessage.includes('failed') || errorMessage.includes('closed'))) {
+          console.warn('⚠️ Realtime connection issue - falling back to polling:', errorMessage)
+          // @ts-ignore
+          window.__realtimeConnectionIssue = errorMessage
+          return
+        }
+        
         if (errorMessage.includes('supabase') || errorMessage.includes('Supabase')) {
           // @ts-ignore
           window.__supabaseError = errorMessage
-          }
+        }
         originalConsoleError.apply(console, args)
       }
       

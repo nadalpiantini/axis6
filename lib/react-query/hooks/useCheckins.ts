@@ -10,7 +10,7 @@ export interface CheckIn {
 }
 
 interface CheckInInput {
-  categoryId: number
+  categoryId: string | number
   completed: boolean
 }
 
@@ -148,6 +148,9 @@ export function useToggleCheckIn(userId: string | undefined) {
       // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
       queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
+      // Also invalidate dashboard data for visual updates
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data', userId] })
     }
   })
 }
