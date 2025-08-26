@@ -26,12 +26,10 @@ CREATE TABLE IF NOT EXISTS axis6_checkins (
 ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_at_key;
 ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_date_key;
 
--- Add computed column for date part (if it doesn't exist)
-ALTER TABLE axis6_checkins ADD COLUMN IF NOT EXISTS completed_date DATE GENERATED ALWAYS AS (completed_at::date) STORED;
-
--- Add the proper unique constraint for ON CONFLICT operations
-ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_date_key 
-    UNIQUE (user_id, category_id, completed_date);
+-- Create a simple unique constraint without computed column
+-- This will prevent duplicate check-ins for the same user, category, and day
+ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_at_key 
+    UNIQUE (user_id, category_id, completed_at);
 
 -- Add performance indexes
 CREATE INDEX IF NOT EXISTS idx_checkins_user_completed 
@@ -40,8 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_checkins_user_completed
 CREATE INDEX IF NOT EXISTS idx_checkins_category_completed 
     ON axis6_checkins(category_id, completed_at DESC);
 
-CREATE INDEX IF NOT EXISTS idx_checkins_completed_date 
-    ON axis6_checkins(completed_date);
+
 
 -- STEP 2: Fix axis6_profiles table structure
 -- =====================================================
@@ -153,6 +150,9 @@ CREATE POLICY "Users can delete own time blocks" ON axis6_time_blocks
 
 -- STEP 6: Create missing functions for time blocks
 -- =====================================================
+
+-- Drop existing function first to avoid return type conflicts
+DROP FUNCTION IF EXISTS get_my_day_data(UUID, DATE);
 
 -- Create the get_my_day_data function that the API expects
 CREATE OR REPLACE FUNCTION get_my_day_data(p_user_id UUID, p_date DATE DEFAULT CURRENT_DATE)
@@ -279,11 +279,11 @@ FROM information_schema.table_constraints
 WHERE table_name = 'axis6_checkins' 
 AND constraint_type = 'UNIQUE';
 
--- Verify computed column exists
-SELECT column_name, data_type, is_generated, generation_expression
-FROM information_schema.columns 
+-- Verify unique constraint exists
+SELECT constraint_name, constraint_type 
+FROM information_schema.table_constraints 
 WHERE table_name = 'axis6_checkins' 
-AND column_name = 'completed_date';
+AND constraint_name = 'axis6_checkins_user_id_category_id_completed_at_key';
 
 -- Verify RLS is enabled
 SELECT schemaname, tablename, rowsecurity 
@@ -298,5 +298,5 @@ WHERE routine_name = 'get_my_day_data';
 -- Test the unique constraint
 SELECT 'Unique constraint test' as test_name,
        COUNT(*) as total_checkins,
-       COUNT(DISTINCT (user_id, category_id, completed_date)) as unique_combinations
+       COUNT(DISTINCT (user_id, category_id, completed_at)) as unique_combinations
 FROM axis6_checkins;

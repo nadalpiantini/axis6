@@ -167,12 +167,7 @@ export default function DashboardPageV2() {
   // Enable realtime updates for this user (with connection monitoring)
   const realtimeStatus = useRealtimeDashboard(user?.id)
 
-  // Calculate derived state with memoization
-  const completedCategoryIds = useMemo(
-    () => new Set(checkins.map(c => Number(c.category_id))),
-    [checkins]
-  )
-  
+  // Calculate derived state with memoization - Fixed to avoid circular dependency
   const axes = useMemo(
     () => {
       // 🛡️ NULL CHECK: Ensure categories is an array
@@ -182,6 +177,13 @@ export default function DashboardPageV2() {
       
       // 🛡️ SAFEGUARD: Limit to exactly 6 categories (AXIS6 hexagon design)
       const limitedCategories = categories.slice(0, 6)
+      
+      // Create completed category IDs set inline to avoid circular dependency
+      const completedCategoryIds = new Set(
+        Array.isArray(checkins) 
+          ? checkins.map(c => Number(c.category_id)).filter(id => !isNaN(id))
+          : []
+      )
       
       return limitedCategories.map(cat => {
         // 🛡️ IMPROVED JSONB NAME PARSING with multiple fallbacks
@@ -215,20 +217,32 @@ export default function DashboardPageV2() {
         }
       })
     },
-    [categories, completedCategoryIds]
+    [categories, checkins] // Direct dependency on checkins instead of completedCategoryIds
   )
 
   const currentStreak = useMemo(
-    () => Array.isArray(streaks) && streaks.length > 0 
-      ? Math.max(...streaks.map(s => s.current_streak || 0), 0) 
-      : 0,
+    () => {
+      if (!Array.isArray(streaks) || streaks.length === 0) return 0
+      
+      const validStreaks = streaks
+        .map(s => s.current_streak || 0)
+        .filter(streak => typeof streak === 'number' && !isNaN(streak))
+      
+      return validStreaks.length > 0 ? Math.max(...validStreaks) : 0
+    },
     [streaks]
   )
 
   const longestStreak = useMemo(
-    () => Array.isArray(streaks) && streaks.length > 0 
-      ? Math.max(...streaks.map(s => s.longest_streak || 0), 0) 
-      : 0,
+    () => {
+      if (!Array.isArray(streaks) || streaks.length === 0) return 0
+      
+      const validStreaks = streaks
+        .map(s => s.longest_streak || 0)
+        .filter(streak => typeof streak === 'number' && !isNaN(streak))
+      
+      return validStreaks.length > 0 ? Math.max(...validStreaks) : 0
+    },
     [streaks]
   )
 

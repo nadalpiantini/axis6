@@ -42,15 +42,29 @@ export function useHexagonResonance(userId?: string, date?: string) {
       }
 
       const dateParam = date || new Date().toISOString().split('T')[0]
-      const response = await fetch(`/api/resonance/hexagon?date=${dateParam}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      
+      try {
+        const response = await fetch(`/api/resonance/hexagon?date=${dateParam}`, {
+          method: 'GET',
+          credentials: 'include', // Include cookies for authentication
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
 
-      if (!response.ok) {
+        if (!response.ok) {
+          console.warn(`Hexagon resonance API returned ${response.status}: ${response.statusText}`)
+          return {
+            success: true,
+            date: dateParam,
+            resonance: [],
+            totalResonance: 0
+          }
+        }
+
+        return response.json()
+      } catch (error) {
+        console.warn('Failed to fetch hexagon resonance:', error)
         return {
           success: true,
           date: dateParam,
@@ -58,12 +72,17 @@ export function useHexagonResonance(userId?: string, date?: string) {
           totalResonance: 0
         }
       }
-
-      return response.json()
     },
     enabled: !!userId && userId !== '',
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
     refetchInterval: 60 * 1000, // Refetch every minute for subtle real-time updates
+    retry: (failureCount, error) => {
+      // Don't retry on 401 errors (authentication issues)
+      if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+        return false
+      }
+      return failureCount < 2
+    }
   })
 }

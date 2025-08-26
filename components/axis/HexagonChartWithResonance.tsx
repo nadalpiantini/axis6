@@ -137,7 +137,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       const y = center + radius * Math.sin(angleRad)
       return `${x},${y}`
     }).join(' '),
-    [center, radius]
+    [center, radius, categories]
   )
 
   // Calculate data polygon points (same as original)
@@ -151,7 +151,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       const y = center + radius * value * Math.sin(angleRad)
       return { x, y, value }
     })
-  }, [data, center, radius])
+  }, [data, center, radius, categories])
 
   const dataPolygonPoints = useMemo(() => 
     dataPoints.map(p => `${p.x},${p.y}`).join(' '),
@@ -160,35 +160,40 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
 
   // Calculate resonance dots positions
   const resonancePoints = useMemo(() => {
-    if (!showResonance || !resonanceData?.resonance) return []
+    if (!showResonance || !resonanceData?.resonance || !Array.isArray(resonanceData.resonance)) return []
     
-    return categories.map((cat, index) => {
-      const resonanceInfo = resonanceData.resonance.find(r => r.axisSlug === cat.key)
-      if (!resonanceInfo || !resonanceInfo.hasResonance) return null
-      
-      const angleRad = (cat.angle * Math.PI) / 180
-      const dotsCount = Math.min(resonanceInfo.resonanceCount, 8) // Max 8 dots per axis
-      const dots = []
-      
-      for (let i = 0; i < dotsCount; i++) {
-        // Create spiral pattern around each axis point
-        const dotAngle = angleRad + (i * Math.PI / 6) // Spread dots around axis
-        const dotRadius = resonanceRadius + (i % 2) * 15 // Alternating distances
-        const x = center + dotRadius * Math.cos(dotAngle)
-        const y = center + dotRadius * Math.sin(dotAngle)
+    try {
+      return categories.map((cat, index) => {
+        const resonanceInfo = resonanceData.resonance.find(r => r?.axisSlug === cat.key)
+        if (!resonanceInfo || !resonanceInfo.hasResonance) return null
         
-        dots.push({
-          x,
-          y,
-          color: cat.color,
-          delay: i * 0.2,
-          intensity: Math.min(resonanceInfo.resonanceCount / 5, 1) // Scale intensity
-        })
-      }
-      
-      return dots
-    }).filter(Boolean).flat()
-  }, [resonanceData, showResonance, center, resonanceRadius])
+        const angleRad = (cat.angle * Math.PI) / 180
+        const dotsCount = Math.min(resonanceInfo.resonanceCount || 0, 8) // Max 8 dots per axis
+        const dots = []
+        
+        for (let i = 0; i < dotsCount; i++) {
+          // Create spiral pattern around each axis point
+          const dotAngle = angleRad + (i * Math.PI / 6) // Spread dots around axis
+          const dotRadius = resonanceRadius + (i % 2) * 15 // Alternating distances
+          const x = center + dotRadius * Math.cos(dotAngle)
+          const y = center + dotRadius * Math.sin(dotAngle)
+          
+          dots.push({
+            x,
+            y,
+            color: cat.color,
+            delay: i * 0.2,
+            intensity: Math.min((resonanceInfo.resonanceCount || 0) / 5, 1) // Scale intensity
+          })
+        }
+        
+        return dots
+      }).filter(Boolean).flat()
+    } catch (error) {
+      console.warn('Error calculating resonance points:', error)
+      return []
+    }
+  }, [resonanceData, showResonance, center, resonanceRadius, categories])
 
   // Create grid lines (same as original)
   const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])
