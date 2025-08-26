@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { reportError } from '@/lib/monitoring/error-tracking'
-import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +22,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (authError) {
-      logger.error('Auth signin failed', { error: authError, email })
+      console.error('Auth signin failed:', authError.message)
       return NextResponse.json(
         { error: authError.message },
         { status: 401 }
@@ -46,16 +44,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (profileError) {
-      logger.error('Profile fetch failed during login', { 
-        error: profileError, 
-        userId: authData.user.id 
-      })
+      console.error('Profile fetch failed during login:', profileError.message)
     }
 
-    logger.info('User logged in successfully', { 
-      userId: authData.user.id, 
-      email: authData.user.email 
-    })
+    console.log('User logged in successfully:', authData.user.id)
 
     return NextResponse.json({
       message: 'Login successful',
@@ -73,15 +65,9 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    logger.error('Login endpoint error', { error })
-    reportError(error, 'high', {
-      component: 'AuthAPI',
-      action: 'login',
-      url: '/api/auth/login'
-    })
-
+    console.error('Login endpoint error:', error.message || error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Login failed. Please try again.' },
       { status: 500 }
     )
   }

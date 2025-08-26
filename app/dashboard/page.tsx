@@ -163,41 +163,43 @@ const HexagonVisualization = memo(({
           
           return (
             <g key={axis.id}>
-              <circle
-                cx={x}
-                cy={y}
-                r="30"
-                fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
-                fillOpacity={axis.completed ? 0.8 : 1}
-                className="cursor-pointer transition-all hover:scale-110 active:scale-95"
-                onClick={() => !isToggling && onToggleAxis(axis.id)}
-                role="button"
-                aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
-                data-testid={`category-${axis.name.toLowerCase()}`}
-                data-category={axis.name.toLowerCase()}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
+              <g 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (!isToggling) {
                     onToggleAxis(axis.id)
                   }
                 }}
-              />
-              <foreignObject 
-                x={x - 14} 
-                y={y - 14} 
-                width="28" 
-                height="28"
-                style={{ pointerEvents: 'none' }}
+                style={{ cursor: 'pointer' }}
               >
-                <AxisIcon 
-                  axis={axis.icon}
-                  size={28}
-                  color={axis.completed ? 'white' : '#9ca3af'}
-                  custom
-                  animated={showAnimations && axis.completed}
+                <circle
+                  cx={x}
+                  cy={y}
+                  r="30"
+                  fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
+                  fillOpacity={axis.completed ? 0.8 : 1}
+                  className="transition-all hover:scale-110 active:scale-95"
+                  role="button"
+                  aria-label={`${axis.name}: ${axis.completed ? 'completed' : 'not completed'}`}
+                  data-testid={`category-${axis.name.toLowerCase()}`}
+                  data-category={axis.name.toLowerCase()}
                 />
-              </foreignObject>
+                <foreignObject 
+                  x={x - 14} 
+                  y={y - 14} 
+                  width="28" 
+                  height="28"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <AxisIcon 
+                    axis={axis.icon}
+                    size={28}
+                    color={axis.completed ? 'white' : '#9ca3af'}
+                    custom
+                    animated={showAnimations && axis.completed}
+                  />
+                </foreignObject>
+              </g>
             </g>
           )
         })}

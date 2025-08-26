@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,23 +30,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Use service role client for registration
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    )
+    // Create Supabase client with server-side cookies
+    const supabase = await createClient()
 
-    // Sign up user
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    // Sign up user using the standard method
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      email_confirm: true
+      options: {
+        data: {
+          name: name,
+        },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://axis6.app'}/auth/callback`
+      }
     })
 
     if (authError) {
@@ -64,30 +60,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create user profile
+    // Create user profile (the trigger might handle this, but we ensure it exists)
     const { error: profileError } = await supabase
       .from('axis6_profiles')
-      .insert([
+      .upsert([
         {
           id: authData.user.id,
           name: name,
-          timezone: 'America/Santo_Domingo',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Santo_Domingo',
           onboarded: false,
         }
-      ])
+      ], {
+        onConflict: 'id'
+      })
 
     if (profileError) {
       console.error('Profile creation failed:', profileError.message)
-      return NextResponse.json(
-        { error: `Profile creation failed: ${profileError.message}` },
-        { status: 500 }
-      )
+      // Don't fail the registration if profile already exists or has issues
     }
 
     console.log('User registered successfully:', authData.user.id)
 
     return NextResponse.json({
-      message: 'Registration successful',
+      message: 'Registration successful! Please check your email to confirm your account.',
       user: {
         id: authData.user.id,
         email: authData.user.email,
@@ -96,9 +91,9 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('Registration endpoint error:', error.message)
+    console.error('Registration endpoint error:', error.message || error)
     return NextResponse.json(
-      { error: `Internal server error: ${error.message}` },
+      { error: 'Registration failed. Please try again.' },
       { status: 500 }
     )
   }
