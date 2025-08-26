@@ -37,10 +37,6 @@ export function createClient() {
 
   // Enhanced error handling for auth state changes
   client.auth.onAuthStateChange((event, session) => {
-    if (event === 'TOKEN_REFRESHED') {
-      console.log('Token refreshed successfully')
-    }
-    
     if (event === 'SIGNED_OUT' || (event === 'USER_UPDATED' && !session)) {
       // Clear any stale auth data
       if (typeof window !== 'undefined') {
@@ -57,10 +53,6 @@ export function createClient() {
           window.queryClient.clear()
         }
       }
-    }
-    
-    if (event === 'SIGNED_IN' && session) {
-      console.log('User signed in:', session.user.id)
     }
   })
 

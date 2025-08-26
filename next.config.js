@@ -280,7 +280,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789',
   },
-
 }
 
 // Enable PWA support for mobile app-like experience

@@ -104,7 +104,7 @@ export async function GET() {
         id: randomMantra.id,
         content: randomMantra.content,
         author: randomMantra.author,
-        category: randomMantra.axis6_categories?.name?.en || 'General'
+        category: (randomMantra.axis6_categories as any)?.name?.en || 'General'
       },
       completed: false
     })
