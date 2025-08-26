@@ -60,7 +60,7 @@ class EmailService {
   
   async sendWelcome(data: WelcomeEmailData) {
     if (!process.env['RESEND_API_KEY']) {
-      logger.info('Email service in development mode', { type: 'welcome', to: data.email })
+      logger.info(`Email service in development mode: welcome to ${data.email}`)
       return { success: true, id: 'dev-mode' }
     }
 
@@ -112,7 +112,7 @@ class EmailService {
 
   async sendPasswordReset(data: PasswordResetEmailData) {
     if (!process.env['RESEND_API_KEY']) {
-      logger.info('Password reset email would be sent (DEV)', { email: data.email, resetUrl: data.resetUrl })
+      logger.info(`Password reset email would be sent (DEV): ${data.email}`)
       return { success: true, id: 'dev-mode' }
     }
 
@@ -241,7 +241,7 @@ class EmailService {
 
   async sendTestEmail(to: string) {
     if (!process.env['RESEND_API_KEY']) {
-      logger.info('Email service in development mode', { type: 'test', to })
+      logger.info(`Email service in development mode: test to ${to}`)
       return { success: true, id: 'dev-mode' }
     }
 
@@ -278,10 +278,10 @@ class EmailService {
         ]
       })
 
-      logger.info('Test email sent successfully', { emailId: result.data?.id, to })
+      logger.info(`Test email sent successfully to ${to}`)
       return { success: true, id: result.data?.id }
     } catch (error: any) {
-      logger.error('Failed to send test email', { error, to })
+      logger.error(`Failed to send test email to ${to}: ${error}`)
       return { success: false, error: error.message }
     }
   }

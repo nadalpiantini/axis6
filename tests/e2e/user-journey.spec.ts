@@ -37,10 +37,16 @@ test.describe('AXIS6 Complete User Journey', () => {
       await passwordFields.nth(1).fill(testPassword);
     }
     
-    // Accept terms if checkbox exists
-    const checkbox = page.locator('input[type="checkbox"]');
-    if (await checkbox.isVisible({ timeout: 2000 })) {
-      await checkbox.check();
+    // Accept terms checkbox (required)
+    const termsCheckbox = page.locator('input[type="checkbox"][required]').first();
+    if (await termsCheckbox.count() > 0) {
+      await termsCheckbox.check();
+    }
+    
+    // Check marketing checkbox if exists (optional)
+    const marketingCheckbox = page.locator('input[type="checkbox"]:not([required])').first();
+    if (await marketingCheckbox.count() > 0 && await marketingCheckbox.isVisible({ timeout: 1000 })) {
+      await marketingCheckbox.check();
     }
     
     // Step 4: Submit form
@@ -121,9 +127,15 @@ test.describe('AXIS6 Complete User Journey', () => {
       await passwordFields.nth(1).fill(testPassword);
     }
     
-    const checkbox = page.locator('input[type="checkbox"]');
-    if (await checkbox.isVisible({ timeout: 2000 })) {
-      await checkbox.check();
+    // Handle checkboxes properly
+    const termsCheckbox = page.locator('input[type="checkbox"][required]').first();
+    if (await termsCheckbox.count() > 0) {
+      await termsCheckbox.check();
+    }
+    
+    const marketingCheckbox = page.locator('input[type="checkbox"]:not([required])').first();
+    if (await marketingCheckbox.count() > 0 && await marketingCheckbox.isVisible({ timeout: 1000 })) {
+      await marketingCheckbox.check();
     }
     
     await page.locator('button[type="submit"]').click();

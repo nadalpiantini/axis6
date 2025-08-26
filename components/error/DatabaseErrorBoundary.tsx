@@ -37,7 +37,7 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    logger.error('Database error boundary caught an error:', error, errorInfo)
+    logger.error('Database error boundary caught an error:', error)
     
     this.setState({
       error,

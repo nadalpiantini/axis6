@@ -80,8 +80,8 @@ interface TemperamentResult {
 export default function ProfilePage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
-  const { data: streaks = [] } = useStreaks(user?.id || '')
-  const { data: checkins = [] } = useTodayCheckins(user?.id || '')
+  const { data: streaks = [], isLoading: streaksLoading } = useStreaks(user?.id || '')
+  const { data: checkins = [], isLoading: checkinsLoading } = useTodayCheckins(user?.id || '')
   
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
@@ -369,6 +369,7 @@ export default function ProfilePage() {
     showNotification('success', 'Your psychological profile has been updated! You will now receive personalized recommendations.')
   }
 
+  // 🛡️ SAFE: Define temperament data with proper type safety
   const temperamentData = {
     sanguine: {
       name: 'Sanguine',
@@ -401,7 +402,7 @@ export default function ProfilePage() {
   } as const
 
   // Handle loading state
-  if (userLoading || profileLoading) {
+  if (userLoading || profileLoading || streaksLoading || checkinsLoading) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">

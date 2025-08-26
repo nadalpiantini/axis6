@@ -10,7 +10,7 @@ import './globals.css'
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap', // Improves loading performance and prevents FOUT
-  preload: true
+  preload: false // Disable preload to avoid PWA conflict
 })
 
 export const metadata: Metadata = {

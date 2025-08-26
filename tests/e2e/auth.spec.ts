@@ -235,11 +235,11 @@ test.describe('AXIS6 Authentication Flow', () => {
       expect(isInvalid).toBe(true);
     });
     
-    test('should handle form accessibility', async ({ loginPage, utils }) => {
+    test('should handle form accessibility', async ({ loginPage, testUtils }) => {
       await loginPage.goto('/auth/login');
       
       // Check accessibility
-      const a11yIssues = await utils.checkAccessibility(loginPage.page);
+      const a11yIssues = await testUtils.checkAccessibility(loginPage.page);
       
       // Should have proper labels
       const emailLabel = await loginPage.emailInput.getAttribute('aria-label') || 

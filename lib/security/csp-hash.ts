@@ -172,8 +172,8 @@ export interface CSPViolation {
 export function handleCSPViolation(violation: CSPViolation): void {
   // In development, log to console
   if (process.env['NODE_ENV'] === 'development') {
-    ,
-    })
+    // TODO: Replace with proper error handling
+    // console.error('CSP Violation:', violation)
   }
   
   // In production, send to monitoring service

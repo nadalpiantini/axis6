@@ -948,7 +948,6 @@ export function logSecurityEvent(
   }
   
   // In production, this would send to your security monitoring system
-  )
   
   // Send to monitoring API if available
   if (typeof window !== 'undefined') {

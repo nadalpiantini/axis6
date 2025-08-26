@@ -1,2 +1,206 @@
-<testsuites id="" name="" tests="0" failures="0" skipped="0" errors="0" time="1.818935">
+<testsuites id="" name="" tests="48" failures="0" skipped="48" errors="0" time="0.09294300000000004">
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="chromium" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="firefox" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="webkit" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="Mobile Chrome" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="Mobile Safari" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-hexagon-fix.spec.ts" timestamp="2025-08-26T14:58:33.552Z" hostname="iPad" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should be clickable and trigger API calls" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should show visual feedback on hover" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › toast notifications should appear when clicking hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon buttons should work on touch devices" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › hexagon progress should update when categories are completed" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › all 6 hexagon buttons should be interactive" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › keyboard navigation should work for hexagon buttons" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Dashboard Hexagon Button Fix Verification › performance: hexagon should render without lag" classname="dashboard-hexagon-fix.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
 </testsuites>

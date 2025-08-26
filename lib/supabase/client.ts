@@ -10,9 +10,9 @@ export function createClient() {
   if (!supabaseUrl || !supabaseAnonKey) {
     // TODO: Replace with proper error handling
     // console.error('Missing Supabase environment variables:', {
-      url: supabaseUrl ? 'present' : 'missing',
-      key: supabaseAnonKey ? 'present' : 'missing'
-    });
+    //   url: supabaseUrl ? 'present' : 'missing',
+    //   key: supabaseAnonKey ? 'present' : 'missing'
+    // });
     throw new Error('Missing Supabase environment variables')
   }
 

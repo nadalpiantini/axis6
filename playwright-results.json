@@ -134,176 +134,991 @@
     "workers": 5,
     "webServer": null
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 6,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:6\n\n  4 |   \n  5 |   test.describe('Dashboard Loading and Navigation', () => {\n> 6 |     test('should load dashboard correctly for authenticated user', async ({ authenticatedPage }) => {\n    |         ^\n  7 |       await authenticatedPage.verifyDashboardLoaded();\n  8 |       \n  9 |       // Check page title"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 16,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:16\n\n  14 |     });\n  15 |     \n> 16 |     test('should display user data correctly', async ({ authenticatedPage, testUser }) => {\n     |         ^\n  17 |       await authenticatedPage.verifyDashboardLoaded();\n  18 |       \n  19 |       // Should show user name or email somewhere"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 31,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:31\n\n  29 |     });\n  30 |     \n> 31 |     test('should handle dashboard data loading states', async ({ authenticatedPage }) => {\n     |         ^\n  32 |       // Navigate to dashboard\n  33 |       await authenticatedPage.goto('/dashboard');\n  34 |       "
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 48,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:48\n\n  46 |\n  47 |   test.describe('Hexagon Visualization', () => {\n> 48 |     test('should display hexagon chart correctly', async ({ authenticatedPage }) => {\n     |         ^\n  49 |       await authenticatedPage.verifyDashboardLoaded();\n  50 |       \n  51 |       const hexagon = authenticatedPage.hexagonChart;"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 67,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:67\n\n  65 |     });\n  66 |     \n> 67 |     test('should show all 6 categories in hexagon', async ({ authenticatedPage }) => {\n     |         ^\n  68 |       await authenticatedPage.verifyDashboardLoaded();\n  69 |       \n  70 |       // Look for category indicators in the hexagon"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 86,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:86\n\n  84 |     });\n  85 |     \n> 86 |     test('should be interactive and respond to clicks', async ({ authenticatedPage }) => {\n     |         ^\n  87 |       await authenticatedPage.verifyDashboardLoaded();\n  88 |       \n  89 |       // Find clickable elements in hexagon"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 106,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:106\n\n  104 |\n  105 |   test.describe('Daily Check-ins', () => {\n> 106 |     test('should allow user to perform daily check-ins', async ({ authenticatedPage }) => {\n      |         ^\n  107 |       await authenticatedPage.verifyDashboardLoaded();\n  108 |       \n  109 |       // Look for check-in buttons or cards"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 132,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:132\n\n  130 |     });\n  131 |     \n> 132 |     test('should show check-in status for each category', async ({ authenticatedPage }) => {\n      |         ^\n  133 |       await authenticatedPage.verifyDashboardLoaded();\n  134 |       \n  135 |       // Look for category cards with check-in status"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 152,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:152\n\n  150 |     });\n  151 |     \n> 152 |     test('should prevent duplicate check-ins for same day', async ({ authenticatedPage }) => {\n      |         ^\n  153 |       await authenticatedPage.verifyDashboardLoaded();\n  154 |       \n  155 |       // Find a check-in button and click it"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 174,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:174\n\n  172 |\n  173 |   test.describe('Streak Tracking', () => {\n> 174 |     test('should display streak information', async ({ authenticatedPage }) => {\n      |         ^\n  175 |       await authenticatedPage.verifyDashboardLoaded();\n  176 |       \n  177 |       // Look for streak counters or indicators"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 194,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:194\n\n  192 |     });\n  193 |     \n> 194 |     test('should update streaks after check-ins', async ({ authenticatedPage }) => {\n      |         ^\n  195 |       await authenticatedPage.verifyDashboardLoaded();\n  196 |       \n  197 |       // Get initial streak count"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 227,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:227\n\n  225 |\n  226 |   test.describe('Dashboard Responsiveness', () => {\n> 227 |     test('should adapt to mobile viewport', async ({ authenticatedPage }) => {\n      |         ^\n  228 |       // Set mobile viewport\n  229 |       await authenticatedPage.page.setViewportSize({ width: 375, height: 667 });\n  230 |       await authenticatedPage.verifyDashboardLoaded();"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 243,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:243\n\n  241 |     });\n  242 |     \n> 243 |     test('should work on tablet viewport', async ({ authenticatedPage }) => {\n      |         ^\n  244 |       // Set tablet viewport\n  245 |       await authenticatedPage.page.setViewportSize({ width: 768, height: 1024 });\n  246 |       await authenticatedPage.verifyDashboardLoaded();"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 259,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:259\n\n  257 |     });\n  258 |     \n> 259 |     test('should handle different screen orientations', async ({ authenticatedPage }) => {\n      |         ^\n  260 |       // Portrait\n  261 |       await authenticatedPage.page.setViewportSize({ width: 375, height: 812 });\n  262 |       await authenticatedPage.verifyDashboardLoaded();"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 273,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:273\n\n  271 |\n  272 |   test.describe('Error Handling', () => {\n> 273 |     test('should handle API errors gracefully', async ({ authenticatedPage }) => {\n      |         ^\n  274 |       // Intercept API calls and simulate errors\n  275 |       await authenticatedPage.page.route('**/api/**', route => {\n  276 |         route.fulfill({"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 298,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:298\n\n  296 |     });\n  297 |     \n> 298 |     test('should handle slow network conditions', async ({ authenticatedPage }) => {\n      |         ^\n  299 |       // Simulate slow network\n  300 |       await authenticatedPage.page.route('**/api/**', async route => {\n  301 |         await new Promise(resolve => setTimeout(resolve, 3000)); // 3s delay"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 324,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:324\n\n  322 |\n  323 |   test.describe('Data Persistence', () => {\n> 324 |     test('should persist check-in data across sessions', async ({ authenticatedPage, page, testUser }) => {\n      |         ^\n  325 |       await authenticatedPage.verifyDashboardLoaded();\n  326 |       \n  327 |       // Perform a check-in if possible"
-    },
-    {
-      "message": "Test has unknown parameter \"authenticatedPage\".",
-      "location": {
-        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/dashboard.spec.ts",
-        "line": 357,
-        "column": 9
-      },
-      "snippet": "\u001b[90m   at \u001b[39mdashboard.spec.ts:357\n\n  355 |     });\n  356 |     \n> 357 |     test('should maintain UI state during page refresh', async ({ authenticatedPage }) => {\n      |         ^\n  358 |       await authenticatedPage.verifyDashboardLoaded();\n  359 |       \n  360 |       // Get current state"
+      "title": "dashboard-hexagon-fix.spec.ts",
+      "file": "dashboard-hexagon-fix.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Dashboard Hexagon Button Fix Verification",
+          "file": "dashboard-hexagon-fix.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-16bdb3d9e80ee9db14d8",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-e6dc53ec654312b87272",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-89a9e90ecaae0ec34c45",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-8ae339d834bbf4a17e69",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-bc0c4c705a976794a14b",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-409437399099c2560584",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-5a62a49e583b97b1420a",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-e22abd5cc6975e1f885a",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-a5f64607e434fc525f30",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-544059641e4190e8f3b0",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-bfaf64484959669a2a76",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-eca2cfb45f3b4499f197",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-558b5aa7593de9854530",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-2debc0ece52cfbc74d4b",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-11431dddd3569350fc3d",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-ca61113f27bbb54ce154",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-87f29a002e334e1b91f2",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-a7f29f11d7fd1648fc03",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-68c210cb484f6e3ad57d",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-648504a6ca7993c83375",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-28e62d7c0405fecb1263",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-77cc1b434a75aee5246e",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-efe4f748c38a4dffd788",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-c76c57fb5f1cd7d380c7",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-90c4940e5d65ee6e6b8c",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-ce4ef15f574d71752498",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-1dbbfab10de3fe90db36",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-2f6b38f9401162c22355",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-4237e34ca7d21f76f20f",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-708711e43248325a9b16",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-8c39b7246ab79692a7c8",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-411a7af7b47bc183b5f3",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-d6653eff906886246f47",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-33174dade6cbf8054a3a",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-67f28a548f84c2cfdd71",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-78f74289cc56e631d477",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-84ac8348bf9a7483c1f9",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-01c2ced60b9ef10a298f",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-7a76dc6c926bcf02ce6e",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-b771733021e556c877db",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should be clickable and trigger API calls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-122f8eeb2035d47ed814",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should show visual feedback on hover",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-245233b699acfeac681f",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "toast notifications should appear when clicking hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-69a5afbf1de34f398419",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "hexagon buttons should work on touch devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-be514f009dff0f85a107",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "hexagon progress should update when categories are completed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-481a1b9eac7d836d303f",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "all 6 hexagon buttons should be interactive",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-f1c6a2444553c317c01c",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "keyboard navigation should work for hexagon buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-2b412baf6b8d7c119187",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 178,
+              "column": 7
+            },
+            {
+              "title": "performance: hexagon should render without lag",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0cb9689dbf4dfb10af20-5e0cf28589b0f726999a",
+              "file": "dashboard-hexagon-fix.spec.ts",
+              "line": 200,
+              "column": 7
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-08-26T13:03:30.620Z",
-    "duration": 1818.935,
+    "startTime": "2025-08-26T14:58:33.460Z",
+    "duration": 92.94300000000004,
     "expected": 0,
-    "skipped": 0,
+    "skipped": 48,
     "unexpected": 0,
     "flaky": 0
   }

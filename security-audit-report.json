@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-08-26T14:38:26.207Z",
+  "timestamp": "2025-08-26T14:48:48.869Z",
   "securityScore": 100,
   "summary": {
-    "vulnerabilities": 34,
+    "vulnerabilities": 35,
     "warnings": 33,
-    "critical": 13,
+    "critical": 14,
     "high": 3,
     "medium": 6,
     "low": 12
@@ -206,6 +206,12 @@
       "type": "hardcoded_secret",
       "severity": "critical",
       "description": "Potential hardcoded secret in scripts/verify-supabase-config.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in test-registration.js",
       "fix": "Move secrets to environment variables"
     },
     {

@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (profileError) {
-      logger.error('Profile fetch failed', { error: profileError, userId: user.id })
+      logger.error(`Profile fetch failed for user ${user.id}: ${profileError}`)
       return NextResponse.json(
         { error: 'Failed to fetch user profile' },
         { status: 500 }

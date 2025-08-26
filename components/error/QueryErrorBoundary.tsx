@@ -20,7 +20,7 @@ export function QueryErrorBoundary({ children, fallback }: QueryErrorBoundaryPro
           onError={(error, errorInfo) => {
             // Log error in development only
             if (process.env['NODE_ENV'] === 'development') {
-              logger.error('Query Error Boundary:', error, errorInfo)
+              logger.error('Query Error Boundary:', error)
             }
           }}
           fallback={

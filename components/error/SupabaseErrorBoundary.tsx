@@ -42,7 +42,7 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    logger.error('Supabase Error Boundary caught an error:', error, errorInfo)
+    logger.error('Supabase Error Boundary caught an error:', error)
     
     // Log to external service if available
     if (typeof window !== 'undefined' && 'Sentry' in window) {

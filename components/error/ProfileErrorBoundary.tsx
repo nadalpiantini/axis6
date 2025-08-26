@@ -38,7 +38,7 @@ export class ProfileErrorBoundary extends React.Component<Props, State> {
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error for debugging
-    logger.error('Profile page error boundary caught an error:', error, errorInfo)
+    logger.error('Profile page error boundary caught an error:', error)
     
     // Update state with error info
     this.setState({
