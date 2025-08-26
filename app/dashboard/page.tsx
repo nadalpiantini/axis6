@@ -38,7 +38,6 @@ import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
 
-
 // Memoized hexagon visualization
 const HexagonVisualization = memo(({ 
   axes, 
@@ -70,7 +69,7 @@ const HexagonVisualization = memo(({
       points.push(`${x},${y}`)
     }
     return points.join(' ')
-  }, []) // Only calculate once since size is constant
+  }, [])
 
   // Memoize completion calculation
   const { completedCount, completionPercentage } = useMemo(
@@ -143,43 +142,42 @@ const HexagonVisualization = memo(({
         
         {/* Axis points */}
         {axisPositions.map((axis) => (
-          
-            <ClickableSVG
-              key={axis.id}
-              onClick={() => onToggleAxis(axis.id)}
-              disabled={isToggling}
-              aria-label={`Toggle ${axis.name}: currently ${axis.completed ? 'completed' : 'not completed'}`}
-              data-testid={`hexagon-${axis.name.toLowerCase()}`}
-              showAnimation={true}
-              className="focus:outline-none"
+          <ClickableSVG
+            key={axis.id}
+            onClick={() => onToggleAxis(axis.id)}
+            disabled={isToggling}
+            aria-label={`Toggle ${axis.name}: currently ${axis.completed ? 'completed' : 'not completed'}`}
+            data-testid={`hexagon-${axis.name.toLowerCase()}`}
+            showAnimation={true}
+            className="focus:outline-none"
+          >
+            <circle
+              cx={axis.x}
+              cy={axis.y}
+              r="30"
+              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
+              fillOpacity={axis.completed ? 0.8 : 1}
+              stroke={axis.completed ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}
+              strokeWidth="2"
+              className="transition-all duration-200 hover:stroke-white hover:stroke-[3]"
+              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+            />
+            <foreignObject 
+              x={axis.x - 14} 
+              y={axis.y - 14} 
+              width="28" 
+              height="28"
+              style={{ pointerEvents: 'none' }}
             >
-              <circle
-                cx={axis.x}
-                cy={axis.y}
-                r="30"
-                fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
-                fillOpacity={axis.completed ? 0.8 : 1}
-                stroke={axis.completed ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}
-                strokeWidth="2"
-                className="transition-all duration-200 hover:stroke-white hover:stroke-[3]"
-                style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+              <AxisIcon 
+                axis={axis.icon}
+                size={28}
+                color={axis.completed ? 'white' : '#9ca3af'}
+                custom
+                animated={showAnimations && axis.completed}
               />
-              <foreignObject 
-                x={axis.x - 14} 
-                y={axis.y - 14} 
-                width="28" 
-                height="28"
-                style={{ pointerEvents: 'none' }}
-              >
-                <AxisIcon 
-                  axis={axis.icon}
-                  size={28}
-                  color={axis.completed ? 'white' : '#9ca3af'}
-                  custom
-                  animated={showAnimations && axis.completed}
-                />
-              </foreignObject>
-            </ClickableSVG>
+            </foreignObject>
+          </ClickableSVG>
         ))}
       </svg>
     </div>
@@ -274,10 +272,6 @@ export default function DashboardPageV2() {
       // 🛡️ SAFEGUARD: Limit to exactly 6 categories (AXIS6 hexagon design)
       const limitedCategories = categories.slice(0, 6)
       
-      // Log if we had to truncate (debugging aid)
-      if (categories.length > 6) {
-        }
-      
       return limitedCategories.map(cat => {
         // 🛡️ IMPROVED JSONB NAME PARSING with multiple fallbacks
         let displayName = 'Unknown'
@@ -299,7 +293,7 @@ export default function DashboardPageV2() {
         } catch (error) {
           // If all parsing fails, use slug
           displayName = cat.slug || 'Unknown'
-          }
+        }
         
         return {
           id: cat.id,
@@ -327,23 +321,22 @@ export default function DashboardPageV2() {
     [streaks]
   )
 
-  // Optimized hexagon key generation - memoized to prevent unnecessary recalculations
+  // Optimized hexagon key generation
   const hexagonKey = useMemo(() => {
     return `hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`
   }, [axes])
 
-  // Memoized axis lookup map for O(1) performance instead of O(n) find operations
+  // Memoized axis lookup map for O(1) performance
   const axisMap = useMemo(() => {
     return new Map(axes.map(axis => [axis.id, axis]))
   }, [axes])
 
-  // Handlers with useCallback for optimization and immediate UI updates
+  // Handler with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
     
-    const axis = axisMap.get(axisId) // O(1) lookup instead of O(n) find
+    const axis = axisMap.get(axisId)
     if (axis) {
-      // FRONTEND FIX: Use mutate with optimized error handling
       toggleCheckIn.mutate(
         {
           categoryId: axisId,
@@ -364,27 +357,15 @@ export default function DashboardPageV2() {
               message: message
             })
             
-            // CRITICAL FIX: Force immediate refetch of related queries
-            // This ensures visual updates happen immediately
+            // Force immediate refetch of related queries
             queryClient.invalidateQueries({ queryKey: ['checkins', 'today', user?.id] })
             queryClient.invalidateQueries({ queryKey: ['streaks', user?.id] })
-            
-            // Log success for debugging
-            console.log('✅ Checkin toggle successful:', data)
           },
           onError: (error) => {
             const errorMessage = 'Failed to update. Please try again.'
             
             // Show error toast
             showToast(errorMessage, 'error', 4000)
-            
-            // Log error for debugging with more detail
-            console.error('❌ Toggle check-in error:', {
-              axisId,
-              axisName: axis.name,
-              completed: !axis.completed,
-              error: error.message || error
-            })
             
             // Also add to notification store
             addNotification({
@@ -404,7 +385,7 @@ export default function DashboardPageV2() {
     router.push('/auth/login')
   }, [router])
 
-  // Handle authentication redirect - MUST be before any conditional returns
+  // Handle authentication redirect
   useEffect(() => {
     if (!userLoading && !user) {
       router.push('/auth/login')
@@ -463,161 +444,161 @@ export default function DashboardPageV2() {
     <QueryErrorBoundary>
       <RealtimeErrorBoundary maxRetries={3}>
         <div className="min-h-screen text-white">
-        <StandardHeader
-          user={user}
-          onLogout={handleLogout}
-          currentStreak={currentStreak}
-          completionPercentage={completedCount === categories.length ? 100 : Math.round((completedCount / categories.length) * 100)}
-          variant="dashboard"
-        />
+          <StandardHeader
+            user={user}
+            onLogout={handleLogout}
+            currentStreak={currentStreak}
+            completionPercentage={completedCount === 6 ? 100 : Math.round((completedCount / 6) * 100)}
+            variant="dashboard"
+          />
 
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
-          {/* Logo Section */}
-          <div className="flex justify-center mb-4 sm:mb-6">
-            <LogoFull size="lg" className="h-16" priority />
-          </div>
-          
-          {/* Welcome Section */}
-          <main className="mb-4 sm:mb-8" role="main">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-center">
-              Hello, {user.email?.split('@')[0]}! 👋
-            </h1>
-            <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </p>
-          </main>
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+            {/* Logo Section */}
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <LogoFull size="lg" className="h-16" priority />
+            </div>
+            
+            {/* Welcome Section */}
+            <main className="mb-4 sm:mb-8" role="main">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-center">
+                Hello, {user.email?.split('@')[0]}! 👋
+              </h1>
+              <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </main>
 
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8" role="region" aria-label="Main dashboard panel">
-            {/* Hexagon Section */}
-            <div className="lg:col-span-2">
-              <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
-                <div className="flex justify-between items-center mb-4 sm:mb-6">
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold">Your Progress Today</h3>
-                  <span className="text-xs sm:text-sm text-gray-400">
-                    {completedCount}/6 completed
-                  </span>
-                </div>
+            {/* Main Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8" role="region" aria-label="Main dashboard panel">
+              {/* Hexagon Section */}
+              <div className="lg:col-span-2">
+                <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+                  <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <h3 className="text-base sm:text-lg md:text-xl font-semibold">Your Progress Today</h3>
+                    <span className="text-xs sm:text-sm text-gray-400">
+                      {completedCount}/6 completed
+                    </span>
+                  </div>
 
-                <HexagonVisualization 
-                  key={hexagonKey}
-                  axes={axes}
-                  onToggleAxis={handleToggleAxis}
-                  isToggling={toggleCheckIn.isPending}
-                />
+                  <HexagonVisualization 
+                    key={hexagonKey}
+                    axes={axes}
+                    onToggleAxis={handleToggleAxis}
+                    isToggling={toggleCheckIn.isPending}
+                  />
 
-                {/* Axes List */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4" data-testid="category-cards">
-                  {axes.map((axis) => (
-                    <MemoizedCategoryCard
-                      key={`${axis.id}-${axis.completed}`}
-                      axis={axis}
-                      onToggle={() => handleToggleAxis(axis.id)}
-                      isToggling={toggleCheckIn.isPending}
-                    />
-                  ))}
+                  {/* Axes List */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4" data-testid="category-cards">
+                    {axes.map((axis) => (
+                      <MemoizedCategoryCard
+                        key={`${axis.id}-${axis.completed}`}
+                        axis={axis}
+                        onToggle={() => handleToggleAxis(axis.id)}
+                        isToggling={toggleCheckIn.isPending}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Stats Section */}
-            <div className="space-y-4 sm:space-y-6">
-              {/* Realtime Status (Development Only) */}
-              {process.env.NODE_ENV === 'development' && realtimeStatus && (
-                <div className="glass rounded-lg p-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Realtime</span>
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className={`w-2 h-2 rounded-full ${
-                          realtimeStatus.isAnyConnected ? 'bg-green-400' : 'bg-yellow-400'
-                        }`} 
-                      />
-                      <span className={`text-xs ${
-                        realtimeStatus.isAnyConnected ? 'text-green-400' : 'text-yellow-400'
-                      }`}>
-                        {realtimeStatus.isAnyConnected ? 'Connected' : 'Polling'}
+              {/* Stats Section */}
+              <div className="space-y-4 sm:space-y-6">
+                {/* Realtime Status (Development Only) */}
+                {process.env.NODE_ENV === 'development' && realtimeStatus && (
+                  <div className="glass rounded-lg p-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Realtime</span>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className={`w-2 h-2 rounded-full ${
+                            realtimeStatus.isAnyConnected ? 'bg-green-400' : 'bg-yellow-400'
+                          }`} 
+                        />
+                        <span className={`text-xs ${
+                          realtimeStatus.isAnyConnected ? 'text-green-400' : 'text-yellow-400'
+                        }`}>
+                          {realtimeStatus.isAnyConnected ? 'Connected' : 'Polling'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Daily Mantra */}
+                <Suspense fallback={
+                  <div className="glass rounded-xl p-4 sm:p-6 animate-pulse">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-5 h-5 bg-white/20 rounded"></div>
+                      <div className="h-4 bg-white/20 rounded w-24"></div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-white/20 rounded w-full"></div>
+                      <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                }>
+                  <DailyMantraCard />
+                </Suspense>
+                
+                {/* Quick Stats */}
+                <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-gray-400">Current streak</span>
+                      <span className="text-lg sm:text-xl font-bold text-orange-400">
+                        {currentStreak} days
                       </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-gray-400">Best streak</span>
+                      <span className="text-lg sm:text-xl font-bold text-purple-400">
+                        {longestStreak} days
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-gray-400">Completed today</span>
+                      <span className="text-lg sm:text-xl font-bold">{completedCount}/6</span>
                     </div>
                   </div>
                 </div>
-              )}
 
-              {/* Daily Mantra */}
-              <Suspense fallback={
-                <div className="glass rounded-xl p-4 sm:p-6 animate-pulse">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-5 h-5 bg-white/20 rounded"></div>
-                    <div className="h-4 bg-white/20 rounded w-24"></div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-white/20 rounded w-full"></div>
-                    <div className="h-3 bg-white/20 rounded w-3/4"></div>
-                  </div>
+                {/* Actions */}
+                <div className="space-y-2 sm:space-y-3">
+                  <Link 
+                    href="/my-day"
+                    className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
+                    aria-label="Plan and track your daily activities"
+                  >
+                    <span>Plan My Day</span>
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" aria-hidden="true" />
+                  </Link>
+                  <Link 
+                    href="/analytics"
+                    className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
+                    aria-label="View complete progress analysis"
+                  >
+                    <span>View Complete Analysis</span>
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" aria-hidden="true" />
+                  </Link>
+                  <Link 
+                    href="/achievements"
+                    className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
+                    aria-label="View your achievements and recognitions"
+                  >
+                    <span>Achievements</span>
+                    <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" aria-hidden="true" />
+                  </Link>
                 </div>
-              }>
-                <DailyMantraCard />
-              </Suspense>
-              
-              {/* Quick Stats */}
-              <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base text-gray-400">Current streak</span>
-                    <span className="text-lg sm:text-xl font-bold text-orange-400">
-                      {currentStreak} days
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base text-gray-400">Best streak</span>
-                    <span className="text-lg sm:text-xl font-bold text-purple-400">
-                      {longestStreak} days
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base text-gray-400">Completed today</span>
-                    <span className="text-lg sm:text-xl font-bold">{completedCount}/6</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="space-y-2 sm:space-y-3">
-                <Link 
-                  href="/my-day"
-                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
-                  aria-label="Plan and track your daily activities"
-                >
-                  <span>Plan My Day</span>
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" aria-hidden="true" />
-                </Link>
-                <Link 
-                  href="/analytics"
-                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
-                  aria-label="View complete progress analysis"
-                >
-                  <span>View Complete Analysis</span>
-                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" aria-hidden="true" />
-                </Link>
-                <Link 
-                  href="/achievements"
-                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
-                  aria-label="View your achievements and recognitions"
-                >
-                  <span>Achievements</span>
-                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" aria-hidden="true" />
-                </Link>
               </div>
             </div>
           </div>
-        </div>
-        
+          
           {/* Toast Notifications */}
           <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>
