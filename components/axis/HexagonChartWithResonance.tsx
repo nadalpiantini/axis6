@@ -141,16 +141,17 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   )
 
   // Calculate data polygon points (same as original)
-  const dataPoints = useMemo(() => 
-    categories.map((cat) => {
-      const value = data[cat.key as keyof typeof data] / 100
+  const dataPoints = useMemo(() => {
+    if (!data || typeof data !== 'object') return []
+    
+    return categories.map((cat) => {
+      const value = (data[cat.key as keyof typeof data] || 0) / 100
       const angleRad = (cat.angle * Math.PI) / 180
       const x = center + radius * value * Math.cos(angleRad)
       const y = center + radius * value * Math.sin(angleRad)
       return { x, y, value }
-    }),
-    [data, center, radius]
-  )
+    })
+  }, [data, center, radius])
 
   const dataPolygonPoints = useMemo(() => 
     dataPoints.map(p => `${p.x},${p.y}`).join(' '),
