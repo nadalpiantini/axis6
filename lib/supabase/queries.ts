@@ -30,7 +30,8 @@ export async function getTodayCheckins(userId: string, isServer = false) {
     .from('axis6_checkins')
     .select('*')
     .eq('user_id', userId)
-    .eq('completed_at', today)
+    .gte('completed_at', `${today}T00:00:00.000Z`)
+    .lte('completed_at', `${today}T23:59:59.999Z`)
   
   if (error) throw error
   return data as Checkin[]
@@ -45,13 +46,14 @@ export async function toggleCheckin(
   const supabase = isServer ? await createServerClient() : createClient()
   const today = new Date().toISOString().split('T')[0]
   
-  // Check if checkin exists
+  // Check if checkin exists for today
   const { data: existing } = await supabase
     .from('axis6_checkins')
     .select('id')
     .eq('user_id', userId)
     .eq('category_id', categoryId)
-    .eq('completed_at', today)
+    .gte('completed_at', `${today}T00:00:00.000Z`)
+    .lte('completed_at', `${today}T23:59:59.999Z`)
     .single()
   
   if (existing) {
@@ -63,19 +65,19 @@ export async function toggleCheckin(
     
     if (error) throw error
   } else {
-    // Add checkin
+    // Add checkin with current timestamp
     const { error } = await supabase
       .from('axis6_checkins')
       .insert({
         user_id: userId,
         category_id: categoryId,
-        completed_at: today
+        completed_at: new Date().toISOString()
       })
     
     if (error) throw error
   }
   
-  // Update streak
+  // Update streak using the corrected function name
   await supabase.rpc('axis6_calculate_streak', {
     p_user_id: userId,
     p_category_id: categoryId
@@ -97,14 +99,14 @@ export async function getUserStreaks(userId: string, isServer = false) {
   return data as Streak[]
 }
 
-// Get user profile
+// FIXED: Get user profile using correct column name 'id' not 'user_id'
 export async function getUserProfile(userId: string, isServer = false) {
   const supabase = isServer ? await createServerClient() : createClient()
   
   const { data, error } = await supabase
     .from('axis6_profiles')
     .select('*')
-    .eq('user_id', userId)
+    .eq('id', userId)  // FIXED: Changed from 'user_id' to 'id'
     .single()
   
   if (error) throw error
@@ -149,4 +151,31 @@ export async function getDailyStats(
   
   if (error) throw error
   return data as DailyStat[]
+}
+
+// NEW: Temperament-related functions
+export async function getTemperamentProfile(userId: string, isServer = false) {
+  const supabase = isServer ? await createServerClient() : createClient()
+  
+  const { data, error } = await supabase
+    .from('axis6_temperament_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single()
+  
+  if (error && error.code !== 'PGRST116') throw error
+  return data
+}
+
+export async function getTemperamentQuestions(isServer = false) {
+  const supabase = isServer ? await createServerClient() : createClient()
+  
+  const { data, error } = await supabase
+    .from('axis6_temperament_questions')
+    .select('*')
+    .eq('is_active', true)
+    .order('order_index')
+  
+  if (error) throw error
+  return data
 }

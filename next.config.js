@@ -283,6 +283,6 @@ const nextConfig = {
 
 }
 
-// Temporarily disable PWA for Next.js 15 compatibility
-// module.exports = withPWA(nextConfig)
-module.exports = nextConfig
+// Enable PWA support for mobile app-like experience
+module.exports = withPWA(nextConfig)
+// module.exports = nextConfig

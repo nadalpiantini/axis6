@@ -31,7 +31,7 @@ import {
 import { LogoIcon } from '@/components/ui/Logo'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks'
+import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
 import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
 import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
 import { TemperamentResults } from '@/components/psychology/TemperamentResults'

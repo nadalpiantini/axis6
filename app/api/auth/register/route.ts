@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+// import { sendEmail } from '@/lib/email/service' // TODO: Implement email service
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,10 +31,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create Supabase client with server-side cookies
-    const supabase = await createClient()
+    // Create Supabase client directly
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase environment variables')
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      )
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-    // Sign up user using the standard method
+    // Sign up user
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -46,7 +58,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('Auth signup failed:', authError.message)
+      console.error('Auth signup failed:', authError)
       return NextResponse.json(
         { error: authError.message },
         { status: 400 }
@@ -60,14 +72,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create user profile (the trigger might handle this, but we ensure it exists)
+    // Create user profile
     const { error: profileError } = await supabase
       .from('axis6_profiles')
       .upsert([
         {
           id: authData.user.id,
           name: name,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Santo_Domingo',
+          timezone: 'America/Santo_Domingo',
           onboarded: false,
         }
       ], {
@@ -75,11 +87,25 @@ export async function POST(request: NextRequest) {
       })
 
     if (profileError) {
-      console.error('Profile creation failed:', profileError.message)
-      // Don't fail the registration if profile already exists or has issues
+      console.error('Profile creation error:', profileError)
+      // Don't fail registration if profile exists
     }
 
-    console.log('User registered successfully:', authData.user.id)
+    // Send welcome email (non-blocking) - TODO: Uncomment when email service is ready
+    // try {
+    //   await sendEmail({
+    //     to: email,
+    //     type: 'welcome',
+    //     data: {
+    //       name: name,
+    //       email: email
+    //     }
+    //   })
+    //   console.log('Welcome email sent to:', email)
+    // } catch (emailError) {
+    //   // Log error but don't fail registration
+    //   console.error('Failed to send welcome email:', emailError)
+    // }
 
     return NextResponse.json({
       message: 'Registration successful! Please check your email to confirm your account.',
@@ -91,9 +117,9 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('Registration endpoint error:', error.message || error)
+    console.error('Registration error:', error)
     return NextResponse.json(
-      { error: 'Registration failed. Please try again.' },
+      { error: `Registration failed: ${error.message}` },
       { status: 500 }
     )
   }

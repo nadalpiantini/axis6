@@ -18,16 +18,24 @@ export function createClient() {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        flowType: 'pkce' // Enable PKCE for better security
       },
       realtime: {
         params: {
           eventsPerSecond: 10,
         },
+        heartbeatIntervalMs: 30000, // 30 seconds
+        reconnectAfterMs: () => Math.random() * 5000 // Random backoff
       },
+      global: {
+        headers: {
+          'X-Client-Info': 'axis6-web'
+        }
+      }
     }
   )
 
-  // Add refresh token error handling
+  // Enhanced error handling for auth state changes
   client.auth.onAuthStateChange((event, session) => {
     if (event === 'TOKEN_REFRESHED') {
       console.log('Token refreshed successfully')
@@ -41,7 +49,18 @@ export function createClient() {
           key.startsWith('sb-') && key.includes('-auth-token')
         )
         keysToRemove.forEach(key => localStorage.removeItem(key))
+        
+        // Clear React Query cache on logout
+        // @ts-ignore - queryClient might be added by React Query
+        if (window.queryClient) {
+          // @ts-ignore
+          window.queryClient.clear()
+        }
       }
+    }
+    
+    if (event === 'SIGNED_IN' && session) {
+      console.log('User signed in:', session.user.id)
     }
   })
 

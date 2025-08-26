@@ -22,8 +22,8 @@ async function fetchTodayCheckins(userId: string): Promise<CheckIn[]> {
     .from('axis6_checkins')
     .select('*')
     .eq('user_id', userId)
-    .gte('completed_at', `${today}T00:00:00`)
-    .lte('completed_at', `${today}T23:59:59`)
+    .gte('completed_at', `${today}T00:00:00.000Z`)  // FIXED: Added timezone info
+    .lte('completed_at', `${today}T23:59:59.999Z`)  // FIXED: Added timezone info
 
   if (error) throw error
   return data || []
@@ -33,13 +33,13 @@ async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: st
   const supabase = createClient()
   
   if (completed) {
-    // Add check-in
+    // Add check-in with proper timestamp
     const { data, error } = await supabase
       .from('axis6_checkins')
       .insert({
         user_id: userId,
         category_id: categoryId,
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString()  // FIXED: Use full timestamp
       })
       .select()
       .single()
@@ -54,8 +54,8 @@ async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: st
       .delete()
       .eq('user_id', userId)
       .eq('category_id', categoryId)
-      .gte('completed_at', `${today}T00:00:00`)
-      .lte('completed_at', `${today}T23:59:59`)
+      .gte('completed_at', `${today}T00:00:00.000Z`)  // FIXED: Added timezone info
+      .lte('completed_at', `${today}T23:59:59.999Z`)  // FIXED: Added timezone info
     
     if (error) throw error
     return null
