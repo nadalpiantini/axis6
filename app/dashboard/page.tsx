@@ -327,13 +327,32 @@ export default function DashboardPageV2() {
     [streaks]
   )
 
+  // Optimized hexagon key generation - memoized to prevent unnecessary recalculations
+  const hexagonKey = useMemo(() => {
+    return `hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`
+  }, [axes])
+
+  // Memoized axis lookup map for O(1) performance instead of O(n) find operations
+  const axisMap = useMemo(() => {
+    return new Map(axes.map(axis => [axis.id, axis]))
+  }, [axes])
+
+  // Memoized toggle handlers for each axis to prevent recreation on every render
+  const axisToggleHandlers = useMemo(() => {
+    const handlers = new Map()
+    axes.forEach(axis => {
+      handlers.set(axis.id, () => handleToggleAxis(axis.id))
+    })
+    return handlers
+  }, [axes, handleToggleAxis])
+
   // Handlers with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
     
-    const axis = axes.find(a => a.id === axisId)
+    const axis = axisMap.get(axisId) // O(1) lookup instead of O(n) find
     if (axis) {
-      // FRONTEND FIX: Use mutateAsync for better control over success/error handling
+      // FRONTEND FIX: Use mutate with optimized error handling
       toggleCheckIn.mutate(
         {
           categoryId: axisId,
@@ -385,7 +404,7 @@ export default function DashboardPageV2() {
         }
       )
     }
-  }, [axes, toggleCheckIn, addNotification, queryClient, user?.id])
+  }, [axisMap, toggleCheckIn, addNotification, queryClient, user?.id, showToast])
 
   const handleLogout = useCallback(async () => {
     const { createClient } = await import('@/lib/supabase/client')
@@ -495,7 +514,7 @@ export default function DashboardPageV2() {
                 </div>
 
                 <HexagonVisualization 
-                  key={`hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`}
+                  key={hexagonKey}
                   axes={axes}
                   onToggleAxis={handleToggleAxis}
                   isToggling={toggleCheckIn.isPending}
@@ -505,9 +524,9 @@ export default function DashboardPageV2() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4" data-testid="category-cards">
                   {axes.map((axis) => (
                     <MemoizedCategoryCard
-                      key={`${axis.id}-${axis.completed}-${toggleCheckIn.isPending}`}
+                      key={`${axis.id}-${axis.completed}`}
                       axis={axis}
-                      onToggle={() => handleToggleAxis(axis.id)}
+                      onToggle={axisToggleHandlers.get(axis.id)}
                       isToggling={toggleCheckIn.isPending}
                     />
                   ))}
