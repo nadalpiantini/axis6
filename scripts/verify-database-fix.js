@@ -23,6 +23,7 @@ async function verifyDatabaseFix() {
   console.log('================================')
   
   let allTestsPassed = true
+  const testUserId = 'b07a89a3-6030-42f9-8c60-ce28afc47132' // Example UUID for testing
   const results = {
     tables: {},
     queries: {},
@@ -43,7 +44,8 @@ async function verifyDatabaseFix() {
     'axis6_temperament_questions',
     'axis6_temperament_responses',
     'axis6_personalization_settings',
-    'axis6_temperament_activities'
+    'axis6_temperament_activities',
+    'axis6_time_blocks'  // Added for Plan My Day feature
   ]
   
   for (const table of requiredTables) {
@@ -68,7 +70,49 @@ async function verifyDatabaseFix() {
     }
   }
   
-  // Test 2: Check temperament questions were inserted
+  // Test 2: Check UNIQUE constraint on axis6_checkins (required for UPSERT)
+  console.log('\n🔑 CHECKING UNIQUE CONSTRAINT:')
+  try {
+    // Test an UPSERT operation to see if it fails with constraint error
+    const testData = {
+      user_id: testUserId,
+      category_id: 1,
+      completed_at: new Date().toISOString(),
+      mood: 5,
+      notes: 'Test from verify script'
+    }
+    
+    const { data, error } = await supabase
+      .from('axis6_checkins')
+      .upsert(testData, {
+        onConflict: 'user_id,category_id,completed_at'
+      })
+      .select()
+    
+    if (error) {
+      if (error.code === '42P10') {
+        console.log('❌ Missing UNIQUE constraint - UPSERT will fail!')
+        results.queries.uniqueConstraint = 'MISSING'
+        allTestsPassed = false
+      } else if (error.code === '23503') {
+        // Foreign key violation is OK - means constraint syntax works
+        console.log('✅ UNIQUE constraint exists (UPSERT syntax valid)')
+        results.queries.uniqueConstraint = 'OK'
+      } else {
+        console.log(`⚠️ Unexpected error: ${error.message}`)
+        results.queries.uniqueConstraint = 'UNKNOWN'
+      }
+    } else {
+      console.log('✅ UNIQUE constraint working')
+      results.queries.uniqueConstraint = 'OK'
+    }
+  } catch (err) {
+    console.log(`❌ Constraint check exception: ${err.message}`)
+    results.queries.uniqueConstraint = 'EXCEPTION'
+    allTestsPassed = false
+  }
+  
+  // Test 3: Check temperament questions were inserted
   console.log('\n📝 CHECKING TEMPERAMENT QUESTIONS:')
   try {
     const { data: questions, error } = await supabase
@@ -94,9 +138,8 @@ async function verifyDatabaseFix() {
     allTestsPassed = false
   }
   
-  // Test 3: Test authenticated user queries (simulated)
+  // Test 4: Test authenticated user queries (simulated)
   console.log('\n🔐 CHECKING AUTHENTICATED ACCESS:')
-  const testUserId = 'b07a89a3-6030-42f9-8c60-ce28afc47132' // Example UUID
   
   // Test axis6_profiles with correct column
   try {
@@ -164,7 +207,7 @@ async function verifyDatabaseFix() {
     allTestsPassed = false
   }
   
-  // Test 4: Check categories are accessible
+  // Test 5: Check categories are accessible
   console.log('\n🎯 CHECKING PUBLIC DATA ACCESS:')
   try {
     const { data: categories, error } = await supabase
@@ -190,6 +233,33 @@ async function verifyDatabaseFix() {
     allTestsPassed = false
   }
   
+  // Test 6: Check RPC function for Plan My Day
+  console.log('\n⚙️ CHECKING RPC FUNCTIONS:')
+  try {
+    const { data, error } = await supabase.rpc('get_my_day_data', {
+      p_user_id: testUserId,
+      p_date: new Date().toISOString().split('T')[0]
+    })
+    
+    if (error) {
+      if (error.code === '42883') {
+        console.log('❌ get_my_day_data function missing')
+        results.queries.rpcFunction = 'MISSING'
+        allTestsPassed = false
+      } else {
+        console.log('✅ get_my_day_data function exists')
+        results.queries.rpcFunction = 'OK'
+      }
+    } else {
+      console.log('✅ get_my_day_data function working')
+      results.queries.rpcFunction = 'OK'
+    }
+  } catch (err) {
+    console.log(`❌ RPC function exception: ${err.message}`)
+    results.queries.rpcFunction = 'EXCEPTION'
+    allTestsPassed = false
+  }
+  
   // Final Report
   console.log('\n================================')
   console.log('📊 VERIFICATION SUMMARY:')
@@ -206,18 +276,30 @@ async function verifyDatabaseFix() {
     console.log('\n🔧 REQUIRED ACTIONS:')
     
     if (Object.values(results.tables).includes('ERROR')) {
-      console.log('1. Run PRODUCTION_FIX_SAFE.sql in Supabase Dashboard')
+      console.log('1. Run EMERGENCY_FIX_400_500_ERRORS.sql in Supabase Dashboard')
+    }
+    
+    if (results.queries.uniqueConstraint === 'MISSING') {
+      console.log('2. Add UNIQUE constraint to axis6_checkins table')
+    }
+    
+    if (results.tables['axis6_time_blocks'] === 'ERROR') {
+      console.log('3. Create axis6_time_blocks table for Plan My Day feature')
+    }
+    
+    if (results.queries.rpcFunction === 'MISSING') {
+      console.log('4. Create get_my_day_data RPC function')
     }
     
     if (results.queries.temperamentQuestions === 0) {
-      console.log('2. Ensure temperament questions are inserted')
+      console.log('5. Ensure temperament questions are inserted')
     }
     
     if (results.queries.profiles === 'ERROR') {
-      console.log('3. Check that profile queries use "id" column, not "user_id"')
+      console.log('6. Check that profile queries use "id" column, not "user_id"')
     }
     
-    console.log('\n📄 See docs/EXECUTE_DATABASE_FIX.md for detailed instructions')
+    console.log('\n📄 Run scripts/EMERGENCY_FIX_400_500_ERRORS.sql in Supabase SQL Editor')
   }
   
   // Output JSON results for programmatic use

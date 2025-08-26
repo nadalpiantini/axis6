@@ -12,7 +12,6 @@ import {
   RealtimeParticipantPayload 
 } from '../supabase/types'
 import { useSupabaseClient } from './useSupabaseClient'
-import { createClient } from '../supabase/client'
 
 const MESSAGE_PAGE_SIZE = 50
 

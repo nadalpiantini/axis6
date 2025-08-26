@@ -168,7 +168,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
             )}
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-2" aria-label="Main navigation">
               {navigationItems.map((item) => {
                 const Icon = item.icon
                 const isActive = pathname === item.href
@@ -300,7 +300,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
           )}
 
           {/* Mobile Navigation */}
-          <div className="md:hidden border-t border-white/10 px-2 py-2">
+          <nav className="md:hidden border-t border-white/10 px-2 py-2" aria-label="Mobile navigation">
             <div className="flex items-center justify-around">
               {navigationItems.slice(0, 4).map((item) => {
                 const Icon = item.icon
@@ -321,7 +321,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                 )
               })}
             </div>
-          </div>
+          </nav>
         </div>
       </motion.header>
       

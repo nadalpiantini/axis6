@@ -81,6 +81,8 @@ const questionTypeIcons = {
   goal_setting: Zap
 }
 
+
+
 export function EnhancedTemperamentQuestionnaire({ 
   userId, 
   onComplete, 
@@ -413,7 +415,13 @@ export function EnhancedTemperamentQuestionnaire({
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 rounded-lg bg-purple-500/20">
-                    <QuestionIcon className="w-5 h-5 text-purple-400" />
+                    {QuestionIcon ? (
+                      <QuestionIcon className="w-5 h-5 text-purple-400" />
+                    ) : (
+                      <div className="w-5 h-5 flex items-center justify-center text-purple-400 text-xs">
+                        Q
+                      </div>
+                    )}
                   </div>
                   <span className="text-xs uppercase tracking-wide text-gray-400">
                     {currentQuestion.question_type.replace('_', ' ')}
@@ -454,10 +462,16 @@ export function EnhancedTemperamentQuestionnaire({
                             className={`p-1.5 rounded-lg ${isSelected ? 'opacity-100' : 'opacity-60'}`}
                             style={{ backgroundColor: `${temperamentColor}20` }}
                           >
-                            <TemperamentIcon 
-                              className="w-4 h-4" 
-                              style={{ color: temperamentColor }}
-                            />
+                            {TemperamentIcon ? (
+                              <TemperamentIcon 
+                                className="w-4 h-4" 
+                                style={{ color: temperamentColor }}
+                              />
+                            ) : (
+                              <div className="w-4 h-4 flex items-center justify-center text-xs">
+                                {option.temperament.charAt(0).toUpperCase()}
+                              </div>
+                            )}
                           </div>
                           <span className={`text-sm sm:text-base ${
                             isSelected ? 'text-white' : 'text-gray-300'

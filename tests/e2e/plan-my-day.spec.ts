@@ -60,45 +60,45 @@ test.describe('AXIS6 Plan My Day Feature', () => {
   test.describe('Plan My Day Button', () => {
     
     test('should display Plan My Day button on dashboard', async ({ page }) => {
-      // Check that the Plan My Day button is visible
-      const planButton = page.locator('button:has-text("Plan My Day"), a:has-text("Plan My Day")');
+      // Check that the Plan My Day link is visible
+      const planButton = page.locator('a:has-text("Plan My Day")');
       await expect(planButton).toBeVisible();
       
-      // Verify button styling
+      // Verify it's a link with proper styling (glass style)
       const buttonClasses = await planButton.getAttribute('class');
-      expect(buttonClasses).toContain('bg-gradient-to-r');
-      expect(buttonClasses).toContain('from-purple-600');
-      expect(buttonClasses).toContain('to-blue-600');
+      expect(buttonClasses).toContain('glass');
+      
+      // Verify it has the calendar icon
+      const calendarIcon = planButton.locator('svg');
+      await expect(calendarIcon).toBeVisible();
     });
     
     test('should be clickable and trigger navigation', async ({ page }) => {
-      // Find and click the Plan My Day button
-      const planButton = page.locator('button:has-text("Plan My Day"), a:has-text("Plan My Day")');
+      // Find and click the Plan My Day link
+      const planButton = page.locator('a:has-text("Plan My Day")');
       await expect(planButton).toBeVisible();
       
-      // Monitor navigation or modal opening
-      const [response] = await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api') || resp.url().includes('plan'), { timeout: 5000 }).catch(() => null),
-        planButton.click()
-      ]);
+      // Click the button and wait for navigation
+      await planButton.click();
       
-      // Check if navigation occurred or modal opened
-      const currentUrl = page.url();
-      const modalOpened = await page.locator('[role="dialog"], .modal, [data-testid="plan-modal"]').isVisible().catch(() => false);
+      // Wait for navigation to my-day page
+      await page.waitForURL('**/my-day', { timeout: 10000 });
       
-      // Either navigation or modal should happen
-      const navigatedToPlanPage = currentUrl.includes('plan');
-      expect(navigatedToPlanPage || modalOpened).toBeTruthy();
+      // Verify we're on the my-day page
+      expect(page.url()).toContain('/my-day');
+      
+      // Verify the page has loaded (check for key elements)
+      const pageTitle = page.locator('h1, h2').filter({ hasText: /my day|plan.*day/i });
+      await expect(pageTitle.first()).toBeVisible({ timeout: 5000 });
     });
     
     test('should have proper accessibility attributes', async ({ page }) => {
-      const planButton = page.locator('button:has-text("Plan My Day"), a:has-text("Plan My Day")');
+      const planButton = page.locator('a:has-text("Plan My Day")');
       
       // Check ARIA attributes
       const ariaLabel = await planButton.getAttribute('aria-label');
-      if (ariaLabel) {
-        expect(ariaLabel.toLowerCase()).toContain('plan');
-      }
+      expect(ariaLabel).toBeTruthy();
+      expect(ariaLabel.toLowerCase()).toContain('plan');
       
       // Check that button is focusable
       await planButton.focus();
