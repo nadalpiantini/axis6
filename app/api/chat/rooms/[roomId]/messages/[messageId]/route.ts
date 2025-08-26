@@ -5,11 +5,11 @@ import { logger } from '@/lib/logger'
 // PUT /api/chat/rooms/[roomId]/messages/[messageId] - Edit a message
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { roomId: string; messageId: string } }
+  { params }: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const { roomId, messageId } = params
+    const { roomId, messageId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -85,11 +85,11 @@ export async function PUT(
 // DELETE /api/chat/rooms/[roomId]/messages/[messageId] - Delete a message
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { roomId: string; messageId: string } }
+  { params }: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const { roomId, messageId } = params
+    const { roomId, messageId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

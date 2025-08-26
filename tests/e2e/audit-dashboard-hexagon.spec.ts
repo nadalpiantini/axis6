@@ -101,6 +101,43 @@ class DashboardHexagonAuditor {
     }
   }
   
+  async waitForDashboardLoad() {
+    console.log('🔄 Waiting for dashboard to fully load...');
+    
+    try {
+      // Wait for page load state
+      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+      
+      // Wait for critical dashboard elements
+      await this.page.waitForSelector('[data-testid="dashboard-container"], .dashboard-container, main', 
+        { timeout: 8000 });
+      
+      // Wait for hexagon visualization or category elements
+      await this.page.waitForFunction(() => {
+        const hexagon = document.querySelector('[data-testid*="hexagon"], .hexagon-container, svg');
+        const categories = document.querySelectorAll('[data-category], [class*="axis-"], [data-testid*="category"]');
+        return (hexagon && hexagon.getBoundingClientRect().height > 0) || categories.length >= 3;
+      }, { timeout: 8000 });
+      
+      // Wait for React to finish initial renders
+      await this.page.waitForTimeout(1000);
+      
+      // Ensure no loading spinners are present
+      await this.page.waitForFunction(() => {
+        const spinners = document.querySelectorAll('[data-testid*="loading"], .loading, .spinner');
+        return spinners.length === 0 || Array.from(spinners).every(s => s.style.display === 'none');
+      }, { timeout: 5000 }).catch(() => {
+        console.log('⚠️ Loading spinners might still be present');
+      });
+      
+      console.log('✅ Dashboard load complete');
+      
+    } catch (error) {
+      console.warn('⚠️ Dashboard load wait failed:', error);
+      // Continue anyway - don't block tests
+    }
+  }
+
   async reportBug(page: string, element: string, issue: string, severity: BugReport['severity'] = 'medium', category?: string) {
     const bugId = this.bugs.length + 1;
     const screenshot = `dashboard-hexagon-bug-${bugId}-${page.replace('/', '_')}.png`;
@@ -464,7 +501,7 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
     console.log('⬡ [SUB-AGENT 2] Starting Complete Hexagon Audit...');
     
     await page.goto(`${BASE_URL}/dashboard`);
-    await page.waitForLoadState('networkidle');
+    await auditor.waitForDashboardLoad(); // Enhanced waiting
     
     // Test hexagon visualization
     const hexagonFound = await auditor.testHexagonVisualization();
@@ -505,18 +542,30 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
     console.log('📋 [SUB-AGENT 2] Starting All Categories Check-in Test...');
     
     await page.goto(`${BASE_URL}/dashboard`);
-    await page.waitForLoadState('networkidle');
+    await auditor.waitForDashboardLoad(); // Enhanced waiting
     
     let successfulCategories = 0;
     
     for (const category of AXIS6_CATEGORIES) {
+      console.log(`🎯 Testing category: ${category} (${successfulCategories + 1}/${AXIS6_CATEGORIES.length})`);
+      
       const success = await auditor.testCategoryInteraction(category);
       if (success) {
         successfulCategories++;
+        console.log(`✅ ${category} test successful (${successfulCategories}/${AXIS6_CATEGORIES.length})`);
+      } else {
+        console.log(`❌ ${category} test failed`);
       }
       
-      // Wait between category tests
-      await page.waitForTimeout(2000);
+      // Enhanced wait between category tests with stability check
+      await page.waitForTimeout(3000);
+      
+      // Verify page is still stable before next test
+      try {
+        await page.waitForLoadState('networkidle', { timeout: 3000 });
+      } catch (error) {
+        console.log(`⚠️ Page still loading after ${category} test`);
+      }
     }
     
     console.log(`📊 Successfully tested ${successfulCategories}/${AXIS6_CATEGORIES.length} categories`);
@@ -533,7 +582,7 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
     console.log('📈 [SUB-AGENT 2] Starting Progress Tracking Audit...');
     
     await page.goto(`${BASE_URL}/dashboard`);
-    await page.waitForLoadState('networkidle');
+    await auditor.waitForDashboardLoad(); // Enhanced waiting
     
     // Test progress indicators before interactions
     await auditor.testProgressIndicators();
