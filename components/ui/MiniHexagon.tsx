@@ -28,11 +28,11 @@ const categoryColors = {
 }
 
 const categoryLabels = {
-  physical: 'Físico',
+  physical: 'Physical',
   mental: 'Mental',
-  emotional: 'Emocional',
+  emotional: 'Emotional',
   social: 'Social',
-  spiritual: 'Espiritual',
+  spiritual: 'Spiritual',
   material: 'Material'
 }
 

@@ -20,56 +20,56 @@ interface HexagonChartProps {
 const categories = [
   { 
     key: 'physical', 
-    label: 'Movimiento Vivo', 
-    shortLabel: 'Físico',
+    label: 'Living Movement', 
+    shortLabel: 'Physical',
     color: '#D4845C', // Warm Terracotta
     softColor: '#F4E4DE',
-    mantra: 'Hoy habito mi cuerpo con ternura',
+    mantra: 'Today I inhabit my body with tenderness',
     angle: 0 
   },
   { 
     key: 'mental', 
-    label: 'Claridad Interna', 
+    label: 'Inner Clarity', 
     shortLabel: 'Mental',
     color: '#8B9DC3', // Sage Blue
     softColor: '#E8EDF4',
-    mantra: 'Hoy hago espacio para pensar menos',
+    mantra: 'Today I make space to think less',
     angle: 60 
   },
   { 
     key: 'emotional', 
-    label: 'Expresión Creadora', 
-    shortLabel: 'Arte',
+    label: 'Creative Expression', 
+    shortLabel: 'Emotional',
     color: '#B8A4C9', // Light Lavender
     softColor: '#F0EAEF',
-    mantra: 'Hoy no creo para mostrar, creo para liberar',
+    mantra: 'Today I create not to show, but to free',
     angle: 120 
   },
   { 
     key: 'social', 
-    label: 'Vínculo Espejo', 
+    label: 'Mirror Connection', 
     shortLabel: 'Social',
     color: '#A8C8B8', // Soft Sage Green
     softColor: '#E8F1EC',
-    mantra: 'Hoy me vinculo sin desaparecer',
+    mantra: 'Today I connect without disappearing',
     angle: 180 
   },
   { 
     key: 'spiritual', 
-    label: 'Presencia Elevada', 
-    shortLabel: 'Espiritual',
+    label: 'Elevated Presence', 
+    shortLabel: 'Spiritual',
     color: '#7B6C8D', // Deep Lavender
     softColor: '#E9E4ED',
-    mantra: 'Hoy me encuentro más allá del hacer',
+    mantra: 'Today I find myself beyond doing',
     angle: 240 
   },
   { 
     key: 'material', 
-    label: 'Sustento Terrenal', 
+    label: 'Earthly Sustenance', 
     shortLabel: 'Material',
     color: '#C19A6B', // Golden Brown
     softColor: '#F1EBE4',
-    mantra: 'Hoy me sostengo, no me demuestro',
+    mantra: 'Today I sustain myself, not prove myself',
     angle: 300 
   }
 ]

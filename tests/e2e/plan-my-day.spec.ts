@@ -43,7 +43,17 @@ test.describe('AXIS6 Plan My Day Feature', () => {
         }
       }
     } catch {
-      // Continue anyway
+      // If still on register page, try navigating to dashboard
+      if (page.url().includes('register')) {
+        await page.goto('/dashboard');
+        await page.waitForLoadState('networkidle');
+      }
+    }
+    
+    // Ensure we're on the dashboard
+    if (!page.url().includes('dashboard')) {
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
     }
   });
 

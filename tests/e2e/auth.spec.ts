@@ -193,23 +193,34 @@ test.describe('AXIS6 Authentication Flow', () => {
       await page.waitForURL(/\/(auth\/login|login)/);
     });
     
-    test('should maintain session across page refreshes', async ({ authenticatedPage }) => {
-      // User is already authenticated via fixture
-      await authenticatedPage.verifyDashboardLoaded();
+    test('should maintain session across page refreshes', async ({ loginPage, testUser, dashboardPage }) => {
+      // Register and login user first
+      await loginPage.goto();
+      await loginPage.registerUser(testUser.email, testUser.password, testUser.name);
+      await loginPage.loginUser(testUser.email, testUser.password);
+      
+      // Verify dashboard loaded
+      await dashboardPage.verifyDashboardLoaded();
       
       // Refresh the page
-      await authenticatedPage.page.reload();
-      await authenticatedPage.page.waitForLoadState('networkidle');
+      await dashboardPage.page.reload();
+      await dashboardPage.page.waitForLoadState('networkidle');
       
       // Should still be logged in
-      await authenticatedPage.verifyDashboardLoaded();
+      await dashboardPage.verifyDashboardLoaded();
     });
     
-    test('should logout user successfully', async ({ authenticatedPage, page }) => {
-      await authenticatedPage.verifyDashboardLoaded();
+    test('should logout user successfully', async ({ loginPage, testUser, dashboardPage, page }) => {
+      // Register and login user first
+      await loginPage.goto();
+      await loginPage.registerUser(testUser.email, testUser.password, testUser.name);
+      await loginPage.loginUser(testUser.email, testUser.password);
+      
+      // Verify dashboard loaded
+      await dashboardPage.verifyDashboardLoaded();
       
       // Logout
-      await authenticatedPage.logout();
+      await dashboardPage.logout();
       
       // Should redirect to login or landing page
       await page.waitForURL(/\/(auth\/login|login|\/)/);
