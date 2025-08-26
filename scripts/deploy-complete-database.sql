@@ -5,6 +5,9 @@
 -- Execute this in Supabase SQL Editor: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql
 -- 
 -- IMPORTANT: This script is idempotent - safe to run multiple times
+-- 
+-- CRITICAL FIX: This version corrects the axis6_profiles table structure
+-- The id column now directly references auth.users(id) without a separate user_id column
 -- =====================================================
 
 -- =====================================================
@@ -13,14 +16,18 @@
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- User profiles table
+-- IMPORTANT: id column directly references auth.users(id), no separate user_id column
 CREATE TABLE IF NOT EXISTS axis6_profiles (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    name TEXT,
     username TEXT UNIQUE,
     full_name TEXT,
     avatar_url TEXT,
+    timezone TEXT DEFAULT 'UTC',
+    onboarded BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -233,15 +240,50 @@ ALTER TABLE axis6_user_activities ENABLE ROW LEVEL SECURITY;
 -- RLS POLICIES
 -- =====================================================
 
+-- Drop existing policies if they exist (for idempotency)
+DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON axis6_profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON axis6_profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON axis6_profiles;
+DROP POLICY IF EXISTS "Categories are viewable by everyone" ON axis6_categories;
+DROP POLICY IF EXISTS "Users can view own checkins" ON axis6_checkins;
+DROP POLICY IF EXISTS "Users can insert own checkins" ON axis6_checkins;
+DROP POLICY IF EXISTS "Users can update own checkins" ON axis6_checkins;
+DROP POLICY IF EXISTS "Users can delete own checkins" ON axis6_checkins;
+DROP POLICY IF EXISTS "Users can view own streaks" ON axis6_streaks;
+DROP POLICY IF EXISTS "Users can insert own streaks" ON axis6_streaks;
+DROP POLICY IF EXISTS "Users can update own streaks" ON axis6_streaks;
+DROP POLICY IF EXISTS "Users can view own daily stats" ON axis6_daily_stats;
+DROP POLICY IF EXISTS "Users can insert own daily stats" ON axis6_daily_stats;
+DROP POLICY IF EXISTS "Users can update own daily stats" ON axis6_daily_stats;
+DROP POLICY IF EXISTS "Users can view own temperament profile" ON axis6_temperament_profiles;
+DROP POLICY IF EXISTS "Users can insert own temperament profile" ON axis6_temperament_profiles;
+DROP POLICY IF EXISTS "Users can update own temperament profile" ON axis6_temperament_profiles;
+DROP POLICY IF EXISTS "Anyone can view active questions" ON axis6_temperament_questions;
+DROP POLICY IF EXISTS "Users can view own responses" ON axis6_temperament_responses;
+DROP POLICY IF EXISTS "Users can insert own responses" ON axis6_temperament_responses;
+DROP POLICY IF EXISTS "Users can update own responses" ON axis6_temperament_responses;
+DROP POLICY IF EXISTS "Users can view own personalization settings" ON axis6_personalization_settings;
+DROP POLICY IF EXISTS "Users can insert own personalization settings" ON axis6_personalization_settings;
+DROP POLICY IF EXISTS "Users can update own personalization settings" ON axis6_personalization_settings;
+DROP POLICY IF EXISTS "Anyone can view active temperament activities" ON axis6_temperament_activities;
+DROP POLICY IF EXISTS "Mantras are viewable by everyone" ON axis6_mantras;
+DROP POLICY IF EXISTS "Users can view own mantra history" ON axis6_user_mantras;
+DROP POLICY IF EXISTS "Users can insert own mantra history" ON axis6_user_mantras;
+DROP POLICY IF EXISTS "Users can update own mantra history" ON axis6_user_mantras;
+DROP POLICY IF EXISTS "Activities are viewable by everyone" ON axis6_activities;
+DROP POLICY IF EXISTS "Users can view own activity history" ON axis6_user_activities;
+DROP POLICY IF EXISTS "Users can insert own activity history" ON axis6_user_activities;
+DROP POLICY IF EXISTS "Users can update own activity history" ON axis6_user_activities;
+
 -- Core table policies
 CREATE POLICY "Profiles are viewable by everyone" ON axis6_profiles
     FOR SELECT USING (true);
 
 CREATE POLICY "Users can update own profile" ON axis6_profiles
-    FOR UPDATE USING (auth.uid() = user_id);
+    FOR UPDATE USING (auth.uid() = id);
 
 CREATE POLICY "Users can insert own profile" ON axis6_profiles
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+    FOR INSERT WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Categories are viewable by everyone" ON axis6_categories
     FOR SELECT USING (true);
