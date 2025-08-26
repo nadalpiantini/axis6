@@ -30,6 +30,7 @@ import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
 import { ClickableSVG } from '@/components/ui/ClickableSVG'
+import { DailyMantraCard } from '@/components/mantras/DailyMantraCard'
 
 // Memoized header component
 const DashboardHeader = memo(({ 
@@ -427,6 +428,9 @@ export default function DashboardPageV2() {
 
             {/* Stats Section */}
             <div className="space-y-4 sm:space-y-6">
+              {/* Daily Mantra */}
+              <DailyMantraCard />
+              
               {/* Quick Stats */}
               <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
                 <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
