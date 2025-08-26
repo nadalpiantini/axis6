@@ -36,10 +36,11 @@ export function TimeBlockHexagon({
   const createHexagonPath = (index: number, _total: number, percentage: number) => {
     const angle = (360 / 6) * index - 90 // Start from top
     const nextAngle = (360 / 6) * (index + 1) - 90
-    const centerX = 150
-    const centerY = 150
-    const maxRadius = 120
-    const radius = (percentage / 100) * maxRadius || 10
+    const centerX = 200
+    const centerY = 200
+    const minRadius = 80  // Minimum size for usable segments (proportionally increased)
+    const maxRadius = 160 // Maximum radius (proportionally increased)
+    const radius = Math.max(minRadius, (percentage / 100) * maxRadius)
     
     // Convert angles to radians
     const startRad = (angle * Math.PI) / 180
@@ -54,34 +55,56 @@ export function TimeBlockHexagon({
     return `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`
   }
   
+  // Calculate total planned + actual minutes for better planning visualization
+  const totalPlannedMinutes = distribution.reduce((sum, cat) => sum + (cat.planned_minutes || 0), 0)
+  const totalCombinedMinutes = Math.max(totalMinutes + totalPlannedMinutes, 1)
+  
   // Map categories to hexagon segments
   const hexagonSegments = categories.map((category, index) => {
     const dist = distribution.find(d => d.category_id === category.id)
-    const percentage = dist ? (dist.actual_minutes / Math.max(totalMinutes, 1)) * 100 : 0
+    const actualMinutes = dist?.actual_minutes || 0
+    const plannedMinutes = dist?.planned_minutes || 0
+    const combinedMinutes = actualMinutes + plannedMinutes
+    const percentage = (combinedMinutes / totalCombinedMinutes) * 100
     const isActive = activeTimer?.category_id === category.id
     
+    // Determine visual state for distinctive styling
+    const hasPlanned = plannedMinutes > 0
+    const hasActual = actualMinutes > 0
+    const isEmpty = !hasPlanned && !hasActual
+    const isCompleted = hasActual && hasPlanned && actualMinutes >= plannedMinutes
+    const isInProgress = isActive
+    const isPartiallyComplete = hasActual && hasPlanned && actualMinutes < plannedMinutes
+
     return {
       ...category,
       index,
       percentage,
-      actualMinutes: dist?.actual_minutes || 0,
-      plannedMinutes: dist?.planned_minutes || 0,
+      actualMinutes,
+      plannedMinutes,
       path: createHexagonPath(index, 6, percentage),
-      isActive
+      isActive,
+      // Visual states for distinctive styling
+      hasPlanned,
+      hasActual, 
+      isEmpty,
+      isCompleted,
+      isInProgress,
+      isPartiallyComplete
     }
   })
 
   return (
     <div className="relative flex items-center justify-center">
       <svg 
-        width="300" 
-        height="300" 
-        viewBox="0 0 300 300" 
+        width="400" 
+        height="400" 
+        viewBox="0 0 400 400" 
         className="transform rotate-0"
       >
         {/* Background hexagon */}
         <motion.path
-          d="M 150 30 L 240 75 L 240 165 L 150 210 L 60 165 L 60 75 Z"
+          d="M 200 40 L 320 100 L 320 220 L 200 280 L 80 220 L 80 100 Z"
           fill="none"
           stroke="rgba(255, 255, 255, 0.1)"
           strokeWidth="2"
@@ -94,14 +117,14 @@ export function TimeBlockHexagon({
         {[0, 1, 2, 3, 4, 5].map(i => {
           const angle = (360 / 6) * i - 90
           const rad = (angle * Math.PI) / 180
-          const x = 150 + Math.cos(rad) * 120
-          const y = 150 + Math.sin(rad) * 120
+          const x = 200 + Math.cos(rad) * 160
+          const y = 200 + Math.sin(rad) * 160
           
           return (
             <motion.line
               key={i}
-              x1="150"
-              y1="150"
+              x1="200"
+              y1="200"
               x2={x}
               y2={y}
               stroke="rgba(255, 255, 255, 0.05)"
@@ -114,57 +137,117 @@ export function TimeBlockHexagon({
         })}
         
         {/* Category segments */}
-        {hexagonSegments.map((segment, index) => (
-          <motion.g key={segment.id}>
-            <motion.path
-              d={segment.path}
-              fill={segment.color}
-              fillOpacity={segment.isActive ? 0.5 : 0.3}
-              stroke={segment.color}
-              strokeWidth={segment.isActive ? "3" : "2"}
-              initial={{ scale: 0 }}
-              animate={{ 
-                scale: segment.isActive ? [1, 1.05, 1] : 1,
-                fillOpacity: segment.isActive ? [0.3, 0.6, 0.5] : 0.3
-              }}
-              transition={{ 
-                duration: segment.isActive ? 2 : 0.5,
-                delay: index * 0.1,
-                repeat: segment.isActive ? Infinity : 0
-              }}
-              whileHover={{ fillOpacity: 0.5, scale: 1.05 }}
-              onClick={() => onCategoryClick?.(segment)}
-              className="cursor-pointer"
-            />
+        {hexagonSegments.map((segment, index) => {
+          // Determine styling based on state
+          const getSegmentStyles = () => {
+            if (segment.isInProgress) {
+              return {
+                fill: segment.color,
+                fillOpacity: 0.6,
+                stroke: segment.color,
+                strokeWidth: "4",
+                strokeDasharray: "none"
+              }
+            } else if (segment.isCompleted) {
+              return {
+                fill: segment.color,
+                fillOpacity: 0.8,
+                stroke: segment.color,
+                strokeWidth: "3",
+                strokeDasharray: "none"
+              }
+            } else if (segment.isPartiallyComplete) {
+              return {
+                fill: segment.color,
+                fillOpacity: 0.4,
+                stroke: segment.color,
+                strokeWidth: "2",
+                strokeDasharray: "5,5"
+              }
+            } else if (segment.hasPlanned) {
+              return {
+                fill: segment.color,
+                fillOpacity: 0.2,
+                stroke: segment.color,
+                strokeWidth: "2",
+                strokeDasharray: "none"
+              }
+            } else {
+              // Empty state
+              return {
+                fill: "none",
+                fillOpacity: 0,
+                stroke: segment.color,
+                strokeWidth: "1",
+                strokeDasharray: "3,3"
+              }
+            }
+          }
+          
+          const styles = getSegmentStyles()
+          
+          return (
+            <motion.g key={segment.id}>
+              <motion.path
+                d={segment.path}
+                fill={styles.fill}
+                fillOpacity={styles.fillOpacity}
+                stroke={styles.stroke}
+                strokeWidth={styles.strokeWidth}
+                strokeDasharray={styles.strokeDasharray}
+                initial={{ scale: 0 }}
+                animate={{ 
+                  scale: segment.isInProgress ? [1, 1.05, 1] : 1,
+                  fillOpacity: segment.isInProgress ? [styles.fillOpacity * 0.7, styles.fillOpacity, styles.fillOpacity * 0.8] : styles.fillOpacity
+                }}
+                transition={{ 
+                  duration: segment.isInProgress ? 2 : 0.5,
+                  delay: index * 0.1,
+                  repeat: segment.isInProgress ? Infinity : 0
+                }}
+                whileHover={{ fillOpacity: Math.min(styles.fillOpacity + 0.2, 1), scale: 1.05 }}
+                onClick={() => onCategoryClick?.(segment)}
+                className="cursor-pointer"
+              />
             
-            {/* Category icon */}
-            {segment.actualMinutes > 0 && (
-              <g
-                transform={`translate(${
-                  150 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 80
-                }, ${
-                  150 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 80
-                })`}
-              >
-                <foreignObject x="-15" y="-15" width="30" height="30">
-                  <div className="flex items-center justify-center w-full h-full">
-                    <AxisIcon
-                      axis={segment.icon}
-                      size={20}
-                      color="white"
-                    />
-                  </div>
-                </foreignObject>
-              </g>
-            )}
+            {/* Category icon - Always visible */}
+            <g
+              transform={`translate(${
+                200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 107
+              }, ${
+                200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 107
+              })`}
+            >
+              <foreignObject x="-15" y="-15" width="30" height="30">
+                <div className="flex items-center justify-center w-full h-full">
+                  <AxisIcon
+                    axis={segment.icon}
+                    size={20}
+                    color={segment.actualMinutes > 0 ? "white" : segment.color}
+                  />
+                </div>
+              </foreignObject>
+            </g>
+            
+            {/* Category label - Always visible */}
+            <text
+              x={200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 140}
+              y={200 + Math.sin(((360 / 6) * index - 30) * Math.PI / 180) * 140}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="fill-gray-400 text-xs font-medium"
+              style={{ fontSize: '11px' }}
+            >
+              {segment.name?.en || segment.slug}
+            </text>
           </motion.g>
         ))}
         
         {/* Center circle with total time */}
         <motion.circle
-          cx="150"
-          cy="150"
-          r="40"
+          cx="200"
+          cy="200"
+          r="53"
           fill="rgba(0, 0, 0, 0.5)"
           stroke="rgba(255, 255, 255, 0.2)"
           strokeWidth="2"
@@ -175,8 +258,8 @@ export function TimeBlockHexagon({
         
         {/* Center text */}
         <motion.text
-          x="150"
-          y="145"
+          x="200"
+          y="193"
           textAnchor="middle"
           className="fill-white text-lg font-bold"
           initial={{ opacity: 0 }}
@@ -187,8 +270,8 @@ export function TimeBlockHexagon({
         </motion.text>
         
         <motion.text
-          x="150"
-          y="165"
+          x="200"
+          y="220"
           textAnchor="middle"
           className="fill-gray-400 text-xs"
           initial={{ opacity: 0 }}

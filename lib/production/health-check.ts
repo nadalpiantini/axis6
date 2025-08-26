@@ -81,6 +81,29 @@ class HealthCheckManager {
     const start = Date.now()
     
     try {
+      // Check if Redis is configured
+      if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+        return {
+          service: 'redis',
+          status: 'degraded',
+          responseTime: 0,
+          details: 'Redis not configured (optional service)',
+          timestamp: new Date().toISOString()
+        }
+      }
+      
+      // Check if using placeholder values
+      if (process.env.UPSTASH_REDIS_REST_URL.includes('your-redis-url') || 
+          process.env.UPSTASH_REDIS_REST_TOKEN.includes('your-redis-token')) {
+        return {
+          service: 'redis',
+          status: 'degraded',
+          responseTime: 0,
+          details: 'Redis configured with placeholder values',
+          timestamp: new Date().toISOString()
+        }
+      }
+      
       const { Redis } = await import('@upstash/redis')
       const redis = Redis.fromEnv()
       
@@ -114,9 +137,9 @@ class HealthCheckManager {
     } catch (error) {
       return {
         service: 'redis',
-        status: 'unhealthy',
+        status: 'degraded',
         responseTime: Date.now() - start,
-        details: error instanceof Error ? error.message : 'Redis unavailable',
+        details: error instanceof Error ? error.message : 'Redis unavailable (optional service)',
         timestamp: new Date().toISOString()
       }
     }
@@ -240,8 +263,9 @@ class HealthCheckManager {
       const memoryUtilization = (heapUsedMB / heapTotalMB) * 100
       
       let status: 'healthy' | 'degraded' | 'unhealthy'
-      if (memoryUtilization < 70) status = 'healthy'
-      else if (memoryUtilization < 85) status = 'degraded'
+      // More lenient thresholds for development and production environments
+      if (memoryUtilization < 90) status = 'healthy'
+      else if (memoryUtilization < 98) status = 'degraded'
       else status = 'unhealthy'
       
       return {

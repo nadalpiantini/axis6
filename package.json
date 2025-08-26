@@ -57,7 +57,8 @@
     "cache:warm": "node scripts/warm-cache.js",
     "cache:clear": "node scripts/clear-cache.js",
     "security:audit": "node scripts/security-audit.js",
-    "security:validate": "node scripts/validate-security-config.js"
+    "security:validate": "node scripts/validate-security-config.js",
+    "test:supabase": "node scripts/test-supabase-connection.js"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -130,6 +131,7 @@
     "jest-environment-jsdom": "^29.6.0",
     "postcss": "^8.4.31",
     "prettier": "^3.0.0",
+    "puppeteer": "^24.17.0",
     "sharp": "^0.34.3",
     "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",

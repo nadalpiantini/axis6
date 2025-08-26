@@ -19,6 +19,7 @@ import {
   BarChart3
 } from 'lucide-react'
 import { LogoFull } from '@/components/ui/Logo'
+import { StandardHeader } from '@/components/layout/StandardHeader'
 import { AxisIcon } from '@/components/icons'
 import { useCategories, useUser } from '@/lib/react-query/hooks'
 import { createClient } from '@/lib/supabase/client'
@@ -237,31 +238,14 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen text-white">
       {/* Header */}
-      <header className="glass border-b border-white/10" role="banner">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard" 
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <LogoFull size="md" className="h-10" priority />
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button
-              onClick={resetToDefaults}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Reset to Defaults
-            </button>
-          </div>
-        </div>
-      </header>
+      <StandardHeader
+        user={user}
+        variant="settings"
+        title="Configuración"
+        subtitle="Personaliza tu experiencia AXIS6"
+        showBackButton={true}
+        backUrl="/dashboard"
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Page Title */}

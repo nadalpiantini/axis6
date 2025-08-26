@@ -10,16 +10,19 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
-  Timer
+  Timer,
+  Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { format, addDays, subDays, isToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { LogoFull } from '@/components/ui/Logo'
+import { StandardHeader } from '@/components/layout/StandardHeader'
 import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
 import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { ActivityTimer } from '@/components/my-day/ActivityTimer'
+import { PlanMyDay } from '@/components/my-day/PlanMyDay'
 import { useUser, useCategories } from '@/lib/react-query/hooks'
 import { useMyDayData, useTimeDistribution } from '@/lib/react-query/hooks/useMyDay'
 
@@ -30,6 +33,7 @@ export default function MyDayPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [showScheduler, setShowScheduler] = useState(false)
   const [showTimer, setShowTimer] = useState(false)
+  const [showPlanMyDay, setShowPlanMyDay] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<any>(null)
   const [activeTimer, setActiveTimer] = useState<any>(null)
   
@@ -84,6 +88,12 @@ export default function MyDayPage() {
     refetchDistribution()
   }
 
+  const handlePlanMyDayClose = () => {
+    setShowPlanMyDay(false)
+    refetchData()
+    refetchDistribution()
+  }
+
   const totalPlannedMinutes = myDayData?.reduce((sum: number, block: any) => 
     sum + block.duration_minutes, 0) || 0
   
@@ -93,37 +103,48 @@ export default function MyDayPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-indigo-950">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 glass-premium border-b border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <ChevronLeft className="w-5 h-5 text-gray-400" />
-              <LogoFull className="h-8" />
-            </Link>
+      <StandardHeader
+        user={user}
+        variant="default"
+        title="Mi Día"
+        subtitle={format(selectedDate, 'EEEE, d MMMM yyyy', { locale: es })}
+        showBackButton={true}
+        backUrl="/dashboard"
+      />
+      
+      {/* Action Bar */}
+      <div className="fixed top-16 left-0 right-0 z-20 glass-premium border-b border-white/10">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-4">
+            <button
+              onClick={() => setShowPlanMyDay(true)}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">Plan My Day</span>
+            </button>
             
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleStartTimer}
-                className="flex items-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
-              >
-                <Timer className="w-4 h-4" />
-                <span className="hidden sm:inline">Start Timer</span>
-              </button>
-              
-              <button
-                onClick={() => handleAddTimeBlock()}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Add Block</span>
-              </button>
-            </div>
+            <button
+              onClick={handleStartTimer}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
+            >
+              <Timer className="w-4 h-4" />
+              <span className="hidden sm:inline">Start Timer</span>
+            </button>
+            
+            <button
+              onClick={() => handleAddTimeBlock()}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Block</span>
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="pt-20 pb-8 px-4">
+      <main className="pt-32 pb-8 px-4">
         <div className="container mx-auto max-w-7xl">
           {/* Date Navigation */}
           <motion.div
@@ -359,6 +380,17 @@ export default function MyDayPage() {
             categories={categories}
             selectedCategory={selectedCategory}
             timeBlock={activeTimer}
+          />
+        )}
+        
+        {showPlanMyDay && (
+          <PlanMyDay
+            isOpen={showPlanMyDay}
+            onClose={handlePlanMyDayClose}
+            userId={user?.id || ''}
+            categories={categories}
+            selectedDate={selectedDate}
+            existingBlocks={myDayData}
           />
         )}
       </AnimatePresence>

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { ReactQueryProvider } from '@/lib/react-query/provider'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { NotificationToast } from '@/components/ui/NotificationToast'
+import { SupabaseErrorBoundary } from '@/components/error/SupabaseErrorBoundary'
 import { headers } from 'next/headers'
 import './globals.css'
 
@@ -84,10 +85,12 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <ReactQueryProvider>
-          <AuthProvider>
-            <NotificationToast />
-            {children}
-          </AuthProvider>
+          <SupabaseErrorBoundary>
+            <AuthProvider>
+              <NotificationToast />
+              {children}
+            </AuthProvider>
+          </SupabaseErrorBoundary>
         </ReactQueryProvider>
         
         {/* Supabase auth helper script - conditionally add nonce if available */}

@@ -28,7 +28,7 @@ export function useStreaks(userId: string | undefined) {
   return useQuery({
     queryKey: ['streaks', userId],
     queryFn: () => fetchStreaks(userId!),
-    enabled: !!userId,
+    enabled: !!userId && userId.length > 0,
     staleTime: 60 * 1000, // 1 minute
   })
 }

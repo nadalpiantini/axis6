@@ -110,4 +110,56 @@ export class LoginPage {
     // Ensure no loading state
     await this.loadingSpinner.waitFor({ state: 'hidden' }).catch(() => {});
   }
+
+  /**
+   * Register a new user account
+   */
+  async registerUser(email: string, password: string, name?: string) {
+    // Navigate to register page
+    await this.page.goto('/auth/register');
+    await this.page.waitForLoadState('networkidle');
+    
+    // Fill registration form
+    const emailInput = this.page.locator('input[type="email"]');
+    const passwordInput = this.page.locator('input[type="password"]');
+    const nameInput = this.page.locator('input[name="name"], input[name="full_name"]');
+    const submitButton = this.page.locator('button[type="submit"]');
+    
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
+    
+    if (name && await nameInput.count() > 0) {
+      await nameInput.fill(name);
+    }
+    
+    await submitButton.click();
+    
+    // Wait for either success redirect or error
+    await Promise.race([
+      this.page.waitForURL(/\/dashboard/, { timeout: 15000 }),
+      this.page.waitForURL(/\/auth\/login/, { timeout: 15000 }),
+      this.errorMessage.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null)
+    ]);
+  }
+
+  /**
+   * Login with existing user credentials
+   */
+  async loginUser(email: string, password: string) {
+    await this.goto();
+    await this.waitForFormReady();
+    await this.login(email, password);
+    
+    // Wait for successful login redirect
+    try {
+      await this.page.waitForURL(/\/dashboard/, { timeout: 15000 });
+    } catch (error) {
+      // If login failed, check for error message
+      const errorMsg = await this.getErrorMessage();
+      if (errorMsg) {
+        throw new Error(`Login failed: ${errorMsg}`);
+      }
+      throw new Error('Login failed: No redirect to dashboard');
+    }
+  }
 }

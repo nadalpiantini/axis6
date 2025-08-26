@@ -8,7 +8,8 @@ import {
   Pause,
   Square,
   Timer,
-  ChevronDown
+  ChevronDown,
+  AlertCircle
 } from 'lucide-react'
 import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
@@ -42,6 +43,7 @@ export function ActivityTimer({
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [activeLogId, setActiveLogId] = useState<number | null>(null)
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   
   const startTimer = useStartTimer()
@@ -93,7 +95,12 @@ export function ActivityTimer({
   }
   
   const handleStart = async () => {
-    if (!activityName.trim()) return
+    setError(null)
+    
+    if (!activityName.trim()) {
+      setError('Please enter an activity name')
+      return
+    }
     
     try {
       const result = await startTimer.mutateAsync({
@@ -107,8 +114,9 @@ export function ActivityTimer({
       setActiveLogId(result.log_id)
       setIsRunning(true)
       setElapsedSeconds(0)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting timer:', error)
+      setError(error?.message || 'Failed to start timer. Please try again.')
     }
   }
   
@@ -153,12 +161,12 @@ export function ActivityTimer({
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
-          {/* Modal */}
+          {/* Modal - Consistent centering with TimeBlockScheduler */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] lg:w-full lg:max-w-md max-h-[90vh] overflow-hidden z-50"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:w-full md:max-w-lg lg:max-w-xl max-h-[90vh] overflow-y-auto z-50"
           >
             <div className="glass rounded-2xl">
               {/* Header */}
@@ -179,6 +187,18 @@ export function ActivityTimer({
 
               {/* Content */}
               <div className="p-6 space-y-4">
+                {/* Error Message */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-red-400">{error}</span>
+                  </motion.div>
+                )}
+                
                 {/* Timer Display */}
                 <motion.div
                   className="text-center py-8"

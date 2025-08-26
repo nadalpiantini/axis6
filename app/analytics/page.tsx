@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { LogoIcon } from '@/components/ui/Logo'
+import { StandardHeader } from '@/components/layout/StandardHeader'
 
 // Types
 interface AnalyticsData {
@@ -203,66 +204,54 @@ export default function AnalyticsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       {/* Header */}
-      <header className="glass border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          {/* Logo Section */}
-          <div className="flex justify-center mb-3 sm:mb-4">
-            <LogoIcon size="md" className="h-10" />
+      <StandardHeader
+        user={user}
+        variant="default"
+        title="Analytics"
+        subtitle={`Insights for the last ${analytics.overview.period}`}
+        showBackButton={true}
+        backUrl="/dashboard"
+      />
+      
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        {/* Controls */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-6 h-6 text-purple-400" />
+            <h2 className="text-lg font-semibold">Your Analytics</h2>
           </div>
           
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-              <Link
-                href="/dashboard"
-                className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition flex items-center gap-1 sm:gap-2"
-              >
-                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Back to Dashboard</span>
-              </Link>
-              <div className="flex-1">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2 sm:gap-3">
-                  <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
-                  Your Analytics
-                </h1>
-                <p className="text-xs sm:text-sm text-gray-400">
-                  Insights for the last {analytics.overview.period}
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
+            >
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="365">Last year</option>
+            </select>
             
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
-              <select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                className="px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleExport('csv')}
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
               >
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-                <option value="365">Last year</option>
-              </select>
-              
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleExport('csv')}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">CSV</span>
-                </button>
-                <button
-                  onClick={() => handleExport('json')}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">JSON</span>
-                </button>
-              </div>
+                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">CSV</span>
+              </button>
+              <button
+                onClick={() => handleExport('json')}
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial justify-center"
+              >
+                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">JSON</span>
+              </button>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Overview Stats */}

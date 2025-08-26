@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Bell, Settings, User, LogOut, Sparkles } from 'lucide-react'
+import { LogoIcon } from '@/components/ui/Logo'
 
 interface HeaderProps {
   user: any
@@ -57,13 +57,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
             {/* Logo and Greeting - More Compact */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Image
-                  src="/axis6-logo.svg"
-                  alt="AXIS6"
-                  width={32}
-                  height={32}
-                  className="rounded-lg"
-                />
+                <LogoIcon size="sm" className="h-8 w-8" />
                 <div className="hidden sm:block">
                   <h1 className="text-sm font-bold text-white">AXIS6</h1>
                   <p className="text-xs text-gray-400 -mt-1">

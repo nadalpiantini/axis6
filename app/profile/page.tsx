@@ -29,6 +29,7 @@ import {
   Star
 } from 'lucide-react'
 import { LogoIcon } from '@/components/ui/Logo'
+import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
@@ -79,8 +80,8 @@ interface TemperamentResult {
 export default function ProfilePage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
-  const { data: streaks = [] } = useStreaks(user?.id)
-  const { data: checkins = [] } = useTodayCheckins(user?.id)
+  const { data: streaks = [] } = useStreaks(user?.id || '')
+  const { data: checkins = [] } = useTodayCheckins(user?.id || '')
   
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
@@ -100,7 +101,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) {
+      if (!user || !user.id) {
         setProfileLoading(false)
         return
       }
@@ -121,21 +122,23 @@ export default function ProfilePage() {
 
         if (profileData) {
           // Profile exists, use it
+          const safeName = profileData.name || user.email?.split('@')[0] || 'User'
           setProfile({
             email: user.email || '',
-            name: profileData.name || user.email?.split('@')[0] || 'User',
+            name: safeName,
             created_at: user.created_at || new Date().toISOString()
           })
-          setEditedName(profileData.name || user.email?.split('@')[0] || 'User')
+          setEditedName(safeName)
         } else {
           // Profile doesn't exist, create default profile and auto-save it
           const defaultName = user.email?.split('@')[0] || 'User'
           
-          setProfile({
+          const safeProfile = {
             email: user.email || '',
             name: defaultName,
             created_at: user.created_at || new Date().toISOString()
-          })
+          }
+          setProfile(safeProfile)
           setEditedName(defaultName)
           
           // Auto-create profile for new users
@@ -158,6 +161,7 @@ export default function ProfilePage() {
             }
           } catch (err) {
             console.warn('Failed to auto-create profile:', err)
+            // Continue with the default profile even if creation fails
           }
         }
 
@@ -171,7 +175,8 @@ export default function ProfilePage() {
           
           if (!error && temperamentData) {
             // 🛡️ VALIDATE: Ensure temperament data has required structure
-            if (temperamentData.primary_temperament && 
+            if (temperamentData && 
+                temperamentData.primary_temperament && 
                 temperamentData.temperament_scores &&
                 typeof temperamentData.temperament_scores === 'object' &&
                 temperamentData.personality_insights &&
@@ -200,6 +205,8 @@ export default function ProfilePage() {
   }, [user, userLoading])
 
   const showNotification = (type: 'success' | 'error', message: string) => {
+    if (!type || !message) return
+    
     setNotification({ show: true, type, message })
     setTimeout(() => {
       setNotification(prev => ({ ...prev, show: false }))
@@ -207,7 +214,7 @@ export default function ProfilePage() {
   }
 
   const handleSaveName = async () => {
-    if (!user || !editedName.trim()) return
+    if (!user || !editedName || !editedName.trim()) return
     
     setSaving(true)
     try {
@@ -224,7 +231,7 @@ export default function ProfilePage() {
 
       if (error) throw error
 
-      setProfile(prev => prev ? { ...prev, name: editedName.trim() } : null)
+      setProfile(prev => prev ? { ...prev, name: editedName.trim() || 'User' } : null)
       setIsEditing(false)
       showNotification('success', 'Profile updated successfully!')
     } catch (error) {
@@ -236,7 +243,7 @@ export default function ProfilePage() {
   }
 
   const handleExportData = async () => {
-    if (!user) return
+    if (!user || !profile) return
     
     try {
       const supabase = createClient()
@@ -250,9 +257,9 @@ export default function ProfilePage() {
 
       const exportData = {
         profile: {
-          email: profile?.email,
-          name: profile?.name,
-          member_since: profile?.created_at
+          email: profile?.email || '',
+          name: profile?.name || '',
+          member_since: profile?.created_at || new Date().toISOString()
         },
         checkins: checkinsRes.data || [],
         streaks: streaksRes.data || [],
@@ -303,13 +310,23 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error deleting account:', error)
       showNotification('error', 'Failed to delete account')
+      // Still redirect even if deletion fails
+      setTimeout(() => {
+        router.push('/')
+      }, 2000)
     }
   }
 
   const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/auth/login')
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      router.push('/auth/login')
+    } catch (error) {
+      console.error('Error during logout:', error)
+      // Still redirect even if logout fails
+      router.push('/auth/login')
+    }
   }
 
   const handleStartAssessment = useCallback(() => {
@@ -318,22 +335,28 @@ export default function ProfilePage() {
   }, [])
 
   const handleAssessmentComplete = (result: TemperamentResult) => {
+    if (!result) return
+    
     setAssessmentResult(result)
     setShowQuestionnaire(false)
     setShowResults(true)
     
     // Refresh temperament profile
-    if (user) {
+    if (user && user.id) {
       const fetchTemperamentProfile = async () => {
-        const supabase = createClient()
-        const { data: temperamentData } = await supabase
-          .from('axis6_temperament_profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
+        try {
+          const supabase = createClient()
+          const { data: temperamentData, error } = await supabase
+            .from('axis6_temperament_profiles')
+            .select('*')
+            .eq('user_id', user.id)
+            .single()
 
-        if (temperamentData) {
-          setTemperamentProfile(temperamentData)
+          if (temperamentData && !error) {
+            setTemperamentProfile(temperamentData)
+          }
+        } catch (err) {
+          console.error('Error fetching temperament profile:', err)
         }
       }
       fetchTemperamentProfile()
@@ -374,7 +397,7 @@ export default function ProfilePage() {
       icon: Heart,
       bgGradient: 'from-green-500/20 to-emerald-500/20'
     }
-  }
+  } as const
 
   // Handle loading state
   if (userLoading || profileLoading) {
@@ -390,7 +413,10 @@ export default function ProfilePage() {
 
   // Only redirect after all loading is complete and we know there's no user
   if (!user) {
-    router.push('/auth/login')
+    // Use setTimeout to avoid navigation during render
+    setTimeout(() => {
+      router.push('/auth/login')
+    }, 0)
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
@@ -414,55 +440,42 @@ export default function ProfilePage() {
   }
 
   // 🛡️ SAFE: Calculate stats with defensive programming
-  const currentStreak = streaks && streaks.length > 0 
-    ? Math.max(...streaks.map(s => s.current_streak || 0))
+  const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0 
+    ? Math.max(...streaks.map(s => s?.current_streak || 0))
     : 0
     
-  const longestStreak = streaks && streaks.length > 0
-    ? Math.max(...streaks.map(s => s.longest_streak || 0))
+  const longestStreak = streaks && Array.isArray(streaks) && streaks.length > 0
+    ? Math.max(...streaks.map(s => s?.longest_streak || 0))
     : 0
     
-  const totalCheckins = checkins ? checkins.length : 0
+  const totalCheckins = checkins && Array.isArray(checkins) ? checkins.length : 0
   
   const memberDays = profile?.created_at 
-    ? Math.floor((new Date().getTime() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24))
+    ? (() => {
+        try {
+          const createdDate = new Date(profile.created_at)
+          if (isNaN(createdDate.getTime())) return 0
+          return Math.floor((new Date().getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24))
+        } catch {
+          return 0
+        }
+      })()
     : 0
 
   return (
     <ProfileErrorBoundary>
       <div className="min-h-screen text-white">
         {/* Header */}
-        <header className="glass border-b border-white/10" role="banner">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard" 
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <LogoIcon size="md" className="h-10" priority />
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <Link
-              href="/settings"
-              className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
-              aria-label="Settings"
-            >
-              <Settings className="w-5 h-5" />
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/10 rounded-lg transition"
-              aria-label="Sign out"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </header>
+        <StandardHeader
+          user={user}
+          onLogout={handleLogout}
+          variant="profile"
+          title="Mi Perfil"
+          subtitle={user?.email}
+          showBackButton={true}
+          backUrl="/dashboard"
+          currentStreak={totalStreak}
+        />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Page Title */}
@@ -481,13 +494,15 @@ export default function ProfilePage() {
                 Psychological Profile
               </h2>
               
-              {temperamentProfile ? (
+              {temperamentProfile && temperamentProfile.primary_temperament ? (
                 <div className="space-y-4">
                   {/* Primary Temperament Display */}
                   {(() => {
                     // 🛡️ SAFE: Defensive access to temperament data
-                    const primaryTemp = temperamentProfile?.primary_temperament
-                    const scores = temperamentProfile?.temperament_scores
+                    if (!temperamentProfile) return null
+                    
+                    const primaryTemp = temperamentProfile.primary_temperament
+                    const scores = temperamentProfile.temperament_scores
                     
                     if (!primaryTemp || !scores || typeof scores !== 'object') {
                       return (
@@ -497,8 +512,8 @@ export default function ProfilePage() {
                       )
                     }
                     
-                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData]
-                    const tempScore = scores[primaryTemp as keyof typeof scores]
+                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData] || temperamentData.melancholic
+                    const tempScore = scores[primaryTemp as keyof typeof scores] || 0
                     
                     if (!tempData) {
                       return (
@@ -508,22 +523,24 @@ export default function ProfilePage() {
                       )
                     }
                     
+                    const TempIcon = tempData.icon || Brain
+                    const iconColor = tempData.color || '#8B5CF6'
+                    const bgGradient = tempData.bgGradient || 'from-gray-500/20 to-gray-600/20'
+                    const percentage = Math.round((tempScore || 0) * 100)
+                    const safePercentage = Math.max(0, Math.min(100, percentage)) // Ensure percentage is between 0-100
+                    
                     return (
-                      <div className={`p-4 rounded-xl bg-gradient-to-r ${tempData.bgGradient || 'from-gray-500/20 to-gray-600/20'}`}>
+                      <div className={`p-4 rounded-xl bg-gradient-to-r ${bgGradient}`}>
                         <div className="flex items-center gap-3">
                           <div className="p-2 rounded-lg bg-white/20">
-                            {(() => {
-                              const TempIcon = tempData.icon || Brain
-                              if (!TempIcon || typeof TempIcon !== 'function') {
-                                return <Brain className="w-5 h-5" style={{ color: tempData.color || '#8B5CF6' }} />
-                              }
-                              return (
-                                <TempIcon 
-                                  className="w-5 h-5" 
-                                  style={{ color: tempData.color || '#8B5CF6' }}
-                                />
-                              )
-                            })()}
+                            {TempIcon && typeof TempIcon === 'function' ? (
+                              <TempIcon 
+                                className="w-5 h-5" 
+                                style={{ color: iconColor }}
+                              />
+                            ) : (
+                              <Brain className="w-5 h-5" style={{ color: iconColor }} />
+                            )}
                           </div>
                           <div>
                             <h3 className="font-semibold text-white">
@@ -536,9 +553,9 @@ export default function ProfilePage() {
                           <div className="ml-auto">
                             <div 
                               className="px-3 py-1 rounded-full text-sm font-bold text-white"
-                              style={{ backgroundColor: tempData.color || '#8B5CF6' }}
+                              style={{ backgroundColor: iconColor }}
                             >
-                              {Math.round((tempScore || 0) * 100)}%
+                              {safePercentage}%
                             </div>
                           </div>
                         </div>
@@ -547,50 +564,55 @@ export default function ProfilePage() {
                   })()}
 
                   {/* Quick Insights */}
-                  {temperamentProfile?.personality_insights && typeof temperamentProfile.personality_insights === 'object' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                        <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
-                          <Star className="w-3 h-3" />
-                          Strengths
-                        </h4>
-                        <p className="text-xs text-gray-300">
-                          {(() => {
-                            const insights = temperamentProfile.personality_insights
-                            const strengths = Array.isArray(insights?.strengths) ? insights.strengths : []
-                            return strengths.length > 0 ? strengths.slice(0, 2).join(', ') : 'Not available'
-                          })()}
-                        </p>
+                  {temperamentProfile && temperamentProfile.personality_insights && typeof temperamentProfile.personality_insights === 'object' && (() => {
+                    const insights = temperamentProfile.personality_insights
+                    if (!insights) return null
+                    
+                    const strengths = Array.isArray(insights.strengths) ? insights.strengths : []
+                    const workStyle = insights.work_style
+                    const socialStyle = insights.social_style
+                    
+                    const strengthsText = strengths.length > 0 ? strengths.slice(0, 2).join(', ') : 'Not available'
+                    const workStyleText = typeof workStyle === 'string' && workStyle.length > 0
+                      ? workStyle.length > 40 ? `${workStyle.slice(0, 40)}...` : workStyle
+                      : 'Not available'
+                    const socialStyleText = typeof socialStyle === 'string' && socialStyle.length > 0
+                      ? socialStyle.length > 40 ? `${socialStyle.slice(0, 40)}...` : socialStyle
+                      : 'Not available'
+                    
+                    return (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                          <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
+                            <Star className="w-3 h-3" />
+                            Strengths
+                          </h4>
+                          <p className="text-xs text-gray-300">{strengthsText}</p>
+                        </div>
+                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                          <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
+                          <p className="text-xs text-gray-300">{workStyleText}</p>
+                        </div>
+                        <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                          <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
+                          <p className="text-xs text-gray-300">{socialStyleText}</p>
+                        </div>
                       </div>
-                      <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                        <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
-                        <p className="text-xs text-gray-300">
-                          {(() => {
-                            const workStyle = temperamentProfile.personality_insights?.work_style
-                            return typeof workStyle === 'string' && workStyle.length > 0
-                              ? workStyle.length > 40 ? `${workStyle.slice(0, 40)}...` : workStyle
-                              : 'Not available'
-                          })()}
-                        </p>
-                      </div>
-                      <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                        <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
-                        <p className="text-xs text-gray-300">
-                          {(() => {
-                            const socialStyle = temperamentProfile.personality_insights?.social_style
-                            return typeof socialStyle === 'string' && socialStyle.length > 0
-                              ? socialStyle.length > 40 ? `${socialStyle.slice(0, 40)}...` : socialStyle
-                              : 'Not available'
-                          })()}
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                    )
+                  })()}
 
                   <div className="flex items-center justify-between pt-2">
                     <p className="text-xs text-gray-400">
-                      {temperamentProfile.completed_at 
-                        ? `Completed on ${new Date(temperamentProfile.completed_at).toLocaleDateString()}`
+                      {temperamentProfile && temperamentProfile.completed_at 
+                        ? (() => {
+                            try {
+                              const completedDate = new Date(temperamentProfile.completed_at)
+                              if (isNaN(completedDate.getTime())) return 'Assessment completed'
+                              return `Completed on ${completedDate.toLocaleDateString()}`
+                            } catch {
+                              return 'Assessment completed'
+                            }
+                          })()
                         : 'Assessment completed'}
                     </p>
                     <button
@@ -651,7 +673,7 @@ export default function ProfilePage() {
                         <div className="flex items-center gap-2 mt-1">
                           <input
                             type="text"
-                            value={editedName}
+                            value={editedName || ''}
                             onChange={(e) => setEditedName(e.target.value)}
                             className="bg-white/10 border border-white/20 rounded px-3 py-1 text-white"
                             placeholder="Your name"
@@ -675,7 +697,7 @@ export default function ProfilePage() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <p className="font-medium">{profile.name}</p>
+                          <p className="font-medium">{profile.name || 'User'}</p>
                           <button
                             onClick={() => setIsEditing(true)}
                             className="p-1 text-gray-400 hover:text-white transition-colors"
@@ -694,7 +716,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Email</p>
-                    <p className="font-medium">{profile.email}</p>
+                    <p className="font-medium">{profile.email || 'No email'}</p>
                   </div>
                 </div>
 
@@ -705,11 +727,19 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-sm text-gray-400">Member Since</p>
                     <p className="font-medium">
-                      {new Date(profile.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
+                      {(() => {
+                        try {
+                          const createdDate = new Date(profile.created_at)
+                          if (isNaN(createdDate.getTime())) return 'Unknown'
+                          return createdDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })
+                        } catch {
+                          return 'Unknown'
+                        }
+                      })()}
                     </p>
                     <p className="text-xs text-gray-500">{memberDays} days ago</p>
                   </div>
@@ -824,7 +854,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Psychology Modals */}
-      {showQuestionnaire && user && (
+      {showQuestionnaire && user && user.id && (
         useAIEnhanced ? (
           <EnhancedTemperamentQuestionnaire
             userId={user.id}
@@ -843,7 +873,7 @@ export default function ProfilePage() {
         )
       )}
 
-      {showResults && assessmentResult && (
+      {showResults && assessmentResult && assessmentResult.primary_temperament && (
         <TemperamentResults
           result={assessmentResult}
           onContinue={handleResultsContinue}
@@ -852,12 +882,13 @@ export default function ProfilePage() {
       )}
 
       {/* Notifications */}
-      {notification.show && (
+      {notification.show && notification.message && (
         <motion.div
           initial={{ opacity: 0, y: 50, x: '-50%' }}
           animate={{ opacity: 1, y: 0, x: '-50%' }}
           exit={{ opacity: 0, y: 50, x: '-50%' }}
           className="fixed bottom-6 left-1/2 transform z-50"
+          key={notification.message} // Add key to ensure proper re-rendering
         >
           <div className={`
             flex items-center gap-3 px-6 py-3 rounded-lg backdrop-blur-md
@@ -871,7 +902,7 @@ export default function ProfilePage() {
             ) : (
               <AlertCircle className="w-5 h-5" />
             )}
-            <span className="font-medium">{notification.message}</span>
+            <span className="font-medium">{notification.message || 'Notification'}</span>
           </div>
         </motion.div>
       )}

@@ -66,7 +66,7 @@ export function useTodayCheckins(userId: string | undefined) {
   return useQuery({
     queryKey: ['checkins', 'today', userId],
     queryFn: () => fetchTodayCheckins(userId!),
-    enabled: !!userId,
+    enabled: !!userId && userId.length > 0,
     refetchInterval: 30 * 1000, // Refetch every 30 seconds for real-time feel
   })
 }

@@ -8,7 +8,8 @@ import {
   Calendar,
   Save,
   Loader2,
-  ChevronDown
+  ChevronDown,
+  AlertCircle
 } from 'lucide-react'
 import { format, parse, addMinutes } from 'date-fns'
 import { AxisIcon } from '@/components/icons'
@@ -73,8 +74,13 @@ export function TimeBlockScheduler({
   
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
   
+  const [error, setError] = useState<string | null>(null)
+  
   const handleSave = async () => {
+    setError(null)
+    
     if (!activityName.trim()) {
+      setError('Please enter an activity name')
       return
     }
     
@@ -100,8 +106,9 @@ export function TimeBlockScheduler({
         await createTimeBlock.mutateAsync(timeBlockData)
       }
       onClose()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving time block:', error)
+      setError(error?.message || 'Failed to save time block. Please try again.')
     }
   }
   
@@ -131,12 +138,12 @@ export function TimeBlockScheduler({
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
-          {/* Modal */}
+          {/* Modal - Fixed centering and responsive sizing */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] lg:w-full lg:max-w-lg max-h-[90vh] overflow-hidden z-50"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:w-full md:max-w-lg lg:max-w-xl max-h-[90vh] overflow-y-auto z-50"
           >
             <div className="glass rounded-2xl">
               {/* Header */}
@@ -160,6 +167,18 @@ export function TimeBlockScheduler({
 
               {/* Content */}
               <div className="p-6 space-y-4">
+                {/* Error Message */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-red-400">{error}</span>
+                  </motion.div>
+                )}
+                
                 {/* Category Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
