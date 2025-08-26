@@ -13,7 +13,7 @@ npm install
 cp .env.local.example .env.local
 # Edit .env.local with your Supabase keys
 
-# Run development server
+# Run development server (IMPORTANT: runs on port 6789, not 3000)
 npm run dev
 
 # Open browser
@@ -44,20 +44,20 @@ npm run build        # Production build
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run type-check   # TypeScript type checking
+npm run optimize:check  # Remove console logs + type check + lint
 
-# Testing
+# Testing - Unit/Integration (Jest)
 npm run test         # Run unit tests
 npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+jest path/to/test.spec.ts  # Run single test file
+jest --testNamePattern="test name"  # Run specific test by name
+
+# Testing - Authentication & Database
 npm run test:auth    # Test authentication flow
 npm run test:performance # Test database performance
 npm run test:concurrent  # Test database performance with concurrency
 npm run verify:supabase  # Verify Supabase configuration
-
-# Single Test Execution
-jest path/to/test.spec.ts              # Run single test file
-jest --testNamePattern="test name"     # Run specific test by name
-npm run test:e2e:debug                 # Debug E2E tests with browser UI
-PLAYWRIGHT_BASE_URL=http://localhost:3000 npx playwright test tests/specific.spec.ts --headed
 
 # E2E Testing (Playwright)
 npm run test:e2e           # Run all E2E tests
@@ -68,7 +68,11 @@ npm run test:e2e:accessibility # Accessibility testing
 npm run test:e2e:security     # Security testing
 npm run test:e2e:visual       # Visual regression tests
 npm run test:e2e:mobile       # Mobile responsive tests
-npm run test:e2e:debug        # Debug mode for E2E tests
+npm run test:e2e:debug        # Debug mode with browser UI
+
+# Run specific E2E test
+PLAYWRIGHT_BASE_URL=http://localhost:6789 npx playwright test tests/e2e/specific.spec.ts --headed
+npx playwright test tests/e2e/auth.spec.ts --project=chromium  # Run on specific browser
 
 # Setup & Configuration
 npm run setup:all    # Complete project setup
@@ -96,8 +100,11 @@ npm run analyze            # Bundle analyzer
 npm run optimize:check     # Run optimization checks (console removal + type check + lint)
 ```
 
-## IMPORTANT: Development URL
-**ALWAYS use http://localhost:6789 for development** - The project is configured to run on port 6789, not the default 3000.
+## IMPORTANT Development Notes
+- **Port Configuration**: ALWAYS use http://localhost:6789 for development - The project is configured to run on port 6789, NOT the default 3000
+- **Type Safety**: TypeScript build errors are temporarily ignored (next.config.js) - TODO: fix chat route types
+- **Linting**: ESLint during build is temporarily ignored - TODO: fix linting issues
+- **PWA**: Currently disabled for Next.js 15 compatibility (withPWA is exported but commented)
 
 ## Project Structure
 ```
@@ -296,65 +303,70 @@ CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a
 - `docs/database-performance-optimization.md` - DB optimization details
 - `docs/application-integration-guide.md` - Optimized queries integration
 
-## Key Architectural Patterns
+## High-Level Architecture
 
-### Data Flow Architecture
-The app follows a **unidirectional data flow** pattern:
-1. **Client**: React components with TanStack Query for server state
-2. **API Layer**: Next.js App Router API routes (`/api/*`)
-3. **Database**: Supabase with Row Level Security (RLS) policies
-4. **Real-time**: Supabase Realtime for live updates
+### Data Flow Pattern
+The app follows a **unidirectional data flow** with clear separation of concerns:
+1. **Client Layer**: React components with TanStack Query for server state management
+2. **API Routes**: Next.js App Router API endpoints (`/api/*`) handle business logic
+3. **Database Layer**: Supabase (PostgreSQL) with Row Level Security (RLS) policies
+4. **Real-time Layer**: Supabase Realtime subscriptions for live updates
+5. **Authentication**: Supabase Auth with session management through middleware
 
 ### State Management Strategy
-- **Server State**: TanStack Query (`lib/react-query/hooks/`)
-- **Client State**: Zustand store (`lib/stores/useAppStore.ts`)
-- **Form State**: React Hook Form with Zod validation
-- **Auth State**: Supabase Auth with automatic session management
+The app uses a hybrid approach for different types of state:
+- **Server State**: TanStack Query with hooks in `lib/react-query/hooks/`
+  - Caching, refetching, and optimistic updates handled automatically
+  - Key hooks: `useToggleCheckIn()`, `useTodayCheckins()`, `useDashboardData()`
+- **Client State**: Zustand store (`lib/stores/useAppStore.ts`) for UI state
+- **Form State**: React Hook Form with Zod validation schemas
+- **Auth State**: Supabase Auth with automatic session refresh
 
 ### Component Architecture
-- **Base UI**: Radix UI primitives in `components/ui/`
-- **AXIS6 Specific**: Custom components in `components/axis/`
-- **Error Boundaries**: Multi-level error handling in `components/error/`
-- **Layout Components**: Shared layouts in `components/layout/`
+Components are organized by responsibility:
+- **Base UI Components** (`components/ui/`): Radix UI primitives with Tailwind styling
+- **AXIS6 Components** (`components/axis/`): Domain-specific components like hexagon visualization
+- **Error Boundaries** (`components/error/`): Multi-level error handling with fallback UI
+- **Layout Components** (`components/layout/`): Shared layout structures
 
-### Database Design Principles
-- **Prefix Convention**: All tables use `axis6_` prefix for multi-tenancy
-- **RLS Security**: Every table has Row Level Security enabled
-- **Performance**: 25+ custom indexes for optimized queries
-- **Optimistic Updates**: Client-side optimistic mutations with rollback
-
-### Query Optimization Patterns
-Key hooks implement optimistic updates with automatic rollback:
-- `useToggleCheckIn()` - Optimistic checkin updates
-- `useTodayCheckins()` - Real-time refetching every 30s
-- `useDashboardData()` - Single-query dashboard loading
-- All hooks located in `lib/react-query/hooks/`
+### Database Architecture
+- **Table Naming**: All tables prefixed with `axis6_` for namespace isolation
+- **Security Model**: Row Level Security (RLS) enabled on all tables
+- **Performance**: 25+ custom indexes for optimized query patterns
+- **Key Tables**:
+  - `axis6_profiles`: User profiles (uses `id` column referencing auth.users)
+  - `axis6_categories`: The 6 life dimensions
+  - `axis6_checkins`: Daily check-ins per category
+  - `axis6_streaks`: Streak tracking per category
+  - `axis6_daily_stats`: Pre-calculated statistics
 
 ### Security Architecture
-- **Middleware**: Route-based authentication (`middleware.ts`)
-- **Rate Limiting**: Redis-based with different limits per route type
-- **CSP Headers**: Hash-based Content Security Policy (when enabled)
-- **Input Validation**: Zod schemas in `lib/validation/`
-- **Error Handling**: Multi-tier error boundaries with fallback UI
+Multi-layered security approach:
+- **Route Protection**: Authentication middleware (`middleware.ts`) protects routes
+- **Rate Limiting**: Redis-backed rate limiting with route-specific limits
+- **Content Security Policy**: Advanced CSP configuration in `next.config.js`
+- **Input Validation**: Zod schemas validate all user inputs
+- **RLS Policies**: Database-level security ensures users only access their own data
 
-### AI Integration Architecture
-- **Activity Recommendations**: `lib/ai/activity-recommender.ts`
-- **Personality Analysis**: `lib/ai/personality-analyzer.ts`
-- **Smart Notifications**: `lib/ai/smart-notifications.ts`
-- **Behavioral Analysis**: `lib/ai/behavioral-analyzer.ts`
+### Performance Optimization Strategy
+- **Database Optimization**: Custom indexes and optimized RPC functions
+- **Bundle Optimization**: Chunk splitting for React, Supabase, vendor code
+- **Query Optimization**: Single-query dashboard loading, optimistic updates
+- **Real-time Performance**: Debounced refetching, connection pooling
+- **Image Optimization**: Next.js Image component with automatic optimization
 
-### Development Patterns
-- **Type Safety**: TypeScript with generated Supabase types
-- **Error Boundaries**: Granular error handling at component level
-- **Optimistic UI**: All mutations include optimistic updates
-- **Real-time Updates**: Automatic refetching for live data
-- **Performance Monitoring**: Built-in query performance tracking
+### Testing Architecture
+- **Unit Tests**: Jest for utility functions and components
+- **Integration Tests**: Jest for API routes and database operations
+- **E2E Tests**: Playwright for user workflows across browsers
+- **Performance Tests**: Database performance benchmarking scripts
+- **Authentication Tests**: Dedicated auth flow testing
 
-### Critical Configuration Details
-- **Port**: Development server runs on 6789, not 3000
-- **PWA**: Currently disabled for Next.js 15 compatibility
-- **CSP**: Advanced Content Security Policy in `next.config.js`
-- **Chunk Splitting**: Optimized bundle splitting for React, Supabase, vendors
+### Deployment Pipeline
+- **Version Control**: Git with feature branches
+- **CI/CD**: Vercel automatic deployment on push to main
+- **Environment Management**: Environment variables in Vercel dashboard
+- **Monitoring**: Sentry for errors, Vercel Analytics for performance
 
 ## Debugging Patterns
 
@@ -399,3 +411,57 @@ When users can't access their data:
 - TanStack Query DevTools available in development
 - Bundle analyzer available via `npm run analyze`
 - Real-time query monitoring via custom hooks
+
+## Critical Cross-File Patterns
+
+### Authentication Flow
+The authentication system spans multiple files and layers:
+1. **Supabase Client** (`lib/supabase/client.ts`): Creates browser client with auth config
+2. **Middleware** (`middleware.ts`): Protects routes, checks auth state
+3. **Auth Pages** (`app/auth/*`): Login/register UI components
+4. **API Routes** (`app/api/auth/*`): Handle auth operations
+5. **Custom Hooks** (`lib/react-query/hooks/useUser.ts`): Manage user state
+
+### Real-time Updates Pattern
+Real-time functionality requires coordination between:
+1. **Supabase Client Config**: WebSocket configuration with retry logic
+2. **React Query Hooks**: Subscription setup and cache invalidation
+3. **Component Layer**: UI updates based on real-time events
+4. **Error Handling**: Graceful fallback when WebSocket fails
+
+### Optimistic Updates Pattern
+Used throughout for better UX:
+1. **Mutation Hook**: Optimistically updates cache before server response
+2. **Rollback Logic**: Reverts changes if server request fails
+3. **Cache Invalidation**: Ensures data consistency after success
+4. **UI Feedback**: Shows loading/success/error states
+
+### Rate Limiting Implementation
+Multi-tier rate limiting across the stack:
+1. **Redis Configuration**: Connection setup and key management
+2. **Middleware Layer**: Route-specific rate limit application
+3. **API Routes**: Individual endpoint protection
+4. **Error Responses**: Proper 429 status with retry headers
+
+## Working With This Codebase
+
+### Key Development Principles
+1. **Port 6789**: Always use localhost:6789, never localhost:3000
+2. **Database Columns**: Verify column names - `axis6_profiles` uses `id`, others use `user_id`
+3. **Testing**: Run tests before deploying - auth, performance, and E2E tests available
+4. **Security**: RLS enabled on all tables, rate limiting on API routes
+5. **Performance**: 25+ database indexes deployed, use optimized RPC functions
+
+### Common Gotchas
+- TypeScript errors temporarily ignored for chat routes (TODO in next.config.js)
+- ESLint errors temporarily ignored during build (TODO in next.config.js)
+- PWA configuration disabled for Next.js 15 compatibility
+- WebSocket auth errors are normal during login (handled gracefully)
+- CSP configuration in next.config.js may need adjustment for new external resources
+
+### Quick Debugging
+- Check browser console for `window.__supabaseError`
+- Use `npm run verify:supabase` to check database configuration
+- Run `npm run test:auth` to verify authentication flow
+- Use `npm run analyze` to check bundle size issues
+- TanStack Query DevTools available in development mode

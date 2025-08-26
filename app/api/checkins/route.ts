@@ -79,16 +79,18 @@ export async function POST(request: NextRequest) {
     }
 
     const today = new Date().toISOString().split('T')[0]
+    const todayStart = `${today}T00:00:00.000Z`
+    const todayEnd = `${today}T23:59:59.999Z`
 
     if (completed) {
-      // TEMPORARY FIX: Use insert-or-update pattern due to missing UNIQUE constraint
-      // First, check if checkin already exists
+      // Check if checkin already exists for today
       const { data: existingCheckin } = await supabase
         .from('axis6_checkins')
         .select('id')
         .eq('user_id', user.id)
         .eq('category_id', categoryId)
-        .eq('completed_at', today)
+        .gte('completed_at', todayStart)
+        .lte('completed_at', todayEnd)
         .single()
 
       let checkin, error
@@ -109,13 +111,13 @@ export async function POST(request: NextRequest) {
         checkin = updatedCheckin
         error = updateError
       } else {
-        // Insert new checkin
+        // Insert new checkin with proper TIMESTAMPTZ
         const { data: newCheckin, error: insertError } = await supabase
           .from('axis6_checkins')
           .insert({
             user_id: user.id,
             category_id: categoryId,
-            completed_at: today,
+            completed_at: new Date().toISOString(), // Use full timestamp
             mood: mood || 5,
             notes: notes || null,
             updated_at: new Date().toISOString()
@@ -141,13 +143,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ checkin, message: 'Check-in completed successfully' })
 
     } else {
-      // Remove check-in
+      // Remove check-in for today
       const { error } = await supabase
         .from('axis6_checkins')
         .delete()
         .eq('user_id', user.id)
         .eq('category_id', categoryId)
-        .eq('completed_at', today)
+        .gte('completed_at', todayStart)
+        .lte('completed_at', todayEnd)
 
       if (error) {
         logger.error('Error removing check-in', error)

@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import Link from 'next/link'
-import { Flame, Settings, LogOut, TrendingUp, Calendar } from 'lucide-react'
+import { Flame, Settings, LogOut, TrendingUp, Calendar, MessageCircle } from 'lucide-react'
 import { AxisIcon } from '@/components/icons'
 
 interface DashboardHeaderProps {
@@ -41,6 +41,16 @@ export const DashboardHeader = memo<DashboardHeaderProps>(({
             aria-label="My Day"
           >
             <Calendar className="w-5 h-5 text-gray-300" />
+          </Link>
+          
+          <Link 
+            href="/chat" 
+            className="p-2 glass rounded-full hover:bg-white/20 transition-colors relative"
+            aria-label="Chat"
+          >
+            <MessageCircle className="w-5 h-5 text-gray-300" />
+            {/* Optional: Add notification badge */}
+            {/* <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span> */}
           </Link>
           
           <Link 

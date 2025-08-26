@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Home, Activity, TrendingUp, User, Plus, Calendar } from 'lucide-react'
+import { Home, Activity, TrendingUp, User, Plus, Calendar, MessageCircle } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,11 +17,11 @@ interface FloatingNavProps {
 }
 
 const navItems: NavItem[] = [
-  { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5" />, href: '/dashboard' },
-  { id: 'my-day', label: 'Mi Día', icon: <Calendar className="w-5 h-5" />, href: '/my-day' },
-  { id: 'activities', label: 'Actividades', icon: <Activity className="w-5 h-5" />, href: '/activities' },
-  { id: 'stats', label: 'Estadísticas', icon: <TrendingUp className="w-5 h-5" />, href: '/stats' },
-  { id: 'profile', label: 'Perfil', icon: <User className="w-5 h-5" />, href: '/profile' }
+  { id: 'home', label: 'Home', icon: <Home className="w-5 h-5" />, href: '/dashboard' },
+  { id: 'my-day', label: 'My Day', icon: <Calendar className="w-5 h-5" />, href: '/my-day' },
+  { id: 'chat', label: 'Chat', icon: <MessageCircle className="w-5 h-5" />, href: '/chat' },
+  { id: 'stats', label: 'Stats', icon: <TrendingUp className="w-5 h-5" />, href: '/analytics' },
+  { id: 'profile', label: 'Profile', icon: <User className="w-5 h-5" />, href: '/profile' }
 ]
 
 export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
