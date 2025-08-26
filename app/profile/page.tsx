@@ -35,6 +35,7 @@ import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/i
 import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
 import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
 import { TemperamentResults } from '@/components/psychology/TemperamentResults'
+import { ProfileErrorBoundary } from '@/components/error/ProfileErrorBoundary'
 
 interface UserProfile {
   email: string
@@ -130,7 +131,7 @@ export default function ProfilePage() {
           setEditedName(user.email?.split('@')[0] || 'User')
         }
 
-        // Fetch temperament profile (check if table exists first)
+        // 🛡️ SAFE: Fetch temperament profile with defensive error handling
         try {
           const { data: temperamentData, error } = await supabase
             .from('axis6_temperament_profiles')
@@ -139,11 +140,22 @@ export default function ProfilePage() {
             .single()
           
           if (!error && temperamentData) {
-            setTemperamentProfile(temperamentData)
+            // 🛡️ VALIDATE: Ensure temperament data has required structure
+            if (temperamentData.primary_temperament && 
+                temperamentData.temperament_scores &&
+                temperamentData.personality_insights) {
+              setTemperamentProfile(temperamentData)
+            } else {
+              console.warn('⚠️ Temperament profile has incomplete data:', temperamentData)
+            }
+          } else if (error) {
+            // Log specific errors for debugging
+            console.warn('⚠️ Temperament profile query error:', error.message)
           }
         } catch (err) {
-          // Table might not exist yet, ignore error
-          console.log('Temperament profile not available')
+          // 🛡️ CATCH-ALL: Handle any unexpected errors gracefully
+          console.error('⚠️ Failed to fetch temperament profile:', err)
+          // Don't throw - profile page should work without psychology features
         }
       } finally {
         setProfileLoading(false)
@@ -369,15 +381,26 @@ export default function ProfilePage() {
     )
   }
 
-  const currentStreak = Math.max(...streaks.map(s => s.current_streak), 0)
-  const longestStreak = Math.max(...streaks.map(s => s.longest_streak), 0)
-  const totalCheckins = checkins.length
-  const memberDays = Math.floor((new Date().getTime() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24))
+  // 🛡️ SAFE: Calculate stats with defensive programming
+  const currentStreak = streaks && streaks.length > 0 
+    ? Math.max(...streaks.map(s => s.current_streak || 0))
+    : 0
+    
+  const longestStreak = streaks && streaks.length > 0
+    ? Math.max(...streaks.map(s => s.longest_streak || 0))
+    : 0
+    
+  const totalCheckins = checkins ? checkins.length : 0
+  
+  const memberDays = profile?.created_at 
+    ? Math.floor((new Date().getTime() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24))
+    : 0
 
   return (
-    <div className="min-h-screen text-white">
-      {/* Header */}
-      <header className="glass border-b border-white/10" role="banner">
+    <ProfileErrorBoundary>
+      <div className="min-h-screen text-white">
+        {/* Header */}
+        <header className="glass border-b border-white/10" role="banner">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link 
@@ -429,66 +452,91 @@ export default function ProfilePage() {
               {temperamentProfile ? (
                 <div className="space-y-4">
                   {/* Primary Temperament Display */}
-                  <div className={`p-4 rounded-xl bg-gradient-to-r ${temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.bgGradient}`}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-white/20">
-                        {(() => {
-                          const TempIcon = temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.icon || Brain
-                          return (
-                            <TempIcon 
-                              className="w-5 h-5" 
-                              style={{ color: temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.color }}
-                            />
-                          )
-                        })()}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white">
-                          {temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.name || temperamentProfile.primary_temperament}
-                        </h3>
-                        <p className="text-sm text-gray-200">
-                          {temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.subtitle}
-                        </p>
-                      </div>
-                      <div className="ml-auto">
-                        <div 
-                          className="px-3 py-1 rounded-full text-sm font-bold text-white"
-                          style={{ backgroundColor: temperamentData[temperamentProfile.primary_temperament as keyof typeof temperamentData]?.color }}
-                        >
-                          {Math.round(temperamentProfile.temperament_scores[temperamentProfile.primary_temperament as keyof typeof temperamentProfile.temperament_scores] * 100)}%
+                  {(() => {
+                    // 🛡️ SAFE: Defensive access to temperament data
+                    const primaryTemp = temperamentProfile.primary_temperament
+                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData]
+                    const tempScore = temperamentProfile.temperament_scores?.[primaryTemp as keyof typeof temperamentProfile.temperament_scores]
+                    
+                    if (!primaryTemp || !tempData) {
+                      return (
+                        <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
+                          <p className="text-gray-400">Temperament data incomplete</p>
+                        </div>
+                      )
+                    }
+                    
+                    return (
+                      <div className={`p-4 rounded-xl bg-gradient-to-r ${tempData.bgGradient}`}>
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-white/20">
+                            {(() => {
+                              const TempIcon = tempData.icon || Brain
+                              return (
+                                <TempIcon 
+                                  className="w-5 h-5" 
+                                  style={{ color: tempData.color }}
+                                />
+                              )
+                            })()}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-white">
+                              {tempData.name || primaryTemp}
+                            </h3>
+                            <p className="text-sm text-gray-200">
+                              {tempData.subtitle || 'Temperament Profile'}
+                            </p>
+                          </div>
+                          <div className="ml-auto">
+                            <div 
+                              className="px-3 py-1 rounded-full text-sm font-bold text-white"
+                              style={{ backgroundColor: tempData.color }}
+                            >
+                              {Math.round((tempScore || 0) * 100)}%
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    )
+                  })()}
 
                   {/* Quick Insights */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                      <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
-                        <Star className="w-3 h-3" />
-                        Strengths
-                      </h4>
-                      <p className="text-xs text-gray-300">
-                        {temperamentProfile.personality_insights.strengths?.slice(0, 2).join(', ')}
-                      </p>
+                  {temperamentProfile.personality_insights && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                        <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
+                          <Star className="w-3 h-3" />
+                          Strengths
+                        </h4>
+                        <p className="text-xs text-gray-300">
+                          {temperamentProfile.personality_insights.strengths?.slice(0, 2).join(', ') || 'Not available'}
+                        </p>
+                      </div>
+                      <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                        <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
+                        <p className="text-xs text-gray-300">
+                          {temperamentProfile.personality_insights.work_style 
+                            ? `${temperamentProfile.personality_insights.work_style.slice(0, 40)}...`
+                            : 'Not available'}
+                        </p>
+                      </div>
+                      <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                        <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
+                        <p className="text-xs text-gray-300">
+                          {temperamentProfile.personality_insights.social_style 
+                            ? `${temperamentProfile.personality_insights.social_style.slice(0, 40)}...`
+                            : 'Not available'}
+                        </p>
+                      </div>
                     </div>
-                    <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                      <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
-                      <p className="text-xs text-gray-300">
-                        {temperamentProfile.personality_insights.work_style?.slice(0, 40)}...
-                      </p>
-                    </div>
-                    <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                      <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
-                      <p className="text-xs text-gray-300">
-                        {temperamentProfile.personality_insights.social_style?.slice(0, 40)}...
-                      </p>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="flex items-center justify-between pt-2">
                     <p className="text-xs text-gray-400">
-                      Completed on {new Date(temperamentProfile.completed_at).toLocaleDateString()}
+                      {temperamentProfile.completed_at 
+                        ? `Completed on ${new Date(temperamentProfile.completed_at).toLocaleDateString()}`
+                        : 'Assessment completed'}
                     </p>
                     <button
                       onClick={handleStartAssessment}
@@ -772,6 +820,7 @@ export default function ProfilePage() {
           </div>
         </motion.div>
       )}
-    </div>
+      </div>
+    </ProfileErrorBoundary>
   )
 }
