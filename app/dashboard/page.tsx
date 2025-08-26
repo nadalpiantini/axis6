@@ -4,7 +4,7 @@ import { memo, useMemo, useCallback, useEffect, lazy, Suspense } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Flame, Settings, LogOut, TrendingUp, Trophy, User } from 'lucide-react'
+import { Flame, Settings, LogOut, TrendingUp, Trophy, User, Calendar } from 'lucide-react'
 
 // Lazy load heavy components for better bundle splitting
 const DailyMantraCard = lazy(() => import('@/components/mantras/DailyMantraCard').then(mod => ({ default: mod.DailyMantraCard })))
@@ -533,6 +533,14 @@ export default function DashboardPageV2() {
 
               {/* Actions */}
               <div className="space-y-2 sm:space-y-3">
+                <Link 
+                  href="/my-day"
+                  className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
+                  aria-label="Plan and track your daily activities"
+                >
+                  <span>Plan My Day</span>
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" aria-hidden="true" />
+                </Link>
                 <Link 
                   href="/analytics"
                   className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
