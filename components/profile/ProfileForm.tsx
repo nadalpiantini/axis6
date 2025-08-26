@@ -83,15 +83,7 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
   }
 
   return (
-    <div className="glass rounded-2xl p-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white">Profile Information</h2>
-        <p className="text-gray-400 text-sm mt-1">
-          Update your personal information and preferences
-        </p>
-      </div>
-
-      <Form {...form}>
+    <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name Field */}
@@ -308,7 +300,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
             </Button>
           </div>
         </form>
-      </Form>
-    </div>
+    </Form>
   )
 }

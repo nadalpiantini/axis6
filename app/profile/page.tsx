@@ -661,34 +661,37 @@ export default function ProfilePage() {
             </div>
 
             {/* Profile Form */}
-            <ProfileForm 
-              userId={user.id}
-              initialData={{
-                name: profile.name || '',
-                email: profile.email || '',
-                timezone: 'America/Santo_Domingo'
-              }}
-              onSuccess={() => {
-                showNotification('success', 'Profile updated successfully!')
-                // Refresh profile data
-                const fetchProfile = async () => {
-                  const supabase = createClient()
-                  const { data: profileData } = await supabase
-                    .from('axis6_profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .maybeSingle()
-                  if (profileData) {
-                    setProfile({
-                      email: user.email || '',
-                      name: profileData.name || user.email?.split('@')[0] || 'User',
-                      created_at: user.created_at || new Date().toISOString()
-                    })
+            <div className="glass rounded-2xl p-6" data-testid="profile-form-container">
+              <h2 className="text-xl font-semibold mb-6">Profile Information</h2>
+              <ProfileForm 
+                userId={user.id}
+                initialData={{
+                  name: profile.name || '',
+                  email: profile.email || '',
+                  timezone: 'America/Santo_Domingo'
+                }}
+                onSuccess={() => {
+                  showNotification('success', 'Profile updated successfully!')
+                  // Refresh profile data
+                  const fetchProfile = async () => {
+                    const supabase = createClient()
+                    const { data: profileData } = await supabase
+                      .from('axis6_profiles')
+                      .select('*')
+                      .eq('id', user.id)
+                      .maybeSingle()
+                    if (profileData) {
+                      setProfile({
+                        email: user.email || '',
+                        name: profileData.name || user.email?.split('@')[0] || 'User',
+                        created_at: user.created_at || new Date().toISOString()
+                      })
+                    }
                   }
-                }
-                fetchProfile()
-              }}
-            />
+                  fetchProfile()
+                }}
+              />
+            </div>
 
             {/* User Details */}
             <div className="glass rounded-2xl p-6">
