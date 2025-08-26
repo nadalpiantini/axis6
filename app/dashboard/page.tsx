@@ -321,21 +321,11 @@ export default function DashboardPageV2() {
     [streaks]
   )
 
-  // Optimized hexagon key generation
-  const hexagonKey = useMemo(() => {
-    return `hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`
-  }, [axes])
-
-  // Memoized axis lookup map for O(1) performance
-  const axisMap = useMemo(() => {
-    return new Map(axes.map(axis => [axis.id, axis]))
-  }, [axes])
-
   // Handler with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
     
-    const axis = axisMap.get(axisId)
+    const axis = axes.find(a => a.id === axisId)
     if (axis) {
       toggleCheckIn.mutate(
         {
@@ -376,7 +366,7 @@ export default function DashboardPageV2() {
         }
       )
     }
-  }, [axisMap, toggleCheckIn, addNotification, queryClient, user?.id, showToast])
+  }, [axes, toggleCheckIn, addNotification, queryClient, user?.id, showToast])
 
   const handleLogout = useCallback(async () => {
     const { createClient } = await import('@/lib/supabase/client')
@@ -486,7 +476,7 @@ export default function DashboardPageV2() {
                   </div>
 
                   <HexagonVisualization 
-                    key={hexagonKey}
+                    key={`hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`}
                     axes={axes}
                     onToggleAxis={handleToggleAxis}
                     isToggling={toggleCheckIn.isPending}
