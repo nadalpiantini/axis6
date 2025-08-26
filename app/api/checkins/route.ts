@@ -81,22 +81,54 @@ export async function POST(request: NextRequest) {
     const today = new Date().toISOString().split('T')[0]
 
     if (completed) {
-      // Create check-in using upsert with proper conflict resolution
-      const { data: checkin, error } = await supabase
+      // TEMPORARY FIX: Use insert-or-update pattern due to missing UNIQUE constraint
+      // First, check if checkin already exists
+      const { data: existingCheckin } = await supabase
         .from('axis6_checkins')
-        .upsert({
-          user_id: user.id,
-          category_id: categoryId,
-          completed_at: today,
-          mood: mood || 5,
-          notes: notes || null,
-          updated_at: new Date().toISOString()
-        })
-        .select()
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('category_id', categoryId)
+        .eq('completed_at', today)
         .single()
 
+      let checkin, error
+
+      if (existingCheckin) {
+        // Update existing checkin
+        const { data: updatedCheckin, error: updateError } = await supabase
+          .from('axis6_checkins')
+          .update({
+            mood: mood || 5,
+            notes: notes || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingCheckin.id)
+          .select()
+          .single()
+        
+        checkin = updatedCheckin
+        error = updateError
+      } else {
+        // Insert new checkin
+        const { data: newCheckin, error: insertError } = await supabase
+          .from('axis6_checkins')
+          .insert({
+            user_id: user.id,
+            category_id: categoryId,
+            completed_at: today,
+            mood: mood || 5,
+            notes: notes || null,
+            updated_at: new Date().toISOString()
+          })
+          .select()
+          .single()
+        
+        checkin = newCheckin
+        error = insertError
+      }
+
       if (error) {
-        logger.error('Error creating check-in', error)
+        logger.error('Error creating/updating check-in', error)
         return NextResponse.json({ error: 'Failed to create check-in' }, { status: 500 })
       }
 
