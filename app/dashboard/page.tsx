@@ -337,15 +337,6 @@ export default function DashboardPageV2() {
     return new Map(axes.map(axis => [axis.id, axis]))
   }, [axes])
 
-  // Memoized toggle handlers for each axis to prevent recreation on every render
-  const axisToggleHandlers = useMemo(() => {
-    const handlers = new Map()
-    axes.forEach(axis => {
-      handlers.set(axis.id, () => handleToggleAxis(axis.id))
-    })
-    return handlers
-  }, [axes, handleToggleAxis])
-
   // Handlers with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
@@ -526,7 +517,7 @@ export default function DashboardPageV2() {
                     <MemoizedCategoryCard
                       key={`${axis.id}-${axis.completed}`}
                       axis={axis}
-                      onToggle={axisToggleHandlers.get(axis.id)}
+                      onToggle={() => handleToggleAxis(axis.id)}
                       isToggling={toggleCheckIn.isPending}
                     />
                   ))}
