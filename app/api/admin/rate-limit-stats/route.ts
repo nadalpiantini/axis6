@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     const { data: profile } = await supabase
       .from('axis6_profiles')
       .select('role')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single()
 
     // For now, allow all authenticated users to see basic stats

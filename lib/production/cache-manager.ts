@@ -557,7 +557,7 @@ export const cacheWarmers = {
         const { data } = await supabase
           .from('axis6_profiles')
           .select('*')
-          .eq('user_id', userId)
+          .eq('id', userId)
           .single()
         return data
       },

@@ -68,8 +68,8 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
     // 1. User profile
     supabase
       .from('axis6_profiles')
-      .select('user_id, email, name, avatar_url')
-      .eq('user_id', userId)
+      .select('id, email, name, avatar_url')
+      .eq('id', userId)
       .single(),
     
     // 2. Categories (cached, rarely changes)

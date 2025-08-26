@@ -96,7 +96,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const { data: profile } = await supabase
       .from('axis6_profiles')
       .select('role')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single()
     
     if (profile?.role !== 'admin') {

@@ -46,7 +46,7 @@ async function diagnoseCriticalErrors() {
       const { data: profilesData, error: profilesError } = await supabase
         .from('axis6_profiles')
         .select('*')
-        .eq('user_id', testUserId)
+        .eq('id', testUserId)
         .limit(1)
       
       if (profilesError) {
