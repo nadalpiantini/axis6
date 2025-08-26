@@ -948,7 +948,7 @@ export function logSecurityEvent(
   }
   
   // In production, this would send to your security monitoring system
-  console.warn('SECURITY EVENT:', JSON.stringify(logEntry))
+  )
   
   // Send to monitoring API if available
   if (typeof window !== 'undefined') {

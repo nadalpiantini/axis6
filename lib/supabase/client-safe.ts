@@ -78,8 +78,7 @@ export function createClientSafe() {
               window.queryClient.clear()
             }
           } catch (storageError) {
-            console.warn('Error clearing auth data:', storageError)
-          }
+            }
         }
       }
     })

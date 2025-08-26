@@ -17,12 +17,10 @@ export function useRealtimeCheckins(userId: string | undefined) {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       
       if (authError) {
-        console.warn('⚠️ Realtime setup failed: Authentication error', authError.message)
         return
       }
       
       if (!user) {
-        console.warn('⚠️ Realtime setup skipped: No authenticated user')
         return
       }
       
@@ -38,8 +36,6 @@ export function useRealtimeCheckins(userId: string | undefined) {
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
-            console.log('✅ Realtime checkins update:', payload)
-            
             // Invalidate and refetch checkins data
             queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
             
@@ -48,15 +44,12 @@ export function useRealtimeCheckins(userId: string | undefined) {
             
             // Optionally, show a notification for the update
             if (payload.eventType === 'INSERT') {
-              console.log('🎉 New check-in added')
-            } else if (payload.eventType === 'DELETE') {
-              console.log('❌ Check-in removed')
-            }
+              } else if (payload.eventType === 'DELETE') {
+              }
           }
         )
         .subscribe((status) => {
-          console.log('📡 Realtime checkins subscription status:', status)
-        })
+          })
     }
 
     setupRealtime()
@@ -85,12 +78,10 @@ export function useRealtimeStreaks(userId: string | undefined) {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       
       if (authError) {
-        console.warn('⚠️ Realtime streaks setup failed: Authentication error', authError.message)
         return
       }
       
       if (!user) {
-        console.warn('⚠️ Realtime streaks setup skipped: No authenticated user')
         return
       }
       
@@ -106,8 +97,6 @@ export function useRealtimeStreaks(userId: string | undefined) {
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
-            console.log('✅ Realtime streaks update:', payload)
-            
             // Invalidate and refetch streaks data
             queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
             
@@ -116,14 +105,12 @@ export function useRealtimeStreaks(userId: string | undefined) {
               const newStreak = payload.new as any
               if (newStreak.current_streak % 7 === 0 && newStreak.current_streak > 0) {
                 // Weekly milestone reached
-                console.log(`🎉 ${newStreak.current_streak} day streak achieved!`)
-              }
+                }
             }
           }
         )
         .subscribe((status) => {
-          console.log('📡 Realtime streaks subscription status:', status)
-        })
+          })
     }
 
     setupRealtime()

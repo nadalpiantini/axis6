@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import React, { ErrorInfo, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Database, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react'
@@ -35,7 +37,7 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Database error boundary caught an error:', error, errorInfo)
+    logger.error('Database error boundary caught an error:', error, errorInfo)
     
     this.setState({
       error,

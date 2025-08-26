@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Behavior analysis API error:', error)
+    logger.error('Behavior analysis API error:', error)
     
     return NextResponse.json(
       { 
@@ -125,7 +127,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Insights generation API error:', error)
+    logger.error('Insights generation API error:', error)
     
     return NextResponse.json(
       { 

@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import { ReactNode } from 'react'
 import { QueryErrorResetBoundary, useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from './ErrorBoundary'
@@ -18,7 +20,7 @@ export function QueryErrorBoundary({ children, fallback }: QueryErrorBoundaryPro
           onError={(error, errorInfo) => {
             // Log error in development only
             if (process.env['NODE_ENV'] === 'development') {
-              console.error('Query Error Boundary:', error, errorInfo)
+              logger.error('Query Error Boundary:', error, errorInfo)
             }
           }}
           fallback={

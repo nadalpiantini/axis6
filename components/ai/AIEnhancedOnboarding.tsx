@@ -164,7 +164,8 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
         isGeneratingInsights: false
       }))
     } catch (error) {
-      console.error('Failed to generate AI insights:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to generate AI insights:', error);
       setState(prev => ({ ...prev, isGeneratingInsights: false }))
     }
   }
@@ -428,7 +429,8 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       onComplete({ temperament })
       generateInsights()
     } catch (error) {
-      console.error('Personality analysis failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Personality analysis failed:', error);
       onComplete({ temperament: { primary_temperament: 'balanced' } })
     } finally {
       setIsAnalyzing(false)

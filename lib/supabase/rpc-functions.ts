@@ -39,8 +39,7 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
     }
   } catch (e) {
     // Fallback to individual queries if RPC doesn't exist
-    console.warn('Optimized RPC not available, falling back to individual queries')
-  }
+    }
   
   // Fallback: Fetch data with parallel queries (still better than sequential)
   const [
@@ -125,8 +124,7 @@ export async function updateStreakOptimized(
       return data as Streak
     }
   } catch (e) {
-    console.warn('Optimized streak RPC not available, using fallback')
-  }
+    }
   
   // Fallback: Manual streak calculation
   const today = new Date().toISOString().split('T')[0]

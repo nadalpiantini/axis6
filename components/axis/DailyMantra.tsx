@@ -152,7 +152,8 @@ export default function DailyMantra() {
     } catch (err) {
       // Log error in development only
       if (process.env['NODE_ENV'] === 'development') {
-        console.error('Error fetching mantra:', err)
+        // TODO: Replace with proper error handling
+    // console.error('Error fetching mantra:', err);
       }
       setError('No se pudo cargar el mantra del día')
     } finally {
@@ -184,7 +185,8 @@ export default function DailyMantra() {
     } catch (err) {
       // Log error in development only
       if (process.env['NODE_ENV'] === 'development') {
-        console.error('Error completing mantra:', err)
+        // TODO: Replace with proper error handling
+    // console.error('Error completing mantra:', err);
       }
     } finally {
       setCompleting(false)

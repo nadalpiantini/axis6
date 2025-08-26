@@ -183,8 +183,6 @@ class CircuitBreaker {
     state.state = 'OPEN'
     state.nextAttemptTime = Date.now() + this.config.resetTimeout
     
-    console.warn(`Circuit breaker OPENED for ${serviceName} after ${state.failures} failures`)
-    
     // Report circuit breaker open event
     this.reportCircuitBreakerEvent(serviceName, 'OPEN', {
       failures: state.failures,
@@ -200,8 +198,6 @@ class CircuitBreaker {
     state.state = 'HALF_OPEN'
     state.successes = 0 // Reset success counter
     
-    console.info(`Circuit breaker HALF_OPEN for ${serviceName} - testing service`)
-    
     this.reportCircuitBreakerEvent(serviceName, 'HALF_OPEN')
   }
   
@@ -213,8 +209,6 @@ class CircuitBreaker {
     state.state = 'CLOSED'
     state.failures = 0
     state.successes = 0
-    
-    console.info(`Circuit breaker CLOSED for ${serviceName} - service recovered`)
     
     this.reportCircuitBreakerEvent(serviceName, 'CLOSED')
   }
@@ -237,10 +231,11 @@ class CircuitBreaker {
    * Log circuit breaker failures
    */
   private logFailure(serviceName: string, error: Error) {
-    console.error(`Circuit breaker failure for ${serviceName}:`, {
+    // TODO: Replace with proper error handling
+    // console.error(`Circuit breaker failure for ${serviceName}:`, {
       error: error.message,
       stack: error.stack,
-      timestamp: new Date().toISOString()
+      timestamp: new Date();.toISOString()
     })
   }
   
@@ -312,8 +307,7 @@ class CircuitBreaker {
   reset(serviceName: string) {
     if (this.states.has(serviceName)) {
       this.states.delete(serviceName)
-      console.info(`Circuit breaker reset for ${serviceName}`)
-    }
+      }
   }
   
   /**
@@ -324,8 +318,7 @@ class CircuitBreaker {
     state.state = 'OPEN'
     state.nextAttemptTime = Date.now() + duration
     
-    console.warn(`Circuit breaker FORCE OPENED for ${serviceName} for ${duration}ms`)
-  }
+    }
 }
 
 // Create singleton instance
@@ -360,7 +353,6 @@ export const protectedServices = {
         name: 'email',
         fn: emailFn,
         fallback: () => {
-          console.warn('Email service unavailable, queuing for later')
           return { queued: true }
         },
         timeout: 15000
@@ -393,8 +385,7 @@ export const protectedServices = {
         name: 'cache_set',
         fn: cacheFn,
         fallback: () => {
-          console.warn('Cache unavailable, continuing without caching')
-        },
+          },
         timeout: 3000
       })
   }

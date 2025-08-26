@@ -8,10 +8,11 @@ export function createClient() {
   const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Missing Supabase environment variables:', {
+    // TODO: Replace with proper error handling
+    // console.error('Missing Supabase environment variables:', {
       url: supabaseUrl ? 'present' : 'missing',
       key: supabaseAnonKey ? 'present' : 'missing'
-    })
+    });
     throw new Error('Missing Supabase environment variables')
   }
 
@@ -60,8 +61,7 @@ export function createClient() {
               window.queryClient.clear()
             }
           } catch (storageError) {
-            console.warn('Error clearing auth data:', storageError)
-          }
+            }
         }
       }
     })
@@ -78,8 +78,7 @@ export function createClient() {
         if (errorMessage.includes('supabase') || errorMessage.includes('Supabase')) {
           // @ts-ignore
           window.__supabaseError = errorMessage
-          console.warn('Supabase error detected:', errorMessage)
-        }
+          }
         originalConsoleError.apply(console, args)
       }
       
@@ -89,7 +88,8 @@ export function createClient() {
 
     return client
   } catch (error) {
-    console.error('Failed to create Supabase client:', error)
+    // TODO: Replace with proper error handling
+    // console.error('Failed to create Supabase client:', error);
     throw new Error(`Failed to initialize Supabase client: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
       data: analysis
     })
   } catch (error) {
-    console.error('Personality analysis API error:', error)
+    logger.error('Personality analysis API error:', error)
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(

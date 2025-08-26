@@ -227,7 +227,8 @@ export function AxisActivitiesModal({
       handleCancel()
       refetch()
     } catch (error) {
-      console.error('Error saving activity:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving activity:', error);
       showNotification('error', 'Failed to save activity')
     }
   }
@@ -242,7 +243,8 @@ export function AxisActivitiesModal({
       showNotification('success', 'Activity deleted successfully!')
       refetch()
     } catch (error) {
-      console.error('Error deleting activity:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error deleting activity:', error);
       showNotification('error', 'Failed to delete activity')
     }
   }
@@ -255,7 +257,8 @@ export function AxisActivitiesModal({
       })
       refetch()
     } catch (error) {
-      console.error('Error toggling activity:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error toggling activity:', error);
     }
   }
 

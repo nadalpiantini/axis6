@@ -117,7 +117,8 @@ export default function ProfilePage() {
           .maybeSingle()
 
         if (profileError && profileError.code !== 'PGRST116') {
-          console.error('Error fetching profile:', profileError)
+          // TODO: Replace with proper error handling
+    // console.error('Error fetching profile:', profileError);
         }
 
         if (profileData) {
@@ -155,12 +156,9 @@ export default function ProfilePage() {
               })
             
             if (createError) {
-              console.warn('Could not auto-create profile:', createError.message)
-            } else {
-              console.log('✅ Profile auto-created for new user')
-            }
+              } else {
+              }
           } catch (err) {
-            console.warn('Failed to auto-create profile:', err)
             // Continue with the default profile even if creation fails
           }
         }
@@ -183,15 +181,14 @@ export default function ProfilePage() {
                 typeof temperamentData.personality_insights === 'object') {
               setTemperamentProfile(temperamentData)
             } else {
-              console.warn('⚠️ Temperament profile has incomplete data structure:', temperamentData)
-            }
+              }
           } else if (error && error.code !== 'PGRST116') {
             // PGRST116 = not found, which is expected for new users
-            console.warn('⚠️ Temperament profile query error:', error.message, error.code)
-          }
+            }
         } catch (err) {
           // 🛡️ CATCH-ALL: Handle any unexpected errors gracefully
-          console.error('⚠️ Failed to fetch temperament profile:', err)
+          // TODO: Replace with proper error handling
+    // console.error('⚠️ Failed to fetch temperament profile:', err);
           // Profile page continues to work without psychology features
         }
       } finally {
@@ -235,7 +232,8 @@ export default function ProfilePage() {
       setIsEditing(false)
       showNotification('success', 'Profile updated successfully!')
     } catch (error) {
-      console.error('Error updating profile:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error updating profile:', error);
       showNotification('error', 'Failed to update profile')
     } finally {
       setSaving(false)
@@ -280,7 +278,8 @@ export default function ProfilePage() {
 
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
-      console.error('Error exporting data:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error exporting data:', error);
       showNotification('error', 'Failed to export data')
     }
   }
@@ -308,7 +307,8 @@ export default function ProfilePage() {
         router.push('/')
       }, 2000)
     } catch (error) {
-      console.error('Error deleting account:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error deleting account:', error);
       showNotification('error', 'Failed to delete account')
       // Still redirect even if deletion fails
       setTimeout(() => {
@@ -323,14 +323,14 @@ export default function ProfilePage() {
       await supabase.auth.signOut()
       router.push('/auth/login')
     } catch (error) {
-      console.error('Error during logout:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error during logout:', error);
       // Still redirect even if logout fails
       router.push('/auth/login')
     }
   }
 
   const handleStartAssessment = useCallback(() => {
-    console.log('Starting assessment...')
     setShowQuestionnaire(true)
   }, [])
 
@@ -356,7 +356,8 @@ export default function ProfilePage() {
             setTemperamentProfile(temperamentData)
           }
         } catch (err) {
-          console.error('Error fetching temperament profile:', err)
+          // TODO: Replace with proper error handling
+    // console.error('Error fetching temperament profile:', err);
         }
       }
       fetchTemperamentProfile()

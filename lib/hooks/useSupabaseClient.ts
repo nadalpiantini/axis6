@@ -40,7 +40,8 @@ export function useSupabaseClient(): UseSupabaseClientReturn {
       setIsLoading(false)
       
       // Log error for debugging
-      console.error('Supabase client initialization failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Supabase client initialization failed:', error);
     }
   }, [])
 

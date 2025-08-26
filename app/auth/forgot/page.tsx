@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { Mail, ChevronRight, ArrowLeft } from 'lucide-react'
@@ -25,7 +27,7 @@ export default function ForgotPasswordPage() {
       })
 
       if (error) {
-        console.error('Password reset error:', error)
+        logger.error('Password reset error:', error)
         setError(error.message)
         return
       }
@@ -46,13 +48,13 @@ export default function ForgotPasswordPage() {
           })
         })
       } catch (emailError) {
-        console.warn('Failed to send custom password reset email:', emailError)
+        logger.warn('Failed to send custom password reset email:', emailError)
         // Don't block the flow for email failures
       }
 
       setSuccess(true)
     } catch (error) {
-      console.error('Password reset failed:', error)
+      logger.error('Password reset failed:', error)
       setError('Failed to send password reset email. Please try again.')
     } finally {
       setLoading(false)

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { activityRecommender } from '@/lib/ai/activity-recommender'
@@ -77,7 +79,7 @@ export async function POST(request: NextRequest) {
       data: recommendations
     })
   } catch (error) {
-    console.error('Activity recommendation API error:', error)
+    logger.error('Activity recommendation API error:', error)
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(

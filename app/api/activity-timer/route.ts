@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -24,7 +26,7 @@ export async function POST(request: Request) {
         })
       
       if (error) {
-        console.error('Error starting timer:', error)
+        logger.error('Error starting timer:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
       }
       
@@ -39,7 +41,7 @@ export async function POST(request: Request) {
         })
       
       if (error) {
-        console.error('Error stopping timer:', error)
+        logger.error('Error stopping timer:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
       }
       
@@ -50,7 +52,7 @@ export async function POST(request: Request) {
     }
     
   } catch (error) {
-    console.error('Activity timer error:', error)
+    logger.error('Activity timer error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -77,13 +79,13 @@ export async function GET() {
       .limit(1)
     
     if (error) {
-      console.error('Error fetching active timer:', error)
+      logger.error('Error fetching active timer:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json({ activeTimer: data?.[0] || null })
   } catch (error) {
-    console.error('Activity timer GET error:', error)
+    logger.error('Activity timer GET error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

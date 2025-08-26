@@ -1,78 +1,79 @@
 {
-  "timestamp": "2025-08-26T14:09:00.234Z",
+  "timestamp": "2025-08-26T14:40:37.732Z",
   "baseUrl": "https://axis6.app",
   "summary": {
     "totalChecks": 10,
     "passed": 10,
     "failed": 0,
-    "warnings": 3
+    "warnings": 4
   },
   "results": [
     {
       "name": "Website Accessibility",
       "status": "PASS",
-      "duration": "778ms",
-      "timestamp": "2025-08-26T14:08:57.520Z"
+      "duration": "794ms",
+      "timestamp": "2025-08-26T14:40:35.172Z"
     },
     {
       "name": "API Health Check",
       "status": "PASS",
-      "duration": "822ms",
-      "timestamp": "2025-08-26T14:08:58.343Z"
+      "duration": "797ms",
+      "timestamp": "2025-08-26T14:40:35.971Z"
     },
     {
       "name": "Database Connectivity",
       "status": "PASS",
-      "duration": "199ms",
-      "timestamp": "2025-08-26T14:08:58.542Z"
+      "duration": "182ms",
+      "timestamp": "2025-08-26T14:40:36.153Z"
     },
     {
       "name": "SSL Certificate",
       "status": "PASS",
-      "duration": "133ms",
-      "timestamp": "2025-08-26T14:08:58.675Z"
+      "duration": "169ms",
+      "timestamp": "2025-08-26T14:40:36.321Z"
     },
     {
       "name": "Performance Metrics",
       "status": "PASS",
-      "duration": "273ms",
-      "timestamp": "2025-08-26T14:08:58.948Z"
+      "duration": "311ms",
+      "timestamp": "2025-08-26T14:40:36.633Z"
     },
     {
       "name": "Security Headers",
       "status": "PASS",
-      "duration": "144ms",
-      "timestamp": "2025-08-26T14:08:59.092Z"
+      "duration": "152ms",
+      "timestamp": "2025-08-26T14:40:36.785Z"
     },
     {
       "name": "CDN & Caching",
       "status": "PASS",
-      "duration": "95ms",
-      "timestamp": "2025-08-26T14:08:59.187Z"
+      "duration": "88ms",
+      "timestamp": "2025-08-26T14:40:36.873Z"
     },
     {
       "name": "Circuit Breakers",
       "status": "PASS",
-      "duration": "607ms",
-      "timestamp": "2025-08-26T14:08:59.795Z"
+      "duration": "388ms",
+      "timestamp": "2025-08-26T14:40:37.261Z"
     },
     {
       "name": "Monitoring Systems",
       "status": "PASS",
-      "duration": "286ms",
-      "timestamp": "2025-08-26T14:09:00.080Z"
+      "duration": "312ms",
+      "timestamp": "2025-08-26T14:40:37.574Z"
     },
     {
       "name": "Error Rates",
       "status": "PASS",
-      "duration": "153ms",
-      "timestamp": "2025-08-26T14:09:00.233Z"
+      "duration": "158ms",
+      "timestamp": "2025-08-26T14:40:37.731Z"
     }
   ],
   "errors": [],
   "warnings": [
-    "System health is degraded: [{\"service\":\"database\",\"status\":\"healthy\",\"responseTime\":175,\"details\":\"Query returned 1 records\",\"timestamp\":\"2025-08-26T14:08:57.829Z\"},{\"service\":\"redis\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"Redis not configured (optional service)\",\"timestamp\":\"2025-08-26T14:08:57.655Z\"},{\"service\":\"email\",\"status\":\"healthy\",\"responseTime\":680,\"details\":\"API connectivity verified\",\"timestamp\":\"2025-08-26T14:08:58.335Z\"},{\"service\":\"external\",\"status\":\"healthy\",\"responseTime\":219,\"details\":\"2/2 services responding\",\"timestamp\":\"2025-08-26T14:08:57.875Z\"},{\"service\":\"memory\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"25MB/26MB (96.2%)\",\"timestamp\":\"2025-08-26T14:08:57.660Z\"}]",
+    "System health is degraded: [{\"service\":\"database\",\"status\":\"healthy\",\"responseTime\":69,\"details\":\"Query returned 1 records\",\"timestamp\":\"2025-08-26T14:40:35.347Z\"},{\"service\":\"redis\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"Redis not configured (optional service)\",\"timestamp\":\"2025-08-26T14:40:35.279Z\"},{\"service\":\"email\",\"status\":\"healthy\",\"responseTime\":676,\"details\":\"API connectivity verified\",\"timestamp\":\"2025-08-26T14:40:35.955Z\"},{\"service\":\"external\",\"status\":\"healthy\",\"responseTime\":217,\"details\":\"2/2 services responding\",\"timestamp\":\"2025-08-26T14:40:35.496Z\"},{\"service\":\"memory\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"22MB/24MB (91.7%)\",\"timestamp\":\"2025-08-26T14:40:35.284Z\"}]",
     "Response not compressed (no content-encoding header)",
+    "Invalid x-frame-options: DENY",
     "Analytics endpoint requires authentication (expected)"
   ],
   "systemInfo": {

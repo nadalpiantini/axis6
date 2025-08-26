@@ -57,7 +57,8 @@ export default function AchievementsPage() {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
-        console.error('Error getting user:', userError)
+        // TODO: Replace with proper error handling
+    // console.error('Error getting user:', userError);
         return
       }
 
@@ -97,7 +98,8 @@ export default function AchievementsPage() {
       generateAchievements(streaksData || [], checkinsCount || 0, uniqueDaysCount)
 
     } catch (error) {
-      console.error('Error fetching user data:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error fetching user data:', error);
     } finally {
       setLoading(false)
     }

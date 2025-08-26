@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -96,7 +98,7 @@ export async function GET() {
       ])
     
     if (insertError) {
-      console.error('Failed to create user mantra record:', insertError)
+      logger.error('Failed to create user mantra record:', insertError)
     }
     
     return NextResponse.json({
@@ -110,7 +112,7 @@ export async function GET() {
     })
     
   } catch (error) {
-    console.error('Error fetching daily mantra:', error)
+    logger.error('Error fetching daily mantra:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

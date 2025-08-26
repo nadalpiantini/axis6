@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/client'
 
 export type ErrorLevel = 'info' | 'warn' | 'error' | 'critical'
@@ -80,16 +82,16 @@ class ErrorHandler {
 
     switch (errorLog.level) {
       case 'info':
-        console.info(fullMessage)
+        logger.info(fullMessage)
         break
       case 'warn':
-        console.warn(fullMessage)
+        logger.warn(fullMessage)
         break
       case 'error':
-        console.error(fullMessage)
+        logger.error(fullMessage)
         break
       case 'critical':
-        console.error('🚨 CRITICAL ERROR:', fullMessage)
+        logger.error('🚨 CRITICAL ERROR:', fullMessage)
         break
     }
   }
@@ -116,11 +118,11 @@ class ErrorHandler {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(errorLog)
         }).catch(err => {
-          console.warn('Failed to send error to analytics endpoint:', err)
+          logger.warn('Failed to send error to analytics endpoint:', err)
         })
       }
     } catch (error) {
-      console.warn('Failed to send error to external services:', error)
+      logger.warn('Failed to send error to external services:', error)
     }
   }
 
@@ -148,10 +150,10 @@ class ErrorHandler {
         })
 
       if (error) {
-        console.warn('Failed to store error in database:', error)
+        logger.warn('Failed to store error in database:', error)
       }
     } catch (dbError) {
-      console.warn('Failed to connect to database for error logging:', dbError)
+      logger.warn('Failed to connect to database for error logging:', dbError)
     }
   }
 

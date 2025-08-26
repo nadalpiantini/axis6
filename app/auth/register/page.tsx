@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -123,7 +125,7 @@ export default function RegisterPage() {
       })
 
       if (error) {
-        console.error('Registration error:', error)
+        logger.error('Registration error:', error)
         
         // Handle email confirmation errors gracefully
         if (error.message.includes('Error sending confirmation email')) {
@@ -180,7 +182,7 @@ export default function RegisterPage() {
             })
           })
         } catch (emailError) {
-          console.warn('Failed to send welcome email:', emailError)
+          logger.warn('Failed to send welcome email:', emailError)
           // Don't block registration flow for email failures
         }
 
@@ -195,7 +197,7 @@ export default function RegisterPage() {
         }
       }
     } catch (error) {
-      console.error('Registration failed:', error)
+      logger.error('Registration failed:', error)
       setError('Registration failed. Please try again.')
     } finally {
       setLoading(false)

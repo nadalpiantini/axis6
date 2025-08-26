@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -40,7 +42,7 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Supabase Error Boundary caught an error:', error, errorInfo)
+    logger.error('Supabase Error Boundary caught an error:', error, errorInfo)
     
     // Log to external service if available
     if (typeof window !== 'undefined' && 'Sentry' in window) {
@@ -78,7 +80,7 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
       // Reload the page to reset the state
       window.location.reload()
     } catch (error) {
-      console.error('Error clearing auth data:', error)
+      logger.error('Error clearing auth data:', error)
       this.handleRetry()
     }
   }

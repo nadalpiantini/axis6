@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
       .eq('shown_date', today)
     
     if (updateError) {
-      console.error('Failed to mark mantra as complete:', updateError)
+      logger.error('Failed to mark mantra as complete:', updateError)
       return NextResponse.json(
         { error: 'Failed to update mantra status' },
         { status: 500 }
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('Error completing mantra:', error)
+    logger.error('Error completing mantra:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

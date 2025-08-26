@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Smart notifications fetch error:', error)
+    logger.error('Smart notifications fetch error:', error)
     
     return NextResponse.json(
       { 
@@ -137,7 +139,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Smart notifications generation error:', error)
+    logger.error('Smart notifications generation error:', error)
     
     return NextResponse.json(
       { 
@@ -232,7 +234,7 @@ export async function PATCH(request: NextRequest) {
       message: `Notification ${action} successfully`
     })
   } catch (error) {
-    console.error('Notification update error:', error)
+    logger.error('Notification update error:', error)
     
     return NextResponse.json(
       { 

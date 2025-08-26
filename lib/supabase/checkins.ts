@@ -184,7 +184,8 @@ async function recalculateStreak(userId: string, categoryId: number) {
   })
 
   if (error) {
-    console.error('Error recalculating streak:', error)
+    // TODO: Replace with proper error handling
+    // console.error('Error recalculating streak:', error);
     // Don't throw - this shouldn't block the check-in
   }
 }

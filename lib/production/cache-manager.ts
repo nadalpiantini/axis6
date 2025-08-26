@@ -61,9 +61,7 @@ class CacheManager {
       
       // Test connection
       await this.redis.ping()
-      console.log('Redis cache initialized successfully')
-    } catch (error) {
-      console.warn('Redis cache initialization failed:', error)
+      } catch (error) {
       this.redis = null
     }
   }
@@ -96,8 +94,7 @@ class CacheManager {
           return redisResult
         }
       } catch (error) {
-        console.warn('Redis get error:', error)
-      }
+        }
     }
     
     // Try browser cache (if available)
@@ -134,8 +131,7 @@ class CacheManager {
       try {
         await this.setInRedis(key, data, ttl, tags)
       } catch (error) {
-        console.warn('Redis set error:', error)
-      }
+        }
     }
     
     // Set in browser cache
@@ -158,8 +154,7 @@ class CacheManager {
       try {
         await this.redis.del(key)
       } catch (error) {
-        console.warn('Redis delete error:', error)
-      }
+        }
     }
     
     // Delete from browser
@@ -187,8 +182,7 @@ class CacheManager {
           await this.redis.del(...keys)
         }
       } catch (error) {
-        console.warn('Redis clear error:', error)
-      }
+        }
     }
     
     // Clear browser cache
@@ -228,8 +222,7 @@ class CacheManager {
           }
         }
       } catch (error) {
-        console.warn('Redis tag invalidation error:', error)
-      }
+        }
     }
     
     this.updateStats()
@@ -288,7 +281,6 @@ class CacheManager {
         ? this.decompress(parsed) 
         : parsed
     } catch (error) {
-      console.warn('Redis data parsing error:', error)
       await this.redis.del(redisKey)
       return null
     }
@@ -350,8 +342,7 @@ class CacheManager {
       localStorage.setItem(`cache_${key}`, JSON.stringify(item))
     } catch (error) {
       // LocalStorage quota exceeded or other error
-      console.warn('Browser cache set error:', error)
-    }
+      }
   }
   
   /**
@@ -463,8 +454,7 @@ class CacheManager {
         const data = await loader()
         await this.set(key, data)
       } catch (error) {
-        console.warn(`Cache warm-up failed for ${key}:`, error)
-      }
+        }
     })
     
     await Promise.allSettled(promises)

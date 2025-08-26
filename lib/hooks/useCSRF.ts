@@ -159,7 +159,8 @@ export function useCSRF() {
  *       // Retry the request...
  *     }
  *   } catch (error) {
- *     console.error('Request failed:', error)
+ *     // TODO: Replace with proper error handling
+    // console.error('Request failed:', error);
  *   }
  * }
  */

@@ -115,7 +115,8 @@ export function EnhancedTemperamentQuestionnaire({
 
         setQuestions(questionsData || [])
       } catch (error) {
-        console.error('Error fetching questions:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Error fetching questions:', error);
       } finally {
         setLoading(false)
       }
@@ -171,7 +172,8 @@ export function EnhancedTemperamentQuestionnaire({
         setTimeout(() => setShowAIInsight(false), 3000)
       }
     } catch (error) {
-      console.error('Failed to generate follow-up question:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to generate follow-up question:', error);
     }
   }, [useAI, currentQuestionIndex, responses, questions, language])
 
@@ -207,7 +209,8 @@ export function EnhancedTemperamentQuestionnaire({
           session_id: sessionId
         })
     } catch (error) {
-      console.error('Error saving response:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving response:', error);
     }
 
     // Generate follow-up question if using AI
@@ -284,7 +287,8 @@ export function EnhancedTemperamentQuestionnaire({
         onComplete(result)
       }
     } catch (error) {
-      console.error('Error submitting questionnaire:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error submitting questionnaire:', error);
       
       // Fallback to basic calculation if AI fails
       const { data: result } = await supabase

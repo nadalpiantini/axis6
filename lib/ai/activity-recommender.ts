@@ -84,7 +84,8 @@ export class ActivityRecommender {
 
       return enhancedActivities
     } catch (error) {
-      console.error('Activity recommendation failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Activity recommendation failed:', error);
       return this.getDefaultActivities(input)
     }
   }
@@ -391,7 +392,8 @@ export class ActivityRecommender {
         })
     } catch (error) {
       // Silent fail - not critical
-      console.error('Failed to store recommendations:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to store recommendations:', error);
     }
   }
 

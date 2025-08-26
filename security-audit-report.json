@@ -1,0 +1,384 @@
+{
+  "timestamp": "2025-08-26T14:38:26.207Z",
+  "securityScore": 100,
+  "summary": {
+    "vulnerabilities": 34,
+    "warnings": 33,
+    "critical": 13,
+    "high": 3,
+    "medium": 6,
+    "low": 12
+  },
+  "vulnerabilities": [
+    {
+      "type": "weak_secret",
+      "severity": "medium",
+      "description": "Potentially weak secret in STRIPE_WEBHOOK_SECRET",
+      "fix": "Use strong, randomly generated secrets"
+    },
+    {
+      "type": "file_permissions",
+      "severity": "medium",
+      "description": "File .env.local is readable by others",
+      "fix": "chmod 600 .env.local"
+    },
+    {
+      "type": "file_permissions",
+      "severity": "medium",
+      "description": "File package-lock.json is readable by others",
+      "fix": "chmod 600 package-lock.json"
+    },
+    {
+      "type": "unsafe_csp",
+      "severity": "high",
+      "description": "CSP allows unsafe-inline scripts",
+      "fix": "Implement hash-based or nonce-based CSP"
+    },
+    {
+      "type": "unhashed_password",
+      "severity": "critical",
+      "description": "Potential unhashed password handling in register/route.ts",
+      "fix": "Implement proper password hashing"
+    },
+    {
+      "type": "unhashed_password",
+      "severity": "critical",
+      "description": "Potential unhashed password handling in login/route.ts",
+      "fix": "Implement proper password hashing"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in time-blocks/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in my-day/stats/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in health/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in email/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in email/test/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in auth/test/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in auth/register/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in ai/smart-notifications/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in ai/recommendations/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in ai/optimal-times/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in ai/behavior-analysis/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in activity-timer/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "unsafe_csp_directive",
+      "severity": "high",
+      "description": "CSP contains unsafe directive: 'unsafe-inline'",
+      "fix": "Remove unsafe directives and use nonce or hash-based CSP"
+    },
+    {
+      "type": "unsafe_csp_directive",
+      "severity": "high",
+      "description": "CSP contains unsafe directive: 'unsafe-eval'",
+      "fix": "Remove unsafe directives and use nonce or hash-based CSP"
+    },
+    {
+      "type": "unsafe_csp_directive",
+      "severity": "medium",
+      "description": "CSP contains unsafe directive: data:",
+      "fix": "Remove unsafe directives and use nonce or hash-based CSP"
+    },
+    {
+      "type": "unsafe_csp_directive",
+      "severity": "medium",
+      "description": "CSP contains unsafe directive: *",
+      "fix": "Remove unsafe directives and use nonce or hash-based CSP"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "medium",
+      "description": "Error boundaries may leak sensitive information",
+      "fix": "Ensure error details are hidden in production"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in .vercel/output/functions/api/mantras.func/index.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in .vercel/output/functions/middleware.func/index.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in .vercel/output/static/_worker.js/__next-on-pages-dist__/functions/api/mantras.func.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in .vercel/output/static/_worker.js/__next-on-pages-dist__/functions/middleware.func.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in lib/supabase/database.types.ts",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/init-supabase.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/simple-auth-test.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/test-auth-flow.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/test-mvp-endpoints.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/verify-supabase-config.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in tests/e2e/user-journey.spec.ts",
+      "fix": "Move secrets to environment variables"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "sql_injection_risk",
+      "description": "Potential SQL injection risk in test/route.ts",
+      "fix": "Use parameterized queries"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in checkins.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in debug.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in queries.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in rpc-functions.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in queries/optimized-dashboard.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in time-blocks/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in streaks/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in monitoring/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in monitoring/report/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in monitoring/report/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in monitoring/logs/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in monitoring/logs/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in mantras/complete/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in health/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in email/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in email/test/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in email/test/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in csp-report/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in csp-report/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in checkins/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in categories/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "no_auth_check",
+      "description": "No authentication check in auth/test/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in auth/register/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in auth/login/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in analytics/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in ai/smart-notifications/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in ai/recommendations/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in ai/optimal-times/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in ai/behavior-analysis/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in activity-timer/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_csp_directive",
+      "description": "CSP missing recommended directive: frame-ancestors"
+    },
+    {
+      "type": "rate_limit_check_failed",
+      "description": "Could not analyze rate limiting configuration"
+    }
+  ],
+  "recommendations": []
+}

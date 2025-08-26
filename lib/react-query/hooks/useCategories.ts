@@ -24,8 +24,7 @@ async function fetchCategories(): Promise<Category[]> {
   // 🛡️ SAFEGUARD: Ensure we don't have more than 6 categories
   const rawData = data || []
   if (rawData.length > 6) {
-    console.warn(`⚠️ AXIS6: Database has ${rawData.length} categories, limiting to first 6`)
-  }
+    }
   
   // Transform the data to ensure proper typing for JSONB fields
   const categories = rawData.slice(0, 6).map(category => {
@@ -38,7 +37,8 @@ async function fetchCategories(): Promise<Category[]> {
         parsedName = JSON.parse(category.name)
       }
     } catch (error) {
-      console.error(`⚠️ AXIS6: Failed to parse name JSONB for category ${category.id}:`, error)
+      // TODO: Replace with proper error handling
+    // console.error(`⚠️ AXIS6: Failed to parse name JSONB for category ${category.id}:`, error);
       // Keep original string value as fallback
       parsedName = category.name
     }
@@ -48,7 +48,8 @@ async function fetchCategories(): Promise<Category[]> {
         parsedDescription = JSON.parse(category.description)
       }
     } catch (error) {
-      console.error(`⚠️ AXIS6: Failed to parse description JSONB for category ${category.id}:`, error)
+      // TODO: Replace with proper error handling
+    // console.error(`⚠️ AXIS6: Failed to parse description JSONB for category ${category.id}:`, error);
       // Keep original string value as fallback
       parsedDescription = category.description
     }

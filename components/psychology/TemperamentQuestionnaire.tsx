@@ -104,7 +104,8 @@ export function TemperamentQuestionnaire({
 
         setQuestions(questionsData || [])
       } catch (error) {
-        console.error('Error fetching questions:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Error fetching questions:', error);
       } finally {
         setLoading(false)
       }
@@ -138,7 +139,8 @@ export function TemperamentQuestionnaire({
           session_id: sessionId
         })
     } catch (error) {
-      console.error('Error saving response:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving response:', error);
     }
   }, [currentQuestion, userId, sessionId, supabase])
 
@@ -191,7 +193,8 @@ export function TemperamentQuestionnaire({
 
       onComplete(result)
     } catch (error) {
-      console.error('Error submitting questionnaire:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error submitting questionnaire:', error);
     } finally {
       setSubmitting(false)
     }

@@ -226,8 +226,7 @@ class AnalyticsManager {
         }))
       })
     } catch (error) {
-      console.warn('Web Vitals tracking failed:', error)
-    }
+      }
   }
   
   /**
@@ -294,8 +293,7 @@ class AnalyticsManager {
         window.va('event', { name: event.name, data: event.properties })
       }
     } catch (error) {
-      console.warn('Vercel Analytics tracking failed:', error)
-    }
+      }
   }
   
   /**
@@ -315,8 +313,7 @@ class AnalyticsManager {
         await this.flushAnalytics()
       }
     } catch (error) {
-      console.warn('Custom analytics tracking failed:', error)
-    }
+      }
   }
   
   /**
@@ -338,8 +335,7 @@ class AnalyticsManager {
         localStorage.removeItem('pending_analytics')
       }
     } catch (error) {
-      console.warn('Analytics flush failed:', error)
-    }
+      }
   }
   
   /**

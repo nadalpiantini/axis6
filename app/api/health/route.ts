@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 /**
  * Production Health Check API Endpoint
  * Comprehensive system health monitoring
@@ -129,7 +131,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     })
     
   } catch (error) {
-    console.error('Health check error:', error)
+    logger.error('Health check error:', error)
     
     return NextResponse.json(
       {

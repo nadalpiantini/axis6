@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -20,13 +22,13 @@ export async function GET(request: Request) {
       })
     
     if (error) {
-      console.error('Error fetching time distribution:', error)
+      logger.error('Error fetching time distribution:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json(data)
   } catch (error) {
-    console.error('My day stats error:', error)
+    logger.error('My day stats error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

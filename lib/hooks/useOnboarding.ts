@@ -87,7 +87,6 @@ export function useOnboarding() {
         )
 
       if (streaksError) {
-        console.warn('Error initializing streaks, but continuing onboarding:', streaksError)
         // Don't block onboarding for streak initialization failures
       }
 
@@ -95,7 +94,8 @@ export function useOnboarding() {
       router.push('/dashboard')
       
     } catch (error) {
-      console.error('Onboarding failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Onboarding failed:', error);
       setState(prev => ({ 
         ...prev, 
         error: error instanceof Error ? error.message : 'Error during setup process',

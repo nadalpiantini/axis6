@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Optimal times prediction API error:', error)
+    logger.error('Optimal times prediction API error:', error)
     
     return NextResponse.json(
       { 
@@ -140,7 +142,7 @@ export async function POST(request: NextRequest) {
         .insert(reminderRows)
 
       if (insertError) {
-        console.error('Failed to store adaptive reminders:', insertError)
+        logger.error('Failed to store adaptive reminders:', insertError)
       }
     }
 
@@ -174,7 +176,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Adaptive reminders API error:', error)
+    logger.error('Adaptive reminders API error:', error)
     
     return NextResponse.json(
       { 

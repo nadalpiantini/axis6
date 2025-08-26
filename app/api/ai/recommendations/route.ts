@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -127,7 +129,7 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Activity recommendations API error:', error)
+    logger.error('Activity recommendations API error:', error)
     
     return NextResponse.json(
       { 
@@ -197,7 +199,7 @@ export async function POST(request: NextRequest) {
       .insert(goalRows)
 
     if (insertError) {
-      console.error('Failed to store goals:', insertError)
+      logger.error('Failed to store goals:', insertError)
       // Continue without failing the request
     }
 
@@ -227,7 +229,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Goal recommendations API error:', error)
+    logger.error('Goal recommendations API error:', error)
     
     return NextResponse.json(
       { 

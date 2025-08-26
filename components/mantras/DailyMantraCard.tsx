@@ -34,7 +34,8 @@ export function DailyMantraCard() {
         setCompleted(data.completed || false)
       }
     } catch (error) {
-      console.error('Failed to fetch daily mantra:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to fetch daily mantra:', error);
     } finally {
       setLoading(false)
     }
@@ -54,7 +55,8 @@ export function DailyMantraCard() {
         setCompleted(true)
       }
     } catch (error) {
-      console.error('Failed to mark mantra as complete:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to mark mantra as complete:', error);
     }
   }
 

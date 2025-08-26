@@ -111,9 +111,9 @@ export function clearSupabaseData(): void {
       }
     })
     
-    console.log('Supabase data cleared successfully')
-  } catch (error) {
-    console.error('Error clearing Supabase data:', error)
+    } catch (error) {
+    // TODO: Replace with proper error handling
+    // console.error('Error clearing Supabase data:', error);
   }
 }
 
@@ -125,20 +125,17 @@ export function logSupabaseDebug(): void {
   
   const debugInfo = getSupabaseDebugInfo()
   
-  console.log('Environment:', debugInfo.environment)
-  console.log('Browser:', debugInfo.browser)
-  console.log('Connection:', debugInfo.connection)
-  
   // Check for common issues
   if (!debugInfo.environment.hasUrl) {
-    console.error('❌ Missing NEXT_PUBLIC_SUPABASE_URL')
+    // TODO: Replace with proper error handling
+    // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_URL');
   }
   if (!debugInfo.environment.hasKey) {
-    console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    // TODO: Replace with proper error handling
+    // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
   if (debugInfo.environment.keyLength < 100) {
-    console.warn('⚠️ Supabase key seems too short')
-  }
+    }
   
   console.groupEnd()
 }
@@ -157,6 +154,5 @@ export function initSupabaseDebug(): void {
       log: logSupabaseDebug,
     }
     
-    console.log('🔍 Supabase debug helpers available at window.supabaseDebug')
-  }
+    }
 }

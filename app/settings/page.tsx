@@ -136,7 +136,8 @@ export default function SettingsPage() {
       refetch() // Refresh categories data
       
     } catch (error) {
-      console.error('Error updating axis:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error updating axis:', error);
       showNotification('error', 'Failed to update axis. Please try again.')
     } finally {
       setSaving(false)
@@ -199,7 +200,8 @@ export default function SettingsPage() {
       refetch()
       
     } catch (error) {
-      console.error('Error resetting axes:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error resetting axes:', error);
       showNotification('error', 'Failed to reset axes. Please try again.')
     } finally {
       setSaving(false)

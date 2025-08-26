@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -29,7 +31,7 @@ export default function LoginPage() {
       })
 
       if (error) {
-        console.error('Login error:', error)
+        logger.error('Login error:', error)
         
         // Handle specific error cases with user-friendly messages
         if (error.message.toLowerCase().includes('invalid login credentials')) {
@@ -49,7 +51,7 @@ export default function LoginPage() {
         router.push('/dashboard')
       }
     } catch (error) {
-      console.error('Login failed:', error)
+      logger.error('Login failed:', error)
       setError('Login failed. Please check your internet connection and try again.')
     } finally {
       setLoading(false)

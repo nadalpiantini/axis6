@@ -115,7 +115,8 @@ export function ActivityTimer({
       setIsRunning(true)
       setElapsedSeconds(0)
     } catch (error: any) {
-      console.error('Error starting timer:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error starting timer:', error);
       setError(error?.message || 'Failed to start timer. Please try again.')
     }
   }
@@ -142,7 +143,8 @@ export function ActivityTimer({
       setActiveLogId(null)
       onClose()
     } catch (error) {
-      console.error('Error stopping timer:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error stopping timer:', error);
     }
   }
 

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { errorHandler } from './handler'
 import type { ErrorCategory } from './handler'
@@ -71,7 +73,7 @@ export function withErrorHandling(
       // Log successful requests in development
       if (process.env['NODE_ENV'] === 'development') {
         const duration = Date.now() - startTime
-        console.log(`✅ ${method} ${path} - ${response.status} (${duration}ms)`)
+        logger.log(`✅ ${method} ${path} - ${response.status} (${duration}ms)`)
         
         // Warn about slow requests
         if (duration > 2000) {
@@ -301,6 +303,6 @@ export function checkRateLimit(
 export function logRequest(req: NextRequest, details?: any) {
   if (process.env['NODE_ENV'] === 'development') {
     const url = new URL(req.url)
-    console.log(`📨 ${req.method} ${url.pathname}${url.search}`, details ? { ...details } : '')
+    logger.log(`📨 ${req.method} ${url.pathname}${url.search}`, details ? { ...details } : '')
   }
 }

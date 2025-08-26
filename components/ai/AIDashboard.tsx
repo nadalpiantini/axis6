@@ -61,7 +61,8 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
     try {
       await refreshAIData()
     } catch (error) {
-      console.error('Failed to refresh AI data:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to refresh AI data:', error);
     } finally {
       setIsRefreshing(false)
     }

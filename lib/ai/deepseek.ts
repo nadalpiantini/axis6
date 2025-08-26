@@ -21,7 +21,6 @@ const getConfig = () => {
       AI_CACHE_TTL: process.env['AI_CACHE_TTL'] || '3600'
     })
   } catch (error) {
-    console.warn('DeepSeek configuration warning:', error)
     // Return safe defaults when configuration fails
     return {
       DEEPSEEK_API_KEY: undefined,
@@ -69,8 +68,7 @@ export class DeepSeekClient {
     this.cacheTTL = config.AI_CACHE_TTL * 1000 // Convert to milliseconds
     
     if (!this.apiKey && process.env.NODE_ENV !== 'production') {
-      console.info('ℹ️  DeepSeek AI features disabled - DEEPSEEK_API_KEY not configured')
-    }
+      }
   }
 
   private getCacheKey(messages: ChatMessage[], temperature?: number): string {
@@ -145,7 +143,8 @@ export class DeepSeekClient {
 
       return data
     } catch (error) {
-      console.error('DeepSeek API call failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('DeepSeek API call failed:', error);
       throw error
     }
   }
@@ -204,7 +203,8 @@ Important: Return ONLY the JSON object, no additional text or formatting.`
       const parsed = JSON.parse(cleanedResponse)
       return schema.parse(parsed)
     } catch (error) {
-      console.error('Failed to parse structured output:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to parse structured output:', error);
       throw new Error('Failed to generate valid structured output')
     }
   }

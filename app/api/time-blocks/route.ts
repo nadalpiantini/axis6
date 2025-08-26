@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -20,13 +22,13 @@ export async function GET(request: Request) {
       })
     
     if (error) {
-      console.error('Error fetching time blocks:', error)
+      logger.error('Error fetching time blocks:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Time blocks GET error:', error)
+    logger.error('Time blocks GET error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -62,13 +64,13 @@ export async function POST(request: Request) {
       .single()
     
     if (error) {
-      console.error('Error creating time block:', error)
+      logger.error('Error creating time block:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Time blocks POST error:', error)
+    logger.error('Time blocks POST error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -104,13 +106,13 @@ export async function PUT(request: Request) {
       .single()
     
     if (error) {
-      console.error('Error updating time block:', error)
+      logger.error('Error updating time block:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Time blocks PUT error:', error)
+    logger.error('Time blocks PUT error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -141,13 +143,13 @@ export async function DELETE(request: Request) {
       .eq('user_id', user.id)
     
     if (error) {
-      console.error('Error deleting time block:', error)
+      logger.error('Error deleting time block:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Time blocks DELETE error:', error)
+    logger.error('Time blocks DELETE error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

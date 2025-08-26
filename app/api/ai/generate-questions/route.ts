@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { deepseekClient } from '@/lib/ai/deepseek'
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
       data: question
     })
   } catch (error) {
-    console.error('Question generation API error:', error)
+    logger.error('Question generation API error:', error)
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(

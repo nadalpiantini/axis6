@@ -128,7 +128,8 @@ export function PlanMyDay({
       setSelectedBlocks(new Set(nonConflicting.map((_, i) => i)))
     } catch (err) {
       setError('Failed to generate plan. Please try again.')
-      console.error('Error generating plan:', err)
+      // TODO: Replace with proper error handling
+    // console.error('Error generating plan:', err);
     } finally {
       setIsGenerating(false)
     }
@@ -168,7 +169,8 @@ export function PlanMyDay({
       onClose()
     } catch (error) {
       setError('Failed to create time blocks. Please try again.')
-      console.error('Error creating blocks:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error creating blocks:', error);
     }
   }
   

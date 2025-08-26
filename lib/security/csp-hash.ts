@@ -172,17 +172,14 @@ export interface CSPViolation {
 export function handleCSPViolation(violation: CSPViolation): void {
   // In development, log to console
   if (process.env['NODE_ENV'] === 'development') {
-    console.warn('🔒 CSP Violation:', {
-      directive: violation['violated-directive'],
-      blockedUri: violation['blocked-uri'],
-      sourceFile: violation['source-file'],
-      sample: violation['script-sample']?.substring(0, 100),
+    ,
     })
   }
   
   // In production, send to monitoring service
   if (process.env['NODE_ENV'] === 'production') {
     // Could send to Sentry, DataDog, etc.
-    console.error('CSP Violation in production:', violation)
+    // TODO: Replace with proper error handling
+    // console.error('CSP Violation in production:', violation);
   }
 }

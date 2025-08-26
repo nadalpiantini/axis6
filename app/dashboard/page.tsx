@@ -234,7 +234,6 @@ export default function DashboardPageV2() {
     () => {
       // 🛡️ NULL CHECK: Ensure categories is an array
       if (!Array.isArray(categories) || categories.length === 0) {
-        console.warn('⚠️ AXIS6: Categories not loaded or empty array')
         return []
       }
       
@@ -243,8 +242,7 @@ export default function DashboardPageV2() {
       
       // Log if we had to truncate (debugging aid)
       if (categories.length > 6) {
-        console.warn(`⚠️ AXIS6: Found ${categories.length} categories, limiting to 6 for hexagon layout`)
-      }
+        }
       
       return limitedCategories.map(cat => {
         // 🛡️ IMPROVED JSONB NAME PARSING with multiple fallbacks
@@ -267,8 +265,7 @@ export default function DashboardPageV2() {
         } catch (error) {
           // If all parsing fails, use slug
           displayName = cat.slug || 'Unknown'
-          console.warn(`⚠️ AXIS6: Failed to parse name for category ${cat.id}:`, error)
-        }
+          }
         
         return {
           id: cat.id,

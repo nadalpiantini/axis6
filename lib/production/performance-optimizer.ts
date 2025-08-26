@@ -73,10 +73,8 @@ class PerformanceOptimizer {
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js')
-        console.log('Service Worker registered:', registration)
-      } catch (error) {
-        console.warn('Service Worker registration failed:', error)
-      }
+        } catch (error) {
+        }
     }
   }
   
@@ -193,7 +191,6 @@ class PerformanceOptimizer {
         const observer = new PerformanceObserver((list) => {
           list.getEntries().forEach((entry) => {
             if (entry.entryType === 'longtask') {
-              console.warn('Long task detected:', entry)
               this.reportPerformanceIssue('long_task', entry.duration)
             }
           })
@@ -201,8 +198,7 @@ class PerformanceOptimizer {
         
         observer.observe({ entryTypes: ['longtask'] })
       } catch (error) {
-        console.warn('Performance Observer not supported')
-      }
+        }
     }
     
     // Monitor memory usage
@@ -458,8 +454,6 @@ export const performanceUtils = {
       const start = performance.now()
       const result = fn(...args)
       const end = performance.now()
-      
-      console.log(`${name} took ${end - start}ms`)
       
       if (end - start > 100) { // Log slow operations
         performanceOptimizer['reportPerformanceIssue']('slow_function', end - start)
