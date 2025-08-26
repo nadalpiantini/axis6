@@ -4,6 +4,7 @@ import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
 import { reportError } from '@/lib/monitoring/error-tracking'
+import { logger } from '@/lib/logger'
 
 interface ErrorBoundaryState {
   hasError: boolean
@@ -39,10 +40,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   override componentDidCatch(error: Error, errorInfo: any) {
-    // Log error in development only
-    if (process.env['NODE_ENV'] === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo)
-    }
+    // Log error using centralized logger
+    logger.error('ErrorBoundary caught an error', error)
     
     // Use enhanced error tracking system
     reportError(error, 'high', {

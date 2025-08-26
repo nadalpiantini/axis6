@@ -1,10 +1,13 @@
 'use client'
 
-import { memo, useMemo, useCallback, useEffect } from 'react'
+import { memo, useMemo, useCallback, useEffect, lazy, Suspense } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { Flame, Settings, LogOut, TrendingUp, Trophy, User } from 'lucide-react'
+
+// Lazy load heavy components for better bundle splitting
+const DailyMantraCard = lazy(() => import('@/components/mantras/DailyMantraCard').then(mod => ({ default: mod.DailyMantraCard })))
 
 // React Query hooks
 import { 
@@ -30,7 +33,6 @@ import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
 import { ClickableSVG } from '@/components/ui/ClickableSVG'
-import { DailyMantraCard } from '@/components/mantras/DailyMantraCard'
 
 // Memoized header component
 const DashboardHeader = memo(({ 
@@ -277,13 +279,48 @@ export default function DashboardPageV2() {
   )
   
   const axes = useMemo(
-    () => categories.map(cat => ({
-      id: cat.id,
-      name: cat.name?.['en'] || cat.slug,
-      color: cat.color,
-      icon: cat.icon,
-      completed: completedCategoryIds.has(cat.id)
-    })),
+    () => {
+      // 🛡️ SAFEGUARD: Limit to exactly 6 categories (AXIS6 hexagon design)
+      const limitedCategories = categories.slice(0, 6)
+      
+      // Log if we had to truncate (debugging aid)
+      if (categories.length > 6) {
+        console.warn(`⚠️ AXIS6: Found ${categories.length} categories, limiting to 6 for hexagon layout`)
+      }
+      
+      return limitedCategories.map(cat => {
+        // 🛡️ IMPROVED JSONB NAME PARSING with multiple fallbacks
+        let displayName = 'Unknown'
+        
+        try {
+          // Try object access first
+          if (typeof cat.name === 'object' && cat.name?.en) {
+            displayName = cat.name.en
+          }
+          // Try string parsing as fallback
+          else if (typeof cat.name === 'string') {
+            const parsed = JSON.parse(cat.name)
+            displayName = parsed.en || parsed.es || cat.slug || 'Unknown'
+          }
+          // Final fallback to slug
+          else {
+            displayName = cat.slug || 'Unknown'
+          }
+        } catch (error) {
+          // If all parsing fails, use slug
+          displayName = cat.slug || 'Unknown'
+          console.warn(`⚠️ AXIS6: Failed to parse name for category ${cat.id}:`, error)
+        }
+        
+        return {
+          id: cat.id,
+          name: displayName,
+          color: cat.color,
+          icon: cat.icon,
+          completed: completedCategoryIds.has(cat.id)
+        }
+      })
+    },
     [categories, completedCategoryIds]
   )
 
@@ -429,7 +466,20 @@ export default function DashboardPageV2() {
             {/* Stats Section */}
             <div className="space-y-4 sm:space-y-6">
               {/* Daily Mantra */}
-              <DailyMantraCard />
+              <Suspense fallback={
+                <div className="glass rounded-xl p-4 sm:p-6 animate-pulse">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-5 h-5 bg-white/20 rounded"></div>
+                    <div className="h-4 bg-white/20 rounded w-24"></div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-white/20 rounded w-full"></div>
+                    <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                  </div>
+                </div>
+              }>
+                <DailyMantraCard />
+              </Suspense>
               
               {/* Quick Stats */}
               <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">

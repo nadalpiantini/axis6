@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 // GET /api/streaks - Get user's streaks
 export async function GET(request: NextRequest) {
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     const { data: streaks, error } = await query
     
     if (error) {
-      console.error('Error fetching streaks:', error)
+      logger.error('Error fetching streaks', error)
       return NextResponse.json({ error: 'Failed to fetch streaks' }, { status: 500 })
     }
 
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ streaks, stats })
 
   } catch (error) {
-    console.error('Streaks API error:', error)
+    logger.error('Streaks API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       })
 
       if (error) {
-        console.error('Error recalculating streak:', error)
+        logger.error('Error recalculating streak', error)
         return NextResponse.json({ error: 'Failed to recalculate streak' }, { status: 500 })
       }
 
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Streaks POST API error:', error)
+    logger.error('Streaks POST API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

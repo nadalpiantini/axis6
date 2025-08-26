@@ -193,17 +193,15 @@ const nextConfig = {
 
   // Advanced CSP with hash-based security
   async headers() {
-    // TEMPORARY FIX: Using permissive CSP to fix button interactions in production
-    // TODO: Calculate and add proper hashes for all React event handlers
-    // Original hash-based CSP temporarily disabled - see lib/security/csp-hash.ts
+    const isDevelopment = process.env.NODE_ENV === 'development'
     
-    // let cspHeader
-    // try {
-    //   const { getCSPHeader } = await import('./lib/security/csp-hash.ts')
-    //   cspHeader = getCSPHeader()
-    // } catch (error) {
-    //   // Fallback CSP if module fails to load
-      const cspHeader = [
+    let cspHeader
+    try {
+      const { buildCSP } = await import('./lib/security/csp.js')
+      cspHeader = buildCSP(undefined, isDevelopment)
+    } catch (error) {
+      // Fallback CSP if module fails to load
+      cspHeader = [
         "default-src 'self'",
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -217,7 +215,7 @@ const nextConfig = {
         "base-uri 'self'",
         "form-action 'self' https://*.supabase.co"
       ].join('; ')
-    // }
+    }
 
     return [
       {

@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/stores/useAppStore'
+import { logger } from '@/lib/logger'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -20,10 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(session)
         }
       } catch (error) {
-        // Log error in development only
-        if (process.env['NODE_ENV'] === 'development') {
-          console.error('Error checking session:', error)
-        }
+        logger.error('Error checking session', error)
       } finally {
         setIsLoading(false)
       }

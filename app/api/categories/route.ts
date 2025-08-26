@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 // GET /api/categories - Get categories (with optional user customization)
 export async function GET(request: NextRequest) {
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { data: categories, error } = await query
     
     if (error) {
-      console.error('Error fetching categories:', error)
+      logger.error('Error fetching categories', error)
       return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
     }
 
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ categories: userCategories })
 
   } catch (error) {
-    console.error('Categories API error:', error)
+    logger.error('Categories API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -105,14 +106,14 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error creating category:', error)
+      logger.error('Error creating category', error)
       return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })
     }
 
     return NextResponse.json({ category, message: 'Category created successfully' })
 
   } catch (error) {
-    console.error('Categories POST API error:', error)
+    logger.error('Categories POST API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -154,14 +155,14 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error updating category:', error)
+      logger.error('Error updating category', error)
       return NextResponse.json({ error: 'Failed to update category or not authorized' }, { status: 500 })
     }
 
     return NextResponse.json({ category, message: 'Category updated successfully' })
 
   } catch (error) {
-    console.error('Categories PUT API error:', error)
+    logger.error('Categories PUT API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -206,14 +207,14 @@ export async function DELETE(request: NextRequest) {
       .eq('created_by', user.id) // Only allow deleting own categories
 
     if (error) {
-      console.error('Error deleting category:', error)
+      logger.error('Error deleting category', error)
       return NextResponse.json({ error: 'Failed to delete category or not authorized' }, { status: 500 })
     }
 
     return NextResponse.json({ message: 'Category deleted successfully' })
 
   } catch (error) {
-    console.error('Categories DELETE API error:', error)
+    logger.error('Categories DELETE API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

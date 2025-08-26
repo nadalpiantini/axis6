@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-// import { sendEmail } from '@/lib/email/service' // TODO: Implement email service
+import { sendEmail } from '@/lib/email/service-simple'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Missing Supabase environment variables')
+      logger.error('Missing Supabase environment variables')
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('Auth signup failed:', authError)
+      logger.error('Auth signup failed', authError)
       return NextResponse.json(
         { error: authError.message },
         { status: 400 }
@@ -87,25 +88,25 @@ export async function POST(request: NextRequest) {
       })
 
     if (profileError) {
-      console.error('Profile creation error:', profileError)
+      logger.error('Profile creation error', profileError)
       // Don't fail registration if profile exists
     }
 
-    // Send welcome email (non-blocking) - TODO: Uncomment when email service is ready
-    // try {
-    //   await sendEmail({
-    //     to: email,
-    //     type: 'welcome',
-    //     data: {
-    //       name: name,
-    //       email: email
-    //     }
-    //   })
-    //   console.log('Welcome email sent to:', email)
-    // } catch (emailError) {
-    //   // Log error but don't fail registration
-    //   console.error('Failed to send welcome email:', emailError)
-    // }
+    // Send welcome email (non-blocking)
+    try {
+      await sendEmail({
+        to: email,
+        type: 'welcome',
+        data: {
+          name: name,
+          email: email
+        }
+      })
+      logger.info('Welcome email sent', { email })
+    } catch (emailError) {
+      // Log error but don't fail registration
+      logger.error('Failed to send welcome email', emailError)
+    }
 
     return NextResponse.json({
       message: 'Registration successful! Please check your email to confirm your account.',
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('Registration error:', error)
+    logger.error('Registration error', error)
     return NextResponse.json(
       { error: `Registration failed: ${error.message}` },
       { status: 500 }

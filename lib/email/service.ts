@@ -4,7 +4,7 @@ import { PasswordResetEmail } from './templates/password-reset'
 import { WeeklyStatsEmail } from './templates/weekly-stats'
 import { NotificationEmail } from './templates/notification'
 import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
-import { logger } from '@/lib/utils/logger'
+import { logger } from '@/lib/logger'
 
 // Initialize Resend only if API key is available
 const resend = process.env['RESEND_API_KEY'] ? new Resend(process.env['RESEND_API_KEY']) : null
@@ -112,8 +112,7 @@ class EmailService {
 
   async sendPasswordReset(data: PasswordResetEmailData) {
     if (!process.env['RESEND_API_KEY']) {
-      console.log('📧 [DEV] Password reset email would be sent to:', data.email)
-      console.log('📧 [DEV] Reset URL:', data.resetUrl)
+      logger.info('Password reset email would be sent (DEV)', { email: data.email, resetUrl: data.resetUrl })
       return { success: true, id: 'dev-mode' }
     }
 
@@ -132,17 +131,17 @@ class EmailService {
         ]
       })
 
-      console.log('📧 Password reset email sent:', result.data?.id)
+      logger.info('Password reset email sent', { emailId: result.data?.id })
       return { success: true, id: result.data?.id }
     } catch (error: any) {
-      console.error('❌ Failed to send password reset email:', error)
+      logger.error('Failed to send password reset email', error)
       return { success: false, error: error.message }
     }
   }
 
   async sendWeeklyStats(data: WeeklyStatsEmailData) {
     if (!process.env['RESEND_API_KEY']) {
-      console.log('📧 [DEV] Weekly stats email would be sent to:', data.email)
+      logger.info('Weekly stats email would be sent (DEV)', { email: data.email })
       return { success: true, id: 'dev-mode' }
     }
 
@@ -161,10 +160,10 @@ class EmailService {
         ]
       })
 
-      console.log('📧 Weekly stats email sent:', result.data?.id)
+      logger.info('Weekly stats email sent', { emailId: result.data?.id })
       return { success: true, id: result.data?.id }
     } catch (error: any) {
-      console.error('❌ Failed to send weekly stats email:', error)
+      logger.error('Failed to send weekly stats email', error)
       return { success: false, error: error.message }
     }
   }

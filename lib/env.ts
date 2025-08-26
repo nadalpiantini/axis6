@@ -6,6 +6,7 @@
  */
 
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * Server-side environment variables schema
@@ -79,8 +80,7 @@ function validateServerEnv() {
   const parsed = serverEnvSchema.safeParse(process.env)
   
   if (!parsed.success) {
-    console.error('❌ Invalid environment variables:')
-    console.error(parsed.error.flatten().fieldErrors)
+    logger.error('Invalid environment variables', parsed.error.flatten().fieldErrors)
     
     // In production, throw to prevent the app from starting with invalid config
     if (process.env['NODE_ENV'] === 'production') {
@@ -88,7 +88,7 @@ function validateServerEnv() {
     }
     
     // In development, warn but continue
-    console.warn('⚠️  Running with invalid environment variables. Some features may not work.')
+    logger.warn('Running with invalid environment variables. Some features may not work.')
   }
   
   return parsed.data
@@ -107,8 +107,7 @@ function validateClientEnv() {
   })
   
   if (!parsed.success) {
-    console.error('❌ Invalid client environment variables:')
-    console.error(parsed.error.flatten().fieldErrors)
+    logger.error('Invalid client environment variables', parsed.error.flatten().fieldErrors)
     
     if (process.env['NODE_ENV'] === 'production') {
       throw new Error('Invalid client environment variables')

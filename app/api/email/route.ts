@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { emailService } from '@/lib/email/service'
+import { logger } from '@/lib/logger'
 
 // POST /api/email - Send various types of emails
 export async function POST(request: NextRequest) {
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error: any) {
-    console.error('Email API error:', error)
+    logger.error('Email API error', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
       details: error.message 
@@ -157,7 +158,7 @@ export async function GET() {
     })
 
   } catch (error: any) {
-    console.error('Email config error:', error)
+    logger.error('Email config error', error)
     return NextResponse.json({ 
       error: 'Failed to get email configuration' 
     }, { status: 500 })

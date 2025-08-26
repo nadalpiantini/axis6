@@ -155,7 +155,9 @@ export interface CSPViolationReport {
 }
 
 export function logCSPViolation(report: CSPViolationReport): void {
-  console.warn('CSP Violation:', {
+  const { logger } = require('@/lib/logger')
+  
+  logger.warn('CSP Violation detected', {
     directive: report['violated-directive'],
     blockedUri: report['blocked-uri'],
     documentUri: report['document-uri'],
@@ -165,7 +167,21 @@ export function logCSPViolation(report: CSPViolationReport): void {
   
   // In production, send to monitoring service
   if (process.env['NODE_ENV'] === 'production') {
-    // TODO: Send to Sentry or other monitoring service
-    // Sentry.captureMessage('CSP Violation', { extra: report })
+    // Send to error tracking service
+    try {
+      fetch('/api/errors/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'csp_violation',
+          error: report,
+          timestamp: new Date().toISOString()
+        })
+      }).catch(() => {
+        // Fail silently if reporting fails
+      })
+    } catch {
+      // Fail silently
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 // GET /api/analytics - Get user's analytics data
 export async function GET(request: NextRequest) {
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const { data: dailyStats, error: dailyError } = await dailyQuery
 
     if (dailyError) {
-      console.error('Error fetching daily stats:', dailyError)
+      logger.error('Error fetching daily stats', dailyError)
       return NextResponse.json({ error: 'Failed to fetch daily statistics' }, { status: 500 })
     }
 
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
     const { data: checkins, error: checkinsError } = await checkinsQuery
 
     if (checkinsError) {
-      console.error('Error fetching check-ins:', checkinsError)
+      logger.error('Error fetching check-ins', checkinsError)
       return NextResponse.json({ error: 'Failed to fetch check-ins' }, { status: 500 })
     }
 
@@ -87,7 +88,7 @@ export async function GET(request: NextRequest) {
     const { data: streaks, error: streaksError } = await streaksQuery
 
     if (streaksError) {
-      console.error('Error fetching streaks:', streaksError)
+      logger.error('Error fetching streaks', streaksError)
       return NextResponse.json({ error: 'Failed to fetch streaks' }, { status: 500 })
     }
 
@@ -178,7 +179,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ analytics })
 
   } catch (error) {
-    console.error('Analytics API error:', error)
+    logger.error('Analytics API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: exportData })
 
   } catch (error) {
-    console.error('Analytics export API error:', error)
+    logger.error('Analytics export API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

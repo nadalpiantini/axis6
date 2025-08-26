@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 // GET /api/checkins - Get user's check-ins
 export async function GET(request: NextRequest) {
@@ -46,14 +47,14 @@ export async function GET(request: NextRequest) {
     const { data: checkins, error } = await query
     
     if (error) {
-      console.error('Error fetching check-ins:', error)
+      logger.error('Error fetching check-ins', error)
       return NextResponse.json({ error: 'Failed to fetch check-ins' }, { status: 500 })
     }
 
     return NextResponse.json({ checkins })
 
   } catch (error) {
-    console.error('Check-ins API error:', error)
+    logger.error('Check-ins API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (error) {
-        console.error('Error creating check-in:', error)
+        logger.error('Error creating check-in', error)
         return NextResponse.json({ error: 'Failed to create check-in' }, { status: 500 })
       }
 
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
         .eq('completed_at', today)
 
       if (error) {
-        console.error('Error removing check-in:', error)
+        logger.error('Error removing check-in', error)
         return NextResponse.json({ error: 'Failed to remove check-in' }, { status: 500 })
       }
 
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Check-ins POST API error:', error)
+    logger.error('Check-ins POST API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -169,14 +170,14 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error updating check-in:', error)
+      logger.error('Error updating check-in', error)
       return NextResponse.json({ error: 'Failed to update check-in' }, { status: 500 })
     }
 
     return NextResponse.json({ checkin, message: 'Check-in updated successfully' })
 
   } catch (error) {
-    console.error('Check-ins PUT API error:', error)
+    logger.error('Check-ins PUT API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -209,7 +210,7 @@ export async function DELETE(request: NextRequest) {
       .eq('completed_at', date)
 
     if (error) {
-      console.error('Error deleting check-in:', error)
+      logger.error('Error deleting check-in', error)
       return NextResponse.json({ error: 'Failed to delete check-in' }, { status: 500 })
     }
 
@@ -222,7 +223,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: 'Check-in deleted successfully' })
 
   } catch (error) {
-    console.error('Check-ins DELETE API error:', error)
+    logger.error('Check-ins DELETE API error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

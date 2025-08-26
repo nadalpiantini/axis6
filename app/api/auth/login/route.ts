@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('Auth signin failed:', authError.message)
+      logger.error('Auth signin failed', authError)
       return NextResponse.json(
         { error: authError.message },
         { status: 401 }
@@ -44,10 +45,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (profileError) {
-      console.error('Profile fetch failed during login:', profileError.message)
+      logger.error('Profile fetch failed during login', profileError)
     }
 
-    console.log('User logged in successfully:', authData.user.id)
+    logger.info('User logged in successfully', { userId: authData.user.id })
 
     return NextResponse.json({
       message: 'Login successful',
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('Login endpoint error:', error.message || error)
+    logger.error('Login endpoint error', error)
     return NextResponse.json(
       { error: 'Login failed. Please try again.' },
       { status: 500 }

@@ -8,6 +8,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { protectedServices } from '@/lib/production/circuit-breaker'
 import { withEnhancedRateLimit } from '@/lib/middleware/enhanced-rate-limit'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     })
     
   } catch (error) {
-    console.error('Monitoring event processing error:', error)
+    logger.error('Monitoring event processing error', error)
     
     return NextResponse.json(
       { error: 'Failed to process monitoring event' },
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(monitoringData)
     
   } catch (error) {
-    console.error('Monitoring data retrieval error:', error)
+    logger.error('Monitoring data retrieval error', error)
     
     return NextResponse.json(
       { error: 'Failed to retrieve monitoring data' },
@@ -161,7 +162,7 @@ async function checkAlertRules(event: MonitoringEvent): Promise<AlertRule[]> {
     .eq('type', event.type)
   
   if (error) {
-    console.error('Error fetching alert rules:', error)
+    logger.error('Error fetching alert rules', error)
     return []
   }
   
@@ -207,7 +208,7 @@ async function evaluateAlertRule(rule: AlertRule, event: MonitoringEvent): Promi
         return false
     }
   } catch (error) {
-    console.error('Error evaluating alert rule:', error)
+    logger.error('Error evaluating alert rule', error)
     return false
   }
 }
@@ -221,7 +222,7 @@ async function processAlerts(alertRules: AlertRule[], event: MonitoringEvent) {
       try {
         await sendAlert(channel, rule, event)
       } catch (error) {
-        console.error(`Failed to send alert via ${channel}:`, error)
+        logger.error(`Failed to send alert via ${channel}`, error)
       }
     }
   }
@@ -272,7 +273,7 @@ Threshold: ${rule.threshold}`
  */
 async function sendEmailAlert(message: string, severity: string) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn('Resend API key not configured for email alerts')
+    logger.warn('Resend API key not configured for email alerts')
     return
   }
   
