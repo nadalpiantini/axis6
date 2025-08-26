@@ -5,10 +5,11 @@ import { logger } from '@/lib/logger'
 // POST /api/chat/rooms/[roomId]/messages/[messageId]/reactions - Add a reaction
 export async function POST(
   request: NextRequest,
-  { params }: { params: { roomId: string; messageId: string } }
+  context: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {
     const supabase = await createClient()
+    const params = await context.params
     const { roomId, messageId } = params
     
     // Get user from session
@@ -89,10 +90,11 @@ export async function POST(
 // DELETE /api/chat/rooms/[roomId]/messages/[messageId]/reactions - Remove a reaction
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { roomId: string; messageId: string } }
+  context: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {
     const supabase = await createClient()
+    const params = await context.params
     const { roomId, messageId } = params
     
     // Get user from session

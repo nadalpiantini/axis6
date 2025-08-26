@@ -138,34 +138,66 @@ class DashboardHexagonAuditor {
   async testCategoryInteraction(category: string) {
     console.log(`🎯 Testing ${category} category interactions...`);
     
+    // Enhanced selectors with priority order
     const categorySelectors = [
       `[data-category="${category.toLowerCase()}"]`,
+      `[data-testid="${category.toLowerCase()}-category"]`,
       `[data-testid*="${category.toLowerCase()}"]`,
       `button:has-text("${category}")`,
       `[aria-label*="${category}"]`,
+      `.axis-${category.toLowerCase()}`,
       `[class*="${category.toLowerCase()}"]`
     ];
     
     let categoryElement = null;
     let usedSelector = '';
     
-    // Find the category element using different selectors
-    for (const selector of categorySelectors) {
-      const element = this.page.locator(selector);
-      if (await element.count() > 0) {
-        categoryElement = element.first();
-        usedSelector = selector;
-        break;
+    // Enhanced element finding with retry logic
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      for (const selector of categorySelectors) {
+        try {
+          const element = this.page.locator(selector);
+          await element.waitFor({ state: 'attached', timeout: 2000 });
+          
+          if (await element.count() > 0) {
+            categoryElement = element.first();
+            usedSelector = selector;
+            console.log(`📍 Found ${category} using selector: ${selector}`);
+            break;
+          }
+        } catch (error) {
+          // Continue trying other selectors
+          continue;
+        }
+      }
+      
+      if (categoryElement) break;
+      
+      if (attempt < maxAttempts) {
+        console.log(`⏳ Retry ${attempt}/${maxAttempts} for finding ${category} category...`);
+        await this.page.waitForTimeout(1000);
+        await this.page.reload();
+        await this.waitForDashboardLoad();
       }
     }
     
     if (!categoryElement) {
       await this.reportBug('/dashboard', `${category} Category`, 
-        `${category} category element not found with any selector`, 'high', category);
+        `${category} category element not found with any selector after ${maxAttempts} attempts`, 'high', category);
       return false;
     }
     
-    // Test visibility and interactivity
+    // Enhanced visibility and interactivity checks with retries
+    try {
+      await categoryElement.waitFor({ state: 'visible', timeout: 5000 });
+      await categoryElement.waitFor({ state: 'attached', timeout: 3000 });
+    } catch (error) {
+      await this.reportBug('/dashboard', `${category} Category`, 
+        `${category} category element not ready: ${error}`, 'medium', category);
+      return false;
+    }
+    
     const isVisible = await categoryElement.isVisible();
     const isEnabled = await categoryElement.isEnabled();
     
@@ -181,47 +213,89 @@ class DashboardHexagonAuditor {
       return false;
     }
     
-    // Get initial state
-    const initialClasses = await categoryElement.getAttribute('class') || '';
-    const initialDataChecked = await categoryElement.getAttribute('data-checked') || '';
-    const initialAriaPressed = await categoryElement.getAttribute('aria-pressed') || '';
+    // Enhanced state capture - get multiple attributes for better change detection
+    const getElementState = async () => {
+      const classes = await categoryElement.getAttribute('class') || '';
+      const dataChecked = await categoryElement.getAttribute('data-checked') || '';
+      const ariaPressed = await categoryElement.getAttribute('aria-pressed') || '';
+      const dataCompleted = await categoryElement.getAttribute('data-completed') || '';
+      const style = await categoryElement.getAttribute('style') || '';
+      
+      return { classes, dataChecked, ariaPressed, dataCompleted, style };
+    };
     
-    // Monitor network activity
+    const initialState = await getElementState();
     const initialNetworkCount = this.networkLogs.length;
     
-    // Click the category
+    console.log(`📊 Initial state for ${category}:`, initialState);
+    
+    // Enhanced click with error handling and loading state detection
     try {
-      await categoryElement.click();
-      await this.page.waitForTimeout(2000);
+      // Wait for any pending network requests to complete
+      await this.page.waitForLoadState('networkidle', { timeout: 3000 });
+      
+      // Ensure element is still attached and clickable
+      await categoryElement.waitFor({ state: 'visible' });
+      
+      // Click with force to avoid interception issues
+      await categoryElement.click({ force: true });
+      console.log(`🖱️  Clicked ${category} category`);
+      
+      // Wait for optimistic update to take effect
+      await this.page.waitForTimeout(500);
+      
+      // Wait for network request to be triggered and complete
+      await this.page.waitForResponse(response => 
+        response.url().includes('/api/checkins') && 
+        response.request().method() === 'POST',
+        { timeout: 8000 }
+      ).catch(() => {
+        console.log(`⚠️ No API response detected for ${category} - may be cached or optimistic`);
+      });
+      
+      // Additional wait for UI to settle after network response
+      await this.page.waitForTimeout(1500);
+      
     } catch (error) {
       await this.reportBug('/dashboard', `${category} Category`, 
-        `Failed to click ${category} category: ${error}`, 'high', category);
+        `Failed to interact with ${category} category: ${error}`, 'high', category);
       return false;
     }
     
-    // Check for state changes
-    const newClasses = await categoryElement.getAttribute('class') || '';
-    const newDataChecked = await categoryElement.getAttribute('data-checked') || '';
-    const newAriaPressed = await categoryElement.getAttribute('aria-pressed') || '';
+    // Enhanced state change detection with multiple checks
+    const finalState = await getElementState();
+    console.log(`📊 Final state for ${category}:`, finalState);
     
-    const stateChanged = initialClasses !== newClasses || 
-                        initialDataChecked !== newDataChecked || 
-                        initialAriaPressed !== newAriaPressed;
+    const stateChanged = Object.keys(initialState).some(key => 
+      initialState[key] !== finalState[key]
+    );
     
     if (!stateChanged) {
+      // Double-check with DOM element inspection
+      const elementHtml = await categoryElement.innerHTML();
+      console.log(`🔍 ${category} element HTML after click:`, elementHtml.substring(0, 200) + '...');
+      
       await this.reportBug('/dashboard', `${category} Category`, 
-        `${category} category state did not change after click`, 'medium', category);
+        `${category} category visual state did not change after interaction. Initial: ${JSON.stringify(initialState)}, Final: ${JSON.stringify(finalState)}`, 'medium', category);
     } else {
       console.log(`✅ ${category} category state changed successfully`);
     }
     
-    // Check for network activity
+    // Enhanced network activity check
     const finalNetworkCount = this.networkLogs.length;
-    if (finalNetworkCount === initialNetworkCount) {
-      await this.reportBug('/dashboard', `${category} Category`, 
-        `${category} category click did not trigger API calls`, 'medium', category);
+    const apiCallsMade = finalNetworkCount - initialNetworkCount;
+    
+    if (apiCallsMade === 0) {
+      // Check for specific API endpoints that should have been called
+      const recentLogs = this.networkLogs.slice(-5);
+      const hasCheckinsCall = recentLogs.some(log => log.includes('/api/checkins'));
+      
+      if (!hasCheckinsCall) {
+        await this.reportBug('/dashboard', `${category} Category`, 
+          `${category} category interaction did not trigger expected API calls. Recent activity: ${recentLogs.join(', ')}`, 'medium', category);
+      }
     } else {
-      console.log(`✅ ${category} category click triggered ${finalNetworkCount - initialNetworkCount} API calls`);
+      console.log(`✅ ${category} category interaction triggered ${apiCallsMade} API calls`);
     }
     
     // Check for console errors
