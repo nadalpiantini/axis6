@@ -13,6 +13,19 @@ export function useRealtimeCheckins(userId: string | undefined) {
     let channel: RealtimeChannel
 
     const setupRealtime = async () => {
+      // Check authentication before setting up realtime
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      if (authError) {
+        console.warn('⚠️ Realtime setup failed: Authentication error', authError.message)
+        return
+      }
+      
+      if (!user) {
+        console.warn('⚠️ Realtime setup skipped: No authenticated user')
+        return
+      }
+      
       // Subscribe to changes in checkins table for this user
       channel = supabase
         .channel(`checkins:${userId}`)
@@ -25,7 +38,7 @@ export function useRealtimeCheckins(userId: string | undefined) {
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
-            console.log('Realtime update:', payload)
+            console.log('✅ Realtime checkins update:', payload)
             
             // Invalidate and refetch checkins data
             queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
@@ -35,15 +48,15 @@ export function useRealtimeCheckins(userId: string | undefined) {
             
             // Optionally, show a notification for the update
             if (payload.eventType === 'INSERT') {
-              // Check-in added
-              console.log('New check-in added')
+              console.log('🎉 New check-in added')
             } else if (payload.eventType === 'DELETE') {
-              // Check-in removed
-              console.log('Check-in removed')
+              console.log('❌ Check-in removed')
             }
           }
         )
-        .subscribe()
+        .subscribe((status) => {
+          console.log('📡 Realtime checkins subscription status:', status)
+        })
     }
 
     setupRealtime()
@@ -68,6 +81,19 @@ export function useRealtimeStreaks(userId: string | undefined) {
     let channel: RealtimeChannel
 
     const setupRealtime = async () => {
+      // Check authentication before setting up realtime
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      if (authError) {
+        console.warn('⚠️ Realtime streaks setup failed: Authentication error', authError.message)
+        return
+      }
+      
+      if (!user) {
+        console.warn('⚠️ Realtime streaks setup skipped: No authenticated user')
+        return
+      }
+      
       // Subscribe to changes in streaks table for this user
       channel = supabase
         .channel(`streaks:${userId}`)
@@ -80,7 +106,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
-            console.log('Streak update:', payload)
+            console.log('✅ Realtime streaks update:', payload)
             
             // Invalidate and refetch streaks data
             queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
@@ -95,7 +121,9 @@ export function useRealtimeStreaks(userId: string | undefined) {
             }
           }
         )
-        .subscribe()
+        .subscribe((status) => {
+          console.log('📡 Realtime streaks subscription status:', status)
+        })
     }
 
     setupRealtime()

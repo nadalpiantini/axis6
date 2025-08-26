@@ -263,10 +263,10 @@ export default function DashboardPageV2() {
   const { addNotification } = useUIStore()
   
   // Fetch all data in parallel with React Query
-  const { data: user, isLoading: userLoading } = useUser()
-  const { data: categories = [], isLoading: categoriesLoading } = useCategories()
-  const { data: checkins = [] } = useTodayCheckins(user?.id)
-  const { data: streaks = [] } = useStreaks(user?.id)
+  const { data: user, isLoading: userLoading, error: userError } = useUser()
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useCategories()
+  const { data: checkins = [], error: checkinsError } = useTodayCheckins(user?.id)
+  const { data: streaks = [], error: streaksError } = useStreaks(user?.id)
   const toggleCheckIn = useToggleCheckIn(user?.id)
   
   // Enable realtime updates for this user
@@ -280,6 +280,12 @@ export default function DashboardPageV2() {
   
   const axes = useMemo(
     () => {
+      // 🛡️ NULL CHECK: Ensure categories is an array
+      if (!Array.isArray(categories) || categories.length === 0) {
+        console.warn('⚠️ AXIS6: Categories not loaded or empty array')
+        return []
+      }
+      
       // 🛡️ SAFEGUARD: Limit to exactly 6 categories (AXIS6 hexagon design)
       const limitedCategories = categories.slice(0, 6)
       
@@ -325,12 +331,16 @@ export default function DashboardPageV2() {
   )
 
   const currentStreak = useMemo(
-    () => Math.max(...streaks.map(s => s.current_streak), 0),
+    () => Array.isArray(streaks) && streaks.length > 0 
+      ? Math.max(...streaks.map(s => s.current_streak || 0), 0) 
+      : 0,
     [streaks]
   )
 
   const longestStreak = useMemo(
-    () => Math.max(...streaks.map(s => s.longest_streak), 0),
+    () => Array.isArray(streaks) && streaks.length > 0 
+      ? Math.max(...streaks.map(s => s.longest_streak || 0), 0) 
+      : 0,
     [streaks]
   )
 
@@ -391,6 +401,23 @@ export default function DashboardPageV2() {
     )
   }
 
+  // Show error state if critical data failed to load
+  if (userError || categoriesError) {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-2">Failed to load dashboard data</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // Show loading state for authentication check
   if (!user) {
     return (
@@ -403,7 +430,7 @@ export default function DashboardPageV2() {
     )
   }
 
-  const completedCount = axes.filter(a => a.completed).length
+  const completedCount = Array.isArray(axes) ? axes.filter(a => a.completed).length : 0
 
   return (
     <QueryErrorBoundary>

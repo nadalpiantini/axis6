@@ -6,7 +6,11 @@ import { NotificationToast } from '@/components/ui/NotificationToast'
 import { headers } from 'next/headers'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap', // Improves loading performance and prevents FOUT
+  preload: true
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:6789'),

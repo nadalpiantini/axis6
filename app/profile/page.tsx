@@ -108,14 +108,19 @@ export default function ProfilePage() {
       try {
         const supabase = createClient()
         
-        // Fetch basic profile
-        const { data: profileData } = await supabase
+        // Fetch basic profile (use maybeSingle to handle non-existent profiles)
+        const { data: profileData, error: profileError } = await supabase
           .from('axis6_profiles')
           .select('*')
-          .eq('user_id', user.id)
-          .single()
+          .eq('id', user.id)
+          .maybeSingle()
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error('Error fetching profile:', profileError)
+        }
 
         if (profileData) {
+          // Profile exists, use it
           setProfile({
             email: user.email || '',
             name: profileData.name || user.email?.split('@')[0] || 'User',
@@ -123,12 +128,37 @@ export default function ProfilePage() {
           })
           setEditedName(profileData.name || user.email?.split('@')[0] || 'User')
         } else {
+          // Profile doesn't exist, create default profile and auto-save it
+          const defaultName = user.email?.split('@')[0] || 'User'
+          
           setProfile({
             email: user.email || '',
-            name: user.email?.split('@')[0] || 'User',
+            name: defaultName,
             created_at: user.created_at || new Date().toISOString()
           })
-          setEditedName(user.email?.split('@')[0] || 'User')
+          setEditedName(defaultName)
+          
+          // Auto-create profile for new users
+          try {
+            const { error: createError } = await supabase
+              .from('axis6_profiles')
+              .insert({
+                id: user.id,
+                name: defaultName,
+                timezone: 'America/Santo_Domingo',
+                onboarded: false,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+            
+            if (createError) {
+              console.warn('Could not auto-create profile:', createError.message)
+            } else {
+              console.log('✅ Profile auto-created for new user')
+            }
+          } catch (err) {
+            console.warn('Failed to auto-create profile:', err)
+          }
         }
 
         // 🛡️ SAFE: Fetch temperament profile with defensive error handling
@@ -137,25 +167,27 @@ export default function ProfilePage() {
             .from('axis6_temperament_profiles')
             .select('*')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
           
           if (!error && temperamentData) {
             // 🛡️ VALIDATE: Ensure temperament data has required structure
             if (temperamentData.primary_temperament && 
                 temperamentData.temperament_scores &&
-                temperamentData.personality_insights) {
+                typeof temperamentData.temperament_scores === 'object' &&
+                temperamentData.personality_insights &&
+                typeof temperamentData.personality_insights === 'object') {
               setTemperamentProfile(temperamentData)
             } else {
-              console.warn('⚠️ Temperament profile has incomplete data:', temperamentData)
+              console.warn('⚠️ Temperament profile has incomplete data structure:', temperamentData)
             }
-          } else if (error) {
-            // Log specific errors for debugging
-            console.warn('⚠️ Temperament profile query error:', error.message)
+          } else if (error && error.code !== 'PGRST116') {
+            // PGRST116 = not found, which is expected for new users
+            console.warn('⚠️ Temperament profile query error:', error.message, error.code)
           }
         } catch (err) {
           // 🛡️ CATCH-ALL: Handle any unexpected errors gracefully
           console.error('⚠️ Failed to fetch temperament profile:', err)
-          // Don't throw - profile page should work without psychology features
+          // Profile page continues to work without psychology features
         }
       } finally {
         setProfileLoading(false)
@@ -183,11 +215,11 @@ export default function ProfilePage() {
       const { error } = await supabase
         .from('axis6_profiles')
         .upsert({
-          user_id: user.id,
+          id: user.id,
           name: editedName.trim(),
           updated_at: new Date().toISOString()
         }, {
-          onConflict: 'user_id'
+          onConflict: 'id'
         })
 
       if (error) throw error
@@ -454,11 +486,10 @@ export default function ProfilePage() {
                   {/* Primary Temperament Display */}
                   {(() => {
                     // 🛡️ SAFE: Defensive access to temperament data
-                    const primaryTemp = temperamentProfile.primary_temperament
-                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData]
-                    const tempScore = temperamentProfile.temperament_scores?.[primaryTemp as keyof typeof temperamentProfile.temperament_scores]
+                    const primaryTemp = temperamentProfile?.primary_temperament
+                    const scores = temperamentProfile?.temperament_scores
                     
-                    if (!primaryTemp || !tempData) {
+                    if (!primaryTemp || !scores || typeof scores !== 'object') {
                       return (
                         <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
                           <p className="text-gray-400">Temperament data incomplete</p>
@@ -466,23 +497,37 @@ export default function ProfilePage() {
                       )
                     }
                     
+                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData]
+                    const tempScore = scores[primaryTemp as keyof typeof scores]
+                    
+                    if (!tempData) {
+                      return (
+                        <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
+                          <p className="text-gray-400">Unknown temperament type: {primaryTemp}</p>
+                        </div>
+                      )
+                    }
+                    
                     return (
-                      <div className={`p-4 rounded-xl bg-gradient-to-r ${tempData.bgGradient}`}>
+                      <div className={`p-4 rounded-xl bg-gradient-to-r ${tempData.bgGradient || 'from-gray-500/20 to-gray-600/20'}`}>
                         <div className="flex items-center gap-3">
                           <div className="p-2 rounded-lg bg-white/20">
                             {(() => {
                               const TempIcon = tempData.icon || Brain
+                              if (!TempIcon || typeof TempIcon !== 'function') {
+                                return <Brain className="w-5 h-5" style={{ color: tempData.color || '#8B5CF6' }} />
+                              }
                               return (
                                 <TempIcon 
                                   className="w-5 h-5" 
-                                  style={{ color: tempData.color }}
+                                  style={{ color: tempData.color || '#8B5CF6' }}
                                 />
                               )
                             })()}
                           </div>
                           <div>
                             <h3 className="font-semibold text-white">
-                              {tempData.name || primaryTemp}
+                              {tempData.name || primaryTemp || 'Unknown'}
                             </h3>
                             <p className="text-sm text-gray-200">
                               {tempData.subtitle || 'Temperament Profile'}
@@ -491,7 +536,7 @@ export default function ProfilePage() {
                           <div className="ml-auto">
                             <div 
                               className="px-3 py-1 rounded-full text-sm font-bold text-white"
-                              style={{ backgroundColor: tempData.color }}
+                              style={{ backgroundColor: tempData.color || '#8B5CF6' }}
                             >
                               {Math.round((tempScore || 0) * 100)}%
                             </div>
@@ -502,7 +547,7 @@ export default function ProfilePage() {
                   })()}
 
                   {/* Quick Insights */}
-                  {temperamentProfile.personality_insights && (
+                  {temperamentProfile?.personality_insights && typeof temperamentProfile.personality_insights === 'object' && (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
                         <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
@@ -510,23 +555,33 @@ export default function ProfilePage() {
                           Strengths
                         </h4>
                         <p className="text-xs text-gray-300">
-                          {temperamentProfile.personality_insights.strengths?.slice(0, 2).join(', ') || 'Not available'}
+                          {(() => {
+                            const insights = temperamentProfile.personality_insights
+                            const strengths = Array.isArray(insights?.strengths) ? insights.strengths : []
+                            return strengths.length > 0 ? strengths.slice(0, 2).join(', ') : 'Not available'
+                          })()}
                         </p>
                       </div>
                       <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
                         <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
                         <p className="text-xs text-gray-300">
-                          {temperamentProfile.personality_insights.work_style 
-                            ? `${temperamentProfile.personality_insights.work_style.slice(0, 40)}...`
-                            : 'Not available'}
+                          {(() => {
+                            const workStyle = temperamentProfile.personality_insights?.work_style
+                            return typeof workStyle === 'string' && workStyle.length > 0
+                              ? workStyle.length > 40 ? `${workStyle.slice(0, 40)}...` : workStyle
+                              : 'Not available'
+                          })()}
                         </p>
                       </div>
                       <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
                         <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
                         <p className="text-xs text-gray-300">
-                          {temperamentProfile.personality_insights.social_style 
-                            ? `${temperamentProfile.personality_insights.social_style.slice(0, 40)}...`
-                            : 'Not available'}
+                          {(() => {
+                            const socialStyle = temperamentProfile.personality_insights?.social_style
+                            return typeof socialStyle === 'string' && socialStyle.length > 0
+                              ? socialStyle.length > 40 ? `${socialStyle.slice(0, 40)}...` : socialStyle
+                              : 'Not available'
+                          })()}
                         </p>
                       </div>
                     </div>

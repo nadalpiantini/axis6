@@ -219,6 +219,20 @@ CLOUDFLARE_ACCOUNT_ID=69d3a8e7263adc6d6972e5ed7ffc6f2a
 2. **Email Service**: Resend integration pending - currently using Supabase's default email service
 3. **PWA**: Temporarily disabled for Next.js 15 compatibility
 
+## Resolved Issues (Historical Reference)
+### Database Schema Differences (RESOLVED 2025-08-26)
+- **Issue**: `axis6_profiles` table uses `id` column as user reference while other tables use `user_id`
+- **Impact**: 400/404/406 errors, profile page failures
+- **Solution**: Updated queries and RLS policies to use correct column names per table
+- **Prevention**: Added error boundaries and defensive programming patterns
+- **Documentation**: See `docs/production-fixes/2025-08-26-database-rls-crisis.md`
+
+### RLS Policy Configuration (RESOLVED 2025-08-26)
+- **Issue**: Row Level Security policies referenced incorrect columns
+- **Impact**: Users couldn't access their own data
+- **Solution**: Applied corrected RLS policies (28 total) with proper column references
+- **Maintenance Scripts**: Available in `scripts/maintenance/` for future diagnostics
+
 ## Important Files & Scripts
 ### Configuration Files
 - `next.config.js` - Next.js config with CSP settings (currently commented)

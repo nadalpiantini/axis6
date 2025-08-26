@@ -258,6 +258,53 @@ Before considering setup complete:
 
 ## 📝 Change History
 
+### August 26, 2025 - Database RLS Crisis and Column Mapping Resolution
+- **CRITICAL INCIDENT**: Complete database access failure across application
+  - **Severity**: CRITICAL - 100% user impact on profile and database operations
+  - **Root Cause**: Schema mismatch - `axis6_profiles` uses `id` column while queries expected `user_id`
+  - **Error Cascade**: Column mismatch → 400/404/406 HTTP errors → undefined data → React Error #130
+  - **Resolution Time**: 2 hours from detection to complete fix
+  
+- **Technical Root Causes Identified**:
+  - **Column Mapping Issue**: `axis6_profiles` table uniquely uses `id` as user reference (not `user_id`)
+  - **RLS Policy Failures**: Policies referenced non-existent columns causing access denials
+  - **Type Mismatches**: TypeScript types didn't reflect actual database schema
+  - **Missing Error Handling**: No error boundaries for database failures
+  
+- **Diagnostic Tools Created**:
+  - `scripts/maintenance/diagnose-production-database.js` - Emergency database diagnosis
+  - `scripts/maintenance/check-table-schemas.js` - Schema structure verification
+  - `scripts/maintenance/fix-rls-policies.sql` - Comprehensive RLS corrections
+  - `scripts/maintenance/apply-rls-fixes.js` - Automated fix deployment
+  
+- **Fixes Applied**:
+  - **RLS Policy Overhaul**: 28 policies corrected with proper column references
+    - `axis6_profiles`: Uses `auth.uid() = id` (not user_id)
+    - Other tables: Use `auth.uid() = user_id` pattern
+    - Public read access for categories and mantras
+  - **Query Corrections**: All profile queries updated to use correct `id` column
+  - **Error Boundaries**: DatabaseErrorBoundary and ProfileErrorBoundary components
+  - **Defensive Programming**: Null checks, optional chaining, fallback values
+  
+- **Verification Results**:
+  - ✅ All 28 RLS policies successfully applied
+  - ✅ API endpoints returning 200 status
+  - ✅ Profile page loads without errors
+  - ✅ Dashboard functionality restored
+  - ✅ Zero console errors in production
+  
+- **Lessons Learned & Prevention**:
+  - Document column naming conventions explicitly
+  - Implement error boundaries at all database touchpoints
+  - Generate TypeScript types directly from database
+  - Add automated schema validation tests
+  - Deploy comprehensive error tracking (Sentry)
+  
+- **Documentation Created**:
+  - `docs/production-fixes/2025-08-26-database-rls-crisis.md` - Complete incident report
+  - Diagnostic scripts archived in `scripts/maintenance/` for future use
+  - Updated CLAUDE.md with resolved issues section
+
 ### August 26, 2025 - Production Crisis Resolution
 - **Critical Issues Resolved**:
   - **Dashboard Not Functional**: Fixed broken hexagon and category buttons in production
