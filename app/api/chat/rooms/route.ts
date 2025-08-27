@@ -21,11 +21,28 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') // Filter by room type
     const categoryId = searchParams.get('categoryId') // Filter by category
     
+    // First get room IDs where user is a participant to avoid complex inner joins
+    const { data: participantRooms, error: participantError } = await supabase
+      .from('axis6_chat_participants')
+      .select('room_id')
+      .eq('user_id', user.id)
+
+    if (participantError) {
+      logger.error('Error fetching user participations:', participantError)
+      return NextResponse.json({ error: 'Failed to fetch user participations' }, { status: 500 })
+    }
+
+    if (!participantRooms || participantRooms.length === 0) {
+      return NextResponse.json({ rooms: [] })
+    }
+
+    const roomIds = participantRooms.map(p => p.room_id)
+
     let query = supabase
       .from('axis6_chat_rooms')
       .select(`
         *,
-        participants:axis6_chat_participants!inner(
+        participants:axis6_chat_participants(
           id,
           role,
           joined_at,
@@ -55,7 +72,7 @@ export async function GET(request: NextRequest) {
           )
         )
       `)
-      .eq('participants.user_id', user.id)
+      .in('id', roomIds)
       .eq('is_active', true)
       .order('updated_at', { ascending: false })
 

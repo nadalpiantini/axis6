@@ -28,33 +28,65 @@ export function useChatRooms(userId?: string) {
     queryFn: async (): Promise<ChatRoomWithParticipants[]> => {
       if (!userId || !supabase) throw new Error('User ID and Supabase client required')
 
-      const { data, error } = await supabase
-        .from('axis6_chat_rooms')
-        .select(`
-          *,
-          participants:axis6_chat_participants!inner(
-            *,
-            profile:axis6_profiles(*)
-          ),
-          category:axis6_categories(*),
-          last_message:axis6_chat_messages(
-            *,
-            sender:axis6_profiles(*)
-          )
-        `)
-        .eq('participants.user_id', userId)
-        .eq('is_active', true)
-        .order('updated_at', { ascending: false })
+      try {
+        // First get room IDs where user is a participant
+        const { data: participantRooms, error: participantError } = await supabase
+          .from('axis6_chat_participants')
+          .select('room_id')
+          .eq('user_id', userId)
 
-      if (error) {
+        if (participantError) {
+          console.error('Failed to fetch user participations:', participantError)
+          throw participantError
+        }
+
+        if (!participantRooms || participantRooms.length === 0) {
+          return []
+        }
+
+        const roomIds = participantRooms.map(p => p.room_id)
+
+        // Then get room details with all related data
+        const { data, error } = await supabase
+          .from('axis6_chat_rooms')
+          .select(`
+            *,
+            participants:axis6_chat_participants(
+              *,
+              profile:axis6_profiles(*)
+            ),
+            category:axis6_categories(*),
+            last_message:axis6_chat_messages(
+              *,
+              sender:axis6_profiles(*)
+            )
+          `)
+          .in('id', roomIds)
+          .eq('is_active', true)
+          .order('updated_at', { ascending: false })
+
+        if (error) {
+          console.error('Failed to fetch chat rooms:', error)
+          throw error
+        }
+
+        return data || []
+      } catch (error) {
         console.error('Failed to fetch chat rooms:', error)
         throw error
       }
-      return data || []
     },
     enabled: !!userId && !!supabase,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: true,
+    retry: (failureCount, error) => {
+      // Retry up to 3 times, but not for 400 errors (client errors)
+      if (error?.message?.includes('400') || failureCount >= 3) {
+        return false
+      }
+      return true
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   })
 }
 
