@@ -198,7 +198,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       console.warn('Error calculating resonance points:', error)
       return []
     }
-  }, [resonanceData, showResonance, center, resonanceRadius, windowWidth])
+  }, [resonanceData, showResonance, center, resonanceRadius])
 
   // Create grid lines (same as original)
   const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])
