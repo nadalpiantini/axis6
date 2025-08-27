@@ -43,3 +43,6 @@ next-env.d.ts
 # cloudflare
 .wrangler/
 .dev.vars
+public/sw.js
+public/swe-worker-*.js
+public/workbox-*.js

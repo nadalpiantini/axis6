@@ -65,6 +65,8 @@ export default function ChatPage() {
     console.error('Chat error:', error)
     // Check if it's a database table missing error
     const isDatabaseError = error.message?.includes('relation') && error.message?.includes('does not exist')
+    // Check if it's a 400 error indicating malformed query
+    const is400Error = error.message?.includes('400') || error.status === 400
     
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -82,6 +84,19 @@ export default function ChatPage() {
                   Database tables need to be deployed. Run the chat enhancement SQL script in Supabase.
                 </p>
               </div>
+            </>
+          ) : is400Error ? (
+            <>
+              <h2 className="text-xl font-semibold text-gray-200 mb-2">Chat Temporarily Unavailable</h2>
+              <p className="text-gray-400 mb-4">
+                We're experiencing technical difficulties with the chat system. This has been automatically reported.
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-purple-600 hover:bg-purple-700"
+              >
+                Try Again
+              </Button>
             </>
           ) : (
             <>
