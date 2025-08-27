@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
 import { useEffect } from 'react'
+
+import { createClient } from '@/lib/supabase/client'
 
 // Types for dashboard data
 export interface DashboardData {

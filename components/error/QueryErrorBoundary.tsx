@@ -1,11 +1,14 @@
 'use client'
 
+import { QueryErrorResetBoundary, useQueryErrorResetBoundary } from '@tanstack/react-query'
+import { AlertCircle, RefreshCw } from 'lucide-react'
+import { ReactNode } from 'react'
+
 import { logger } from '@/lib/utils/logger';
 
-import { ReactNode } from 'react'
-import { QueryErrorResetBoundary, useQueryErrorResetBoundary } from '@tanstack/react-query'
+
 import { ErrorBoundary } from './ErrorBoundary'
-import { AlertCircle, RefreshCw } from 'lucide-react'
+
 
 interface QueryErrorBoundaryProps {
   children: ReactNode

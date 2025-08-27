@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
+import { useState, useEffect, useCallback, useRef } from 'react'
+
 import { chatRealtimeManager } from '../supabase/chat-realtime'
 import { createClient } from '../supabase/client'
 import { 
@@ -11,6 +12,7 @@ import {
   RealtimeMessagePayload,
   RealtimeParticipantPayload 
 } from '../supabase/types'
+
 import { useSupabaseClient } from './useSupabaseClient'
 
 const MESSAGE_PAGE_SIZE = 50

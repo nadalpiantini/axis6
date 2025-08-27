@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, 
@@ -11,6 +10,8 @@ import {
   ChevronDown,
   AlertCircle
 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+
 import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
 import { useStartTimer, useStopTimer } from '@/lib/react-query/hooks/useMyDay'
@@ -334,7 +335,7 @@ export function ActivityTimer({
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-10 h-10 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: selectedCategoryData?.color + '30' }}
+                        style={{ backgroundColor: `${selectedCategoryData?.color  }30` }}
                       >
                         <AxisIcon
                           axis={selectedCategoryData?.icon}

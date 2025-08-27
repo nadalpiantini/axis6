@@ -1,13 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { motion } from 'framer-motion'
 import { ArrowLeft, MessageCircle, Users, Lock, Globe } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { motion } from 'framer-motion'
+
 
 type RoomType = 'group' | 'category' | 'support'
 

@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+
 import { handleCSPViolation, type CSPViolation } from '@/lib/security/csp-hash'
 import { logger } from '@/lib/utils/logger'
 

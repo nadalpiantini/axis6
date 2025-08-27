@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { createClient } from '@/lib/supabase/client'
 
 export interface Streak {

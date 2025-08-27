@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
+
 import { useUser } from '@/lib/react-query/hooks'
 
 /**

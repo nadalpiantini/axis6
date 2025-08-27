@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Focus, Users, Eye, EyeOff, Sparkles } from 'lucide-react'
+import { useState } from 'react'
+
 import { usePreferencesStore } from '@/lib/stores/useAppStore'
 
 interface FocusSettingsProps {

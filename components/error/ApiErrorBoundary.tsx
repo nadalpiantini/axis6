@@ -1,7 +1,8 @@
 'use client'
 
-import { ReactNode, useState, useEffect } from 'react'
 import { AlertCircle, RefreshCw, Wifi, WifiOff } from 'lucide-react'
+import { ReactNode, useState, useEffect } from 'react'
+
 import { reportError } from '@/lib/monitoring/error-tracking'
 import { logger } from '@/lib/utils/logger'
 

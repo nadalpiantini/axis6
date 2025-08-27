@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import { Metadata } from 'next'
+import Link from 'next/link'
+
 import { LogoFull } from '@/components/ui/Logo'
 
 export const metadata: Metadata = {

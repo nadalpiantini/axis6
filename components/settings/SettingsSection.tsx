@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronDown,
@@ -12,6 +11,7 @@ import {
   RotateCcw,
   HelpCircle
 } from 'lucide-react'
+import { useState } from 'react'
 
 interface SettingsSectionProps {
   title: string

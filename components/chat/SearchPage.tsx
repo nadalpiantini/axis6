@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Search, ArrowLeft, TrendingUp, Calendar } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { Search, ArrowLeft, TrendingUp, Calendar } from 'lucide-react'
+import React, { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
-import { MessageSearch } from './MessageSearch'
-import { SearchResults } from './SearchResults'
 import { useMessageSearch, useSearchAnalytics } from '@/lib/hooks/useMessageSearch'
 import { SearchResult } from '@/lib/services/message-search'
-import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+
+import { MessageSearch } from './MessageSearch'
+import { SearchResults } from './SearchResults'
+
 
 interface SearchPageProps {
   onBack?: () => void

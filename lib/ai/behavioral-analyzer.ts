@@ -1,6 +1,8 @@
-import { deepseekClient } from './deepseek'
-import { createClient } from '@/lib/supabase/client'
 import { addDays, subDays, format, parseISO } from 'date-fns'
+
+import { createClient } from '@/lib/supabase/client'
+
+import { deepseekClient } from './deepseek'
 
 export interface BehaviorPattern {
   pattern_type: 'checkin_timing' | 'completion_rate' | 'category_preference' | 'streak_behavior' | 'mood_correlation'
@@ -589,7 +591,7 @@ export class BehavioralAnalyzer {
    */
   private async determineBehavioralTraits(patterns: BehaviorPattern[], temperament: any) {
     // Default traits based on patterns
-    let traits = {
+    const traits = {
       motivation_type: 'mixed' as const,
       goal_orientation: 'balanced' as const,
       social_tendency: 'independent' as const,
@@ -814,9 +816,9 @@ export class BehavioralAnalyzer {
 
       // Add time-specific context
       if (time.hour < 10) {
-        message = "🌅 " + message.replace("Perfect time", "Great morning")
+        message = `🌅 ${  message.replace("Perfect time", "Great morning")}`
       } else if (time.hour > 18) {
-        message = "🌙 " + message.replace("Perfect time", "Evening reflection time")
+        message = `🌙 ${  message.replace("Perfect time", "Evening reflection time")}`
       }
 
       messages.push({

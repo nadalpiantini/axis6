@@ -1,8 +1,5 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useRouter } from 'next/navigation'
-import { useUser } from '@/lib/react-query/hooks'
 import { 
   TrendingUp, 
   Calendar, 
@@ -15,8 +12,9 @@ import {
   Flame,
   TrendingDown
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
 
-import { StandardHeader } from '@/components/layout/StandardHeader'
 import { 
   CompletionRateChart,
   CategoryPerformanceChart,
@@ -24,6 +22,7 @@ import {
   MoodTrendChart,
   WeeklyProgressChart
 } from '@/components/charts/ChartComponents'
+import { StandardHeader } from '@/components/layout/StandardHeader'
 import { 
   useCompletionChartData,
   useCategoryChartData,
@@ -32,6 +31,7 @@ import {
   useCachedChartData
 } from '@/lib/hooks/useChartData'
 import { performanceOptimizer } from '@/lib/production/performance-optimizer'
+import { useUser } from '@/lib/react-query/hooks'
 
 // Types
 interface AnalyticsData {

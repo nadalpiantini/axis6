@@ -3,8 +3,10 @@
  */
 
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
-import { reportError, categorizeError, type ErrorContext } from './error-tracking'
+
 import { logger } from '@/lib/utils/logger'
+
+import { reportError, categorizeError, type ErrorContext } from './error-tracking'
 
 export interface QueryError extends Error {
   status?: number

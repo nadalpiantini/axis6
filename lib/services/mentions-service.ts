@@ -3,8 +3,8 @@
  * Handles @username functionality in chat messages
  */
 
-import { createClient } from '@/lib/supabase/client'
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/client'
 
 export interface MentionUser {
   id: string

@@ -1,4 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
+
 import type { Database } from './types'
 
 let clientInstance: ReturnType<typeof createBrowserClient<Database>> | null = null

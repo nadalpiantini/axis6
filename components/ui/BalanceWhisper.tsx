@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
 
 interface BalanceWhisperProps {
   children: React.ReactNode

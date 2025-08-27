@@ -1,5 +1,5 @@
-import { memo } from 'react'
 import { Trophy, Target, Calendar, TrendingUp } from 'lucide-react'
+import { memo } from 'react'
 
 interface DashboardStatsProps {
   completedToday: number

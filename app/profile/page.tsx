@@ -1,7 +1,5 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
   ArrowLeft, 
@@ -28,16 +26,19 @@ import {
   Sparkles,
   Star
 } from 'lucide-react'
-import { LogoIcon } from '@/components/ui/Logo'
-import { ProfileForm } from '@/components/profile/ProfileForm'
-import { StandardHeader } from '@/components/layout/StandardHeader'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
-import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
-import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
-import { TemperamentResults } from '@/components/psychology/TemperamentResults'
+import { useState, useEffect, useCallback } from 'react'
+
 import { ProfileErrorBoundary } from '@/components/error/ProfileErrorBoundary'
+import { StandardHeader } from '@/components/layout/StandardHeader'
+import { ProfileForm } from '@/components/profile/ProfileForm'
+import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
+import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
+import { TemperamentResults } from '@/components/psychology/TemperamentResults'
+import { LogoIcon } from '@/components/ui/Logo'
+import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
+import { createClient } from '@/lib/supabase/client'
 
 interface UserProfile {
   email: string

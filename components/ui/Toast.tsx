@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export type ToastType = 'success' | 'error' | 'warning'
 

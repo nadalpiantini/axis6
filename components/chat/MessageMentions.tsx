@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
 import { AtSign } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import React from 'react'
+
 import { MentionMatch } from '@/lib/services/mentions-service'
+import { cn } from '@/lib/utils'
 
 interface MessageMentionsProps {
   text: string

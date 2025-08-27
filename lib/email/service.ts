@@ -1,10 +1,13 @@
 import { Resend } from 'resend'
-import { WelcomeEmail } from './templates/welcome'
+
+import { logger } from '@/lib/logger'
+import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
+
+import { NotificationEmail } from './templates/notification'
 import { PasswordResetEmail } from './templates/password-reset'
 import { WeeklyStatsEmail } from './templates/weekly-stats'
-import { NotificationEmail } from './templates/notification'
-import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
-import { logger } from '@/lib/logger'
+import { WelcomeEmail } from './templates/welcome'
+
 
 // Initialize Resend only if API key is available
 const resend = process.env['RESEND_API_KEY'] ? new Resend(process.env['RESEND_API_KEY']) : null

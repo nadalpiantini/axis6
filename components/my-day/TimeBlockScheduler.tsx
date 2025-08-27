@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { format, parse, addMinutes } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, 
@@ -11,7 +11,8 @@ import {
   ChevronDown,
   AlertCircle
 } from 'lucide-react'
-import { format, parse, addMinutes } from 'date-fns'
+import { useState, useEffect } from 'react'
+
 import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
 import { useCreateTimeBlock, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'

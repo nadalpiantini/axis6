@@ -1,5 +1,6 @@
-import { deepseekClient } from './deepseek'
 import { createClient } from '@/lib/supabase/client'
+
+import { deepseekClient } from './deepseek'
 
 export interface PersonalityAnalysisInput {
   userId: string

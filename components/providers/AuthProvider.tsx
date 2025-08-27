@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { useAuthStore } from '@/lib/stores/useAppStore'
+import { useEffect } from 'react'
+
 import { logger } from '@/lib/logger'
+import { useAuthStore } from '@/lib/stores/useAppStore'
+import { createClient } from '@/lib/supabase/client'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()

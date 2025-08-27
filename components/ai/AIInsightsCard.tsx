@@ -1,11 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
-import { Progress } from '@/components/ui/progress'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Brain, 
   TrendingUp, 
@@ -20,9 +15,16 @@ import {
   CheckCircle2,
   AlertTriangle
 } from 'lucide-react'
-import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
+import { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Progress } from '@/components/ui/progress'
 import { PersonalizedInsight } from '@/lib/ai/behavioral-analyzer'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
+
 
 interface AIInsightsCardProps {
   className?: string

@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
-import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
 import { Suspense } from 'react'
+
+import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
 
 export const metadata: Metadata = {
   title: 'Chat | AXIS6',

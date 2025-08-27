@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { sanitizeEmail, sanitizeInput } from '@/lib/security/sanitize'
 
 // Common schemas

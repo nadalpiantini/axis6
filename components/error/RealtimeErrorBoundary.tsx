@@ -1,7 +1,7 @@
 'use client'
 
-import { Component, ReactNode } from 'react'
 import { Wifi, WifiOff, RotateCcw } from 'lucide-react'
+import { Component, ReactNode } from 'react'
 
 interface RealtimeErrorBoundaryState {
   hasError: boolean
@@ -147,7 +147,7 @@ export class RealtimeErrorBoundary extends Component<
               </summary>
               <pre className="mt-2 p-2 bg-gray-900/50 rounded text-red-400 overflow-auto">
                 {this.state.error.message}
-                {this.state.errorInfo && '\n' + this.state.errorInfo.componentStack}
+                {this.state.errorInfo && `\n${  this.state.errorInfo.componentStack}`}
               </pre>
             </details>
           )}

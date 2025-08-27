@@ -1,6 +1,6 @@
+import { User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { User } from '@supabase/supabase-js'
 
 // UI State Store - for UI-related state
 interface UIState {

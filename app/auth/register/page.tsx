@@ -1,14 +1,15 @@
 'use client'
 
-import { logger } from '@/lib/utils/logger';
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Mail, Lock, User, ChevronRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+import { PasswordStrength } from '@/components/auth/PasswordStrength'
 import { LogoFull } from '@/components/ui/Logo'
 import { shouldBypassRateLimit } from '@/lib/test-config'
-import { PasswordStrength } from '@/components/auth/PasswordStrength'
+import { logger } from '@/lib/utils/logger';
 import { validateEmail, validateName, validatePasswordMatch } from '@/lib/validation/auth'
 
 export default function RegisterPage() {

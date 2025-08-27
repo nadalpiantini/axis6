@@ -1,10 +1,11 @@
-import { logger } from '@/lib/utils/logger';
 
-import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
+
 import { activityRecommender } from '@/lib/ai/activity-recommender'
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
+import { logger } from '@/lib/utils/logger';
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

@@ -1,10 +1,11 @@
 'use client'
 
-import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
-import { reportError } from '@/lib/monitoring/error-tracking'
+import { Component, ReactNode } from 'react'
+
 import { logger } from '@/lib/logger'
+import { reportError } from '@/lib/monitoring/error-tracking'
 
 interface ErrorBoundaryState {
   hasError: boolean

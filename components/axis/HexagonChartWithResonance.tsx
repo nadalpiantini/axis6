@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useEffect, useState, useMemo, memo } from 'react'
+
 import { useHexagonResonance } from '@/hooks/useHexagonResonance'
 import { useUser } from '@/lib/react-query/hooks'
 
@@ -29,8 +30,8 @@ interface HexagonChartWithResonanceProps {
   }>
 }
 
-// THE RITUAL OS - Updated category system with brand colors (same as original)
-const categories = [
+// THE RITUAL OS - Updated category system with brand colors (moved outside component to prevent infinite loops)
+const HEXAGON_CATEGORIES = [
   { 
     key: 'physical', 
     label: 'Living Movement', 
@@ -85,7 +86,7 @@ const categories = [
     mantra: 'Today I sustain myself, not prove myself',
     angle: 300 
   }
-]
+] as const
 
 const HexagonChartWithResonance = memo(function HexagonChartWithResonance({ 
   data, 
@@ -131,27 +132,27 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
 
   // Calculate hexagon points for the background (same as original)
   const hexagonPoints = useMemo(() => 
-    categories.map((cat) => {
+    HEXAGON_CATEGORIES.map((cat) => {
       const angleRad = (cat.angle * Math.PI) / 180
       const x = center + radius * Math.cos(angleRad)
       const y = center + radius * Math.sin(angleRad)
       return `${x},${y}`
     }).join(' '),
-    [center, radius, categories]
+    [center, radius]
   )
 
   // Calculate data polygon points (same as original)
   const dataPoints = useMemo(() => {
     if (!data || typeof data !== 'object') return []
     
-    return categories.map((cat) => {
+    return HEXAGON_CATEGORIES.map((cat) => {
       const value = (data[cat.key as keyof typeof data] || 0) / 100
       const angleRad = (cat.angle * Math.PI) / 180
       const x = center + radius * value * Math.cos(angleRad)
       const y = center + radius * value * Math.sin(angleRad)
       return { x, y, value }
     })
-  }, [data, center, radius, categories])
+  }, [data, center, radius])
 
   const dataPolygonPoints = useMemo(() => 
     dataPoints.map(p => `${p.x},${p.y}`).join(' '),
@@ -163,7 +164,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
     if (!showResonance || !resonanceData?.resonance || !Array.isArray(resonanceData.resonance)) return []
     
     try {
-      return categories.map((cat, index) => {
+      return HEXAGON_CATEGORIES.map((cat, index) => {
         const resonanceInfo = resonanceData.resonance.find(r => r?.axisSlug === cat.key)
         if (!resonanceInfo || !resonanceInfo.hasResonance) return null
         
@@ -193,7 +194,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       console.warn('Error calculating resonance points:', error)
       return []
     }
-  }, [resonanceData, showResonance, center, resonanceRadius, categories])
+  }, [resonanceData, showResonance, center, resonanceRadius])
 
   // Create grid lines (same as original)
   const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])
@@ -219,7 +220,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         {gridLevels.map((level, idx) => (
           <motion.polygon
             key={idx}
-            points={categories.map((cat) => {
+            points={HEXAGON_CATEGORIES.map((cat) => {
               const angleRad = (cat.angle * Math.PI) / 180
               const x = center + radius * level * Math.cos(angleRad)
               const y = center + radius * level * Math.sin(angleRad)
@@ -235,7 +236,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         ))}
 
         {/* THE RITUAL OS - Flowing axis lines (same as original) */}
-        {categories.map((cat, idx) => (
+        {HEXAGON_CATEGORIES.map((cat, idx) => (
           <motion.line
             key={idx}
             x1={center}
@@ -314,7 +315,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
               cx={point.x}
               cy={point.y}
               r={pointRadius}
-              fill={categories[idx]?.color || '#666'}
+              fill={HEXAGON_CATEGORIES[idx]?.color || '#666'}
               stroke="rgba(255, 255, 255, 0.9)"
               strokeWidth={strokeWidth}
               initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
@@ -330,7 +331,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
                 repeatDelay: 3
               }}
               style={{
-                filter: `drop-shadow(0 2px 8px ${categories[idx]?.color || '#666'}40)`
+                filter: `drop-shadow(0 2px 8px ${HEXAGON_CATEGORIES[idx]?.color || '#666'}40)`
               }}
               className="cursor-pointer"
             />
@@ -356,7 +357,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       </svg>
 
       {/* THE RITUAL OS - Enhanced mobile labels with better touch targets */}
-      {categories.map((cat, idx) => {
+      {HEXAGON_CATEGORIES.map((cat, idx) => {
         const angleRad = (cat.angle * Math.PI) / 180
         const x = center + labelDistance * Math.cos(angleRad)
         const y = center + labelDistance * Math.sin(angleRad)

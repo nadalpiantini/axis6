@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Bell, 
@@ -21,6 +20,8 @@ import {
   CheckCircle,
   Settings
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'

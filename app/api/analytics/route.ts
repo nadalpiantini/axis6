@@ -1,6 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/server'
 
 // GET /api/analytics - Get user's analytics data
 export async function GET(request: NextRequest) {
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
     const startDateStr = startDate.toISOString().split('T')[0]
 
     // Get daily statistics
-    let dailyQuery = supabase
+    const dailyQuery = supabase
       .from('axis6_daily_stats')
       .select('*')
       .eq('user_id', user.id)

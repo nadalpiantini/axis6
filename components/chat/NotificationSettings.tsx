@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Bell, BellOff, Volume2, VolumeX, Settings, TestTube } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { Bell, BellOff, Volume2, VolumeX, Settings, TestTube } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
 import { notificationService, NotificationPermissionResult } from '@/lib/services/notification-service'
+import { cn } from '@/lib/utils'
 
 interface NotificationSettingsProps {
   className?: string

@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+
 import { logger } from '@/lib/logger'
 
 // Initialize Resend with API key

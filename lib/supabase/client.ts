@@ -1,6 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
-import type { Database } from './types'
+
 import { initSupabaseDebug } from './debug'
+import type { Database } from './types'
 
 export function createClient() {
   // Use consistent bracket notation for environment variables

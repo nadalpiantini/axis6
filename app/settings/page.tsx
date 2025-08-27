@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
   User,
@@ -17,6 +16,8 @@ import {
   TrendingUp,
   CheckCircle
 } from 'lucide-react'
+import Link from 'next/link'
+
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
@@ -221,7 +222,7 @@ export default function SettingsPage() {
                       <div 
                         className="p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl flex-shrink-0"
                         style={{ 
-                          backgroundColor: card.color + '20',
+                          backgroundColor: `${card.color  }20`,
                           border: `1px solid ${card.color}30`
                         }}
                       >

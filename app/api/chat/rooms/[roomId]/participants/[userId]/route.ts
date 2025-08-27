@@ -1,6 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/server'
 
 // PUT /api/chat/rooms/[roomId]/participants/[userId] - Update participant role or settings
 export async function PUT(

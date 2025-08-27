@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+
+import { NextRequest, NextResponse } from 'next/server'
 
 const CSRF_SECRET = process.env['CSRF_SECRET'] || (() => {
   if (process.env['NODE_ENV'] === 'production') {

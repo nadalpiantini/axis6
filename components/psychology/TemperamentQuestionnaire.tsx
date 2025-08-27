@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronLeft, 
@@ -13,6 +12,8 @@ import {
   Zap,
   Loader2
 } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+
 import { LogoIcon } from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
 

@@ -1,11 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { format, formatDistanceToNow, parseISO } from 'date-fns'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Bell, 
   BellRing, 
@@ -22,10 +18,16 @@ import {
   Zap,
   TrendingUp
 } from 'lucide-react'
-import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
+import { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { SmartNotification } from '@/lib/ai/smart-notifications'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format, formatDistanceToNow, parseISO } from 'date-fns'
+import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
+
 
 interface SmartNotificationPanelProps {
   className?: string

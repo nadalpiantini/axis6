@@ -3,8 +3,8 @@
  * Comprehensive user analytics, performance tracking, and business metrics
  */
 
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import * as Sentry from '@sentry/nextjs'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 interface AnalyticsEvent {
   name: string

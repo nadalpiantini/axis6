@@ -1,14 +1,16 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MoreVertical, Reply, Trash2, Edit3 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import React, { useEffect, useRef } from 'react'
+
 import { Button } from '@/components/ui/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { ChatMessageWithSender } from '@/lib/supabase/types'
-import { ChatMessage } from './ChatMessage'
 import { useIntersection } from '@/lib/hooks/useIntersection'
+import { ChatMessageWithSender } from '@/lib/supabase/types'
+import { cn } from '@/lib/utils'
+
+import { ChatMessage } from './ChatMessage'
 
 interface ChatMessageListProps {
   messages: ChatMessageWithSender[]

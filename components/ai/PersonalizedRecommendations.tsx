@@ -1,11 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Sparkles, 
   Target, 
@@ -20,9 +15,16 @@ import {
   Calendar,
   Award
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAIRecommendations } from '@/lib/hooks/useAIPersonalization'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
-import { motion, AnimatePresence } from 'framer-motion'
+
 
 interface PersonalizedRecommendationsProps {
   className?: string

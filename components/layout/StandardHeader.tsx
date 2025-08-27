@@ -1,8 +1,5 @@
 'use client'
 
-import { useState, useEffect, memo } from 'react'
-import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { 
   Bell, 
@@ -17,8 +14,13 @@ import {
   ChevronLeft,
   Home,
   BarChart3,
-  Target
+  Target,
+  MessageSquare
 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
+import { useState, useEffect, memo } from 'react'
+
 import { LogoIcon } from '@/components/ui/Logo'
 
 interface StandardHeaderProps {
@@ -96,6 +98,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
   const navigationItems = [
     { href: '/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/my-day', icon: Calendar, label: 'Mi Día' },
+    { href: '/chat', icon: MessageSquare, label: 'Chat' },
     { href: '/analytics', icon: BarChart3, label: 'Análisis' },
     { href: '/achievements', icon: Trophy, label: 'Logros' },
     { href: '/profile', icon: User, label: 'Perfil' }

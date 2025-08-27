@@ -1,10 +1,11 @@
 'use client'
 
-import { logger } from '@/lib/utils/logger';
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
 import { createClient } from '@/lib/supabase/client'
+import { logger } from '@/lib/utils/logger';
 
 export default function AuthCallbackPage() {
   const router = useRouter()

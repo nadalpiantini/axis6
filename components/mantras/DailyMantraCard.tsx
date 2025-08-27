@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Sparkles, CheckCircle, RefreshCw } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 interface Mantra {
   id: number

@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useMemo, memo } from 'react'
-import { useConstellation } from '@/hooks/useConstellation'
+
 import { BalanceWhisper } from '@/components/ui/BalanceWhisper'
+import { useConstellation } from '@/hooks/useConstellation'
 
 interface RitualConstellationProps {
   date?: string

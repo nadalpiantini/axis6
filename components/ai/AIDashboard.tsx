@@ -1,10 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { format } from 'date-fns'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Brain, 
   Sparkles, 
@@ -22,12 +19,18 @@ import {
   Calendar,
   AlertTriangle
 } from 'lucide-react'
-import { AIInsightsCard } from './AIInsightsCard'
-import { SmartNotificationPanel, NotificationSummary } from './SmartNotificationPanel'
-import { PersonalizedRecommendations } from './PersonalizedRecommendations'
+import { useState, useEffect } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format } from 'date-fns'
+
+import { AIInsightsCard } from './AIInsightsCard'
+import { PersonalizedRecommendations } from './PersonalizedRecommendations'
+import { SmartNotificationPanel, NotificationSummary } from './SmartNotificationPanel'
+
 
 interface AIDashboardProps {
   className?: string

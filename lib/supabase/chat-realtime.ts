@@ -1,3 +1,5 @@
+import { RealtimeChannel, RealtimeChannelSendResponse } from '@supabase/supabase-js'
+
 import { createClient } from './client'
 import { createAuthenticatedChannel, realtimeManager } from './realtime-manager'
 import { 
@@ -7,7 +9,6 @@ import {
   RealtimeParticipantPayload,
   ChatUIState
 } from './types'
-import { RealtimeChannel, RealtimeChannelSendResponse } from '@supabase/supabase-js'
 
 interface ChatRealtimeState {
   connectedRooms: Set<string>

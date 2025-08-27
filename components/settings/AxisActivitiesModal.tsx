@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, 
@@ -13,6 +12,8 @@ import {
   AlertCircle,
   Sparkles
 } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+
 import { AxisIcon } from '@/components/icons'
 import { 
   useAxisActivities, 
@@ -297,7 +298,7 @@ export function AxisActivitiesModal({
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div 
                       className="p-2 rounded-lg flex-shrink-0"
-                      style={{ backgroundColor: axis.color + '20' }}
+                      style={{ backgroundColor: `${axis.color  }20` }}
                     >
                       <AxisIcon 
                         axis={axis.icon}

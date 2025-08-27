@@ -1,6 +1,7 @@
-import { memo } from 'react'
-import Link from 'next/link'
 import { Flame, Settings, LogOut, TrendingUp, Calendar, MessageCircle } from 'lucide-react'
+import Link from 'next/link'
+import { memo } from 'react'
+
 import { AxisIcon } from '@/components/icons'
 
 interface DashboardHeaderProps {

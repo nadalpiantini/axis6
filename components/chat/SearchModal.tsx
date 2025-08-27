@@ -1,9 +1,12 @@
 'use client'
 
-import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSearch } from './MessageSearch'
+import React from 'react'
+
 import { SearchResult } from '@/lib/services/message-search'
+
+import { MessageSearch } from './MessageSearch'
+
 
 interface SearchModalProps {
   isOpen: boolean

@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import { loginSchema, type LoginInput } from '@/lib/validation/schemas'
-import { createClient } from '@/lib/supabase/client'
 import { useAuthStore, useUIStore } from '@/lib/stores/useAppStore'
+import { createClient } from '@/lib/supabase/client'
+import { loginSchema, type LoginInput } from '@/lib/validation/schemas'
 
 export function LoginForm() {
   const router = useRouter()

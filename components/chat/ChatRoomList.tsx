@@ -1,14 +1,15 @@
 'use client'
 
-import React from 'react'
-import { Hash, Users, Settings, MessageCircle, Plus } from 'lucide-react'
-import { motion } from 'framer-motion'
 import { formatDistanceToNow } from 'date-fns'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { motion } from 'framer-motion'
+import { Hash, Users, Settings, MessageCircle, Plus } from 'lucide-react'
+import React from 'react'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
+import { cn } from '@/lib/utils'
 
 interface ChatRoomListProps {
   rooms: ChatRoomWithParticipants[]

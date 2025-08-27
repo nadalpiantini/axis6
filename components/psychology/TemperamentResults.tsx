@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Brain,
@@ -16,6 +15,8 @@ import {
   Award,
   ArrowRight
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
 import { LogoIcon } from '@/components/ui/Logo'
 
 interface TemperamentResult {

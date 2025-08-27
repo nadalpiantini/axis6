@@ -1,7 +1,7 @@
 'use client'
 
-import { ReactNode, useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { ReactNode, useRef, useEffect, useState } from 'react'
 
 interface ClickableSVGProps {
   children: ReactNode

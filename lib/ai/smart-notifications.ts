@@ -1,7 +1,10 @@
-import { deepseekClient } from './deepseek'
-import { behavioralAnalyzer, UserBehaviorProfile } from './behavioral-analyzer'
-import { createClient } from '@/lib/supabase/client'
 import { addMinutes, format, parseISO, isSameDay, isAfter } from 'date-fns'
+
+import { createClient } from '@/lib/supabase/client'
+
+import { behavioralAnalyzer, UserBehaviorProfile } from './behavioral-analyzer'
+import { deepseekClient } from './deepseek'
+
 
 export interface SmartNotification {
   id: string

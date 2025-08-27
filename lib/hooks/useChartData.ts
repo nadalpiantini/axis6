@@ -11,14 +11,16 @@ export interface ChartDataProcessor {
 }
 
 export function useChartDataProcessor(): ChartDataProcessor {
-  const sampleData = useCallback((data: any[], maxPoints: number) => {
+  // Remove useCallback wrappers to avoid React error #310
+  // These functions are stable and don't need memoization
+  const sampleData = (data: any[], maxPoints: number) => {
     if (!data || data.length <= maxPoints) return data
     
     const step = Math.ceil(data.length / maxPoints)
     return data.filter((_, index) => index % step === 0)
-  }, [])
+  }
 
-  const processCompletionData = useCallback((data: any[]) => {
+  const processCompletionData = (data: any[]) => {
     if (!data) return []
     
     return data.map(item => ({
@@ -28,9 +30,9 @@ export function useChartDataProcessor(): ChartDataProcessor {
         : 0,
       date: new Date(item.date).toISOString().split('T')[0] // Normalize date format
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-  }, [])
+  }
 
-  const processCategoryData = useCallback((data: Record<string, any>) => {
+  const processCategoryData = (data: Record<string, any>) => {
     if (!data) return []
     
     return Object.entries(data)
@@ -42,9 +44,9 @@ export function useChartDataProcessor(): ChartDataProcessor {
         averageMood: Math.round(stats.averageMood * 10) / 10
       }))
       .sort((a, b) => b.value - a.value) // Sort by count descending
-  }, [])
+  }
 
-  const processMoodData = useCallback((data: any[]) => {
+  const processMoodData = (data: any[]) => {
     if (!data) return []
     
     return data.map(item => ({
@@ -54,7 +56,7 @@ export function useChartDataProcessor(): ChartDataProcessor {
         : 0,
       date: new Date(item.date).toISOString().split('T')[0]
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-  }, [])
+  }
 
   return {
     processCompletionData,

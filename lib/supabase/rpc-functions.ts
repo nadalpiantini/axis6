@@ -1,5 +1,6 @@
-import { createClient } from './client'
 import type { Database } from '@/types/supabase'
+
+import { createClient } from './client'
 
 type Category = Database['public']['Tables']['axis6_categories']['Row']
 type CheckIn = Database['public']['Tables']['axis6_checkins']['Row']

@@ -1,14 +1,16 @@
 'use client'
 
+import { format, parseISO } from 'date-fns'
+import { motion } from 'framer-motion'
+import { TrendingUp, MessageSquare, Users, Search, Download, Filter, Calendar, Clock, Zap, Heart, FileText, Hash } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
-import { TrendingUp, MessageSquare, Users, Search, Download, Filter, Calendar, Clock, Zap, Heart, FileText, Hash } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
 import { chatAnalyticsService, ChatAnalytics } from '@/lib/services/chat-analytics'
-import { format, parseISO } from 'date-fns'
+import { cn } from '@/lib/utils'
+
 
 interface AnalyticsDashboardProps {
   className?: string

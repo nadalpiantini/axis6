@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
+
 import { AxisIcon } from '@/components/icons'
 import { getAxisColors } from '@/lib/constants/brand-colors'
 

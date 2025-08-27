@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MoreVertical, Users, Hash, Phone, Video, Settings } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import React, { useState, useRef, useEffect } from 'react'
+
 import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { animations } from '@/lib/design-system/theme'
 import { 
   useChatRoom, 
@@ -14,9 +14,11 @@ import {
   useTypingIndicator 
 } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants, ChatMessageWithSender } from '@/lib/supabase/types'
-import { ChatMessageList } from './ChatMessageList'
+import { cn } from '@/lib/utils'
+
 import { ChatComposer } from './ChatComposer'
 import { ChatHeader } from './ChatHeader'
+import { ChatMessageList } from './ChatMessageList'
 import { ChatParticipants } from './ChatParticipants'
 import { TypingIndicator } from './TypingIndicator'
 

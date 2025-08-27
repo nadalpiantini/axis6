@@ -5,6 +5,7 @@
 
 import * as Sentry from '@sentry/nextjs'
 import React from 'react'
+
 import { logger } from '@/lib/utils/logger'
 
 // Error severity levels

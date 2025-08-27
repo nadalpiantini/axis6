@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { MessageCircle, Plus } from 'lucide-react'
-import { ChatRoomList } from '@/components/chat/ChatRoomList'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
 import { ChatRoom } from '@/components/chat/ChatRoom'
+import { ChatRoomList } from '@/components/chat/ChatRoomList'
 import { Button } from '@/components/ui/Button'
 import { useChatRooms } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'

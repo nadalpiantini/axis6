@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS axis6_checkins (
 -- Drop existing unique constraint if it exists (to recreate it properly)
 ALTER TABLE axis6_checkins DROP CONSTRAINT IF EXISTS axis6_checkins_user_id_category_id_completed_at_key;
 
--- Add the proper unique constraint for ON CONFLICT operations
-ALTER TABLE axis6_checkins ADD CONSTRAINT axis6_checkins_user_id_category_id_completed_at_key 
-    UNIQUE (user_id, category_id, (completed_at::date));
+-- Create a unique index for the date-based constraint
+CREATE UNIQUE INDEX IF NOT EXISTS idx_checkins_user_category_date 
+    ON axis6_checkins (user_id, category_id, (completed_at::date));
 
 -- Add performance indexes
 CREATE INDEX IF NOT EXISTS idx_checkins_user_completed 

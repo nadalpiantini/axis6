@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
+
 import { sendEmail } from '@/lib/email/service-simple'
 import { logger } from '@/lib/logger'
 
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest) {
         {
           id: authData.user.id,
           name: name,
+          full_name: name,
           timezone: 'America/Santo_Domingo',
           onboarded: false,
         }

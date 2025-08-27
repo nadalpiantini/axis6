@@ -5,10 +5,12 @@
 
 'use client'
 
-import React, { Component, ReactNode } from 'react'
 import * as Sentry from '@sentry/nextjs'
-import { Button } from '@/components/ui/Button'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import React, { Component, ReactNode } from 'react'
+
+import { Button } from '@/components/ui/Button'
+
 
 interface ErrorInfo {
   componentStack: string

@@ -1,10 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Brain, 
   Sparkles, 
@@ -21,12 +18,17 @@ import {
   Calendar,
   Star
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
+import React, { useState, useEffect } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { activityRecommender } from '@/lib/ai/activity-recommender'
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
+import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+
 
 interface OnboardingStep {
   id: string

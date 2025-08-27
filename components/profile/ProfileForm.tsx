@@ -1,11 +1,12 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import { Loader2, Save } from "lucide-react"
+import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { createClient } from "@/lib/supabase/client"
-import { profileFormSchema, type ProfileFormData, timezoneOptions } from "@/lib/validation/profile"
+
+import { Button } from "@/components/ui/Button"
+import { DatePicker } from "@/components/ui/date-picker"
 import {
   Form,
   FormControl,
@@ -16,8 +17,6 @@ import {
   FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { DatePicker } from "@/components/ui/date-picker"
 import {
   Select,
   SelectContent,
@@ -25,7 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/Button"
+import { Textarea } from "@/components/ui/textarea"
+import { createClient } from "@/lib/supabase/client"
+import { profileFormSchema, type ProfileFormData, timezoneOptions } from "@/lib/validation/profile"
 
 interface ProfileFormProps {
   userId: string

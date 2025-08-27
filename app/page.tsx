@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Star, TrendingUp, Shield } from 'lucide-react'
+import Link from 'next/link'
+
 import { LogoFull } from '@/components/ui/Logo'
 
-import { motion } from 'framer-motion'
 
 const axes = [
   { name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },
@@ -47,7 +48,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
           >
             <div className="mb-4 sm:mb-6 flex justify-center">
-              <LogoFull size="xl" priority className="max-w-xs sm:max-w-sm md:max-w-md" />
+              <LogoFull size="xl" className="max-w-xs sm:max-w-sm md:max-w-md" priority />
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white leading-tight px-2">
               Balance Your Life with AXIS6

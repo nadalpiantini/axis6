@@ -1,8 +1,8 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useState } from 'react'
 
 // Dynamically import DevTools only in development to avoid SSR issues
 const ReactQueryDevtools = dynamic(

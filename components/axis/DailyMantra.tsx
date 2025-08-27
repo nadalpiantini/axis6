@@ -1,8 +1,8 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
 import { Sparkles, Heart, Brain, Users, Sun, Briefcase, Palette, Check, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 interface Mantra {
   id: number

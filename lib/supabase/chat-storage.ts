@@ -3,8 +3,8 @@
  * Handles file uploads, downloads, and management for chat system
  */
 
-import { createClient } from '@/lib/supabase/client'
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/client'
 
 export interface FileUploadProgress {
   loaded: number
@@ -363,7 +363,7 @@ export class ChatStorageService {
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`
   }
 
   /**

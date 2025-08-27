@@ -1,5 +1,6 @@
-import { createClient } from './client'
 import { SupabaseClient } from '@supabase/supabase-js'
+
+import { createClient } from './client'
 
 interface RealtimeConnectionState {
   isConnected: boolean

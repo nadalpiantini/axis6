@@ -1,9 +1,10 @@
-import { logger } from '@/lib/utils/logger';
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
 import { z } from 'zod'
+
+import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
+import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger';
 
 const requestSchema = z.object({
   sessionId: z.string(),

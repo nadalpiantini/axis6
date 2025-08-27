@@ -153,7 +153,7 @@ export function escapeSQLString(str: string): string {
         case "'":
         case '\\':
         case '%':
-          return '\\' + char
+          return `\\${  char}`
         default:
           return char
       }

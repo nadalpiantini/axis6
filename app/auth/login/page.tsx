@@ -1,13 +1,14 @@
 'use client'
 
-import { logger } from '@/lib/utils/logger';
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Mail, Lock, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import { LogoFull } from '@/components/ui/Logo'
 import { shouldBypassRateLimit } from '@/lib/test-config'
+import { logger } from '@/lib/utils/logger';
 
 export default function LoginPage() {
   const router = useRouter()
@@ -64,7 +65,7 @@ export default function LoginPage() {
         <div className="glass rounded-3xl p-8">
           <div className="text-center mb-8">
             <div className="mb-4 flex justify-center">
-              <LogoFull size="lg" priority />
+              <LogoFull size="lg" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
               Welcome Back

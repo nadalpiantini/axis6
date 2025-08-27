@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
+
 import type { CheckIn } from './hooks/useCheckins'
 
 interface CacheUpdateOptions {

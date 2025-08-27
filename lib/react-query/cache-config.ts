@@ -4,8 +4,9 @@
  */
 
 import { QueryClient } from '@tanstack/react-query'
-import { logger } from '@/lib/utils/logger'
+
 import { createEnhancedQueryClient, createQueryErrorHandler } from '@/lib/monitoring/query-error-handler'
+import { logger } from '@/lib/utils/logger'
 
 // Cache time configurations (in milliseconds)
 export const CACHE_TIMES = {

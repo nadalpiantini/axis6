@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AtSign, User } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+
 import { useDebounce } from '@/lib/hooks/useDebounce'
+import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
+import { cn } from '@/lib/utils'
 
 interface MentionInputProps {
   value: string
@@ -173,9 +174,9 @@ export function MentionInput({
     if (!mentionRange) return
     
     const newValue = 
-      value.slice(0, mentionRange.start) + 
-      `@${user.name} ` + 
-      value.slice(mentionRange.end)
+      `${value.slice(0, mentionRange.start)  
+      }@${user.name} ${  
+      value.slice(mentionRange.end)}`
     
     onChange(newValue)
     
@@ -205,7 +206,7 @@ export function MentionInput({
     const textarea = textareaRef.current
     if (textarea) {
       textarea.style.height = 'auto'
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`
     }
   }, [value])
 

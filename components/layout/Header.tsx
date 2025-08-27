@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Bell, Settings, User, LogOut, Sparkles } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
 import { LogoIcon } from '@/components/ui/Logo'
 
 interface HeaderProps {

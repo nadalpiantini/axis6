@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react'
 import { Crown, Shield, User, MoreVertical } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import React from 'react'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatParticipant } from '@/lib/supabase/types'
+import { cn } from '@/lib/utils'
 
 interface ParticipantWithProfile extends ChatParticipant {
   profile: {

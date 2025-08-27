@@ -1,6 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/server'
 
 // POST /api/chat/rooms/[roomId]/messages/[messageId]/reactions - Add a reaction
 export async function POST(

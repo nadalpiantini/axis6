@@ -1,15 +1,25 @@
 'use client'
 
-import { memo, useMemo, useCallback, useEffect, lazy, Suspense } from 'react'
-import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
 import { Flame, Settings, LogOut, TrendingUp, Trophy, User, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { memo, useMemo, useCallback, useEffect, lazy, Suspense } from 'react'
 
 // Lazy load heavy components for better bundle splitting
 const DailyMantraCard = lazy(() => import('@/components/mantras/DailyMantraCard').then(mod => ({ default: mod.DailyMantraCard })))
 
 // React Query hooks
+import HexagonChartWithResonance from '@/components/axis/HexagonChartWithResonance'
+import { HexagonErrorBoundary } from '@/components/error/HexagonErrorBoundary'
+import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
+import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
+import { AxisIcon } from '@/components/icons'
+import { StandardHeader } from '@/components/layout/StandardHeader'
+import { ClickableSVG } from '@/components/ui/ClickableSVG'
+import { LogoFull } from '@/components/ui/Logo'
+import { SkeletonDashboard } from '@/components/ui/Skeleton'
+import { useRealtimeDashboard } from '@/lib/hooks/useRealtimeCheckins'
 import { 
   useUser, 
   useCategories, 
@@ -20,7 +30,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 
 // Realtime hooks
-import { useRealtimeDashboard } from '@/lib/hooks/useRealtimeCheckins'
 
 // Zustand stores
 import { 
@@ -29,15 +38,7 @@ import {
 } from '@/lib/stores/useAppStore'
 
 // Components
-import { AxisIcon } from '@/components/icons'
-import { LogoFull } from '@/components/ui/Logo'
-import { SkeletonDashboard } from '@/components/ui/Skeleton'
-import { QueryErrorBoundary } from '@/components/error/QueryErrorBoundary'
-import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
-import { ClickableSVG } from '@/components/ui/ClickableSVG'
-import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
-import HexagonChartWithResonance from '@/components/axis/HexagonChartWithResonance'
 
 // New Hexagon component wrapper with resonance features
 const HexagonVisualizationWithResonance = memo(({ 
@@ -81,15 +82,17 @@ const HexagonVisualizationWithResonance = memo(({
   return (
     <div className="flex justify-center mb-4 sm:mb-8 overflow-hidden" data-testid="hexagon-chart">
       <div className="w-full max-w-[95vw] sm:max-w-none flex justify-center">
-        <HexagonChartWithResonance
-          data={hexagonData}
-          size={350}
-          animate={true}
-          showResonance={showResonance}
-          onToggleAxis={onToggleAxis}
-          isToggling={isToggling}
-          axes={axes}
-        />
+        <HexagonErrorBoundary>
+          <HexagonChartWithResonance
+            data={hexagonData}
+            size={350}
+            animate={true}
+            showResonance={showResonance}
+            onToggleAxis={onToggleAxis}
+            isToggling={isToggling}
+            axes={axes}
+          />
+        </HexagonErrorBoundary>
       </div>
     </div>
   )
@@ -378,7 +381,7 @@ export default function DashboardPageV2() {
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8">
             {/* Logo Section */}
             <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-              <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" />
+              <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" priority={false} />
             </div>
             
             {/* Welcome Section */}

@@ -1,6 +1,6 @@
+import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 import { ChatRoom, ChatParticipant, ChatMessage } from '@/lib/supabase/types'
-import { logger } from '@/lib/logger'
 
 /**
  * Security validation utilities for chat system

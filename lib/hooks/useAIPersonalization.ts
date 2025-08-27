@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect, useCallback } from 'react'
+
 import { UserBehaviorProfile, PersonalizedInsight } from '@/lib/ai/behavioral-analyzer'
 import { SmartNotification } from '@/lib/ai/smart-notifications'
 

@@ -1,16 +1,18 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { MoreVertical, Reply, Trash2, Edit3, Heart, ThumbsUp, Smile } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import React, { useState, useEffect } from 'react'
+
 import { Badge } from '@/components/ui/badge'
-import { ChatMessageWithSender } from '@/lib/supabase/types'
+import { Button } from '@/components/ui/Button'
 import { useMessageReaction } from '@/lib/hooks/useChat'
-import { FileAttachment } from './FileUpload'
 import { chatStorage, ChatAttachment } from '@/lib/supabase/chat-storage'
+import { ChatMessageWithSender } from '@/lib/supabase/types'
+import { cn } from '@/lib/utils'
+
+import { FileAttachment } from './FileUpload'
 
 interface ChatMessageProps {
   message: ChatMessageWithSender

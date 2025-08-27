@@ -1,6 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/logger'
+import { createClient } from '@/lib/supabase/server'
 
 // GET /api/streaks - Get user's streaks
 export async function GET(request: NextRequest) {

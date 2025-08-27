@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/logger'
 import type { ErrorReport, PerformanceReport } from '@/lib/monitoring/error-tracker'
 

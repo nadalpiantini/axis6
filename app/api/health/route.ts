@@ -1,4 +1,3 @@
-import { logger } from '@/lib/utils/logger';
 
 /**
  * Production Health Check API Endpoint
@@ -6,9 +5,11 @@ import { logger } from '@/lib/utils/logger';
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { healthCheck, type SystemHealth } from '@/lib/production/health-check'
+
 import { circuitBreaker } from '@/lib/production/circuit-breaker'
+import { healthCheck, type SystemHealth } from '@/lib/production/health-check'
 import { performanceOptimizer } from '@/lib/production/performance-optimizer'
+import { logger } from '@/lib/utils/logger';
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'

@@ -1,14 +1,16 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
-import { Search, X, Clock, Filter, TrendingUp, Calendar, User, MessageSquare } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { messageSearchService, SearchResult, SearchOptions, SearchStats } from '@/lib/services/message-search'
-import { useDebounce } from '@/lib/hooks/useDebounce'
 import { formatDistanceToNow } from 'date-fns'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Search, X, Clock, Filter, TrendingUp, Calendar, User, MessageSquare } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { useDebounce } from '@/lib/hooks/useDebounce'
+import { messageSearchService, SearchResult, SearchOptions, SearchStats } from '@/lib/services/message-search'
+import { cn } from '@/lib/utils'
+
 
 interface MessageSearchProps {
   className?: string

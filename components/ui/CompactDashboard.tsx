@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TrendingUp, Calendar, Award, BarChart3 } from 'lucide-react'
+import { useState } from 'react'
+
 import { PhysicalIcon, MentalIcon, EmotionalIcon, SocialIcon, SpiritualIcon, MaterialIcon } from '../icons'
+
 import MiniHexagon from './MiniHexagon'
 import WellnessScore from './WellnessScore'
 

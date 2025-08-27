@@ -21,7 +21,7 @@ export async function GET() {
       env: {
         hasUrl,
         hasAnon,
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...'
+        url: `${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30)  }...`
       },
       test: {
         querySuccess: !error,

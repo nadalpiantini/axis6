@@ -1,13 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Search, MessageSquare, Calendar, User, Filter, ArrowUpDown } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/badge'
-import { SearchResult, SearchStats } from '@/lib/services/message-search'
 import { formatDistanceToNow, format } from 'date-fns'
+import { motion } from 'framer-motion'
+import { Search, MessageSquare, Calendar, User, Filter, ArrowUpDown } from 'lucide-react'
+import React, { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { SearchResult, SearchStats } from '@/lib/services/message-search'
+import { cn } from '@/lib/utils'
+
 
 interface SearchResultsProps {
   results: SearchResult[]

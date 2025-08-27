@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { Home, Activity, TrendingUp, User, Plus, Calendar, MessageCircle } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface NavItem {
   id: string

@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useCallback, useState, useRef } from 'react'
-import { Upload, X, File, Image, Video, Music, FileText, Archive, Download, ZoomIn } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { Upload, X, File, Image, Video, Music, FileText, Archive, Download, ZoomIn } from 'lucide-react'
+import React, { useCallback, useState, useRef } from 'react'
+
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
 import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { chatStorage, ChatAttachment, FileUploadProgress } from '@/lib/supabase/chat-storage'
-import { ImageLightbox } from './ImageLightbox'
 import { logger } from '@/lib/logger'
+import { chatStorage, ChatAttachment, FileUploadProgress } from '@/lib/supabase/chat-storage'
+import { cn } from '@/lib/utils'
+
+import { ImageLightbox } from './ImageLightbox'
+
 
 interface FileUploadProps {
   messageId: string

@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Image, Smile, Plus, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { Send, Paperclip, Image, Smile, Plus, X } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/textarea'
+import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
+import { ChatAttachment } from '@/lib/supabase/chat-storage'
+import { cn } from '@/lib/utils'
+
 import { FileUpload, FileAttachment } from './FileUpload'
 import { MentionInput } from './MentionInput'
-import { ChatAttachment } from '@/lib/supabase/chat-storage'
-import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
+
 
 interface ChatComposerProps {
   onSendMessage: (
@@ -50,7 +53,7 @@ export function ChatComposer({
     const textarea = textareaRef.current
     if (textarea) {
       textarea.style.height = 'auto'
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`
     }
   }, [message])
 

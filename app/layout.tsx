@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ReactQueryProvider } from '@/lib/react-query/provider'
+import { headers } from 'next/headers'
+import { Toaster } from 'sonner'
+
+import { SupabaseErrorBoundary } from '@/components/error/SupabaseErrorBoundary'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { NotificationToast } from '@/components/ui/NotificationToast'
-import { SupabaseErrorBoundary } from '@/components/error/SupabaseErrorBoundary'
-import { Toaster } from 'sonner'
-import { headers } from 'next/headers'
+import { ReactQueryProvider } from '@/lib/react-query/provider'
+
 import './globals.css'
 
 const inter = Inter({ 
@@ -126,6 +128,8 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//nvpnhqhjttgwfwvkgmpk.supabase.co" />
+        
+        {/* Logo assets are loaded on-demand with Next.js Image optimization */}
         
         {/* Splash screen for iOS */}
         <link rel="apple-touch-startup-image" href="/brand/splash/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />

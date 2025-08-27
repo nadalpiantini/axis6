@@ -1,7 +1,8 @@
 'use client'
 
-import React, { Suspense, useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import React, { Suspense, useMemo } from 'react'
+
 import { performanceUtils } from '@/lib/production/performance-optimizer'
 
 // Dynamic imports with loading states for better performance

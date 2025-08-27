@@ -1,7 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
   ArrowLeft, 
@@ -13,11 +11,14 @@ import {
   Activity,
   Loader2
 } from 'lucide-react'
-import { LogoIcon } from '@/components/ui/Logo'
-import { StandardHeader } from '@/components/layout/StandardHeader'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useEffect } from 'react'
+
+import { StandardHeader } from '@/components/layout/StandardHeader'
+import { LogoIcon } from '@/components/ui/Logo'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
+import { createClient } from '@/lib/supabase/client'
 
 interface Achievement {
   id: string

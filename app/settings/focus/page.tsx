@@ -1,9 +1,10 @@
 'use client'
 
+import { Focus } from 'lucide-react'
+
+import { FocusSettings } from '@/components/settings/FocusSettings'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection } from '@/components/settings/SettingsSection'
-import { FocusSettings } from '@/components/settings/FocusSettings'
-import { Focus } from 'lucide-react'
 import { useUser } from '@/lib/react-query/hooks'
 
 export default function FocusSettingsPage() {

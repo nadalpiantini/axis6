@@ -1,6 +1,6 @@
+import { createClient } from '@/lib/supabase/client'
 import { logger } from '@/lib/utils/logger';
 
-import { createClient } from '@/lib/supabase/client'
 
 export type ErrorLevel = 'info' | 'warn' | 'error' | 'critical'
 export type ErrorCategory = 'auth' | 'database' | 'api' | 'email' | 'ui' | 'network' | 'validation' | 'performance'

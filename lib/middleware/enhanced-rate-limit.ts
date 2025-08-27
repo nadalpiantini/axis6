@@ -3,9 +3,10 @@
  * Integrates with error tracking and provides comprehensive protection
  */
 
-import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { NextRequest, NextResponse } from 'next/server'
+
 import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
 import { logger } from '@/lib/utils/logger'
 
@@ -312,7 +313,7 @@ export async function withEnhancedRateLimit(
       'rate_limit_exceeded',
       {
         limiterType,
-        identifier: identifier.split(':')[0] + ':***', // Anonymize
+        identifier: `${identifier.split(':')[0]  }:***`, // Anonymize
         remaining: result.remaining,
         total: result.total,
         retryAfter,
@@ -324,7 +325,7 @@ export async function withEnhancedRateLimit(
     )
     
     logger.warn(`Rate limit exceeded: ${limiterType}`, {
-      identifier: identifier.split(':')[0] + ':***',
+      identifier: `${identifier.split(':')[0]  }:***`,
       remaining: result.remaining,
       total: result.total,
       retryAfter,
@@ -363,7 +364,7 @@ export async function withEnhancedRateLimit(
   // Request allowed - log if we're getting close to the limit
   if (result.remaining <= Math.floor(result.total * 0.1)) {
     logger.info(`Rate limit warning: ${limiterType}`, {
-      identifier: identifier.split(':')[0] + ':***',
+      identifier: `${identifier.split(':')[0]  }:***`,
       remaining: result.remaining,
       total: result.total,
       percentage: (result.remaining / result.total) * 100,

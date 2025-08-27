@@ -1,8 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useUser } from '@/lib/react-query/hooks'
 import { 
   TrendingUp, 
   Calendar, 
@@ -17,8 +14,8 @@ import {
   TrendingDown
 } from 'lucide-react'
 import Link from 'next/link'
-import { LogoIcon } from '@/components/ui/Logo'
-import { StandardHeader } from '@/components/layout/StandardHeader'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { 
   LineChart, 
   Line, 
@@ -33,6 +30,10 @@ import {
   Tooltip,
   Legend
 } from 'recharts'
+
+import { StandardHeader } from '@/components/layout/StandardHeader'
+import { LogoIcon } from '@/components/ui/Logo'
+import { useUser } from '@/lib/react-query/hooks'
 
 // Types
 interface AnalyticsData {

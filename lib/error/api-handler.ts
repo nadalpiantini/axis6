@@ -1,6 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server'
+
 import { logger } from '@/lib/utils/logger';
 
-import { NextRequest, NextResponse } from 'next/server'
 import { errorHandler } from './handler'
 import type { ErrorCategory } from './handler'
 

@@ -1,11 +1,12 @@
 'use client'
 
-import { logger } from '@/lib/utils/logger';
 
+import { Mail, ChevronRight, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Mail, ChevronRight, ArrowLeft } from 'lucide-react'
+
 import { LogoFull } from '@/components/ui/Logo'
+import { logger } from '@/lib/utils/logger';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')

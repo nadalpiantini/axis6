@@ -1,11 +1,12 @@
 'use client'
 
-import { logger } from '@/lib/utils/logger';
 
-import React, { ErrorInfo, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Database, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
+import React, { ErrorInfo, ReactNode } from 'react'
+
+import { logger } from '@/lib/utils/logger';
 
 interface Props {
   children: ReactNode

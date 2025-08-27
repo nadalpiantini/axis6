@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { format, addDays, subDays, isToday } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Calendar, 
@@ -15,14 +16,14 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { format, addDays, subDays, isToday } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { LogoFull } from '@/components/ui/Logo'
+import { useState, useEffect } from 'react'
+
 import { StandardHeader } from '@/components/layout/StandardHeader'
-import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
-import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { ActivityTimer } from '@/components/my-day/ActivityTimer'
 import { PlanMyDay } from '@/components/my-day/PlanMyDay'
+import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
+import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
+import { LogoFull } from '@/components/ui/Logo'
 import { useUser, useCategories } from '@/lib/react-query/hooks'
 import { useMyDayData, useTimeDistribution } from '@/lib/react-query/hooks/useMyDay'
 
