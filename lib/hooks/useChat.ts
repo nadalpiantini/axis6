@@ -46,21 +46,10 @@ export function useChatRooms(userId?: string) {
 
         const roomIds = participantRooms.map(p => p.room_id)
 
-        // Then get room details with all related data
-        const { data, error } = await supabase
+        // Get room details without relying on automatic foreign key relationships
+        const { data: roomsData, error } = await supabase
           .from('axis6_chat_rooms')
-          .select(`
-            *,
-            participants:axis6_chat_participants(
-              *,
-              profile:axis6_profiles(*)
-            ),
-            category:axis6_categories(*),
-            last_message:axis6_chat_messages(
-              *,
-              sender:axis6_profiles(*)
-            )
-          `)
+          .select('*')
           .in('id', roomIds)
           .eq('is_active', true)
           .order('updated_at', { ascending: false })
@@ -70,7 +59,81 @@ export function useChatRooms(userId?: string) {
           throw error
         }
 
-        return data || []
+        if (!roomsData || roomsData.length === 0) {
+          return []
+        }
+
+        // Fetch participants manually for each room
+        const roomsWithData: ChatRoomWithParticipants[] = []
+
+        for (const room of roomsData) {
+          // Get participants for this room
+          const { data: participantsData } = await supabase
+            .from('axis6_chat_participants')
+            .select('*')
+            .eq('room_id', room.id)
+
+          // Get participant profiles manually
+          const participants: ChatParticipant[] = []
+          if (participantsData) {
+            for (const participant of participantsData) {
+              const { data: profileData } = await supabase
+                .from('axis6_profiles')
+                .select('*')
+                .eq('id', participant.user_id)
+                .single()
+
+              participants.push({
+                ...participant,
+                profile: profileData
+              })
+            }
+          }
+
+          // Get category if exists
+          let category = null
+          if (room.category_id) {
+            const { data: categoryData } = await supabase
+              .from('axis6_categories')
+              .select('*')
+              .eq('id', room.category_id)
+              .single()
+            category = categoryData
+          }
+
+          // Get last message if exists
+          let lastMessage = null
+          const { data: messageData } = await supabase
+            .from('axis6_chat_messages')
+            .select('*')
+            .eq('room_id', room.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single()
+
+          if (messageData) {
+            // Get sender profile for last message
+            const { data: senderData } = await supabase
+              .from('axis6_profiles')
+              .select('*')
+              .eq('id', messageData.sender_id)
+              .single()
+
+            lastMessage = {
+              ...messageData,
+              sender: senderData
+            }
+          }
+
+          roomsWithData.push({
+            ...room,
+            participants,
+            category,
+            last_message: lastMessage
+          })
+        }
+
+        return roomsWithData
       } catch (error) {
         console.error('Failed to fetch chat rooms:', error)
         throw error
@@ -181,23 +244,13 @@ export function useChatMessages(roomId: string) {
 
   return useInfiniteQuery({
     queryKey: ['chatMessages', roomId],
+    initialPageParam: null,
     queryFn: async ({ pageParam }): Promise<{ data: ChatMessageWithSender[], nextCursor: string | null }> => {
       if (!supabase) throw new Error('Supabase client not available')
       
       let query = supabase
         .from('axis6_chat_messages')
-        .select(`
-          *,
-          sender:axis6_profiles(*),
-          reactions:axis6_chat_reactions(
-            *,
-            user:axis6_profiles(*)
-          ),
-          reply_to:axis6_chat_messages(
-            *,
-            sender:axis6_profiles(*)
-          )
-        `)
+        .select('*')
         .eq('room_id', roomId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
@@ -207,18 +260,69 @@ export function useChatMessages(roomId: string) {
         query = query.lt('created_at', pageParam)
       }
 
-      const { data, error } = await query
+      const { data: messagesData, error } = await query
 
       if (error) throw error
 
-      const messages = (data || []) as ChatMessageWithSender[]
+      if (!messagesData || messagesData.length === 0) {
+        return { data: [], nextCursor: null }
+      }
+
+      // Manually populate related data for each message
+      const messages: ChatMessageWithSender[] = []
+
+      for (const message of messagesData) {
+        // Get sender profile
+        const { data: senderData } = await supabase
+          .from('axis6_profiles')
+          .select('*')
+          .eq('id', message.sender_id)
+          .single()
+
+        // Get reactions (optional - only if they exist)
+        const { data: reactionsData } = await supabase
+          .from('axis6_chat_reactions')
+          .select('*')
+          .eq('message_id', message.id)
+
+        // Get reply-to message if exists
+        let replyToMessage = null
+        if (message.reply_to_id) {
+          const { data: replyData } = await supabase
+            .from('axis6_chat_messages')
+            .select('*')
+            .eq('id', message.reply_to_id)
+            .single()
+
+          if (replyData) {
+            // Get sender for reply-to message
+            const { data: replySenderData } = await supabase
+              .from('axis6_profiles')
+              .select('*')
+              .eq('id', replyData.sender_id)
+              .single()
+
+            replyToMessage = {
+              ...replyData,
+              sender: replySenderData
+            }
+          }
+        }
+
+        messages.push({
+          ...message,
+          sender: senderData,
+          reactions: reactionsData || [],
+          reply_to: replyToMessage
+        })
+      }
       const nextCursor = messages.length === MESSAGE_PAGE_SIZE 
         ? messages[messages.length - 1]?.created_at 
         : null
 
       return { data: messages.reverse(), nextCursor }
     },
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage: { data: ChatMessageWithSender[], nextCursor: string | null }) => lastPage.nextCursor,
     enabled: !!roomId && !!supabase,
     staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnMount: true

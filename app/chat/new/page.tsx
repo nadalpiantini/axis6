@@ -60,7 +60,7 @@ export default function NewChatRoomPage() {
           description: description.trim() || null,
           type,
           category_id: type === 'category' ? categoryId : null,
-          created_by: user.id,
+          creator_id: user.id,
           is_private: isPrivate
         })
         .select()

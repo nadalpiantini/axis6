@@ -72,7 +72,7 @@ const HexagonVisualizationWithResonance = memo(({
     axes.forEach(axis => {
       const key = axis.name.toLowerCase()
       if (key in defaultData) {
-        defaultData[key as keyof typeof defaultData] = axis.completed ? 1 : 0
+        defaultData[key as keyof typeof defaultData] = axis.completed ? 100 : 0
       }
     })
     
