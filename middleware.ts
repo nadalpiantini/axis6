@@ -90,7 +90,22 @@ export async function middleware(request: NextRequest) {
               return request.cookies.getAll()
             },
             setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+              cookiesToSet.forEach(({ name, value, options }) => {
+                // Handle base64 encoded values properly
+                let processedValue = value
+                if (value && value.startsWith('base64-')) {
+                  try {
+                    // Validate that we can decode and parse this value
+                    const decoded = atob(value.substring(7))
+                    JSON.parse(decoded)
+                    processedValue = value // Keep the base64 format if valid
+                  } catch {
+                    // If invalid, skip setting this cookie
+                    return
+                  }
+                }
+                response.cookies.set(name, processedValue, options)
+              })
             }
           }
         }

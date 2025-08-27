@@ -1,4 +1,4 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect, useCallback } from 'react'
 
@@ -36,7 +36,7 @@ export function useAIPersonalization() {
     error: null
   })
 
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const queryClient = useQueryClient()
 
   // Fetch behavior analysis

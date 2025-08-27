@@ -1,6 +1,6 @@
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { MessageCircle, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -14,7 +14,7 @@ import { ChatRoomWithParticipants } from '@/lib/supabase/types'
 export default function ChatPage() {
   const [selectedRoom, setSelectedRoom] = useState<ChatRoomWithParticipants | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const router = useRouter()
   
   // Get user ID

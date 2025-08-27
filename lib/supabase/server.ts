@@ -22,9 +22,22 @@ export async function createClient() {
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+            cookiesToSet.forEach(({ name, value, options }) => {
+              // Handle base64 encoded values properly
+              let processedValue = value
+              if (value && value.startsWith('base64-')) {
+                try {
+                  // Validate that we can decode and parse this value
+                  const decoded = atob(value.substring(7))
+                  JSON.parse(decoded)
+                  processedValue = value // Keep the base64 format if valid
+                } catch {
+                  // If invalid, skip setting this cookie
+                  return
+                }
+              }
+              cookieStore.set(name, processedValue, options)
+            })
           } catch {
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

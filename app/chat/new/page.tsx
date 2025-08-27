@@ -1,6 +1,6 @@
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { ArrowLeft, MessageCircle, Users, Lock, Globe } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -15,7 +15,7 @@ type RoomType = 'group' | 'category' | 'support'
 
 export default function NewChatRoomPage() {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')

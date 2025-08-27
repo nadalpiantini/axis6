@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { sendEmail } from '@/lib/email/service-simple'
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    const supabase = await createClient()
 
     // Sign up user
     const { data: authData, error: authError } = await supabase.auth.signUp({

@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -12,7 +11,7 @@ const leaderboardQuerySchema = z.object({
 // GET /api/resonance/streaks - Get user's streaks
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -81,7 +80,7 @@ export async function GET(request: NextRequest) {
 // GET /api/resonance/streaks/leaderboard - Get resonance leaderboard
 export async function getLeaderboard(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     
     // Parse query parameters
     const { searchParams } = new URL(request.url)

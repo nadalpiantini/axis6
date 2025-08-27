@@ -3,8 +3,7 @@
  * Real-time system monitoring and alerting
  */
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { logger } from '@/lib/logger'
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     
     // Check authentication for admin endpoints
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -131,7 +130,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * Store monitoring event in database
  */
 async function storeMonitoringEvent(event: MonitoringEvent) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = await createClient()
   
   await protectedServices.database.mutation(async () => {
     const { error } = await supabase
@@ -154,7 +153,7 @@ async function storeMonitoringEvent(event: MonitoringEvent) {
  * Check alert rules against incoming event
  */
 async function checkAlertRules(event: MonitoringEvent): Promise<AlertRule[]> {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = await createClient()
   
   const { data: alertRules, error } = await supabase
     .from('axis6_alert_rules')
@@ -343,7 +342,7 @@ async function sendSlackAlert(message: string, severity: string) {
  * Calculate error rate for a service
  */
 async function calculateErrorRate(service: string, timeWindowSeconds: number): Promise<number> {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = await createClient()
   const startTime = new Date(Date.now() - timeWindowSeconds * 1000).toISOString()
   
   const { data: events, error } = await supabase
@@ -370,7 +369,7 @@ async function getMonitoringData(filters: {
   service?: string | null
   severity?: string | null
 }) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = await createClient()
   
   // Calculate time range
   const timeRangeMs = parseTimeRange(filters.timeRange)

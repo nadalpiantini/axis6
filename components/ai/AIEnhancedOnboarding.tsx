@@ -1,6 +1,6 @@
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Brain, 
@@ -100,7 +100,7 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
     insights: []
   })
 
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const goToNextStep = () => {
     setState(prev => ({
