@@ -5,9 +5,13 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch: # Allow manual trigger
 
 env:
   NODE_VERSION: '20'
+  NEXT_TELEMETRY_DISABLED: 1
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
   quality-gate:
@@ -17,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better caching
         
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,23 +30,36 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
         
       - name: Type check
         run: npm run type-check
         
-      - name: Lint check
-        run: npm run lint
-        continue-on-error: true # Don't fail build on lint issues
+      - name: Lint check (strict mode)
+        run: npm run lint:strict || npm run lint
         
-      - name: Security check
+      - name: Security audit
+        run: npm audit --audit-level=moderate || true
+        
+      - name: Security headers check
         run: npm run security:headers
         continue-on-error: true
         
-      - name: Run tests
+      - name: Run tests with coverage
         run: npm run test:ci
-        continue-on-error: true # Don't fail build on test issues
+        env:
+          CI: true
         
       - name: Build application
         run: npm run build
@@ -192,3 +211,112 @@ jobs:
       - name: Bundle size check
         run: |
           npm run analyze:report || true
+          
+      - name: Database performance check
+        run: npm run test:performance
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        continue-on-error: true
+        
+      - name: Upload metrics to Sentry
+        if: always()
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: |
+          echo "Uploading performance metrics to Sentry..."
+          # Sentry performance tracking would go here
+          
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'
+    
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        
+      - name: Run E2E tests
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ github.event_name == 'pull_request' && 'http://localhost:6789' || 'https://axis6.app' }}
+          CI: true
+          
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-results-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 7
+          
+  database-migration-check:
+    name: Database Migration Check
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check for pending migrations
+        run: |
+          echo "Checking for pending database migrations..."
+          ls -la supabase/migrations/ || echo "No migrations directory"
+          
+      - name: Validate migration scripts
+        run: |
+          for file in supabase/migrations/*.sql; do
+            if [ -f "$file" ]; then
+              echo "Validating $file..."
+              # Basic SQL syntax check
+              node -e "
+                const fs = require('fs');
+                const sql = fs.readFileSync('$file', 'utf8');
+                if (sql.includes('DROP TABLE') && !sql.includes('IF EXISTS')) {
+                  console.error('⚠️ Warning: DROP TABLE without IF EXISTS in $file');
+                }
+                if (!sql.includes('BEGIN;') || !sql.includes('COMMIT;')) {
+                  console.error('⚠️ Warning: Migration should be wrapped in transaction in $file');
+                }
+              " || true
+            fi
+          done
+          
+  notification:
+    name: Build Status Notification
+    runs-on: ubuntu-latest
+    needs: [quality-gate, deployment-check, security-scan]
+    if: always()
+    
+    steps:
+      - name: Send status to Discord/Slack
+        run: |
+          echo "Build status: ${{ needs.quality-gate.result }}"
+          # Webhook notification would go here

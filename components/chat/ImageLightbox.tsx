@@ -102,7 +102,8 @@ export function ImageLightbox({
       link.click()
       document.body.removeChild(link)
     } catch (error) {
-      console.error('Failed to download image:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to download image:', error);
     }
   }
 

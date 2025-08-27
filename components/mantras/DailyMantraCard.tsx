@@ -35,6 +35,7 @@ export function DailyMantraCard() {
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to fetch daily mantra:', error);
     } finally {
       setLoading(false)
@@ -56,6 +57,7 @@ export function DailyMantraCard() {
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to mark mantra as complete:', error);
     }
   }

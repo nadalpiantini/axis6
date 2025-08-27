@@ -58,6 +58,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
             // Global error handling for mutations
             onError: (error: any, variables, context) => {
               // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Mutation failed:', error);
               // You can add global error notifications here
             },

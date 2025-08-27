@@ -22,8 +22,7 @@ function cleanCorruptedAuthData() {
           // If it starts with "base64-" but can't be parsed, it's corrupted
           if (value.startsWith('base64-') && !value.startsWith('base64-eyJ')) {
             document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
-            console.warn(`Cleaned corrupted cookie: ${name}`)
-          }
+            }
         } catch {
           // Remove if we can't process it
           document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
@@ -49,11 +48,9 @@ function cleanCorruptedAuthData() {
     }
     keysToRemove.forEach(key => {
       localStorage.removeItem(key)
-      console.warn(`Cleaned corrupted localStorage: ${key}`)
-    })
+      })
   } catch (error) {
-    console.warn('Error cleaning auth data:', error)
-  }
+    }
 }
 
 export function createClient() {
@@ -109,6 +106,7 @@ export function createClient() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Missing Supabase environment variables:', {
     //   url: supabaseUrl ? 'present' : 'missing',
     //   key: supabaseAnonKey ? 'present' : 'missing'
@@ -138,7 +136,6 @@ export function createClient() {
                 if (item.startsWith('base64-')) {
                   // Check if it's a valid base64 JSON string (should start with eyJ)
                   if (!item.startsWith('base64-eyJ')) {
-                    console.warn(`Removing corrupted auth data for key: ${key}`)
                     localStorage.removeItem(key)
                     return null
                   }
@@ -147,7 +144,6 @@ export function createClient() {
                     const decoded = atob(item.substring(7))
                     return JSON.parse(decoded)
                   } catch (e) {
-                    console.warn(`Failed to decode auth data for key: ${key}`, e)
                     // Remove corrupted data
                     localStorage.removeItem(key)
                     return null
@@ -166,7 +162,6 @@ export function createClient() {
                 
                 return item
               } catch (error) {
-                console.warn(`Storage getItem error for key ${key}:`, error)
                 return null
               }
             },
@@ -228,10 +223,9 @@ export function createClient() {
             keysToRemove.forEach(key => localStorage.removeItem(key))
             
             // Clear React Query cache on logout
-            // @ts-ignore - queryClient might be added by React Query
-            if (window.queryClient) {
-              // @ts-ignore
-              window.queryClient.clear()
+            // Check if React Query is available
+            if ((window as any).queryClient) {
+              (window as any).queryClient.clear()
             }
           } catch (storageError) {
             }
@@ -241,8 +235,8 @@ export function createClient() {
 
     // Add global error handler for Supabase client
     if (typeof window !== 'undefined') {
-      // @ts-ignore - Add error handler to window for debugging
-      window.__supabaseError = null
+      // Add error handler to window for debugging
+      (window as any).__supabaseError = null
       
       // Override console.error to catch Supabase errors and provide better handling
       const originalConsoleError = console.error
@@ -254,25 +248,23 @@ export function createClient() {
             errorMessage.includes('HTTP Authentication failed')) {
           // Only log in development, suppress in production
           if (process.env.NODE_ENV === 'development') {
-            console.warn('🔄 Realtime connection pending authentication - this is normal during login')
-          }
-          // @ts-ignore - Track for debugging but don't spam console
-          window.__realtimeAuthPending = true
+            }
+          // Track for debugging but don't spam console
+          (window as any).__realtimeAuthPending = true
           return
         }
         
         // Handle other realtime connection issues
         if (errorMessage.includes('WebSocket connection') && 
             (errorMessage.includes('failed') || errorMessage.includes('closed'))) {
-          console.warn('⚠️ Realtime connection issue - falling back to polling:', errorMessage)
-          // @ts-ignore
-          window.__realtimeConnectionIssue = errorMessage
+          // Track connection issues
+          (window as any).__realtimeConnectionIssue = errorMessage
           return
         }
         
         if (errorMessage.includes('supabase') || errorMessage.includes('Supabase')) {
-          // @ts-ignore
-          window.__supabaseError = errorMessage
+          // Store error for debugging
+          (window as any).__supabaseError = errorMessage
         }
         originalConsoleError.apply(console, args)
       }
@@ -286,6 +278,7 @@ export function createClient() {
     return client
   } catch (error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to create Supabase client:', error);
     throw new Error(`Failed to initialize Supabase client: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -348,8 +341,6 @@ export function cleanupMalformedCookies() {
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     })
     
-    console.log('Cleaned up malformed Supabase cookies')
-  } catch (error) {
-    console.warn('Error cleaning up cookies:', error)
-  }
+    } catch (error) {
+    }
 }

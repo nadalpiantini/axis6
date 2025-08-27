@@ -73,13 +73,13 @@ const nextConfig = {
   
   // Enable type checking during build for production safety
   typescript: {
-    ignoreBuildErrors: true, // Temporarily disabled for deployment - TODO: fix chat route types
+    ignoreBuildErrors: false, // Strict type checking enabled
   },
   
   // Enable ESLint during build for code quality
   eslint: {
     ignoreDuringBuilds: true, // Temporarily disabled for deployment - TODO: fix linting issues
-    dirs: ['app', 'lib', 'components'], // Specify directories to lint
+    dirs: ['app', 'lib', 'components', 'hooks'], // Specify directories to lint
   },
 
   // Image optimization

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -25,7 +27,7 @@ export const GET = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Failed to get user mentions:', error)
+      logger.error('Failed to get user mentions:', error)
       return NextResponse.json(
         { error: 'Failed to get mentions' },
         { status: 500 }
@@ -48,7 +50,7 @@ export const GET = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Mentions API error:', error)
+    logger.error('Mentions API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -83,7 +85,7 @@ export const POST = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Failed to process mentions:', error)
+      logger.error('Failed to process mentions:', error)
       return NextResponse.json(
         { error: 'Failed to process mentions' },
         { status: 500 }
@@ -93,7 +95,7 @@ export const POST = withChatAuth(async (context, request) => {
     return NextResponse.json({ success: true })
 
   } catch (error) {
-    console.error('Process mentions error:', error)
+    logger.error('Process mentions error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -127,7 +129,7 @@ export const PUT = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Failed to mark mentions as read:', error)
+      logger.error('Failed to mark mentions as read:', error)
       return NextResponse.json(
         { error: 'Failed to mark mentions as read' },
         { status: 500 }
@@ -140,7 +142,7 @@ export const PUT = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Mark mentions read error:', error)
+    logger.error('Mark mentions read error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -56,7 +58,7 @@ export const GET = withChatAuth(async (context, request) => {
     }
 
     if (error) {
-      console.error('Analytics error:', error)
+      logger.error('Analytics error:', error)
       return NextResponse.json(
         { error: 'Failed to get analytics' },
         { status: 500 }
@@ -69,7 +71,7 @@ export const GET = withChatAuth(async (context, request) => {
     return NextResponse.json(parsedData || {})
 
   } catch (error) {
-    console.error('Analytics API error:', error)
+    logger.error('Analytics API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -93,7 +95,7 @@ export const POST = withChatAuth(async (context, request) => {
     const { data: analytics, error } = await supabase.rpc('get_chat_analytics')
 
     if (error) {
-      console.error('Export analytics error:', error)
+      logger.error('Export analytics error:', error)
       return NextResponse.json(
         { error: 'Failed to export analytics' },
         { status: 500 }
@@ -143,7 +145,7 @@ export const POST = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Export analytics API error:', error)
+    logger.error('Export analytics API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

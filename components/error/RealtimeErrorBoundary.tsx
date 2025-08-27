@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import { Wifi, WifiOff, RotateCcw } from 'lucide-react'
 import { Component, ReactNode } from 'react'
 
@@ -41,7 +43,7 @@ export class RealtimeErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: any) {
-    console.warn('Realtime Error Boundary caught error:', error, errorInfo)
+    logger.warn('Realtime Error Boundary caught error:', error, errorInfo)
     
     this.setState({
       error,
@@ -71,7 +73,7 @@ export class RealtimeErrorBoundary extends Component<
     const retryDelay = Math.min(1000 * Math.pow(2, this.state.retryCount), 10000)
     
     this.retryTimeout = setTimeout(() => {
-      console.log(`Retrying realtime connection (attempt ${this.state.retryCount + 1})`)
+      logger.log(`Retrying realtime connection (attempt ${this.state.retryCount + 1})`)
       this.setState(prevState => ({
         hasError: false,
         error: null,

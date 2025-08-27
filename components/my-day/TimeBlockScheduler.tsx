@@ -109,6 +109,7 @@ export function TimeBlockScheduler({
       onClose()
     } catch (error: any) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving time block:', error);
       setError(error?.message || 'Failed to save time block. Please try again.')
     }

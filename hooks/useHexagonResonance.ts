@@ -38,7 +38,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
         if (sessionError || !session) {
-          console.info('No valid session found for hexagon resonance, returning empty data')
           return {
             success: true,
             date: dateParam,
@@ -57,8 +56,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
         })
 
         if (!response.ok) {
-          console.warn(`Hexagon resonance API returned ${response.status}: ${response.statusText}`)
-          
           // Return empty data for any error to prevent UI issues
           return {
             success: true,
@@ -72,7 +69,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
         return data
         
       } catch (error) {
-        console.warn('Failed to fetch hexagon resonance:', error)
         return {
           success: true,
           date: dateParam,

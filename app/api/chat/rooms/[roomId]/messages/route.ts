@@ -6,11 +6,11 @@ import { createClient } from '@/lib/supabase/server'
 // GET /api/chat/rooms/[roomId]/messages - Get messages for a room with pagination
 export async function GET(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const roomId = params.roomId
+    const { roomId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -108,11 +108,11 @@ export async function GET(
 // POST /api/chat/rooms/[roomId]/messages - Send a new message
 export async function POST(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const roomId = params.roomId
+    const { roomId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

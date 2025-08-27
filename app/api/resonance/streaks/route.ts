@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -28,7 +30,7 @@ export async function GET(request: NextRequest) {
       .order('axis_slug', { ascending: true })
 
     if (streaksError) {
-      console.error('Error fetching streaks:', streaksError)
+      logger.error('Error fetching streaks:', streaksError)
       return NextResponse.json({ 
         error: 'Failed to fetch streaks',
         details: streaksError.message 
@@ -69,7 +71,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Streaks fetch error:', error)
+    logger.error('Streaks fetch error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to fetch streaks'
@@ -77,8 +79,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// GET /api/resonance/streaks/leaderboard - Get resonance leaderboard
-export async function getLeaderboard(request: NextRequest) {
+// Helper function for leaderboard logic (not exported)
+async function getLeaderboard(request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -101,7 +103,7 @@ export async function getLeaderboard(request: NextRequest) {
     )
 
     if (leaderboardError) {
-      console.error('Error fetching leaderboard:', leaderboardError)
+      logger.error('Error fetching leaderboard:', leaderboardError)
       return NextResponse.json({ 
         error: 'Failed to fetch leaderboard',
         details: leaderboardError.message 
@@ -136,7 +138,7 @@ export async function getLeaderboard(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Leaderboard fetch error:', error)
+    logger.error('Leaderboard fetch error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to fetch leaderboard'

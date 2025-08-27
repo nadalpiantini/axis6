@@ -4,16 +4,13 @@ import {
   TrendingUp, 
   Calendar, 
   Target, 
-  Award,
-  ArrowLeft,
-  Download,
+  Award,Download,
   BarChart3,
   PieChart,
   Activity,
   Flame,
   TrendingDown
 } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { 
@@ -21,7 +18,8 @@ import {
   Line, 
   BarChart, 
   Bar, 
-  PieChart as RechartsPieChart, 
+  PieChart as RechartsPieChart,
+  Pie,
   Cell, 
   ResponsiveContainer,
   XAxis,
@@ -32,7 +30,6 @@ import {
 } from 'recharts'
 
 import { StandardHeader } from '@/components/layout/StandardHeader'
-import { LogoIcon } from '@/components/ui/Logo'
 import { useUser } from '@/lib/react-query/hooks'
 
 // Types
@@ -97,9 +94,7 @@ export default function AnalyticsPage() {
       setLoading(true)
       setError(null)
       
-      const params = new URLSearchParams({
-        period
-      })
+      const params = new URLSearchParams({period})
       
       const response = await fetch(`/api/analytics?${params}`)
       
@@ -350,7 +345,7 @@ export default function AnalyticsPage() {
                     <Tooltip 
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                      formatter={(value) => [`${Math.round(value * 100)}%`, 'Completion Rate']}
+                      formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion Rate']}
                     />
                     <Line 
                       type="monotone" 
@@ -381,24 +376,23 @@ export default function AnalyticsPage() {
                       formatter={(value) => [`${value}`, 'Check-ins']}
                     />
                     <Legend />
-                    <RechartsPieChart 
-                      data={Object.entries(analytics.categoryStats).map(([name, stats]) => ({
-                        name,
-                        value: stats.count,
-                        color: stats.color
-                      }))}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {Object.entries(analytics.categoryStats).map(([name, stats], index) => (
-                        <Cell key={`cell-${index}`} fill={stats.color} />
-                      ))}
-                    </RechartsPieChart>
+                    <Pie
+                        data={Object.entries(analytics.categoryStats).map(([name, stats]) => ({
+                          name,
+                          value: stats.count,
+                          color: stats.color
+                        }))}
+                        cx="50%"
+                        cy="50%"
+                        label={({name, percent}: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {Object.entries(analytics.categoryStats).map(([name, stats], index) => (
+                          <Cell key={`cell-${index}`} fill={stats.color} />
+                        ))}
+                    </Pie>
                   </RechartsPieChart>
                 </ResponsiveContainer>
               </div>

@@ -121,7 +121,7 @@ export function useChartPerformanceMetrics() {
     
     // Log slow data processing operations
     if (duration > 10) {
-      console.warn(`Slow chart data processing: ${operationName} took ${duration.toFixed(2)}ms`)
+      // Performance warning for slow operations
     }
     
     return result

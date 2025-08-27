@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('Error recording micro win:', error)
+      logger.error('Error recording micro win:', error)
       
       // Check if it's outside morning window
       if (error.message?.includes('morning window')) {
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Micro win creation error:', error)
+    logger.error('Micro win creation error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to record micro win'
@@ -126,7 +128,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (feedError) {
-      console.error('Error fetching micro wins feed:', feedError)
+      logger.error('Error fetching micro wins feed:', feedError)
       return NextResponse.json({ 
         error: 'Failed to fetch feed',
         details: feedError.message 
@@ -166,7 +168,7 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Micro wins feed error:', error)
+    logger.error('Micro wins feed error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to fetch feed'
@@ -211,7 +213,7 @@ export async function PATCH(request: NextRequest) {
       })
 
     if (reactionError) {
-      console.error('Error adding reaction:', reactionError)
+      logger.error('Error adding reaction:', reactionError)
       return NextResponse.json({ 
         error: 'Failed to add reaction',
         details: reactionError.message 
@@ -227,7 +229,7 @@ export async function PATCH(request: NextRequest) {
       .eq('id', winId)
 
     if (updateError) {
-      console.error('Error updating resonance count:', updateError)
+      logger.error('Error updating resonance count:', updateError)
     }
 
     return NextResponse.json({
@@ -236,7 +238,7 @@ export async function PATCH(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Reaction error:', error)
+    logger.error('Reaction error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to add reaction'

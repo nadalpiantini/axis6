@@ -123,14 +123,13 @@ export default function NotificationSettingsPage() {
     try {
       // Here you would save to Supabase
       // await updateNotificationPreferences(preferences)
-      console.log('Saving notification preferences:', preferences)
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       setHasChanges(false)
     } catch (error) {
-      console.error('Error saving notification preferences:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving notification preferences:', error);
     } finally {
       setIsSaving(false)
     }

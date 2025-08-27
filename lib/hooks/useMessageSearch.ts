@@ -59,7 +59,6 @@ export function useMessageSearch() {
       const suggestions = await messageSearchService.getSearchSuggestions(partial)
       setSuggestions(suggestions)
     } catch (err) {
-      console.warn('Failed to get suggestions:', err)
       setSuggestions([])
     }
   }

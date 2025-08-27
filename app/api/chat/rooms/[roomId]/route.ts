@@ -6,11 +6,11 @@ import { createClient } from '@/lib/supabase/server'
 // GET /api/chat/rooms/[roomId] - Get specific chat room details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string  }> }
 ) {
   try {
     const supabase = await createClient()
-    const roomId = params.roomId
+    const { roomId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -80,11 +80,11 @@ export async function GET(
 // PUT /api/chat/rooms/[roomId] - Update chat room
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string  }> }
 ) {
   try {
     const supabase = await createClient()
-    const roomId = params.roomId
+    const { roomId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -139,11 +139,11 @@ export async function PUT(
 // DELETE /api/chat/rooms/[roomId] - Delete/deactivate chat room
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string  }> }
 ) {
   try {
     const supabase = await createClient()
-    const roomId = params.roomId
+    const { roomId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

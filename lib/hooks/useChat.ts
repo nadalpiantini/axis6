@@ -36,7 +36,8 @@ export function useChatRooms(userId?: string) {
           .eq('user_id', userId)
 
         if (participantError) {
-          console.error('Failed to fetch user participations:', participantError)
+          // TODO: Replace with proper error handling
+    // console.error('Failed to fetch user participations:', participantError);
           throw participantError
         }
 
@@ -55,7 +56,8 @@ export function useChatRooms(userId?: string) {
           .order('updated_at', { ascending: false })
 
         if (error) {
-          console.error('Failed to fetch chat rooms:', error)
+          // TODO: Replace with proper error handling
+    // console.error('Failed to fetch chat rooms:', error);
           throw error
         }
 
@@ -135,7 +137,8 @@ export function useChatRooms(userId?: string) {
 
         return roomsWithData
       } catch (error) {
-        console.error('Failed to fetch chat rooms:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Failed to fetch chat rooms:', error);
         throw error
       }
     },
@@ -175,7 +178,8 @@ export function useChatRoom(roomId: string, userId?: string) {
           setIsConnected(true)
         }
       } catch (error) {
-        console.error('Failed to join room:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Failed to join room:', error);
       }
     }
 
@@ -360,7 +364,8 @@ export function useSendMessage(roomId: string) {
       // Messages will be updated via realtime subscription
     },
     onError: (error) => {
-      console.error('Failed to send message:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to send message:', error);
       // Could add toast notification here
     }
   })

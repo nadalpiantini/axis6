@@ -118,7 +118,8 @@ export default function AccountSettingsPage() {
           })
         }
       } catch (error) {
-        console.error('Error loading user data:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Error loading user data:', error);
         showNotification('error', 'Failed to load settings')
       } finally {
         setLoading(false)
@@ -192,7 +193,8 @@ export default function AccountSettingsPage() {
       setHasChanges(false)
       showNotification('success', 'Settings saved successfully!')
     } catch (error) {
-      console.error('Error saving settings:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving settings:', error);
       showNotification('error', 'Failed to save settings')
     } finally {
       setSaving(false)
@@ -254,7 +256,8 @@ export default function AccountSettingsPage() {
 
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
-      console.error('Error exporting data:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error exporting data:', error);
       showNotification('error', 'Failed to export data')
     }
   }
@@ -278,7 +281,8 @@ export default function AccountSettingsPage() {
         window.location.href = '/'
       }, 2000)
     } catch (error) {
-      console.error('Error deleting account:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error deleting account:', error);
       showNotification('error', 'Failed to delete account')
     }
   }

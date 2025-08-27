@@ -52,7 +52,8 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
     } catch (err) {
-      console.error('Export failed:', err)
+      // TODO: Replace with proper error handling
+    // console.error('Export failed:', err);
     }
   }
 

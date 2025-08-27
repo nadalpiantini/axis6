@@ -195,7 +195,6 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         return dots
       }).filter(Boolean).flat()
     } catch (error) {
-      console.warn('Error calculating resonance points:', error)
       return []
     }
   }, [resonanceData, showResonance, center, resonanceRadius])

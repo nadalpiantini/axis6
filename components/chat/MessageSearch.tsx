@@ -77,7 +77,8 @@ export function MessageSearch({
       setStats(searchStats)
       setSelectedIndex(-1)
     } catch (error) {
-      console.error('Search failed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Search failed:', error);
       setResults([])
       setStats(null)
     } finally {
@@ -90,7 +91,8 @@ export function MessageSearch({
       const suggestions = await messageSearchService.getSearchSuggestions(partial)
       setSuggestions(suggestions)
     } catch (error) {
-      console.error('Failed to get suggestions:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to get suggestions:', error);
       setSuggestions([])
     }
   }

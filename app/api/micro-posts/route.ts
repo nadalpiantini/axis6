@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (postError) {
-      console.error('Error creating micro post:', postError)
+      logger.error('Error creating micro post:', postError)
       return NextResponse.json({ 
         error: 'Failed to create post',
         details: postError.message 
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Micro post creation error:', error)
+    logger.error('Micro post creation error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to create post'
@@ -163,7 +165,7 @@ export async function GET(request: NextRequest) {
     const { data: posts, error: postsError } = await query
 
     if (postsError) {
-      console.error('Error fetching micro posts:', postsError)
+      logger.error('Error fetching micro posts:', postsError)
       return NextResponse.json({ 
         error: 'Failed to fetch posts',
         details: postsError.message 
@@ -208,7 +210,7 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Micro posts feed error:', error)
+    logger.error('Micro posts feed error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to fetch posts feed'

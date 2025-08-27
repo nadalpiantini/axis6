@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -16,7 +18,7 @@ export const GET = withChatAuth(async (context, request) => {
     const { data: analytics, error } = await supabase.rpc('get_user_search_analytics')
 
     if (error) {
-      console.error('Search analytics error:', error)
+      logger.error('Search analytics error:', error)
       return NextResponse.json(
         { error: 'Failed to get search analytics' },
         { status: 500 }
@@ -33,7 +35,7 @@ export const GET = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Search analytics API error:', error)
+    logger.error('Search analytics API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -10,6 +10,7 @@ export async function testSupabaseConnection() {
     
     if (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Supabase connection error:', error);
       return { success: false, error: error.message }
     }
@@ -21,6 +22,7 @@ export async function testSupabaseConnection() {
     }
   } catch (error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Supabase test failed:', error);
     return { 
       success: false, 
@@ -40,6 +42,7 @@ export async function testSupabaseAuth(email: string, password: string) {
     
     if (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Auth error:', error);
       return { success: false, error: error.message }
     }
@@ -55,6 +58,7 @@ export async function testSupabaseAuth(email: string, password: string) {
     return { success: false, error: 'No user returned' }
   } catch (error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Auth test failed:', error);
     return { 
       success: false, 

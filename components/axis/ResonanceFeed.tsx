@@ -75,7 +75,8 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       setHasMore(data.pagination.hasMore)
       if (!reset) setPage(page + 1)
     } catch (error) {
-      console.error('Error fetching feed:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error fetching feed:', error);
       toast.error('Failed to load feed')
     } finally {
       setLoading(false)
@@ -107,7 +108,8 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
 
       toast.success('Support added!')
     } catch (error) {
-      console.error('Error adding reaction:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error adding reaction:', error);
       toast.error('Failed to add support')
     }
   }

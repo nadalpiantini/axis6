@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 interface ChatRoomPageProps {
-  params: {
+  params: Promise<{
     roomId: string
-  }
+  }>
 }
 
 export default function ChatRoomPage({ params }: ChatRoomPageProps) {
@@ -17,8 +17,10 @@ export default function ChatRoomPage({ params }: ChatRoomPageProps) {
   useEffect(() => {
     // For now, redirect to the main chat page with the room selected
     // The main chat page will handle room selection via query params
-    router.push(`/chat?room=${params.roomId}`)
-  }, [params.roomId, router])
+    params.then(p => {
+      router.push(`/chat?room=${p.roomId}`)
+    })
+  }, [params, router])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-950">

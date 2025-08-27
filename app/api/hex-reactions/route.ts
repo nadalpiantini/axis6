@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (reactionError) {
-      console.error('Error creating hex reaction:', reactionError)
+      logger.error('Error creating hex reaction:', reactionError)
       return NextResponse.json({ 
         error: 'Failed to add reaction',
         details: reactionError.message 
@@ -76,7 +78,7 @@ export async function POST(request: NextRequest) {
       .eq('id', validatedData.postId)
 
     if (updateError) {
-      console.warn('Failed to update glow score:', updateError)
+      logger.warn('Failed to update glow score:', updateError)
       // Don't fail the request, just log the warning
     }
 
@@ -99,7 +101,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.error('Hex reaction creation error:', error)
+    logger.error('Hex reaction creation error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to add reaction'
@@ -151,7 +153,7 @@ export async function DELETE(request: NextRequest) {
       .select('post_id')
 
     if (deleteError) {
-      console.error('Error removing hex reaction:', deleteError)
+      logger.error('Error removing hex reaction:', deleteError)
       return NextResponse.json({ 
         error: 'Failed to remove reaction',
         details: deleteError.message 
@@ -173,7 +175,7 @@ export async function DELETE(request: NextRequest) {
         .eq('id', postId)
 
       if (updateError) {
-        console.warn('Failed to update glow score:', updateError)
+        logger.warn('Failed to update glow score:', updateError)
       }
     }
 
@@ -183,7 +185,7 @@ export async function DELETE(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Hex reaction deletion error:', error)
+    logger.error('Hex reaction deletion error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to remove reaction'

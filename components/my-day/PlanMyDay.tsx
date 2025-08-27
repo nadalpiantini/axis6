@@ -130,6 +130,7 @@ export function PlanMyDay({
     } catch (err) {
       setError('Failed to generate plan. Please try again.')
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error generating plan:', err);
     } finally {
       setIsGenerating(false)
@@ -171,6 +172,7 @@ export function PlanMyDay({
     } catch (error) {
       setError('Failed to create time blocks. Please try again.')
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error creating blocks:', error);
     }
   }

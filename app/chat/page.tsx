@@ -62,7 +62,8 @@ export default function ChatPage() {
   }
 
   if (error) {
-    console.error('Chat error:', error)
+    // TODO: Replace with proper error handling
+    // console.error('Chat error:', error);
     // Check if it's a database table missing error
     const isDatabaseError = error.message?.includes('relation') && error.message?.includes('does not exist')
     // Check if it's a 400 error indicating malformed query

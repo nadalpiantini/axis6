@@ -51,8 +51,6 @@ class RealtimeConnectionManager {
     
     if (this.state.consecutiveFailures >= this.maxFailures) {
       this.state.shouldUsePolling = true
-      console.warn(`Realtime connection failed ${this.maxFailures} times, falling back to polling`)
-      
       // Auto-retry realtime after fallback delay
       setTimeout(() => {
         this.resetFailureCount()
@@ -66,8 +64,7 @@ class RealtimeConnectionManager {
   resetFailureCount() {
     this.state.consecutiveFailures = 0
     this.state.shouldUsePolling = false
-    console.log('Realtime connection retry enabled')
-  }
+    }
   
   /**
    * Get current connection state for debugging
@@ -84,7 +81,6 @@ class RealtimeConnectionManager {
       const { data: { session } } = await this.supabase.auth.getSession()
       return !!(session?.access_token)
     } catch (error) {
-      console.warn('Authentication check failed:', error)
       return false
     }
   }
@@ -152,12 +148,10 @@ export async function createAuthenticatedChannel(
       if (status === 'SUBSCRIBED') {
         realtimeManager.onConnectionSuccess()
         onConnectionChange?.(true)
-        console.log(`✅ Realtime channel '${channelName}' connected`)
-      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
         realtimeManager.onConnectionFailure()
         onConnectionChange?.(false)
-        console.warn(`❌ Realtime channel '${channelName}' disconnected: ${status}`)
-      }
+        }
       
       callback(status, error)
     })

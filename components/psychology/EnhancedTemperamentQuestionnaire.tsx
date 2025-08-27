@@ -119,6 +119,7 @@ export function EnhancedTemperamentQuestionnaire({
         setQuestions(questionsData || [])
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error fetching questions:', error);
       } finally {
         setLoading(false)
@@ -176,6 +177,7 @@ export function EnhancedTemperamentQuestionnaire({
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to generate follow-up question:', error);
     }
   }, [useAI, currentQuestionIndex, responses, questions, language])
@@ -213,6 +215,7 @@ export function EnhancedTemperamentQuestionnaire({
         })
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving response:', error);
     }
 
@@ -291,6 +294,7 @@ export function EnhancedTemperamentQuestionnaire({
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error submitting questionnaire:', error);
       
       // Fallback to basic calculation if AI fails

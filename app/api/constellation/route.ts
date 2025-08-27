@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -19,7 +21,7 @@ export async function GET(request: NextRequest) {
       })
 
     if (constellationError) {
-      console.error('Error fetching constellation data:', constellationError)
+      logger.error('Error fetching constellation data:', constellationError)
       return NextResponse.json({ 
         error: 'Failed to fetch constellation data',
         details: constellationError.message 
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Constellation API error:', error)
+    logger.error('Constellation API error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: 'Failed to process constellation request'

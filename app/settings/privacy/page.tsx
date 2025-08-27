@@ -150,14 +150,13 @@ export default function PrivacySettingsPage() {
     try {
       // Here you would save to Supabase
       // await updatePrivacySettings(settings)
-      console.log('Saving privacy settings:', settings)
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       setHasChanges(false)
     } catch (error) {
-      console.error('Error saving privacy settings:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving privacy settings:', error);
     } finally {
       setIsSaving(false)
     }

@@ -6,11 +6,11 @@ import { createClient } from '@/lib/supabase/server'
 // PUT /api/chat/rooms/[roomId]/participants/[userId] - Update participant role or settings
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { roomId: string; userId: string } }
+  { params }: { params: Promise<{ roomId: string; userId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const { roomId, userId } = params
+    const { roomId, userId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -103,11 +103,11 @@ export async function PUT(
 // DELETE /api/chat/rooms/[roomId]/participants/[userId] - Remove participant from room
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { roomId: string; userId: string } }
+  { params }: { params: Promise<{ roomId: string; userId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const { roomId, userId } = params
+    const { roomId, userId } = await params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

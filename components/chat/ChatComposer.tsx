@@ -127,7 +127,8 @@ export function ChatComposer({
         const mentionedUserIds = mentionsService.extractMentionedUserIds(mentionResult.mentions)
         // These can be passed to the parent component for notification handling
       } catch (error) {
-        console.error('Failed to process mentions:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Failed to process mentions:', error);
       }
     }
 
@@ -208,7 +209,10 @@ export function ChatComposer({
             <FileUpload
               messageId={messageId}
               onFileUploaded={handleFileUploaded}
-              onError={(error) => console.error('File upload error:', error)}
+              onError={(error) => {
+                // TODO: Replace with proper error handling
+                // console.error('File upload error:', error);
+              }}
             />
           </motion.div>
         )}

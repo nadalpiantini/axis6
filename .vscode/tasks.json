@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "TypeScript Check",
+      "type": "npm",
+      "script": "type-check",
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Fix TypeScript",
+      "type": "shell",
+      "command": "node scripts/fix-remaining-typescript.js",
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}

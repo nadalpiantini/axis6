@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -32,7 +34,7 @@ export const GET = withChatAuth(async (context, request) => {
       .order('created_at', { ascending: true })
 
     if (error) {
-      console.error('Failed to get attachments:', error)
+      logger.error('Failed to get attachments:', error)
       return NextResponse.json(
         { error: 'Failed to get attachments' },
         { status: 500 }
@@ -42,7 +44,7 @@ export const GET = withChatAuth(async (context, request) => {
     return NextResponse.json({ attachments: attachments || [] })
 
   } catch (error) {
-    console.error('Attachments API error:', error)
+    logger.error('Attachments API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -87,7 +89,7 @@ export const POST = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Failed to initialize file upload:', error)
+      logger.error('Failed to initialize file upload:', error)
       return NextResponse.json(
         { error: 'Failed to initialize file upload' },
         { status: 500 }
@@ -97,7 +99,7 @@ export const POST = withChatAuth(async (context, request) => {
     return NextResponse.json(data)
 
   } catch (error) {
-    console.error('File upload initialization error:', error)
+    logger.error('File upload initialization error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

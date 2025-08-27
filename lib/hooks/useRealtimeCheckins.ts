@@ -88,8 +88,7 @@ export function useRealtimeCheckins(userId: string | undefined) {
               queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
               
               // Log successful realtime update for debugging
-              console.log('Realtime checkins update received:', payload.eventType)
-            }
+              }
           )
           .subscribe((status, error) => {
             if (status === 'SUBSCRIBED') {
@@ -98,8 +97,7 @@ export function useRealtimeCheckins(userId: string | undefined) {
                 error: null, 
                 retryCount: 0 
               })
-              console.log('Realtime checkins subscription active')
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+              } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
               setRealtimeState({ 
                 isConnected: false, 
                 error: error?.message || `Connection ${status.toLowerCase()}`, 
@@ -110,11 +108,8 @@ export function useRealtimeCheckins(userId: string | undefined) {
               if (attemptNumber < maxRetries) {
                 const delay = retryDelays[attemptNumber] || 5000
                 retryTimeoutRef.current = setTimeout(() => {
-                  console.log(`Retrying realtime connection (attempt ${attemptNumber + 1}/${maxRetries})`)
                   setupRealtime(attemptNumber + 1)
                 }, delay)
-              } else {
-                console.warn('Max realtime retry attempts reached, falling back to polling')
               }
             }
           })
@@ -128,8 +123,6 @@ export function useRealtimeCheckins(userId: string | undefined) {
           error: errorMessage, 
           retryCount: attemptNumber 
         })
-        
-        console.warn('Realtime setup error:', errorMessage)
         
         // Don't retry on auth errors
         if (errorMessage.includes('Session error') && attemptNumber < maxRetries) {
@@ -239,8 +232,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
               if (payload.eventType === 'UPDATE' && payload.new) {
                 const newStreak = payload.new as any
                 if (newStreak.current_streak % 7 === 0 && newStreak.current_streak > 0) {
-                  console.log(`Weekly milestone reached: ${newStreak.current_streak} days!`)
-                }
+                  }
               }
             }
           )
@@ -251,8 +243,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
                 error: null, 
                 retryCount: 0 
               })
-              console.log('Realtime streaks subscription active')
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+              } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
               setRealtimeState({ 
                 isConnected: false, 
                 error: error?.message || `Connection ${status.toLowerCase()}`, 
@@ -279,8 +270,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
           retryCount: attemptNumber 
         })
         
-        console.warn('Realtime streaks setup error:', errorMessage)
-      }
+        }
     }
 
     setupRealtime()

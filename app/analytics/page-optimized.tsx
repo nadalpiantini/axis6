@@ -25,7 +25,6 @@ import {
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { 
   useCompletionChartData,
-  useCategoryChartData,
   useMoodChartData,
   useDailyActivityData,
   useCachedChartData
@@ -124,9 +123,7 @@ export default function OptimizedAnalyticsPage() {
     period === '7' ? 7 : 30
   )
   
-  const categoryData = useCategoryChartData(
-    useCachedChartData('category_data', analytics?.categoryStats || {}, 300000)
-  )
+  const categoryData = useCachedChartData('category_data', analytics?.categoryStats || {}, 300000)
   
   const moodData = useMoodChartData(
     useCachedChartData('mood_data', analytics?.moodTrend || [], 300000),
@@ -157,8 +154,7 @@ export default function OptimizedAnalyticsPage() {
       
       const loadTime = performance.now() - start
       if (loadTime > 1000) {
-        console.warn(`Slow analytics fetch: ${loadTime}ms`)
-      }
+        }
       
       // Preload chart assets
       performanceOptimizer.preloadForPage('/analytics')

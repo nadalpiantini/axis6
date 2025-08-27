@@ -113,6 +113,7 @@ export function clearSupabaseData(): void {
     
     } catch (error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error clearing Supabase data:', error);
   }
 }
@@ -128,10 +129,12 @@ export function logSupabaseDebug(): void {
   // Check for common issues
   if (!debugInfo.environment.hasUrl) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_URL');
   }
   if (!debugInfo.environment.hasKey) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
   if (debugInfo.environment.keyLength < 100) {
@@ -146,8 +149,8 @@ export function logSupabaseDebug(): void {
 export function initSupabaseDebug(): void {
   if (process.env['NODE_ENV'] === 'development' && typeof window !== 'undefined') {
     // Add debug helpers to window
-    // @ts-ignore
-    window.supabaseDebug = {
+    // Add debug helpers to window
+    (window as any).supabaseDebug = {
       getInfo: getSupabaseDebugInfo,
       testConnection: testSupabaseConnection,
       clearData: clearSupabaseData,

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -48,7 +50,7 @@ export const GET = withChatAuth(async (context, request, { params }) => {
     })
 
   } catch (error) {
-    console.error('Attachment GET error:', error)
+    logger.error('Attachment GET error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -86,7 +88,7 @@ export const PUT = withChatAuth(async (context, request, { params }) => {
     })
 
     if (error || !data) {
-      console.error('Failed to finalize upload:', error)
+      logger.error('Failed to finalize upload:', error)
       return NextResponse.json(
         { error: 'Failed to finalize upload' },
         { status: 500 }
@@ -103,7 +105,7 @@ export const PUT = withChatAuth(async (context, request, { params }) => {
     return NextResponse.json({ attachment })
 
   } catch (error) {
-    console.error('Attachment PUT error:', error)
+    logger.error('Attachment PUT error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -153,7 +155,7 @@ export const DELETE = withChatAuth(async (context, request, { params }) => {
       .eq('id', attachmentId)
 
     if (deleteError) {
-      console.error('Failed to delete attachment:', deleteError)
+      logger.error('Failed to delete attachment:', deleteError)
       return NextResponse.json(
         { error: 'Failed to delete attachment' },
         { status: 500 }
@@ -164,12 +166,12 @@ export const DELETE = withChatAuth(async (context, request, { params }) => {
     supabase.storage
       .from('chat-files')
       .remove([attachment.storage_path])
-      .catch(error => console.warn('Storage deletion failed:', error))
+      .catch(error => logger.warn('Storage deletion failed:', error))
 
     return NextResponse.json({ success: true })
 
   } catch (error) {
-    console.error('Attachment DELETE error:', error)
+    logger.error('Attachment DELETE error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

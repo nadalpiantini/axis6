@@ -96,6 +96,7 @@ export function useOnboarding() {
       
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Onboarding failed:', error);
       setState(prev => ({ 
         ...prev, 

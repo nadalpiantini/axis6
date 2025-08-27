@@ -232,10 +232,11 @@ class CircuitBreaker {
    */
   private logFailure(serviceName: string, error: Error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error(`Circuit breaker failure for ${serviceName}:`, {
     //   error: error.message,
     //   stack: error.stack,
-    //   timestamp: new Date().toISOString()
+    //   timestamp: new Date();.toISOString()
     // })
   }
   

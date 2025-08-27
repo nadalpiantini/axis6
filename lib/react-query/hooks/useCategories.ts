@@ -39,6 +39,7 @@ async function fetchCategories(): Promise<Category[]> {
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error(`⚠️ AXIS6: Failed to parse name JSONB for category ${category.id}:`, error);
       // Keep original string value as fallback
       parsedName = category.name
@@ -50,6 +51,7 @@ async function fetchCategories(): Promise<Category[]> {
       }
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error(`⚠️ AXIS6: Failed to parse description JSONB for category ${category.id}:`, error);
       // Keep original string value as fallback
       parsedDescription = category.description

@@ -1,5 +1,7 @@
 'use client'
 
+import { logger } from '@/lib/utils/logger';
+
 import React from 'react'
 
 interface HexagonErrorBoundaryState {
@@ -64,7 +66,7 @@ export class HexagonErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error details for monitoring
-    console.error('HexagonErrorBoundary caught an error:', error, errorInfo)
+    logger.error('HexagonErrorBoundary caught an error:', error, errorInfo)
     
     this.setState({
       hasError: true,
@@ -83,7 +85,7 @@ export class HexagonErrorBoundary extends React.Component<
       )
 
       if (isReactError310) {
-        console.error('🚨 React Error #310 detected in Hexagon component:', {
+        logger.error('🚨 React Error #310 detected in Hexagon component:', {
           error: error.message,
           component: 'HexagonChartWithResonance',
           stack: error.stack,

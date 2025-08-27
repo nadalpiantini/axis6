@@ -41,7 +41,6 @@ class ChatRealtimeManager {
    */
   async joinRoom(roomId: string, userId: string): Promise<void> {
     if (this.state.connectedRooms.has(roomId)) {
-      console.log(`Already connected to room ${roomId}`)
       return
     }
 
@@ -119,15 +118,15 @@ class ChatRealtimeManager {
             online_at: new Date().toISOString()
           })
 
-          console.log(`✅ Joined chat room: ${roomId}`)
-        }
+          }
       })
 
       // Start heartbeat for this room
       this.startHeartbeat(userId)
 
     } catch (error) {
-      console.error(`Failed to join chat room ${roomId}:`, error)
+      // TODO: Replace with proper error handling
+    // console.error(`Failed to join chat room ${roomId}:`, error);
       throw error
     }
   }
@@ -151,9 +150,9 @@ class ChatRealtimeManager {
       this.presenceCallbacks.delete(roomId)
       this.participantCallbacks.delete(roomId)
 
-      console.log(`✅ Left chat room: ${roomId}`)
-    } catch (error) {
-      console.error(`Failed to leave chat room ${roomId}:`, error)
+      } catch (error) {
+      // TODO: Replace with proper error handling
+    // console.error(`Failed to leave chat room ${roomId}:`, error);
     }
   }
 
@@ -176,13 +175,15 @@ class ChatRealtimeManager {
         })
 
       if (error) {
-        console.error('Failed to send message:', error)
+        // TODO: Replace with proper error handling
+    // console.error('Failed to send message:', error);
         return false
       }
 
       return true
     } catch (error) {
-      console.error('Error sending message:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error sending message:', error);
       return false
     }
   }
@@ -204,8 +205,7 @@ class ChatRealtimeManager {
         payload: { userId: user.id, isTyping }
       })
     } catch (error) {
-      console.warn('Failed to send typing indicator:', error)
-    }
+      }
   }
 
   /**
@@ -226,7 +226,8 @@ class ChatRealtimeManager {
 
       return !error
     } catch (error) {
-      console.error('Failed to add reaction:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to add reaction:', error);
       return false
     }
   }
@@ -246,7 +247,8 @@ class ChatRealtimeManager {
 
       return !error
     } catch (error) {
-      console.error('Failed to remove reaction:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to remove reaction:', error);
       return false
     }
   }

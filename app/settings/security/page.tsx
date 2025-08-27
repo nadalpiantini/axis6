@@ -205,14 +205,13 @@ export default function SecuritySettingsPage() {
     try {
       // Here you would save to Supabase
       // await updateSecuritySettings(settings)
-      console.log('Saving security settings:', settings)
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       setHasChanges(false)
     } catch (error) {
-      console.error('Error saving security settings:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Error saving security settings:', error);
     } finally {
       setIsSaving(false)
     }

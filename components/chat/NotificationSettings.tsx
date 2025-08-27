@@ -71,8 +71,7 @@ export function NotificationSettings({
     try {
       const success = await notificationService.testNotification()
       if (!success) {
-        console.warn('Test notification failed')
-      }
+        }
     } finally {
       setTimeout(() => setIsTestingNotification(false), 1000)
     }

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 
 import { withChatAuth } from '@/lib/middleware/chat-auth'
@@ -47,7 +49,7 @@ export const GET = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Search error:', error)
+      logger.error('Search error:', error)
       return NextResponse.json(
         { error: 'Search failed' },
         { status: 500 }
@@ -75,7 +77,7 @@ export const GET = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Search API error:', error)
+    logger.error('Search API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -105,7 +107,7 @@ export const POST = withChatAuth(async (context, request) => {
     })
 
     if (error) {
-      console.error('Search suggestions error:', error)
+      logger.error('Search suggestions error:', error)
       return NextResponse.json({ suggestions: [] })
     }
 
@@ -116,7 +118,7 @@ export const POST = withChatAuth(async (context, request) => {
     })
 
   } catch (error) {
-    console.error('Search suggestions API error:', error)
+    logger.error('Search suggestions API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
