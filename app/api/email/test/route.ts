@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/service-simple'
 import { logger } from '@/lib/logger'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const { email } = await request.json()
+    const { email } = await _request.json()
     
     if (!email) {
       return NextResponse.json(

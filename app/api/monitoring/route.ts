@@ -34,7 +34,7 @@ interface AlertRule {
 /**
  * Submit monitoring events
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
     // Apply rate limiting
     const { response: rateLimitResponse } = await withEnhancedRateLimit(request, 'api')
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return rateLimitResponse
     }
 
-    const event: MonitoringEvent = await request.json()
+    const event: MonitoringEvent = await _request.json()
     
     // Validate event
     if (!event.type || !event.service || !event.message) {
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 /**
  * Get monitoring dashboard data
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     const supabase = await createClient()
     
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
     
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const timeRange = searchParams.get('timeRange') || '1h'
     const service = searchParams.get('service')
     const severity = searchParams.get('severity')

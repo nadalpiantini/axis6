@@ -8,10 +8,9 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/analytics
  * Get comprehensive chat analytics for the authenticated user
  */
-export const GET = withChatAuth(async (context, request) => {
+export const GET = withChatAuth(async (_context, _request) => {
   try {
-    const { user } = context
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     
     const type = searchParams.get('type') // 'overview', 'room', 'user', 'realtime'
     const roomId = searchParams.get('room_id')
@@ -83,10 +82,9 @@ export const GET = withChatAuth(async (context, request) => {
  * POST /api/chat/analytics/export
  * Export analytics data in different formats
  */
-export const POST = withChatAuth(async (context, request) => {
+export const POST = withChatAuth(async (_context, _request) => {
   try {
-    const { user } = context
-    const body = await request.json()
+    const body = await _request.json()
     const { format = 'json' } = body
 
     const { createClient } = await import('@/lib/supabase/server')
@@ -129,7 +127,7 @@ export const POST = withChatAuth(async (context, request) => {
         ...rows.map(row => row.join(','))
       ].join('\n')
 
-      return new Response(csvContent, {
+      return new NextResponse(csvContent, {
         headers: {
           'Content-Type': 'text/csv',
           'Content-Disposition': 'attachment; filename=chat-analytics.csv'

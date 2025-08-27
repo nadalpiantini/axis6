@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import type { ErrorReport, PerformanceReport } from '@/lib/monitoring/error-tracker'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const { type, data } = await request.json()
+    const { type, data } = await _request.json()
     
     if (!type || !data) {
       return NextResponse.json(

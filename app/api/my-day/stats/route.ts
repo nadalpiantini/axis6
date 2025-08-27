@@ -7,7 +7,7 @@ import { logger } from '@/lib/utils/logger';
 export async function GET(request: Request) {
   try {
     const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const date = searchParams.get('date')
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()

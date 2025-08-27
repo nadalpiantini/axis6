@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/ai/recommendations/activities
  * Get personalized activity recommendations for a category
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const categoryId = searchParams.get('category_id')
     const energyLevel = searchParams.get('energy_level') as 'low' | 'medium' | 'high' | null
     const socialPreference = searchParams.get('social_preference') as 'solo' | 'small_group' | 'large_group' | null
@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
  * POST /api/ai/recommendations/goals
  * Get personalized goal recommendations
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { timeframe = 'weekly' } = body
 
     if (!['weekly', 'monthly'].includes(timeframe)) {

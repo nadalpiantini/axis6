@@ -85,7 +85,7 @@ export async function PUT(
 
 // DELETE /api/chat/rooms/[roomId]/messages/[messageId] - Delete a message
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {

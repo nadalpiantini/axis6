@@ -11,7 +11,7 @@ const createReactionSchema = z.object({
 })
 
 // POST /api/hex-reactions - Add hex-star reaction to a post
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse and validate request body
-    const body = await request.json()
+    const body = await _request.json()
     const validatedData = createReactionSchema.parse(body)
 
     // Check if post exists and is accessible
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE /api/hex-reactions - Remove hex-star reaction from a post
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -121,7 +121,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const postId = searchParams.get('postId')
     const axisType = searchParams.get('axisType')
 

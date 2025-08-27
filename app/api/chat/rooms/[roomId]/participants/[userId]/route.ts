@@ -102,7 +102,7 @@ export async function PUT(
 
 // DELETE /api/chat/rooms/[roomId]/participants/[userId] - Remove participant from room
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ roomId: string; userId: string }> }
 ) {
   try {

@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic [active]:
+    - generic [ref=e5] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]:
+        - img [ref=e7] [cursor=pointer]
+      - generic [ref=e10] [cursor=pointer]:
+        - button "Open issues overlay" [ref=e11] [cursor=pointer]:
+          - generic [ref=e12] [cursor=pointer]:
+            - generic [ref=e13] [cursor=pointer]: "0"
+            - generic [ref=e14] [cursor=pointer]: "1"
+          - generic [ref=e15] [cursor=pointer]: Issue
+        - button "Collapse issues badge" [ref=e16] [cursor=pointer]:
+          - img [ref=e17] [cursor=pointer]
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - navigation [ref=e24]:
+            - button "previous" [disabled] [ref=e25]:
+              - img "previous" [ref=e26]
+            - generic [ref=e28]:
+              - generic [ref=e29]: 1/
+              - generic [ref=e30]: "1"
+            - button "next" [disabled] [ref=e31]:
+              - img "next" [ref=e32]
+          - img
+        - generic [ref=e34]:
+          - link "Next.js 15.4.7 (stale) Webpack" [ref=e35] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e36] [cursor=pointer]
+            - generic "There is a newer version (15.5.2) available, upgrade recommended!" [ref=e38] [cursor=pointer]: Next.js 15.4.7 (stale)
+            - generic [ref=e39] [cursor=pointer]: Webpack
+          - img
+      - generic [ref=e40]:
+        - dialog "Runtime Error" [ref=e41]:
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - generic [ref=e46]:
+                - generic [ref=e48]: Runtime Error
+                - generic [ref=e49]:
+                  - button "Copy Stack Trace" [ref=e50] [cursor=pointer]:
+                    - img [ref=e51] [cursor=pointer]
+                  - button "No related documentation found" [disabled] [ref=e53]:
+                    - img [ref=e54]
+                  - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e56] [cursor=pointer]:
+                    - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                    - img [ref=e57] [cursor=pointer]
+              - paragraph [ref=e66]: "ENOENT: no such file or directory, open '/Users/nadalpiantini/Dev/axis6-mvp/axis6/.next/routes-manifest.json'"
+            - generic [ref=e69]:
+              - paragraph [ref=e70]:
+                - text: Call Stack
+                - generic [ref=e71]: "23"
+              - button "Show 23 ignore-listed frame(s)" [ref=e72] [cursor=pointer]:
+                - text: Show 23 ignore-listed frame(s)
+                - img [ref=e73] [cursor=pointer]
+          - generic [ref=e75]:
+            - generic [ref=e76]: "1"
+            - generic [ref=e77]: "2"
+        - contentinfo [ref=e78]:
+          - region "Error feedback" [ref=e79]:
+            - paragraph [ref=e80]:
+              - link "Was this helpful?" [ref=e81] [cursor=pointer]:
+                - /url: https://nextjs.org/telemetry#error-feedback
+            - button "Mark as helpful" [ref=e82] [cursor=pointer]:
+              - img [ref=e83] [cursor=pointer]
+            - button "Mark as not helpful" [ref=e86] [cursor=pointer]:
+              - img [ref=e87] [cursor=pointer]
+  - alert [ref=e89]
+```

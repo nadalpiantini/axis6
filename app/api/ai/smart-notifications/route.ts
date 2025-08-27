@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/ai/smart-notifications
  * Get pending smart notifications for the current user
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const includeDelivered = searchParams.get('include_delivered') === 'true'
     const limit = parseInt(searchParams.get('limit') || '10')
 
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
  * POST /api/ai/smart-notifications/generate
  * Generate new personalized notifications for the current user
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -86,10 +86,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { 
       lookAheadHours = 24,
-      force_regenerate = false,
+      force_regenerate: _force_regenerate = false,
       context = null
     } = body
 
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
  * PATCH /api/ai/smart-notifications/:id
  * Mark notification as read or delivered
  */
-export async function PATCH(request: NextRequest) {
+export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -168,7 +168,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { 
       notification_id,
       action, // 'mark_read', 'mark_delivered', 'dismiss'

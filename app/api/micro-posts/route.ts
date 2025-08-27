@@ -20,7 +20,7 @@ const feedQuerySchema = z.object({
 })
 
 // POST /api/micro-posts - Create a micro post
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse and validate request body
-    const body = await request.json()
+    const body = await _request.json()
     const validatedData = createPostSchema.parse(body)
 
     // Get category info for axis slug
@@ -111,12 +111,12 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/micro-posts - Get micro posts feed
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const queryParams = {
       axis: searchParams.get('axis') || undefined,
       limit: parseInt(searchParams.get('limit') || '20'),

@@ -5,14 +5,14 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // POST /api/email - Send various types of emails
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
     // Get user from session for authenticated endpoints
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    const body = await request.json()
+    const body = await _request.json()
     const { type, data, skipAuth = false } = body
 
     // Some email types don't require authentication (like password reset)

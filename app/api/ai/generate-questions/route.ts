@@ -15,7 +15,7 @@ const requestSchema = z.object({
   language: z.enum(['en', 'es']).optional()
 })
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // Authenticate user
     const supabase = await createClient()
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate request body
-    const body = await request.json()
+    const body = await _request.json()
     const validatedData = requestSchema.parse(body)
 
     // Check if AI features are enabled

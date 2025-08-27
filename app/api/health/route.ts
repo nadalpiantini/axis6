@@ -43,12 +43,12 @@ interface HealthResponse extends SystemHealth {
   timestamp: string
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   const start = Date.now()
   
   try {
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const detailed = searchParams.get('detailed') === 'true'
     const service = searchParams.get('service')
     
@@ -216,9 +216,9 @@ async function handleServiceCheck(service: string): Promise<NextResponse> {
 /**
  * Handle POST requests for manual health check triggers
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json()
+    const body = await _request.json()
     const { action, service } = body
     
     switch (action) {

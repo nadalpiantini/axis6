@@ -8,9 +8,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { handleCSPViolation, type CSPViolation } from '@/lib/security/csp-hash'
 import { logger } from '@/lib/utils/logger'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const violation: { 'csp-report': CSPViolation } = await request.json()
+    const violation: { 'csp-report': CSPViolation } = await _request.json()
     
     if (!violation['csp-report']) {
       return NextResponse.json({ error: 'Invalid CSP report format' }, { status: 400 })

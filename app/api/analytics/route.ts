@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // GET /api/analytics - Get user's analytics data
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const period = searchParams.get('period') || '30' // days
     const categoryId = searchParams.get('categoryId')
     
@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
 }
 
 // GET /api/analytics/export - Export user data
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { format = 'json', includeAllData = false } = body
 
     // Get all user data

@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // GET /api/chat/rooms - Get user's chat rooms
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/chat/rooms - Create a new chat room
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -121,8 +121,9 @@ export async function POST(request: NextRequest) {
       type, 
       categoryId, 
       maxParticipants,
+      isPrivate = false,
       inviteUserIds = []
-    } = await request.json()
+    } = await _request.json()
 
     // Validate required fields
     if (!name || !type) {
@@ -147,7 +148,8 @@ export async function POST(request: NextRequest) {
         type,
         category_id: categoryId,
         creator_id: user.id,
-        max_participants: maxParticipants
+        max_participants: maxParticipants,
+        is_private: isPrivate
       })
       .select()
       .single()

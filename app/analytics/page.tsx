@@ -389,7 +389,7 @@ export default function AnalyticsPage() {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {Object.entries(analytics.categoryStats).map(([name, stats], index) => (
+                        {Object.entries(analytics.categoryStats).map(([_name, stats], index) => (
                           <Cell key={`cell-${index}`} fill={stats.color} />
                         ))}
                     </Pie>
@@ -491,7 +491,7 @@ export default function AnalyticsPage() {
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      formatter={(value) => [`${Math.round(value * 100)}%`, 'Completion']}
+                      formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion']}
                     />
                     <Bar dataKey="completion_rate" fill="#F59E0B" />
                   </BarChart>

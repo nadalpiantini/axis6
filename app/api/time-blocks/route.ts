@@ -7,7 +7,7 @@ import { logger } from '@/lib/utils/logger';
 export async function GET(request: Request) {
   try {
     const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const date = searchParams.get('date')
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()
-    const body = await request.json()
+    const body = await _request.json()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError) {
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const supabase = await createClient()
-    const body = await request.json()
+    const body = await _request.json()
     
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -171,7 +171,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const id = searchParams.get('id')
     
     const { data: { user } } = await supabase.auth.getUser()

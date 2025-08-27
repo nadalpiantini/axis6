@@ -13,7 +13,7 @@ const { createClient } = require('@supabase/supabase-js')
 
 // You can get these from your Supabase dashboard
 const SUPABASE_URL = 'https://nvpnhqhjttgwfwvkgmpk.supabase.co'
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52cG5ocWhqdHRnd2Z3dmtnbXBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MDkyNTYsImV4cCI6MjA3MTI4NTI1Nn0.yVgnHzflgpX_CMY4VB62ndZlsrfeH0Mlhl026HT06C0'
 
 if (!SUPABASE_ANON_KEY) {
   console.error('❌ NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is required')

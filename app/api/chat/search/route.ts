@@ -8,10 +8,10 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/search
  * Search chat messages using full-text search
  */
-export const GET = withChatAuth(async (context, request) => {
+export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     
     const query = searchParams.get('q')?.trim()
     const roomId = searchParams.get('room_id')
@@ -89,10 +89,10 @@ export const GET = withChatAuth(async (context, request) => {
  * GET /api/chat/search/suggestions
  * Get search suggestions based on partial query
  */
-export const POST = withChatAuth(async (context, request) => {
+export const POST = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
-    const body = await request.json()
+    const body = await _request.json()
     const { partial } = body
 
     if (!partial || partial.length < 2) {

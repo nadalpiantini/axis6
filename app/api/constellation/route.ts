@@ -5,12 +5,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // GET /api/constellation - Get constellation data for community visualization
 // Returns abstract data about community completion patterns without exposing users
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const dateParam = searchParams.get('date')
     const targetDate = dateParam || new Date().toISOString().split('T')[0]
 

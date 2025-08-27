@@ -14,7 +14,7 @@ export async function GET() {
     )
     
     // Test a simple query
-    const { data, error } = await supabase.from('axis6_categories').select('count')
+    const { data: _data, error } = await supabase.from('axis6_categories').select('count')
     
     return NextResponse.json({
       status: 'ok',

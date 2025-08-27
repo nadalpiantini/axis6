@@ -5,10 +5,10 @@ import { createClient } from '@/lib/supabase/server'
 
 // GET /api/resonance/hexagon - Get resonance data for user's hexagon
 // Returns anonymous count of others who completed same axes today
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Get date parameter first (to use in empty responses)
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const dateParam = searchParams.get('date')
     const targetDate = dateParam || new Date().toISOString().split('T')[0]
 

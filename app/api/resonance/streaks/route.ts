@@ -11,7 +11,7 @@ const leaderboardQuerySchema = z.object({
 })
 
 // GET /api/resonance/streaks - Get user's streaks
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -80,12 +80,12 @@ export async function GET(request: NextRequest) {
 }
 
 // Helper function for leaderboard logic (not exported)
-async function getLeaderboard(request: NextRequest) {
+async function getLeaderboard(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const queryParams = {
       streakType: searchParams.get('streakType') || 'daily',
       limit: parseInt(searchParams.get('limit') || '20')

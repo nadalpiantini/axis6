@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 
 // GET /api/chat/rooms/[roomId]/participants - Get room participants
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
   try {

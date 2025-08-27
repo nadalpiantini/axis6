@@ -8,7 +8,7 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/search/analytics
  * Get search analytics for the authenticated user
  */
-export const GET = withChatAuth(async (context, request) => {
+export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
 

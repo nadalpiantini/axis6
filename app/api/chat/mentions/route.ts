@@ -8,10 +8,10 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/mentions
  * Get mentions for the authenticated user
  */
-export const GET = withChatAuth(async (context, request) => {
+export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
@@ -64,7 +64,7 @@ export const GET = withChatAuth(async (context, request) => {
  */
 export const POST = withChatAuth(async (context, request) => {
   try {
-    const { user } = context
+    const { user: _user } = context
     const body = await request.json()
     const { message_id, mentions } = body
 
@@ -107,10 +107,10 @@ export const POST = withChatAuth(async (context, request) => {
  * PUT /api/chat/mentions
  * Mark mentions as read
  */
-export const PUT = withChatAuth(async (context, request) => {
+export const PUT = withChatAuth(async (context, _request) => {
   try {
-    const { user } = context
-    const body = await request.json()
+    const { user: _user } = context
+    const body = await _request.json()
     const { mention_ids } = body
 
     if (!Array.isArray(mention_ids)) {

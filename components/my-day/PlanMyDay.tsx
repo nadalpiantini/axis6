@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { format } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -194,7 +195,7 @@ export function PlanMyDay({
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <React.Fragment>
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -204,13 +205,20 @@ export function PlanMyDay({
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
-          {/* Modal - Consistent centering */}
+          {/* Modal - Perfect flexbox centering */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:w-full md:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto z-50"
+            className="fixed inset-0 flex items-center justify-center p-4 z-50"
+            style={{
+              paddingTop: 'max(1rem, env(safe-area-inset-top))',
+              paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+              paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+              paddingRight: 'max(1rem, env(safe-area-inset-right))'
+            }}
           >
+            <div className="w-full max-w-2xl lg:max-w-3xl max-h-full overflow-y-auto">
             <div className="glass rounded-2xl">
               {/* Header */}
               <div className="p-6 border-b border-white/10">
@@ -275,7 +283,7 @@ export function PlanMyDay({
                 )}
                 
                 {suggestedPlan.length > 0 && !isGenerating && (
-                  <>
+                  <React.Fragment>
                     <div className="mb-4">
                       <h3 className="text-lg font-medium text-white mb-2">
                         Your Optimized Schedule
@@ -317,7 +325,7 @@ export function PlanMyDay({
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
                                   {category && (
-                                    <>
+                                    <React.Fragment>
                                       <div 
                                         className="w-3 h-3 rounded-full"
                                         style={{ backgroundColor: category.color }}
@@ -330,7 +338,7 @@ export function PlanMyDay({
                                       <span className="text-xs text-gray-400">
                                         {category.name?.en || category.slug}
                                       </span>
-                                    </>
+                                    </React.Fragment>
                                   )}
                                   <span className="text-xs text-gray-500">•</span>
                                   <Clock className="w-3 h-3 text-gray-400" />
@@ -361,7 +369,7 @@ export function PlanMyDay({
                         )
                       })}
                     </div>
-                  </>
+                  </React.Fragment>
                 )}
               </div>
 
@@ -406,8 +414,9 @@ export function PlanMyDay({
                 </div>
               )}
             </div>
+          </div>
           </motion.div>
-        </>
+        </React.Fragment>
       )}
     </AnimatePresence>
   )

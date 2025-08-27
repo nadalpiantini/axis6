@@ -98,7 +98,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   axes
 }: HexagonChartWithResonanceProps) {
   const [isClient, setIsClient] = useState(false)
-  const [windowWidth, setWindowWidth] = useState(0)
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 640)
   
   // Get user data and resonance data
   const { data: user, isLoading: userLoading } = useUser()

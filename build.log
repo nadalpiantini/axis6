@@ -1,0 +1,70 @@
+
+> axis6-mvp@2.0.0 build
+> next build
+
+ ⚠ Warning: Found multiple lockfiles. Selecting /Users/nadalpiantini/Dev/axis6-mvp/package-lock.json.
+   Consider removing the lockfiles at:
+   * /Users/nadalpiantini/Dev/axis6-mvp/axis6/package-lock.json
+
+   ▲ Next.js 15.4.7
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · serverActions
+
+   Creating an optimized production build ...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for client (static)...
+ ○ (pwa) Service worker: /Users/nadalpiantini/Dev/axis6-mvp/axis6/public/sw.js
+ ○ (pwa)   URL: /sw.js
+ ○ (pwa)   Scope: /
+ ○ (pwa) Custom runtimeCaching array found, using it instead of the default one.
+ ⚠ Compiled with warnings in 7.0s
+
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/error-tracking.ts
+./components/error/ErrorBoundary.tsx
+./components/error/QueryErrorBoundary.tsx
+./app/dashboard/page.tsx
+
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/error-tracking.ts
+./app/api/auth/logout/route.ts
+
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./app/api/ai/smart-notifications/route.ts:29:38
+Type error: Cannot find name 'request'. Did you mean '_request'?
+
+[0m [90m 27 |[39m
+ [90m 28 |[39m     [90m// Get query parameters[39m
+[31m[1m>[22m[39m[90m 29 |[39m     [36mconst[39m { searchParams } [33m=[39m [36mnew[39m [33mURL[39m(request[33m.[39murl)
+ [90m    |[39m                                      [31m[1m^[22m[39m
+ [90m 30 |[39m     [36mconst[39m includeDelivered [33m=[39m searchParams[33m.[39m[36mget[39m([32m'include_delivered'[39m) [33m===[39m [32m'true'[39m
+ [90m 31 |[39m     [36mconst[39m limit [33m=[39m parseInt(searchParams[33m.[39m[36mget[39m([32m'limit'[39m) [33m||[39m [32m'10'[39m)
+ [90m 32 |[39m[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -8,7 +8,7 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/attachments
  * Get attachments for a message
  */
-export const GET = withChatAuth(async (context, request) => {
+export const GET = withChatAuth(async (_context, request) => {
   try {
     const { searchParams } = new URL(request.url)
     const messageId = searchParams.get('message_id')
@@ -20,7 +20,6 @@ export const GET = withChatAuth(async (context, request) => {
       )
     }
 
-    const { user } = context
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
@@ -58,7 +57,7 @@ export const GET = withChatAuth(async (context, request) => {
  */
 export const POST = withChatAuth(async (context, request) => {
   try {
-    const { user } = context
+    const { user: _user } = context
     const body = await request.json()
     const { message_id, file_name, file_size, mime_type } = body
 

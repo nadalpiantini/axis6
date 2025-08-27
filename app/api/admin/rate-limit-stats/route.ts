@@ -9,10 +9,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { withEnhancedRateLimit, getRateLimitAnalytics } from '@/lib/middleware/enhanced-rate-limit'
 import { logger } from '@/lib/utils/logger'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // Apply rate limiting to this endpoint
   const { response: rateLimitResponse, headers } = await withEnhancedRateLimit(
-    request,
+    _request,
     'api'
   )
   
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            return request.cookies.getAll()
+            return _request.cookies.getAll()
           },
           setAll() {
             // No-op for server requests
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user profile to check admin status
-    const { data: profile } = await supabase
+    const { data: _profile } = await supabase
       .from('axis6_profiles')
       .select('role')
       .eq('id', user.id)
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
     // For now, allow all authenticated users to see basic stats
     // In production, you'd check for admin role
-    // if (profile?.role !== 'admin') {
+    // if (_profile?.role !== 'admin') {
     //   return NextResponse.json(
     //     { error: 'Admin privileges required' },
     //     { status: 403, headers }

@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/service-simple'
 import { logger } from '@/lib/logger'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const { email, password, name } = await request.json()
+    const { email, password, name } = await _request.json()
 
     // Validate input
     if (!email || !password || !name) {

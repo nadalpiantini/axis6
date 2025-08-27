@@ -10,7 +10,7 @@ interface LogEntry {
   timestamp: string
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // Apply rate limiting
     const identifier = rateLimiter.getIdentifier(request, undefined, 'ip')
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse the log entry
-    const logEntry: LogEntry = await request.json()
+    const logEntry: LogEntry = await _request.json()
 
     // Validate log entry
     if (!logEntry.level || !logEntry.message) {

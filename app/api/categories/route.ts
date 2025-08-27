@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // GET /api/categories - Get categories (with optional user customization)
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const includeInactive = searchParams.get('includeInactive') === 'true'
     const userCustomizedOnly = searchParams.get('userOnly') === 'true'
 
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/categories - Create custom category (if supported)
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { name, description, color, icon, isPersonal = true } = body
 
     if (!name) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/categories/[id] - Update category (for personal categories only)
-export async function PUT(request: NextRequest) {
+export async function PUT(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -131,7 +131,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { categoryId, name, description, color, icon, isActive } = body
 
     if (!categoryId) {
@@ -169,7 +169,7 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE /api/categories/[id] - Delete personal category
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -180,7 +180,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const categoryId = searchParams.get('categoryId')
 
     if (!categoryId) {

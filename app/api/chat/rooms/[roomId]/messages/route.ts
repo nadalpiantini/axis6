@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 
 // GET /api/chat/rooms/[roomId]/messages - Get messages for a room with pagination
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
   try {
@@ -33,7 +33,7 @@ export async function GET(
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const cursor = searchParams.get('cursor') // For pagination
     const limit = parseInt(searchParams.get('limit') || '50')
     const messageType = searchParams.get('type') // Filter by message type
@@ -107,7 +107,7 @@ export async function GET(
 
 // POST /api/chat/rooms/[roomId]/messages - Send a new message
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
   try {
@@ -140,7 +140,7 @@ export async function POST(
       messageType = 'text', 
       replyToId, 
       metadata = {} 
-    } = await request.json()
+    } = await _request.json()
 
     // Validate required fields
     if (!content?.trim()) {

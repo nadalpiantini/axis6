@@ -8,9 +8,8 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
  * GET /api/chat/attachments/[id]
  * Get attachment details and signed URL
  */
-export const GET = withChatAuth(async (context, request, { params }) => {
+export const GET = withChatAuth(async (_context, _request, { params }) => {
   try {
-    const { user } = context
     const attachmentId = params.id
 
     if (!attachmentId) {
@@ -62,9 +61,8 @@ export const GET = withChatAuth(async (context, request, { params }) => {
  * PUT /api/chat/attachments/[id]
  * Finalize file upload
  */
-export const PUT = withChatAuth(async (context, request, { params }) => {
+export const PUT = withChatAuth(async (_context, request, { params }) => {
   try {
-    const { user } = context
     const attachmentId = params.id
     const body = await request.json()
     const { width, height, duration } = body
@@ -117,7 +115,7 @@ export const PUT = withChatAuth(async (context, request, { params }) => {
  * DELETE /api/chat/attachments/[id]
  * Delete attachment
  */
-export const DELETE = withChatAuth(async (context, request, { params }) => {
+export const DELETE = withChatAuth(async (context, _request, { params }) => {
   try {
     const { user } = context
     const attachmentId = params.id

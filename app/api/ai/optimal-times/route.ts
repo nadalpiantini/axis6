@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/ai/optimal-times
  * Predict optimal check-in times for the current user
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
  * POST /api/ai/optimal-times/reminders
  * Generate adaptive reminders based on optimal times
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { 
       enable_reminders = true,
       preferred_hours = null, // User can override with preferred hours

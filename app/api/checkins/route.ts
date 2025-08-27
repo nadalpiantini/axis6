@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // GET /api/checkins - Get user's check-ins
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const date = searchParams.get('date')
     const categoryId = searchParams.get('categoryId')
     
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/checkins - Create or toggle check-in
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { categoryId, completed, mood, notes } = body
 
     if (!categoryId) {
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/checkins - Update existing check-in
-export async function PUT(request: NextRequest) {
+export async function PUT(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -185,7 +185,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { categoryId, date, mood, notes } = body
 
     if (!categoryId || !date) {
@@ -219,7 +219,7 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE /api/checkins - Delete specific check-in
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -230,7 +230,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const categoryId = searchParams.get('categoryId')
     const date = searchParams.get('date')
 

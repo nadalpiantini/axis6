@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const { email, password } = await _request.json()
 
     // Validate input
     if (!email || !password) {

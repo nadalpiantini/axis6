@@ -5,13 +5,13 @@ import { createClient } from '@/lib/supabase/server'
 
 // POST /api/chat/rooms/[roomId]/messages/[messageId]/reactions - Add a reaction
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   context: { params: Promise<{ roomId: string; messageId: string }> }
 ) {
   try {
     const supabase = await createClient()
     const params = await context.params
-    const { roomId, messageId } = params
+    const { roomId: _roomId, messageId } = params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -25,7 +25,7 @@ export async function POST(
     const { data: participation, error: participationError } = await supabase
       .from('axis6_chat_participants')
       .select('*')
-      .eq('room_id', roomId)
+      .eq('room_id', _roomId)
       .eq('user_id', user.id)
       .single()
 
@@ -38,7 +38,7 @@ export async function POST(
       .from('axis6_chat_messages')
       .select('id')
       .eq('id', messageId)
-      .eq('room_id', roomId)
+      .eq('room_id', _roomId)
       .is('deleted_at', null)
       .single()
 
@@ -47,7 +47,7 @@ export async function POST(
     }
 
     // Parse request body
-    const { emoji } = await request.json()
+    const { emoji } = await _request.json()
 
     // Validate emoji
     if (!emoji || typeof emoji !== 'string' || emoji.length > 10) {
@@ -96,7 +96,7 @@ export async function DELETE(
   try {
     const supabase = await createClient()
     const params = await context.params
-    const { roomId, messageId } = params
+    const { roomId: _roomId, messageId } = params
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

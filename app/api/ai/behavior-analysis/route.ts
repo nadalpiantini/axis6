@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/ai/behavior-analysis
  * Perform behavioral analysis for the current user
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
  * POST /api/ai/behavior-analysis/insights
  * Generate personalized insights based on behavior analysis
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await _request.json()
     const { include_profile } = body
 
     const startTime = Date.now()

@@ -24,7 +24,7 @@ const feedQuerySchema = z.object({
 })
 
 // POST /api/micro-wins - Record a micro win
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse and validate request body
-    const body = await request.json()
+    const body = await _request.json()
     const validatedData = createMicroWinSchema.parse(body)
 
     // Call RPC function to record micro win
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/micro-wins - Get micro wins feed
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const queryParams = {
       feedType: searchParams.get('feedType') || 'all',
       axis: searchParams.get('axis') || undefined,
@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
 }
 
 // PATCH /api/micro-wins/[id]/react - Add reaction to micro win
-export async function PATCH(request: NextRequest) {
+export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -188,7 +188,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Get win ID from URL
-    const url = new URL(request.url)
+    const url = new URL(_request.url)
     const pathSegments = url.pathname.split('/')
     const winId = pathSegments[pathSegments.length - 2] // Get ID before /react
 
@@ -197,7 +197,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Parse request body
-    const body = await request.json()
+    const body = await _request.json()
     const { reactionType = 'hex_star', axisResonance } = body
 
     // Create or update reaction
