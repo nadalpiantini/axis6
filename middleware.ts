@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr'
 import { withEnhancedRateLimit } from '@/lib/middleware/enhanced-rate-limit'
 
 // Protected routes that require authentication
-const protectedRoutes = ['/dashboard', '/settings', '/stats', '/profile', '/analytics', '/achievements']
+const protectedRoutes = ['/dashboard', '/settings', '/stats', '/profile', '/analytics', '/achievements', '/chat']
 
 // Public routes that don't require authentication
 const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']

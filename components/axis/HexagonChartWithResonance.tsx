@@ -102,9 +102,12 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   
   // Get user data and resonance data
   const { data: user, isLoading: userLoading } = useUser()
+  // Memoize the date to prevent unnecessary re-renders
+  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  
   const { data: resonanceData, isLoading: resonanceLoading } = useHexagonResonance(
     user?.id || '', 
-    new Date().toISOString().split('T')[0]
+    today
   )
   
   // Enhanced responsive size based on screen width and safe areas
@@ -116,10 +119,11 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
     return size // Desktop
   }, [windowWidth, size])
   
-  const center = responsiveSize / 2
-  const radius = responsiveSize * 0.38 // Slightly smaller for better mobile fit
-  const labelDistance = windowWidth < 640 ? radius * 1.25 : radius * 1.3 // Closer labels on mobile
-  const resonanceRadius = radius * 1.15 // Radius for resonance dots
+  // Memoize calculated values to prevent infinite re-renders
+  const center = useMemo(() => responsiveSize / 2, [responsiveSize])
+  const radius = useMemo(() => responsiveSize * 0.38, [responsiveSize]) // Slightly smaller for better mobile fit
+  const labelDistance = useMemo(() => windowWidth < 640 ? radius * 1.25 : radius * 1.3, [windowWidth, radius]) // Closer labels on mobile
+  const resonanceRadius = useMemo(() => radius * 1.15, [radius]) // Radius for resonance dots
 
   useEffect(() => {
     setIsClient(true)
@@ -194,7 +198,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       console.warn('Error calculating resonance points:', error)
       return []
     }
-  }, [resonanceData, showResonance, center, resonanceRadius])
+  }, [resonanceData, showResonance, center, resonanceRadius, windowWidth])
 
   // Create grid lines (same as original)
   const gridLevels = useMemo(() => [0.2, 0.4, 0.6, 0.8, 1], [])

@@ -31,70 +31,39 @@ interface SettingsSection {
 
 const SETTINGS_SECTIONS: SettingsSection[] = [
   {
-    id: 'focus',
-    name: 'Focus & Community',
-    description: 'ADHD modes and subtle social features',
-    href: '/settings/focus',
-    icon: Brain,
-    isNew: true
-  },
-  {
     id: 'account',
-    name: 'Account',
-    description: 'Profile, preferences, and display settings',
+    name: 'Profile & Account',
+    description: 'Personal information and preferences',
     href: '/settings/account',
     icon: User
   },
   {
     id: 'notifications',
     name: 'Notifications',
-    description: 'Smart alerts, reminders, and delivery preferences',
+    description: 'Reminders and alerts',
     href: '/settings/notifications',
-    icon: Bell,
-    badge: 'AI'
-  },
-  {
-    id: 'privacy',
-    name: 'Privacy & Data',
-    description: 'Data visibility, sharing, and AI analytics controls',
-    href: '/settings/privacy',
-    icon: Shield
-  },
-  {
-    id: 'security',
-    name: 'Security',
-    description: 'Password, 2FA, sessions, and security audit',
-    href: '/settings/security',
-    icon: Lock
-  },
-  {
-    id: 'personalization',
-    name: 'AI Personalization',
-    description: 'Temperament, coaching insights, and behavior analysis',
-    href: '/settings/personalization',
-    icon: Brain,
-    isNew: true
+    icon: Bell
   },
   {
     id: 'axis-customization',
-    name: 'Axis Customization',
-    description: 'Colors, icons, activities, and goal preferences',
+    name: 'Axis & Wellness',
+    description: 'Categories and goals',
     href: '/settings/axis-customization',
     icon: Target
   },
   {
-    id: 'wellness',
-    name: 'Wellness',
-    description: 'Streaks, goals, motivation, and progress tracking',
-    href: '/settings/wellness',
-    icon: Heart
+    id: 'focus',
+    name: 'Focus Mode',
+    description: 'ADHD-friendly options',
+    href: '/settings/focus',
+    icon: Brain
   },
   {
-    id: 'advanced',
-    name: 'Advanced',
-    description: 'Developer settings, data management, and experimental features',
-    href: '/settings/advanced',
-    icon: SettingsIcon
+    id: 'security',
+    name: 'Security',
+    description: 'Password and privacy',
+    href: '/settings/security',
+    icon: Shield
   }
 ]
 
@@ -133,10 +102,7 @@ export function SettingsLayout({
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <div>
-              <h1 className="text-lg font-semibold">{activeSectionData?.name || title}</h1>
-              <p className="text-sm text-gray-400">{activeSectionData?.description || subtitle}</p>
-            </div>
+            <h1 className="text-lg font-semibold">{activeSectionData?.name || 'Settings'}</h1>
           </div>
           <button
             onClick={() => setSidebarOpen(true)}
@@ -201,8 +167,9 @@ export function SettingsLayout({
         {/* Main Content */}
         <div className="flex-1 lg:p-8 p-4">
           {/* Desktop Header */}
+          {/* Desktop Header - Simplified */}
           <div className="hidden lg:block mb-8">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-4">
               <Link
                 href="/dashboard"
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -210,28 +177,8 @@ export function SettingsLayout({
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
-              <div>
-                <h1 className="text-3xl font-bold">{activeSectionData?.name || title}</h1>
-                <p className="text-gray-400">{activeSectionData?.description || subtitle}</p>
-              </div>
+              <h1 className="text-2xl font-bold">{activeSectionData?.name || 'Settings'}</h1>
             </div>
-
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-gray-400">
-              <Link href="/dashboard" className="hover:text-white transition-colors">
-                Dashboard
-              </Link>
-              <ChevronLeft className="w-4 h-4 rotate-180" />
-              <Link href="/settings" className="hover:text-white transition-colors">
-                Settings
-              </Link>
-              {activeSection !== 'overview' && activeSectionData && (
-                <>
-                  <ChevronLeft className="w-4 h-4 rotate-180" />
-                  <span className="text-white">{activeSectionData.name}</span>
-                </>
-              )}
-            </nav>
           </div>
 
           {/* Content Area */}
@@ -270,21 +217,17 @@ function SettingsSidebar({ sections, activeSection, onSectionClick }: SettingsSi
               : 'hover:bg-white/5 border border-transparent hover:border-white/10'
           }`}
         >
-          <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20">
-            <SettingsIcon className="w-4 h-4" />
+          <div className="p-2 rounded-lg bg-purple-500/10">
+            <SettingsIcon className="w-4 h-4 text-purple-400" />
           </div>
           <div className="flex-1">
-            <h4 className="font-medium">Overview</h4>
-            <p className="text-xs text-gray-400">Settings dashboard</p>
+            <h4 className="font-medium">Settings</h4>
           </div>
         </Link>
       </div>
 
       {/* Settings Sections */}
       <div className="space-y-2">
-        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
-          Categories
-        </h4>
         {sections.map((section) => {
           const isActive = activeSection === section.id
           const Icon = section.icon
@@ -300,67 +243,13 @@ function SettingsSidebar({ sections, activeSection, onSectionClick }: SettingsSi
                   : 'hover:bg-white/5 border border-transparent hover:border-white/10'
               }`}
             >
-              <div className={`p-2 rounded-lg transition-colors ${
-                isActive 
-                  ? 'bg-purple-500/30' 
-                  : 'bg-white/10 group-hover:bg-white/20'
-              }`}>
-                <Icon className="w-4 h-4" />
-              </div>
+              <Icon className="w-4 h-4 text-purple-400" />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium truncate">{section.name}</h4>
-                  {section.badge && (
-                    <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs font-medium rounded-full">
-                      {section.badge}
-                    </span>
-                  )}
-                  {section.isNew && (
-                    <span className="px-2 py-0.5 bg-green-500/20 text-green-300 text-xs font-medium rounded-full">
-                      NEW
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-400 truncate">{section.description}</p>
+                <h4 className="font-medium truncate">{section.name}</h4>
               </div>
             </Link>
           )
         })}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
-        <h4 className="text-sm font-medium mb-3">Quick Actions</h4>
-        <div className="space-y-2">
-          <Link
-            href="/settings/account"
-            onClick={onSectionClick}
-            className="block text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            Export Data
-          </Link>
-          <Link
-            href="/settings/security"
-            onClick={onSectionClick}
-            className="block text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            Security Check
-          </Link>
-          <Link
-            href="/settings/personalization"
-            onClick={onSectionClick}
-            className="block text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            Retake Assessment
-          </Link>
-        </div>
-      </div>
-
-      {/* Settings Version */}
-      <div className="mt-6 pt-6 border-t border-white/10">
-        <p className="text-xs text-gray-500">
-          Settings v2.0 • Enhanced with AI
-        </p>
       </div>
     </div>
   )
