@@ -1,38 +1,68 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/server'
 
 // GET /api/resonance/hexagon - Get resonance data for user's hexagon
 // Returns anonymous count of others who completed same axes today
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
-    // Get authenticated user with better error handling
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError) {
-      console.error('Authentication error in hexagon resonance API:', authError)
-      return NextResponse.json({ 
-        error: 'Authentication failed',
-        details: authError.message 
-      }, { status: 401 })
-    }
-    
-    if (!user) {
-      console.warn('No authenticated user found in hexagon resonance API')
-      return NextResponse.json({ 
-        error: 'Unauthorized - No user session found',
-        details: 'User must be logged in to access resonance data'
-      }, { status: 401 })
-    }
-
-    // Get date parameter (defaults to today)
+    // Get date parameter first (to use in empty responses)
     const { searchParams } = new URL(request.url)
     const dateParam = searchParams.get('date')
     const targetDate = dateParam || new Date().toISOString().split('T')[0]
 
-    // Call RPC function to get hexagon resonance data
+    // Create Supabase client
+    const supabase = await createClient()
+    
+    // Get authenticated user with enhanced error handling
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError) {
+      console.error('Authentication error in hexagon resonance API:', {
+        error: authError.message,
+        code: authError.name,
+        timestamp: new Date().toISOString()
+      })
+      
+      // Return empty data instead of 401 to prevent UI issues
+      return NextResponse.json({
+        success: true,
+        date: targetDate,
+        resonance: [],
+        totalResonance: 0,
+        message: 'Authentication failed - returning empty resonance data'
+      })
+    }
+    
+    if (!user) {
+      console.warn('No authenticated user found in hexagon resonance API', {
+        timestamp: new Date().toISOString()
+      })
+      
+      // Return empty data instead of 401 to prevent UI issues
+      return NextResponse.json({
+        success: true,
+        date: targetDate,
+        resonance: [],
+        totalResonance: 0,
+        message: 'No authenticated user - returning empty resonance data'
+      })
+    }
+    
+    console.info('Hexagon resonance API - User authenticated successfully:', {
+      userId: user.id,
+      userEmail: user.email || 'no-email',
+      timestamp: new Date().toISOString()
+    })
+
+
+
+    // Call RPC function to get hexagon resonance data with enhanced error handling
+    console.info('Calling get_hexagon_resonance RPC function:', {
+      userId: user.id,
+      targetDate,
+      timestamp: new Date().toISOString()
+    })
+    
     const { data: resonanceData, error: resonanceError } = await supabase
       .rpc('get_hexagon_resonance', {
         p_user_id: user.id,
@@ -40,7 +70,27 @@ export async function GET(request: NextRequest) {
       })
 
     if (resonanceError) {
-      console.error('Error fetching hexagon resonance:', resonanceError)
+      console.error('Error fetching hexagon resonance:', {
+        error: resonanceError.message,
+        code: resonanceError.code,
+        hint: resonanceError.hint,
+        details: resonanceError.details,
+        userId: user.id,
+        targetDate,
+        timestamp: new Date().toISOString()
+      })
+      
+      // Check if it's a function not found error
+      if (resonanceError.code === '42883') {
+        console.error('get_hexagon_resonance function does not exist in database')
+        return NextResponse.json({
+          success: true,
+          date: targetDate,
+          resonance: [],
+          totalResonance: 0,
+          error: 'Resonance feature not available - function missing'
+        })
+      }
       
       // Return empty resonance data instead of error to prevent UI issues
       return NextResponse.json({
@@ -51,6 +101,12 @@ export async function GET(request: NextRequest) {
         error: 'Resonance data temporarily unavailable'
       })
     }
+    
+    console.info('Successfully fetched hexagon resonance data:', {
+      userId: user.id,
+      recordCount: resonanceData?.length || 0,
+      timestamp: new Date().toISOString()
+    })
 
     // Transform data for hexagon visualization
     const hexagonResonance = resonanceData?.map((axis: any) => ({
