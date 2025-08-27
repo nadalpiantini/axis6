@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 // GET /api/chat/rooms - Get user's chat rooms
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(_request.url)
+    const { searchParams } = new URL(request.url)
     const type = searchParams.get('type') // Filter by room type
     const categoryId = searchParams.get('categoryId') // Filter by category
     
@@ -102,7 +102,7 @@ export async function GET(_request: NextRequest) {
 }
 
 // POST /api/chat/rooms - Create a new chat room
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
     
@@ -123,7 +123,7 @@ export async function POST(_request: NextRequest) {
       maxParticipants,
       isPrivate = false,
       inviteUserIds = []
-    } = await _request.json()
+    } = await request.json()
 
     // Validate required fields
     if (!name || !type) {

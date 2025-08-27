@@ -211,6 +211,7 @@ export default function SecuritySettingsPage() {
       setHasChanges(false)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving security settings:', error);
     } finally {
       setIsSaving(false)

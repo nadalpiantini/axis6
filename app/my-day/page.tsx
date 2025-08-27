@@ -21,7 +21,7 @@ import { useState, useEffect } from 'react'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { ActivityTimer } from '@/components/my-day/ActivityTimer'
 import { PlanMyDay } from '@/components/my-day/PlanMyDay'
-import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
+import { HexagonClock } from '@/components/hexagon-clock'
 import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { LogoFull } from '@/components/ui/Logo'
 import { useUser, useCategories } from '@/lib/react-query/hooks'
@@ -280,11 +280,15 @@ export default function MyDayPage() {
                 Day Overview
               </h2>
               
-              <TimeBlockHexagon
+              <HexagonClock
                 distribution={timeDistribution || []}
                 categories={categories}
                 onCategoryClick={handleAddTimeBlock}
                 activeTimer={activeTimer}
+                showClockMarkers={true}
+                showCurrentTime={true}
+                mobileOptimized={true}
+                hardwareAccelerated={true}
               />
             </motion.div>
 

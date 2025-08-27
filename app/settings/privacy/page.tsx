@@ -156,6 +156,7 @@ export default function PrivacySettingsPage() {
       setHasChanges(false)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving privacy settings:', error);
     } finally {
       setIsSaving(false)

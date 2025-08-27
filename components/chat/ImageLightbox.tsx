@@ -103,6 +103,7 @@ export function ImageLightbox({
       document.body.removeChild(link)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to download image:', error);
     }
   }

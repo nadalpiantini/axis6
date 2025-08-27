@@ -128,6 +128,7 @@ export function ChatComposer({
         // These can be passed to the parent component for notification handling
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to process mentions:', error);
       }
     }
@@ -211,7 +212,8 @@ export function ChatComposer({
               onFileUploaded={handleFileUploaded}
               onError={(error) => {
                 // TODO: Replace with proper error handling
-                // console.error('File upload error:', error);
+                // // TODO: Replace with proper error handling
+    // console.error('File upload error:', error);
               }}
             />
           </motion.div>

@@ -76,6 +76,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       if (!reset) setPage(page + 1)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error fetching feed:', error);
       toast.error('Failed to load feed')
     } finally {
@@ -109,6 +110,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       toast.success('Support added!')
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error adding reaction:', error);
       toast.error('Failed to add support')
     }

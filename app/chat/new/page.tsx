@@ -103,6 +103,7 @@ export default function NewChatRoomPage() {
       router.push(`/chat?room=${room.id}`)
     } catch (err) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error creating room:', err);
       setError('Failed to create room. Please try again.')
     } finally {

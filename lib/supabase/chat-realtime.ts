@@ -126,6 +126,7 @@ class ChatRealtimeManager {
 
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error(`Failed to join chat room ${roomId}:`, error);
       throw error
     }
@@ -152,6 +153,7 @@ class ChatRealtimeManager {
 
       } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error(`Failed to leave chat room ${roomId}:`, error);
     }
   }
@@ -176,6 +178,7 @@ class ChatRealtimeManager {
 
       if (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to send message:', error);
         return false
       }
@@ -183,6 +186,7 @@ class ChatRealtimeManager {
       return true
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error sending message:', error);
       return false
     }
@@ -227,6 +231,7 @@ class ChatRealtimeManager {
       return !error
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to add reaction:', error);
       return false
     }
@@ -248,6 +253,7 @@ class ChatRealtimeManager {
       return !error
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to remove reaction:', error);
       return false
     }

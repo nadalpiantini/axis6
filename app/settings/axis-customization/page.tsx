@@ -83,8 +83,7 @@ export default function AxisCustomizationPage() {
 
   const handleSaveSettings = async () => {
     // TODO: Implement save to database
-    console.log('Saving axis settings:', axisSettings)
-  }
+    }
 
   const handleResetToDefaults = () => {
     if (categories?.length) {

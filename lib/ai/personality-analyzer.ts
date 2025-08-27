@@ -99,6 +99,7 @@ export class PersonalityAnalyzer {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI personality analysis failed:', error);
       // Fallback to basic analysis
       return this.performBasicAnalysis(input)
@@ -142,6 +143,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       return this.parseAdditionalInsights(response)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to generate additional insights:', error);
       return this.getDefaultAdditionalInsights(baseAnalysis.primary_temperament)
@@ -216,6 +218,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
         })
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to store enhanced profile:', error);
     }

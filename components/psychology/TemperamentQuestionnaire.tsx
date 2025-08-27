@@ -107,6 +107,7 @@ export function TemperamentQuestionnaire({
       } catch (error) {
         // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error fetching questions:', error);
       } finally {
         setLoading(false)
@@ -142,6 +143,7 @@ export function TemperamentQuestionnaire({
         })
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error saving response:', error);
     }
@@ -197,6 +199,7 @@ export function TemperamentQuestionnaire({
       onComplete(result)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error submitting questionnaire:', error);
     } finally {

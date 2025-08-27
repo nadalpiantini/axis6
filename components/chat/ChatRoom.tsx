@@ -77,6 +77,7 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
       stopTyping()
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to send message:', error);
     }
   }

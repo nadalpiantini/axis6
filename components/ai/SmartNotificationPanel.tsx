@@ -89,6 +89,7 @@ export function SmartNotificationPanel({
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to handle notification action:', error);
     }
   }

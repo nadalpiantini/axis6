@@ -29,6 +29,12 @@ export function useChatRooms(userId?: string) {
       if (!userId || !supabase) throw new Error('User ID and Supabase client required')
 
       try {
+        // Ensure we have a valid session before making queries
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        if (sessionError || !session) {
+          throw new Error('No valid session available')
+        }
+
         // First get room IDs where user is a participant
         const { data: participantRooms, error: participantError } = await supabase
           .from('axis6_chat_participants')
@@ -36,8 +42,7 @@ export function useChatRooms(userId?: string) {
           .eq('user_id', userId)
 
         if (participantError) {
-          // TODO: Replace with proper error handling
-    // console.error('Failed to fetch user participations:', participantError);
+          console.error('Failed to fetch user participations:', participantError)
           throw participantError
         }
 
@@ -56,8 +61,7 @@ export function useChatRooms(userId?: string) {
           .order('updated_at', { ascending: false })
 
         if (error) {
-          // TODO: Replace with proper error handling
-    // console.error('Failed to fetch chat rooms:', error);
+          console.error('Failed to fetch chat rooms:', error)
           throw error
         }
 
@@ -137,21 +141,14 @@ export function useChatRooms(userId?: string) {
 
         return roomsWithData
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // console.error('Failed to fetch chat rooms:', error);
+        console.error('Failed to fetch chat rooms:', error)
         throw error
       }
     },
     enabled: !!userId && !!supabase,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: true,
-    retry: (failureCount, error) => {
-      // Retry up to 3 times, but not for 400 errors (client errors)
-      if (error?.message?.includes('400') || failureCount >= 3) {
-        return false
-      }
-      return true
-    },
+    retry: false, // EMERGENCY FIX: Disable all retries to stop infinite loop
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   })
 }
@@ -179,6 +176,7 @@ export function useChatRoom(roomId: string, userId?: string) {
         }
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to join room:', error);
       }
     }
@@ -365,6 +363,7 @@ export function useSendMessage(roomId: string) {
     },
     onError: (error) => {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to send message:', error);
       // Could add toast notification here
     }

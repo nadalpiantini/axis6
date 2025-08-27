@@ -117,6 +117,7 @@ export class SmartNotificationService {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Smart notification generation failed:', error);
       return this.generateFallbackNotifications(userId)
     }
@@ -156,6 +157,7 @@ export class SmartNotificationService {
       return this.parseAINotificationResponse(userId, response, context)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI contextual notifications failed:', error);
       return this.generateBasicContextualNotifications(userId, context)
@@ -837,6 +839,7 @@ export class SmartNotificationService {
         .insert(notificationRows)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to store notifications:', error);
     }

@@ -81,6 +81,7 @@ export class BehavioralAnalyzer {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Behavioral analysis failed:', error);
       return this.getDefaultProfile(userId)
     }
@@ -113,6 +114,7 @@ export class BehavioralAnalyzer {
       return aiInsights
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Insight generation failed:', error);
       return this.generateBasicInsights(profile || await this.getDefaultProfile(userId))
@@ -654,6 +656,7 @@ export class BehavioralAnalyzer {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI insights generation failed:', error);
       return this.generateBasicInsights(profile, recentData)
     }
@@ -1001,6 +1004,7 @@ export class BehavioralAnalyzer {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to store behavior profile:', error);
     }
   }
@@ -1025,6 +1029,7 @@ export class BehavioralAnalyzer {
         .insert(insightRows)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to store insights:', error);
     }

@@ -118,6 +118,7 @@ export function ActivityTimer({
     } catch (error: any) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error starting timer:', error);
       setError(error?.message || 'Failed to start timer. Please try again.')
     }
@@ -146,6 +147,7 @@ export function ActivityTimer({
       onClose()
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error stopping timer:', error);
     }

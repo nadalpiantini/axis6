@@ -107,6 +107,7 @@ export function createClient() {
   if (!supabaseUrl || !supabaseAnonKey) {
     // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Missing Supabase environment variables:', {
     //   url: supabaseUrl ? 'present' : 'missing',
     //   key: supabaseAnonKey ? 'present' : 'missing'
@@ -278,6 +279,7 @@ export function createClient() {
     return client
   } catch (error) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to create Supabase client:', error);
     throw new Error(`Failed to initialize Supabase client: ${error instanceof Error ? error.message : 'Unknown error'}`)

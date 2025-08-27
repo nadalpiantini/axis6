@@ -161,6 +161,7 @@ export function useCSRF() {
  *   } catch (error) {
  *     // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Request failed:', error);
  *   }
  * }

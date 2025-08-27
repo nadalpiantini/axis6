@@ -78,6 +78,7 @@ export function MessageSearch({
       setSelectedIndex(-1)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Search failed:', error);
       setResults([])
       setStats(null)
@@ -92,6 +93,7 @@ export function MessageSearch({
       setSuggestions(suggestions)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to get suggestions:', error);
       setSuggestions([])
     }

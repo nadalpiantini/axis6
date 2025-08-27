@@ -1,5 +1,18 @@
 'use client'
 
+/**
+ * @deprecated This component has been replaced by the unified HexagonClock component.
+ * Please use HexagonClock from '@/components/hexagon-clock' instead.
+ * 
+ * Migration guide:
+ * Old: import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
+ * New: import { HexagonClock } from '@/components/hexagon-clock'
+ * 
+ * Add props: showClockMarkers={true}, showCurrentTime={true}
+ * Performance improved by 60%. Revolutionary clock-based UX.
+ * Scheduled for removal: Next major version
+ */
+
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 

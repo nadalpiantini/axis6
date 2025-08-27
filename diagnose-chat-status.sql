@@ -120,3 +120,4 @@ SELECT
     (SELECT COUNT(*) FROM axis6_chat_rooms WHERE is_active = true) as salas_activas,
     (SELECT COUNT(*) FROM axis6_chat_participants) as total_participantes,
     (SELECT COUNT(*) FROM axis6_profiles) as total_usuarios;
+

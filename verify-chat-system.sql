@@ -86,3 +86,4 @@ SELECT
         THEN '✅ FOREIGN KEYS FIXED'
         ELSE '❌ FOREIGN KEYS MISSING'
     END as foreign_key_status;
+

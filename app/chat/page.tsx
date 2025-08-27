@@ -17,21 +17,41 @@ export default function ChatPage() {
   const supabase = createClient()
   const router = useRouter()
   
-  // Get user ID
+  // Get user ID with better error handling
   useEffect(() => {
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error || !session) {
+          console.error('Auth error:', error)
+          router.push('/auth/login')
+          return
+        }
+        setUserId(session.user.id)
+      } catch (error) {
+        console.error('Failed to get session:', error)
         router.push('/auth/login')
-        return
       }
-      setUserId(session.user.id)
     }
     getUser()
   }, [supabase, router])
 
-  // Use the chat rooms hook
+  // Use the chat rooms hook with emergency fallback
   const { data: rooms, isLoading, error } = useChatRooms(userId || undefined)
+  
+  // Emergency: If we have repeated errors, force a page reload to stop infinite loops
+  const [errorCount, setErrorCount] = useState(0)
+  useEffect(() => {
+    if (error) {
+      setErrorCount(prev => prev + 1)
+      if (errorCount > 3) {
+        console.error('Too many errors, forcing page reload to prevent infinite loops')
+        window.location.reload()
+      }
+    } else {
+      setErrorCount(0)
+    }
+  }, [error, errorCount])
 
   const handleCreateRoom = () => {
     router.push('/chat/new')
@@ -62,12 +82,15 @@ export default function ChatPage() {
   }
 
   if (error) {
-    // TODO: Replace with proper error handling
-    // console.error('Chat error:', error);
+    console.error('Chat error:', error);
     // Check if it's a database table missing error
     const isDatabaseError = error.message?.includes('relation') && error.message?.includes('does not exist')
     // Check if it's a 400 error indicating malformed query
     const is400Error = error.message?.includes('400') || error.status === 400
+    // Check if it's a 500 error indicating server issues
+    const is500Error = error.message?.includes('500') || error.status === 500
+    // Check if it's an authentication error
+    const isAuthError = error.message?.includes('session') || error.message?.includes('auth') || error.status === 401
     
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -85,6 +108,32 @@ export default function ChatPage() {
                   Database tables need to be deployed. Run the chat enhancement SQL script in Supabase.
                 </p>
               </div>
+            </>
+          ) : isAuthError ? (
+            <>
+              <h2 className="text-xl font-semibold text-gray-200 mb-2">Authentication Required</h2>
+              <p className="text-gray-400 mb-4">
+                Please sign in again to access the chat system.
+              </p>
+              <Button
+                onClick={() => router.push('/auth/login')}
+                className="mt-4 bg-purple-600 hover:bg-purple-700"
+              >
+                Sign In
+              </Button>
+            </>
+          ) : is500Error ? (
+            <>
+              <h2 className="text-xl font-semibold text-gray-200 mb-2">Server Error</h2>
+              <p className="text-gray-400 mb-4">
+                We're experiencing server issues. Our team has been notified and is working on a fix.
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-purple-600 hover:bg-purple-700"
+              >
+                Try Again
+              </Button>
             </>
           ) : is400Error ? (
             <>

@@ -121,6 +121,7 @@ export default function ProfilePage() {
         if (profileError && profileError.code !== 'PGRST116') {
           // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error fetching profile:', profileError);
         }
 
@@ -192,6 +193,7 @@ export default function ProfilePage() {
           // 🛡️ CATCH-ALL: Handle any unexpected errors gracefully
           // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('⚠️ Failed to fetch temperament profile:', err);
           // Profile page continues to work without psychology features
         }
@@ -237,6 +239,7 @@ export default function ProfilePage() {
       showNotification('success', 'Profile updated successfully!')
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error updating profile:', error);
       showNotification('error', 'Failed to update profile')
@@ -285,6 +288,7 @@ export default function ProfilePage() {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error exporting data:', error);
       showNotification('error', 'Failed to export data')
     }
@@ -315,6 +319,7 @@ export default function ProfilePage() {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error deleting account:', error);
       showNotification('error', 'Failed to delete account')
       // Still redirect even if deletion fails
@@ -331,6 +336,7 @@ export default function ProfilePage() {
       router.push('/auth/login')
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error during logout:', error);
       // Still redirect even if logout fails
@@ -365,6 +371,7 @@ export default function ProfilePage() {
           }
         } catch (err) {
           // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error fetching temperament profile:', err);
         }

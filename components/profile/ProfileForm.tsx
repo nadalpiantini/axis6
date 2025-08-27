@@ -79,6 +79,7 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
       onSuccess?.()
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error updating profile:', error);
       toast.error("Failed to update profile. Please try again.")
     }

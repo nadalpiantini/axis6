@@ -38,6 +38,7 @@ export function useChatRoomsOptimized(userId?: string) {
 
         if (error) {
           // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
           throw error
         }
@@ -45,6 +46,7 @@ export function useChatRoomsOptimized(userId?: string) {
         return data || []
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
         throw error
       }
@@ -124,6 +126,7 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
         if (isMounted) setIsConnected(true)
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to join room:', error);
         // Retry connection after delay
         if (isMounted) {

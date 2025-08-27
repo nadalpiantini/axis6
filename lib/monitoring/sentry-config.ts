@@ -118,6 +118,7 @@ export function logError(
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('🔴 Error:', errorMessage, context?.extra);
   }
 
@@ -208,7 +209,7 @@ export function logMessage(
   context?: Record<string, any>
 ) {
   if (process.env.NODE_ENV === 'development') {
-    console.log(`[${level.toUpperCase()}]`, message, context)
+    }]`, message, context)
   }
 
   Sentry.captureMessage(message, {

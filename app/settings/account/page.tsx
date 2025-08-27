@@ -119,6 +119,7 @@ export default function AccountSettingsPage() {
         }
       } catch (error) {
         // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error loading user data:', error);
         showNotification('error', 'Failed to load settings')
       } finally {
@@ -194,6 +195,7 @@ export default function AccountSettingsPage() {
       showNotification('success', 'Settings saved successfully!')
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving settings:', error);
       showNotification('error', 'Failed to save settings')
     } finally {
@@ -257,6 +259,7 @@ export default function AccountSettingsPage() {
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error exporting data:', error);
       showNotification('error', 'Failed to export data')
     }
@@ -282,6 +285,7 @@ export default function AccountSettingsPage() {
       }, 2000)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error deleting account:', error);
       showNotification('error', 'Failed to delete account')
     }

@@ -114,6 +114,7 @@ export function clearSupabaseData(): void {
     } catch (error) {
     // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error clearing Supabase data:', error);
   }
 }
@@ -130,10 +131,12 @@ export function logSupabaseDebug(): void {
   if (!debugInfo.environment.hasUrl) {
     // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_URL');
   }
   if (!debugInfo.environment.hasKey) {
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('❌ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }

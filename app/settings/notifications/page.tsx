@@ -129,6 +129,7 @@ export default function NotificationSettingsPage() {
       setHasChanges(false)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving notification preferences:', error);
     } finally {
       setIsSaving(false)

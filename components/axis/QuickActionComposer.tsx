@@ -102,6 +102,7 @@ export function QuickActionComposer({
       onSuccess?.()
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error recording micro win:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to record micro win')
     } finally {

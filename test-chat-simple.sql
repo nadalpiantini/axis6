@@ -50,3 +50,4 @@ LEFT JOIN axis6_chat_participants p ON p.room_id = r.id
 WHERE r.is_active = true
 GROUP BY r.id, r.name, r.type
 LIMIT 3;
+

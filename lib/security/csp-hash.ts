@@ -174,6 +174,7 @@ export function handleCSPViolation(violation: CSPViolation): void {
   if (process.env['NODE_ENV'] === 'development') {
     // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('CSP Violation:', violation);
   }
   
@@ -181,6 +182,7 @@ export function handleCSPViolation(violation: CSPViolation): void {
   if (process.env['NODE_ENV'] === 'production') {
     // Could send to Sentry, DataDog, etc.
     // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('CSP Violation in production:', violation);
   }

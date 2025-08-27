@@ -145,6 +145,7 @@ export class DeepSeekClient {
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('DeepSeek API call failed:', error);
       throw error
     }
@@ -205,6 +206,7 @@ Important: Return ONLY the JSON object, no additional text or formatting.`
       return schema.parse(parsed)
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to parse structured output:', error);
       throw new Error('Failed to generate valid structured output')

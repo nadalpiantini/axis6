@@ -97,3 +97,4 @@ BEGIN
   RAISE NOTICE 'Fixed: 1) Added is_private column, 2) Fixed foreign key references to axis6_profiles, 3) Updated RLS policies';
 END;
 $$;
+

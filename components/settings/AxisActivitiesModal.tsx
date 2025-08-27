@@ -230,6 +230,7 @@ export function AxisActivitiesModal({
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error saving activity:', error);
       showNotification('error', 'Failed to save activity')
     }
@@ -247,6 +248,7 @@ export function AxisActivitiesModal({
     } catch (error) {
       // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Error deleting activity:', error);
       showNotification('error', 'Failed to delete activity')
     }
@@ -261,6 +263,7 @@ export function AxisActivitiesModal({
       refetch()
     } catch (error) {
       // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Error toggling activity:', error);
     }
