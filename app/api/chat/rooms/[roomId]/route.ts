@@ -107,7 +107,7 @@ export async function PUT(
     }
 
     // Parse request body
-    const { name, description, isActive, maxParticipants } = await _request.json()
+    const { name, description, isActive, maxParticipants } = await request.json()
 
     const updateData: any = {}
     if (name !== undefined) updateData.name = name

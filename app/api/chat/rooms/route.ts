@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const type = searchParams.get('type') // Filter by room type
     const categoryId = searchParams.get('categoryId') // Filter by category
     
