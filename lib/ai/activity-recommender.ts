@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/client'
 
 import { deepseekClient } from './deepseek'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 export interface ActivityRecommendationInput {
   userId: string
   categoryId: number
@@ -85,10 +86,17 @@ export class ActivityRecommender {
 
       return enhancedActivities
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Activity recommendation failed:', error);
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'activity-recommender',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI activity recommender operation failed:', error);
       return this.getDefaultActivities(input)
     }
   }
@@ -107,7 +115,7 @@ export class ActivityRecommender {
     // Note: prompt construction logic commented out but preserved for reference
     // The prompt would include user profile, context, and requirements
     // Currently using the deepseekClient's internal prompt generation
-    
+
     const activities = await deepseekClient.generateActivityRecommendations(
       temperament,
       categoryName,
@@ -143,7 +151,7 @@ export class ActivityRecommender {
   //   if (input.pastActivities && input.pastActivities.length > 0) {
   //     const completed = input.pastActivities.filter(a => a.completed)
   //     const highRated = input.pastActivities.filter(a => (a.rating || 0) >= 4)
-      
+
   //     context += '\nPast Activity Insights:\n'
   //     if (completed.length > 0) {
   //       context += `- Previously completed: ${completed.slice(0, 3).map(a => a.name).join(', ')}\n`
@@ -184,7 +192,7 @@ export class ActivityRecommender {
     }
 
     const primary = enhancements[primaryTemperament as keyof typeof enhancements]
-    const secondary = secondaryTemperament ? 
+    const secondary = secondaryTemperament ?
       enhancements[secondaryTemperament as keyof typeof enhancements] : null
 
     return activities.map(activity => {
@@ -257,11 +265,11 @@ export class ActivityRecommender {
     if (!factors) return 0.7
 
     let score = 0.7 // Base score
-    
+
     // Adjust based on difficulty
     if (temperament === 'choleric' && activity.difficulty >= 4) score += 0.1
     if (temperament === 'phlegmatic' && activity.difficulty <= 2) score += 0.1
-    
+
     // Cap at 0.95
     return Math.min(0.95, score)
   }
@@ -285,13 +293,13 @@ export class ActivityRecommender {
    */
   private generateAlternatives(activity: any): string[] {
     const alternatives = []
-    
+
     // Easier version
     alternatives.push(`Easier: ${activity.name} (modified for beginners)`)
-    
+
     // Harder version
     alternatives.push(`Harder: Advanced ${activity.name}`)
-    
+
     // Different setting
     alternatives.push(`Alternative: ${activity.name} (group version)`)
 
@@ -312,15 +320,15 @@ export class ActivityRecommender {
    */
   private inferSocialAspect(name: string, description: string): 'solo' | 'small_group' | 'large_group' | 'any' {
     const text = `${name} ${description}`.toLowerCase()
-    
+
     if (text.includes('group') || text.includes('team') || text.includes('class')) {
       return text.includes('small') ? 'small_group' : 'large_group'
     }
-    
+
     if (text.includes('solo') || text.includes('alone') || text.includes('personal')) {
       return 'solo'
     }
-    
+
     return 'any'
   }
 
@@ -329,12 +337,12 @@ export class ActivityRecommender {
    */
   private generateMetric(activityName: string): string {
     const name = activityName.toLowerCase()
-    
+
     if (name.includes('walk') || name.includes('run')) return 'steps'
     if (name.includes('meditat')) return 'minutes'
     if (name.includes('read')) return 'pages'
     if (name.includes('write')) return 'words'
-    
+
     return 'completions'
   }
 
@@ -349,7 +357,7 @@ export class ActivityRecommender {
       4: '30 minutes daily',
       5: '45 minutes daily'
     }
-    
+
     return targets[difficulty as keyof typeof targets] || '15 minutes daily'
   }
 
@@ -395,11 +403,12 @@ export class ActivityRecommender {
         })
     } catch (error) {
       // Silent fail - not critical
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to store recommendations:', error);
-    }
+      handleError(error, {
+      operation: 'ai_operation', component: 'activity-recommender',
+
+        userMessage: 'AI operation failed. Please try again.'
+
+      })}
   }
 
   /**

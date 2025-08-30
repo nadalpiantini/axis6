@@ -45,7 +45,7 @@ export default function StreakCounter({ streaks, loading = false }: StreakCounte
     const today = new Date()
     const diffTime = Math.abs(today.getTime() - last.getTime())
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
+
     if (diffDays === 0) return 'Hoy'
     if (diffDays === 1) return 'Ayer'
     return `Hace ${diffDays} días`
@@ -85,15 +85,15 @@ export default function StreakCounter({ streaks, loading = false }: StreakCounte
               transition={{ delay: index * 0.1 }}
               className={`
                 relative overflow-hidden rounded-xl border transition-all
-                ${isActive 
-                  ? 'bg-navy-900/70 border-white/20 hover:border-white/30' 
+                ${isActive
+                  ? 'bg-navy-900/70 border-white/20 hover:border-white/30'
                   : 'bg-navy-950/50 border-white/10'
                 }
               `}
             >
               {/* Streak Glow Effect */}
               {isActive && (
-                <div 
+                <div
                   className="absolute inset-0 opacity-10"
                   style={{
                     background: `radial-gradient(circle at top right, ${streak.color}, transparent)`
@@ -106,7 +106,7 @@ export default function StreakCounter({ streaks, loading = false }: StreakCounte
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{getCategoryIcon(streak.icon)}</span>
-                    <span 
+                    <span
                       className="font-semibold"
                       style={{ color: isActive ? streak.color : '#9CA3AF' }}
                     >
@@ -131,7 +131,7 @@ export default function StreakCounter({ streaks, loading = false }: StreakCounte
                 <div className="w-full h-2 bg-navy-800/50 rounded-full overflow-hidden mb-3">
                   <motion.div
                     className="h-full rounded-full"
-                    style={{ 
+                    style={{
                       backgroundColor: streak.color,
                       width: `${Math.min((streak.currentStreak / streak.longestStreak) * 100, 100)}%`
                     }}

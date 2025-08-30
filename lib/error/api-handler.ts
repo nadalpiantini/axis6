@@ -70,12 +70,12 @@ export function withErrorHandling(
     try {
       // Add performance monitoring
       const response = await handler(req, context)
-      
+
       // Log successful requests in development
       if (process.env['NODE_ENV'] === 'development') {
         const duration = Date.now() - startTime
         logger.log(`✅ ${method} ${path} - ${response.status} (${duration}ms)`)
-        
+
         // Warn about slow requests
         if (duration > 2000) {
           errorHandler.performanceWarn(`Slow API request detected`, { duration }, {
@@ -85,7 +85,7 @@ export function withErrorHandling(
           })
         }
       }
-      
+
       return response
 
     } catch (error: any) {
@@ -105,7 +105,7 @@ export function withErrorHandling(
       // Log the error with appropriate level and category
       const errorCategory = getErrorCategory(error, category)
       const errorLevel = getErrorLevel(error)
-      
+
       errorHandler.log(errorLevel, errorCategory, `API ${method} ${path} failed: ${error.message}`, error, {
         url: path,
         action: 'api_request',
@@ -119,11 +119,11 @@ export function withErrorHandling(
       })
 
       // Return appropriate HTTP response
-      return NextResponse.json({ 
-        success: false, 
-        error: apiError 
-      }, { 
-        status: getStatusCode(error) 
+      return NextResponse.json({
+        success: false,
+        error: apiError
+      }, {
+        status: getStatusCode(error)
       })
     }
   }
@@ -134,23 +134,23 @@ function getErrorMessage(error: any): string {
   if (error instanceof ApiValidationError) {
     return error.field ? `Validation error for field '${error.field}': ${error.message}` : error.message
   }
-  
+
   if (error instanceof ApiAuthError) {
     return 'Authentication required or invalid credentials'
   }
-  
+
   if (error instanceof ApiNotFoundError) {
     return error.message
   }
-  
+
   if (error instanceof ApiRateLimitError) {
     return 'Rate limit exceeded. Please try again later.'
   }
-  
+
   if (error instanceof ApiDatabaseError) {
     return 'Database operation failed'
   }
-  
+
   // Handle Supabase errors
   if (error.code) {
     switch (error.code) {
@@ -165,13 +165,13 @@ function getErrorMessage(error: any): string {
       case '23502':
         return 'Required field is missing'
       default:
-        return process.env['NODE_ENV'] === 'development' 
-          ? `Database error: ${error.message}` 
+        return process.env['NODE_ENV'] === 'development'
+          ? `Database error: ${error.message}`
           : 'Database operation failed'
     }
   }
-  
-  return process.env['NODE_ENV'] === 'development' 
+
+  return process.env['NODE_ENV'] === 'development'
     ? error.message || 'Unknown error occurred'
     : 'Internal server error'
 }
@@ -182,7 +182,7 @@ function getStatusCode(error: any): number {
   if (error instanceof ApiNotFoundError) return 404
   if (error instanceof ApiRateLimitError) return 429
   if (error instanceof ApiDatabaseError) return 500
-  
+
   // Handle Supabase errors
   if (error.code) {
     switch (error.code) {
@@ -194,7 +194,7 @@ function getStatusCode(error: any): number {
       default: return 500
     }
   }
-  
+
   return 500
 }
 
@@ -204,12 +204,12 @@ function getErrorLevel(error: any): 'info' | 'warn' | 'error' | 'critical' {
   if (error instanceof ApiNotFoundError) return 'info'
   if (error instanceof ApiRateLimitError) return 'warn'
   if (error instanceof ApiDatabaseError) return 'error'
-  
+
   // Critical errors that need immediate attention
   if (error.message?.includes('CRITICAL') || error.code === 'ECONNREFUSED') {
     return 'critical'
   }
-  
+
   return 'error'
 }
 
@@ -218,7 +218,7 @@ function getErrorCategory(error: any, defaultCategory: ErrorCategory): ErrorCate
   if (error instanceof ApiDatabaseError) return 'database'
   if (error instanceof ApiValidationError) return 'validation'
   if (error instanceof ApiRateLimitError) return 'network'
-  
+
   return defaultCategory
 }
 
@@ -264,7 +264,7 @@ export function successResponse<T>(data: T, status: number = 200): NextResponse 
 
 // Async operation wrapper with timeout
 export async function withTimeout<T>(
-  promise: Promise<T>, 
+  promise: Promise<T>,
   timeoutMs: number = 30000,
   operation: string = 'operation'
 ): Promise<T> {
@@ -291,8 +291,8 @@ export async function withDatabaseErrorHandling<T>(
 
 // Rate limiting helper
 export function checkRateLimit(
-  _identifier: string, 
-  _requests: number, 
+  _identifier: string,
+  _requests: number,
   _windowMs: number
 ): boolean {
   // This would integrate with your rate limiting service (Redis, etc.)

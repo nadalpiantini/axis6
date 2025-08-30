@@ -67,7 +67,7 @@ export class HexagonErrorBoundary extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error details for monitoring
     logger.error('HexagonErrorBoundary caught an error:', error, errorInfo)
-    
+
     this.setState({
       hasError: true,
       error,
@@ -135,7 +135,7 @@ export function withHexagonErrorBoundary<P extends object>(
   )
 
   WithErrorBoundary.displayName = `withHexagonErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`
-  
+
   return WithErrorBoundary
 }
 

@@ -11,10 +11,10 @@ export async function PUT(
   try {
     const supabase = await createClient()
     const { roomId, messageId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Edit message auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -39,15 +39,15 @@ export async function PUT(
 
     // Validate content
     if (!content?.trim()) {
-      return NextResponse.json({ 
-        error: 'Message content cannot be empty' 
+      return NextResponse.json({
+        error: 'Message content cannot be empty'
       }, { status: 400 })
     }
 
     // Update the message
     const { data: updatedMessage, error: updateError } = await supabase
       .from('axis6_chat_messages')
-      .update({ 
+      .update({
         content: content.trim(),
         edited_at: new Date().toISOString()
       })
@@ -76,7 +76,7 @@ export async function PUT(
     }
 
     return NextResponse.json({ message: updatedMessage })
-    
+
   } catch (error) {
     logger.error('Edit message API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -91,10 +91,10 @@ export async function DELETE(
   try {
     const supabase = await createClient()
     const { roomId, messageId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Delete message auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -119,7 +119,7 @@ export async function DELETE(
     // Check if user can delete (sender or room creator or admin)
     const isSender = message.sender_id === user.id
     const isRoomCreator = message.room?.creator_id === user.id
-    
+
     // Check if user is admin
     let isAdmin = false
     if (!isSender && !isRoomCreator) {
@@ -129,7 +129,7 @@ export async function DELETE(
         .eq('room_id', roomId)
         .eq('user_id', user.id)
         .single()
-      
+
       isAdmin = participation?.role === 'admin'
     }
 
@@ -140,7 +140,7 @@ export async function DELETE(
     // Soft delete the message
     const { error: deleteError } = await supabase
       .from('axis6_chat_messages')
-      .update({ 
+      .update({
         deleted_at: new Date().toISOString(),
         content: '[Message deleted]'
       })
@@ -152,7 +152,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Message deleted successfully' })
-    
+
   } catch (error) {
     logger.error('Delete message API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

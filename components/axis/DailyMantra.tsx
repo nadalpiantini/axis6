@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Heart, Brain, Users, Sun, Briefcase, Palette, Check, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface Mantra {
   id: number
   category_id: number
@@ -140,7 +141,7 @@ export default function DailyMantra() {
       setLoading(true)
       setError(null)
       const response = await fetch('/api/mantras')
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch mantra')
       }
@@ -152,11 +153,12 @@ export default function DailyMantra() {
     } catch (err) {
       // Log error in development only
       if (process.env['NODE_ENV'] === 'development') {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching mantra:', err);
-      }
+        handleError(error, {
+      operation: 'ai_operation', component: 'DailyMantra',
+
+          userMessage: 'AI operation failed. Please try again.'
+
+        })}
       setError('No se pudo cargar el mantra del día')
     } finally {
       setLoading(false)
@@ -179,7 +181,7 @@ export default function DailyMantra() {
       // Update local state
       setMantra({ ...mantra, is_completed: true })
       setShowReflection(true)
-      
+
       // Hide reflection after 3 seconds
       setTimeout(() => {
         setShowReflection(false)
@@ -187,11 +189,12 @@ export default function DailyMantra() {
     } catch (err) {
       // Log error in development only
       if (process.env['NODE_ENV'] === 'development') {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error completing mantra:', err);
-      }
+        handleError(error, {
+      operation: 'ai_operation', component: 'DailyMantra',
+
+          userMessage: 'AI operation failed. Please try again.'
+
+        })}
     } finally {
       setCompleting(false)
     }
@@ -269,13 +272,13 @@ export default function DailyMantra() {
                   <h3 className="text-xl font-bold">{getRitualName(mantra.category_id)}</h3>
                 </div>
               </div>
-              
+
               {/* Status Badge */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  mantra.is_completed 
+                  mantra.is_completed
                     ? 'bg-green-500/30 text-green-100'
                     : 'bg-white/20 text-white/80'
                 }`}

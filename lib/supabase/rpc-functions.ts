@@ -26,7 +26,7 @@ export interface DashboardData {
 export async function fetchDashboardDataOptimized(userId: string): Promise<DashboardData> {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   try {
     // Try to use the optimized RPC function if it exists
     const { data: rpcData, error: rpcError } = await supabase
@@ -34,14 +34,14 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
         p_user_id: userId,
         p_date: today
       })
-    
+
     if (!rpcError && rpcData) {
       return rpcData as DashboardData
     }
   } catch (e) {
     // Fallback to individual queries if RPC doesn't exist
     }
-  
+
   // Fallback: Fetch data with parallel queries (still better than sequential)
   const [
     categoriesResult,
@@ -55,7 +55,7 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
       .from('axis6_categories')
       .select('*')
       .order('display_order'),
-    
+
     // Today's checkins
     supabase
       .from('axis6_checkins')
@@ -63,13 +63,13 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
       .eq('user_id', userId)
       .gte('completed_at', `${today}T00:00:00`)
       .lte('completed_at', `${today}T23:59:59`),
-    
+
     // Streaks
     supabase
       .from('axis6_streaks')
       .select('*')
       .eq('user_id', userId),
-    
+
     // Daily stats
     supabase
       .from('axis6_daily_stats')
@@ -77,7 +77,7 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
       .eq('user_id', userId)
       .eq('date', today)
       .single(),
-    
+
     // Weekly stats (last 7 days)
     supabase
       .from('axis6_daily_stats')
@@ -86,13 +86,13 @@ export async function fetchDashboardDataOptimized(userId: string): Promise<Dashb
       .gte('date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
       .order('date', { ascending: true })
   ])
-  
+
   // Handle errors
   if (categoriesResult.error) throw categoriesResult.error
   if (checkinsResult.error) throw checkinsResult.error
   if (streaksResult.error) throw streaksResult.error
   if (weeklyResult.error) throw weeklyResult.error
-  
+
   return {
     categories: categoriesResult.data || [],
     todayCheckins: checkinsResult.data || [],
@@ -111,7 +111,7 @@ export async function updateStreakOptimized(
   completed: boolean
 ): Promise<Streak | null> {
   const supabase = createClient()
-  
+
   try {
     // Try optimized RPC first
     const { data, error } = await supabase
@@ -120,16 +120,16 @@ export async function updateStreakOptimized(
         p_category_id: categoryId,
         p_completed: completed
       })
-    
+
     if (!error && data) {
       return data as Streak
     }
   } catch (e) {
     }
-  
+
   // Fallback: Manual streak calculation
   const today = new Date().toISOString().split('T')[0]
-  
+
   if (completed) {
     // Increment or start streak
     const { data: existingStreak } = await supabase
@@ -138,18 +138,18 @@ export async function updateStreakOptimized(
       .eq('user_id', userId)
       .eq('category_id', categoryId)
       .single()
-    
+
     if (existingStreak) {
       const lastCheckin = new Date(existingStreak.last_checkin_date)
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
-      
-      const isConsecutive = 
+
+      const isConsecutive =
         lastCheckin.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]
-      
+
       const newStreak = isConsecutive ? existingStreak.current_streak + 1 : 1
       const longestStreak = Math.max(newStreak, existingStreak.longest_streak)
-      
+
       const { data, error } = await supabase
         .from('axis6_streaks')
         .update({
@@ -161,7 +161,7 @@ export async function updateStreakOptimized(
         .eq('id', existingStreak.id)
         .select()
         .single()
-      
+
       if (error) throw error
       return data
     } else {
@@ -177,7 +177,7 @@ export async function updateStreakOptimized(
         })
         .select()
         .single()
-      
+
       if (error) throw error
       return data
     }
@@ -193,7 +193,7 @@ export async function updateStreakOptimized(
       .eq('category_id', categoryId)
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   }
@@ -208,7 +208,7 @@ export async function batchUpdateCheckins(
 ): Promise<void> {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   // Process all updates in parallel
   await Promise.all(
     updates.map(async ({ categoryId, completed }) => {
@@ -231,7 +231,7 @@ export async function batchUpdateCheckins(
           .gte('completed_at', `${today}T00:00:00`)
           .lte('completed_at', `${today}T23:59:59`)
       }
-      
+
       // Update streak
       await updateStreakOptimized(userId, categoryId, completed)
     })

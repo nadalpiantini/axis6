@@ -7,7 +7,6 @@ import { SearchResult } from '@/lib/services/message-search'
 
 import { MessageSearch } from './MessageSearch'
 
-
 interface SearchModalProps {
   isOpen: boolean
   onClose: () => void

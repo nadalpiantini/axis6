@@ -136,7 +136,7 @@
 
 **Steps**:
 1. Go to: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/settings/auth
-2. Update Site URL from `http://localhost:6789` to `https://axis6.app`
+2. Update Site URL from `http://localhost:3000` to `https://axis6.app`
 3. Add redirect URLs:
    - `https://axis6.app/auth/callback`
    - `https://axis6.app/auth/confirm`  

@@ -1,6 +1,5 @@
 'use client'
 
-
 import { Mail, Lock, User, ChevronRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -30,7 +29,7 @@ export default function RegisterPage() {
   // Real-time validation helpers
   const validateField = (field: string, value: string) => {
     const errors = { ...fieldErrors }
-    
+
     switch (field) {
       case 'name':
         const nameValidation = validateName(value)
@@ -59,7 +58,7 @@ export default function RegisterPage() {
         }
         break
     }
-    
+
     setFieldErrors(errors)
   }
 
@@ -68,7 +67,7 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
     setFieldErrors({})
-    
+
     // Check if still rate limited (bypass in test mode)
     if (!shouldBypassRateLimit() && rateLimitedUntil && Date.now() < rateLimitedUntil) {
       const remainingSeconds = Math.ceil((rateLimitedUntil - Date.now()) / 1000)
@@ -76,43 +75,43 @@ export default function RegisterPage() {
       setLoading(false)
       return
     }
-    
+
     // Validate all fields
     const errors: Record<string, string> = {}
-    
+
     const nameValidation = validateName(name)
     if (!nameValidation.isValid) {
       errors['name'] = nameValidation.error!
     }
-    
+
     const emailValidation = validateEmail(email)
     if (!emailValidation.isValid) {
       errors['email'] = emailValidation.error!
     }
-    
+
     if (password.length < 8) {
       errors['password'] = 'Password must be at least 8 characters'
     }
-    
+
     const passwordMatchValidation = validatePasswordMatch(password, confirmPassword)
     if (!passwordMatchValidation.isValid) {
       errors['confirmPassword'] = passwordMatchValidation.error!
     }
-    
+
     if (!termsAccepted) {
       errors['terms'] = 'You must accept the terms and conditions'
     }
-    
+
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
       setLoading(false)
       return
     }
-    
+
     try {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -127,7 +126,7 @@ export default function RegisterPage() {
 
       if (error) {
         logger.error('Registration error:', error)
-        
+
         // Handle email confirmation errors gracefully
         if (error.message.includes('Error sending confirmation email')) {
           // User was created but email failed - try to sign them in
@@ -135,26 +134,26 @@ export default function RegisterPage() {
             email,
             password
           })
-          
+
           if (!signInError && signInData.user) {
             // Sign in successful after registration
             router.push('/auth/onboarding')
             return
           }
-          
+
           // Show success message even if email failed
           setError('Account created successfully! You can now sign in.')
           setTimeout(() => router.push('/auth/login'), 2000)
           return
         }
-        
+
         // Handle rate limiting specifically (bypass in test mode)
         if (!shouldBypassRateLimit() && error.message.toLowerCase().includes('rate limit')) {
           // Set rate limit for 60 seconds
           const cooldownTime = Date.now() + 60000
           setRateLimitedUntil(cooldownTime)
           setError('Too many registration attempts. Please wait 60 seconds before trying again.')
-          
+
           // Clear rate limit after cooldown
           setTimeout(() => {
             setRateLimitedUntil(null)
@@ -246,8 +245,8 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('name', e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors['name'] 
-                      ? 'border-red-500/50 focus:border-red-400' 
+                    fieldErrors['name']
+                      ? 'border-red-500/50 focus:border-red-400'
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Your name"
@@ -281,8 +280,8 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('email', e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors['email'] 
-                      ? 'border-red-500/50 focus:border-red-400' 
+                    fieldErrors['email']
+                      ? 'border-red-500/50 focus:border-red-400'
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="your@email.com"
@@ -317,8 +316,8 @@ export default function RegisterPage() {
                     }
                   }}
                   className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors['password'] 
-                      ? 'border-red-500/50 focus:border-red-400' 
+                    fieldErrors['password']
+                      ? 'border-red-500/50 focus:border-red-400'
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Minimum 8 characters"
@@ -366,8 +365,8 @@ export default function RegisterPage() {
                   }}
                   onBlur={(e) => validateField('confirmPassword', e.target.value)}
                   className={`w-full pl-10 pr-12 py-3 bg-white/10 border rounded-xl focus:outline-none text-white placeholder-gray-400 transition-all duration-200 ${
-                    fieldErrors['confirmPassword'] 
-                      ? 'border-red-500/50 focus:border-red-400' 
+                    fieldErrors['confirmPassword']
+                      ? 'border-red-500/50 focus:border-red-400'
                       : 'border-white/20 focus:border-purple-400'
                   }`}
                   placeholder="Confirm your password"
@@ -395,8 +394,8 @@ export default function RegisterPage() {
 
             <div className="space-y-3">
               <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={termsAccepted}
                   onChange={(e) => {
                     setTermsAccepted(e.target.checked)
@@ -406,8 +405,8 @@ export default function RegisterPage() {
                       setFieldErrors(errors)
                     }
                   }}
-                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500" 
-                  required 
+                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500"
+                  required
                 />
                 <span>
                   I accept the{' '}
@@ -425,13 +424,13 @@ export default function RegisterPage() {
                   {fieldErrors['terms']}
                 </p>
               )}
-              
+
               <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={newsletterSubscribe}
                   onChange={(e) => setNewsletterSubscribe(e.target.checked)}
-                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500" 
+                  className="mt-0.5 rounded border-gray-600 text-purple-500 focus:ring-purple-500"
                 />
                 <span>
                   Send me tips and updates to help me maintain balance (optional)

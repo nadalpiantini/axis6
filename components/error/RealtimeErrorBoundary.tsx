@@ -44,7 +44,7 @@ export class RealtimeErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: any) {
     logger.warn('Realtime Error Boundary caught error:', error, errorInfo)
-    
+
     this.setState({
       error,
       errorInfo
@@ -71,7 +71,7 @@ export class RealtimeErrorBoundary extends Component<
 
   private scheduleRetry = () => {
     const retryDelay = Math.min(1000 * Math.pow(2, this.state.retryCount), 10000)
-    
+
     this.retryTimeout = setTimeout(() => {
       logger.log(`Retrying realtime connection (attempt ${this.state.retryCount + 1})`)
       this.setState(prevState => ({
@@ -117,19 +117,19 @@ export class RealtimeErrorBoundary extends Component<
                 Connection Issue
               </h3>
               <p className="text-xs text-gray-400 mb-3">
-                {this.isRealtimeError(this.state.error!) 
+                {this.isRealtimeError(this.state.error!)
                   ? 'Real-time updates temporarily unavailable. Data will refresh automatically.'
                   : 'Something went wrong. Please try refreshing the page.'
                 }
               </p>
-              
+
               {this.state.retryCount < (this.props.maxRetries || 3) && (
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <div className="w-3 h-3 border border-gray-500 border-t-transparent rounded-full animate-spin" />
                   <span>Reconnecting... (attempt {this.state.retryCount + 1})</span>
                 </div>
               )}
-              
+
               {this.state.retryCount >= (this.props.maxRetries || 3) && (
                 <button
                   onClick={this.handleManualRetry}
@@ -141,7 +141,7 @@ export class RealtimeErrorBoundary extends Component<
               )}
             </div>
           </div>
-          
+
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details className="mt-3 text-xs">
               <summary className="text-gray-500 cursor-pointer hover:text-gray-400">
@@ -179,8 +179,8 @@ export function withRealtimeErrorBoundary<P extends object>(
       <Component {...props} />
     </RealtimeErrorBoundary>
   )
-  
+
   WrappedComponent.displayName = `withRealtimeErrorBoundary(${Component.displayName || Component.name})`
-  
+
   return WrappedComponent
 }

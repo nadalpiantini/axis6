@@ -31,7 +31,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
   return (
     <div className={`space-y-4 ${className}`}>
       {/* ADHD Focus Mode Section */}
-      <motion.div 
+      <motion.div
         className="glass rounded-xl p-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -47,22 +47,22 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
               <p className="text-xs text-gray-400">ADHD-friendly interface</p>
             </div>
           </div>
-          
+
           <button
             onClick={() => setAdhdFocusMode(!adhdFocusMode)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              addhFocusMode ? 'bg-purple-500' : 'bg-gray-600'
+              adhdFocusMode ? 'bg-purple-500' : 'bg-gray-600'
             }`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                addhFocusMode ? 'translate-x-6' : 'translate-x-1'
+                adhdFocusMode ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>
         </div>
 
-        {addhFocusMode && (
+        {adhdFocusMode && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -82,7 +82,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
       </motion.div>
 
       {/* Social Features Section */}
-      <motion.div 
+      <motion.div
         className="glass rounded-xl p-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -98,7 +98,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
               <p className="text-xs text-gray-400">Subtle social connections</p>
             </div>
           </div>
-          
+
           <button
             onClick={() => toggleSection('social')}
             className="text-gray-400 hover:text-white transition-colors"
@@ -162,8 +162,8 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
           >
             <h4 className="text-xs font-medium text-blue-300 mb-2">Community Balance Philosophy</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Your hexagon resonates with others who find balance in the same axes. 
-              No usernames, no competition - just the gentle awareness that you're 
+              Your hexagon resonates with others who find balance in the same axes.
+              No usernames, no competition - just the gentle awareness that you're
               part of a community seeking balance together.
             </p>
           </motion.div>
@@ -171,7 +171,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
       </motion.div>
 
       {/* Visual Preferences Section */}
-      <motion.div 
+      <motion.div
         className="glass rounded-xl p-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -210,7 +210,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
       </motion.div>
 
       {/* Focus Mode Impact Notice */}
-      {addhFocusMode && (
+      {adhdFocusMode && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -221,7 +221,7 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
             <h4 className="text-sm font-medium text-purple-300">Focus Mode Active</h4>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Your dashboard will show a simplified, single-column layout with larger elements 
+            Your dashboard will show a simplified, single-column layout with larger elements
             and reduced visual complexity. Perfect for maintaining focus on one axis at a time.
           </p>
         </motion.div>

@@ -14,7 +14,7 @@ interface RitualConstellationProps {
 }
 
 // Community constellation visualization - abstract representation of collective balance
-const RitualConstellation = memo(function RitualConstellation({ 
+const RitualConstellation = memo(function RitualConstellation({
   date,
   size = 400,
   showMetrics = true,
@@ -40,9 +40,9 @@ const RitualConstellation = memo(function RitualConstellation({
   // Memoize constellation points with scaled positions
   const scaledPoints = useMemo(() => {
     if (!constellation) return []
-    
+
     const scale = size / constellation.visualHints.recommendedSize
-    
+
     return constellation.points.map(point => ({
       ...point,
       scaledPosition: {
@@ -55,7 +55,7 @@ const RitualConstellation = memo(function RitualConstellation({
 
   if (isLoading) {
     return (
-      <div 
+      <div
         className={`flex items-center justify-center bg-gradient-to-br from-gray-100/60 to-gray-200/60 rounded-3xl ${className}`}
         style={{ width: size, height: size }}
       >
@@ -69,7 +69,7 @@ const RitualConstellation = memo(function RitualConstellation({
 
   if (error || !constellation) {
     return (
-      <div 
+      <div
         className={`flex items-center justify-center bg-gradient-to-br from-gray-100/40 to-gray-200/40 rounded-3xl ${className}`}
         style={{ width: size, height: size }}
       >
@@ -83,7 +83,7 @@ const RitualConstellation = memo(function RitualConstellation({
   return (
     <div className={`relative ${className}`}>
       {/* Main constellation visualization */}
-      <div 
+      <div
         className="relative ritual-card concentric-organic overflow-hidden"
         style={{ width: size, height: size }}
       >
@@ -130,7 +130,7 @@ const RitualConstellation = memo(function RitualConstellation({
                     strokeWidth="1"
                     initial={{ pathLength: 0, opacity: 0 }}
                     animate={{ pathLength: 1, opacity: 0.6 }}
-                    transition={{ 
+                    transition={{
                       delay: 0.5 + index * 0.1,
                       duration: 1,
                       ease: "easeInOut"
@@ -144,7 +144,7 @@ const RitualConstellation = memo(function RitualConstellation({
           {scaledPoints.map((point, index) => {
             const isHovered = hoveredAxis === point.axisSlug
             const isActive = point.completionCount > 0
-            const pointSize = isActive 
+            const pointSize = isActive
               ? Math.min(8 + point.resonanceIntensity * 4, 16)
               : 4
 
@@ -181,11 +181,11 @@ const RitualConstellation = memo(function RitualConstellation({
                   strokeWidth="2"
                   className="cursor-help"
                   initial={{ scale: 0, opacity: 0 }}
-                  animate={{ 
+                  animate={{
                     scale: isHovered ? 1.3 : 1,
                     opacity: 1
                   }}
-                  transition={{ 
+                  transition={{
                     delay: 0.8 + index * 0.1,
                     duration: 0.6,
                     type: "spring",
@@ -194,7 +194,7 @@ const RitualConstellation = memo(function RitualConstellation({
                   onMouseEnter={() => setHoveredAxis(point.axisSlug)}
                   onMouseLeave={() => setHoveredAxis(null)}
                   style={{
-                    filter: isActive 
+                    filter: isActive
                       ? `drop-shadow(0 2px 8px ${point.color}40)`
                       : 'drop-shadow(0 1px 3px rgba(0,0,0,0.2))'
                   }}
@@ -227,11 +227,11 @@ const RitualConstellation = memo(function RitualConstellation({
             stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="2"
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ 
+            animate={{
               scale: [1, 1.1, 1],
               opacity: 1
             }}
-            transition={{ 
+            transition={{
               delay: 1.5,
               duration: 2,
               repeat: Infinity,
@@ -250,7 +250,7 @@ const RitualConstellation = memo(function RitualConstellation({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2 }}
         >
-          <div 
+          <div
             className="w-2 h-2 rounded-full"
             style={{ backgroundColor: currentMoodColors.primary }}
           />
@@ -310,14 +310,14 @@ const RitualConstellation = memo(function RitualConstellation({
             {(() => {
               const point = scaledPoints.find(p => p.axisSlug === hoveredAxis)
               if (!point) return null
-              
+
               return (
                 <div className="text-center">
                   <p className="text-sm font-medium" style={{ color: point.color }}>
                     {typeof point.name === 'object' ? point.name.en || point.name.es : point.axisSlug}
                   </p>
                   <p className="text-xs text-gray-600 mt-1">
-                    {point.completionCount === 0 
+                    {point.completionCount === 0
                       ? 'Awaiting balance'
                       : `${point.completionCount} completions today`
                     }

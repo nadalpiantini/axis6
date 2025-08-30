@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
+import {
   User,
   Bell,
   Shield,
@@ -74,17 +74,17 @@ interface SettingsLayoutProps {
   subtitle?: string
 }
 
-export function SettingsLayout({ 
-  children, 
-  currentSection, 
-  title = 'Settings', 
-  subtitle = 'Customize your AXIS6 experience' 
+export function SettingsLayout({
+  children,
+  currentSection,
+  title = 'Settings',
+  subtitle = 'Customize your AXIS6 experience'
 }: SettingsLayoutProps) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  
+
   // Determine active section
-  const activeSection = currentSection || SETTINGS_SECTIONS.find(section => 
+  const activeSection = currentSection || SETTINGS_SECTIONS.find(section =>
     pathname.startsWith(section.href)
   )?.id || 'overview'
 
@@ -117,10 +117,10 @@ export function SettingsLayout({
       <div className="flex">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block w-80 bg-black/20 backdrop-blur-md border-r border-white/10 h-screen sticky top-0 overflow-y-auto">
-          <SettingsSidebar 
-            sections={SETTINGS_SECTIONS} 
-            activeSection={activeSection} 
-            onSectionClick={() => {}} 
+          <SettingsSidebar
+            sections={SETTINGS_SECTIONS}
+            activeSection={activeSection}
+            onSectionClick={() => {}}
           />
         </div>
 
@@ -154,10 +154,10 @@ export function SettingsLayout({
                     </button>
                   </div>
                 </div>
-                <SettingsSidebar 
-                  sections={SETTINGS_SECTIONS} 
-                  activeSection={activeSection} 
-                  onSectionClick={() => setSidebarOpen(false)} 
+                <SettingsSidebar
+                  sections={SETTINGS_SECTIONS}
+                  activeSection={activeSection}
+                  onSectionClick={() => setSidebarOpen(false)}
                 />
               </motion.div>
             </>

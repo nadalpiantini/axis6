@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/client'
 
 import { deepseekClient } from './deepseek'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 export interface PersonalityAnalysisInput {
   userId: string
   sessionId: string
@@ -97,11 +98,12 @@ export class PersonalityAnalyzer {
 
       return profile
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('AI personality analysis failed:', error);
-      // Fallback to basic analysis
+      handleError(error, {
+      operation: 'ai_operation', component: 'personality-analyzer',
+
+        userMessage: 'AI operation failed. Please try again.'
+
+      })// Fallback to basic analysis
       return this.performBasicAnalysis(input)
     }
   }
@@ -142,10 +144,19 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       // Parse the response into structured format
       return this.parseAdditionalInsights(response)
     } catch (error) {
-      // TODO: Replace with proper error handling
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'personality-analyzer',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI personality analyzer operation failed:', error);
     // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to generate additional insights:', error);
+    // console.error('AI personality analyzer operation failed:', error);
       return this.getDefaultAdditionalInsights(baseAnalysis.primary_temperament)
     }
   }
@@ -163,7 +174,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
   } {
     // Extract sections from the response
     const sections = response.split(/\d+\.\s+/)
-    
+
     return {
       motivation_triggers: this.extractListItems(sections[1] || ''),
       stress_patterns: this.extractListItems(sections[2] || ''),
@@ -191,7 +202,7 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
     const max = Math.max(...values)
     const min = Math.min(...values)
     const range = max - min
-    
+
     // Higher range means clearer temperament distinction
     return Math.min(0.95, 0.5 + (range * 0.5))
   }
@@ -217,11 +228,12 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
           updated_at: new Date().toISOString()
         })
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to store enhanced profile:', error);
-    }
+      handleError(error, {
+      operation: 'ai_operation', component: 'personality-analyzer',
+
+        userMessage: 'AI operation failed. Please try again.'
+
+      })}
   }
 
   /**

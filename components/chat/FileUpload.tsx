@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 
 import { ImageLightbox } from './ImageLightbox'
 
-
 interface FileUploadProps {
   messageId: string
   onFileUploaded?: (attachment: ChatAttachment) => void
@@ -55,7 +54,7 @@ export function FileUpload({
     if (disabled) return
 
     const fileArray = Array.from(files)
-    
+
     // Validate files
     const validFiles = fileArray.filter(file => {
       if (file.size > 50 * 1024 * 1024) {
@@ -83,18 +82,18 @@ export function FileUpload({
         const attachment = await chatStorage.uploadFile(uploadingFile.file, {
           messageId,
           onProgress: (progress: FileUploadProgress) => {
-            setUploadingFiles(prev => 
-              prev.map(f => 
-                f.id === uploadingFile.id 
+            setUploadingFiles(prev =>
+              prev.map(f =>
+                f.id === uploadingFile.id
                   ? { ...f, progress: progress.percentage }
                   : f
               )
             )
           },
           onComplete: (attachment: ChatAttachment) => {
-            setUploadingFiles(prev => 
-              prev.map(f => 
-                f.id === uploadingFile.id 
+            setUploadingFiles(prev =>
+              prev.map(f =>
+                f.id === uploadingFile.id
                   ? { ...f, status: 'completed', attachment, progress: 100 }
                   : f
               )
@@ -102,9 +101,9 @@ export function FileUpload({
             onFileUploaded?.(attachment)
           },
           onError: (error: Error) => {
-            setUploadingFiles(prev => 
-              prev.map(f => 
-                f.id === uploadingFile.id 
+            setUploadingFiles(prev =>
+              prev.map(f =>
+                f.id === uploadingFile.id
                   ? { ...f, status: 'error', error: error.message }
                   : f
               )
@@ -114,9 +113,9 @@ export function FileUpload({
         })
       } catch (error) {
         logger.error('File upload failed:', error)
-        setUploadingFiles(prev => 
-          prev.map(f => 
-            f.id === uploadingFile.id 
+        setUploadingFiles(prev =>
+          prev.map(f =>
+            f.id === uploadingFile.id
               ? { ...f, status: 'error', error: (error as Error).message }
               : f
           )
@@ -185,8 +184,8 @@ export function FileUpload({
         className={cn(
           "relative border-2 border-dashed rounded-lg transition-all duration-200",
           "hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50",
-          dragActive 
-            ? "border-purple-500 bg-purple-500/10" 
+          dragActive
+            ? "border-purple-500 bg-purple-500/10"
             : "border-neutral-600 bg-neutral-800/50",
           disabled && "opacity-50 cursor-not-allowed"
         )}
@@ -231,7 +230,7 @@ export function FileUpload({
               <div className="flex-shrink-0">
                 {getFileIcon(uploadingFile.file.type)}
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-medium text-neutral-200 truncate">
@@ -260,21 +259,21 @@ export function FileUpload({
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between text-xs text-neutral-400">
                   <span>{chatStorage.constructor.formatFileSize(uploadingFile.file.size)}</span>
                   {uploadingFile.status === 'uploading' && (
                     <span>{uploadingFile.progress.toFixed(0)}%</span>
                   )}
                 </div>
-                
+
                 {uploadingFile.status === 'uploading' && (
-                  <Progress 
-                    value={uploadingFile.progress} 
+                  <Progress
+                    value={uploadingFile.progress}
                     className="mt-2 h-1"
                   />
                 )}
-                
+
                 {uploadingFile.status === 'error' && uploadingFile.error && (
                   <p className="mt-1 text-xs text-red-400">
                     {uploadingFile.error}
@@ -328,7 +327,7 @@ export function FileAttachment({
   React.useEffect(() => {
     if (attachment.file_type === 'image') {
       setLoading(true)
-      
+
       // Load both full size and thumbnail
       Promise.all([
         chatStorage.getFileUrl(attachment.storage_path),
@@ -389,14 +388,14 @@ export function FileAttachment({
                       "w-full rounded-t-lg object-cover transition-transform duration-200",
                       "group-hover:scale-105",
                       attachment.height && attachment.width
-                        ? attachment.height > attachment.width 
-                          ? "max-h-80" 
+                        ? attachment.height > attachment.width
+                          ? "max-h-80"
                           : "max-h-48"
                         : "max-h-48"
                     )}
                     loading="lazy"
                     style={{
-                      aspectRatio: attachment.width && attachment.height 
+                      aspectRatio: attachment.width && attachment.height
                         ? `${attachment.width}/${attachment.height}`
                         : 'auto'
                     }}
@@ -411,7 +410,7 @@ export function FileAttachment({
                   </div>
                 </>
               )}
-              
+
               {showRemove && (
                 <Button
                   variant="destructive"
@@ -426,7 +425,7 @@ export function FileAttachment({
                 </Button>
               )}
             </div>
-            
+
             <div className="p-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-neutral-300 truncate font-medium">
@@ -456,7 +455,7 @@ export function FileAttachment({
           <div className="flex-shrink-0">
             {getFileIcon(attachment.mime_type)}
           </div>
-          
+
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-neutral-200 truncate">
               {attachment.file_name}
@@ -465,7 +464,7 @@ export function FileAttachment({
               {chatStorage.constructor.formatFileSize(attachment.file_size)}
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
@@ -489,7 +488,7 @@ export function FileAttachment({
           </div>
         )}
       </div>
-      
+
       {/* Image Lightbox */}
       {attachment.file_type === 'image' && imageUrl && (
         <ImageLightbox

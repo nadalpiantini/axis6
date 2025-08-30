@@ -72,7 +72,7 @@ const icons = {
           stroke="currentColor"
           strokeWidth="2"
           strokeLinejoin="round"
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 5, -5, 0]
           }}
@@ -176,7 +176,7 @@ const icons = {
           animate={{
             rotate: [0, -2, 2, -2, 2, 0]
           }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             repeat: Infinity,
             repeatDelay: 2
@@ -200,7 +200,7 @@ const icons = {
 
 export default function AxisIcon({ axis, size = 24, animated = true, color = "currentColor" }: AxisIconProps) {
   const icon = icons[axis as keyof typeof icons]
-  
+
   if (!icon) {
     return null
   }
@@ -242,9 +242,9 @@ export function AxisIconGrid() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <AxisIcon 
-            axis={axis.key} 
-            size={48} 
+          <AxisIcon
+            axis={axis.key}
+            size={48}
             color={axis.color}
           />
           <span className="text-sm font-medium text-gray-700">

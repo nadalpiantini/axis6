@@ -92,7 +92,7 @@ describe('HexagonClock Performance Tests', () => {
       await act(async () => {
         renderStartTime = performance.now();
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={false} // Disable animations for pure render testing
             hardwareAccelerated={true}
@@ -107,7 +107,7 @@ describe('HexagonClock Performance Tests', () => {
 
     it('handles multiple rapid re-renders efficiently', async () => {
       const renderTimes: number[] = [];
-      
+
       // Simulate 10 rapid re-renders
       for (let i = 0; i < 10; i++) {
         mockPerformance.now
@@ -117,7 +117,7 @@ describe('HexagonClock Performance Tests', () => {
         await act(async () => {
           const start = performance.now();
           const { rerender } = render(
-            <HexagonClock 
+            <HexagonClock
               data={{
                 ...mockCompletionData,
                 physical: mockCompletionData.physical + i, // Slight data change
@@ -133,7 +133,7 @@ describe('HexagonClock Performance Tests', () => {
       // Each re-render should be fast and consistent
       const averageRenderTime = renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length;
       expect(averageRenderTime).toBeLessThan(20); // Should be very fast for re-renders
-      
+
       // No significant performance degradation over time
       const firstRender = renderTimes[0];
       const lastRender = renderTimes[renderTimes.length - 1];
@@ -151,23 +151,23 @@ describe('HexagonClock Performance Tests', () => {
         setTimeout(() => {
           const frameStart = performance.now();
           mockPerformance.now.mockReturnValue(frameStart);
-          
+
           callback();
-          
+
           const frameEnd = performance.now();
           mockPerformance.now.mockReturnValue(frameEnd);
-          
+
           const frameTime = frameEnd - frameStart;
           frameTimes.push(frameTime);
           frameCount++;
         }, 16.67); // Target 60fps timing
-        
+
         return frameCount;
       });
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={true}
             hardwareAccelerated={true}
@@ -203,7 +203,7 @@ describe('HexagonClock Performance Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={true}
             hardwareAccelerated={false} // Simulate older device
@@ -226,7 +226,7 @@ describe('HexagonClock Performance Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             hardwareAccelerated={true}
           />
@@ -241,12 +241,12 @@ describe('HexagonClock Performance Tests', () => {
 
     it('prevents memory leaks during component lifecycle', async () => {
       const initialMemory = mockPerformance.memory?.usedJSHeapSize || 0;
-      
+
       // Mount and unmount component multiple times
       for (let i = 0; i < 50; i++) {
         await act(async () => {
           const { unmount } = render(
-            <HexagonClock 
+            <HexagonClock
               data={{
                 ...mockCompletionData,
                 physical: i % 100, // Varying data
@@ -281,7 +281,7 @@ describe('HexagonClock Performance Tests', () => {
 
       await act(async () => {
         const { container } = render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={jest.fn()}
           />
@@ -290,12 +290,12 @@ describe('HexagonClock Performance Tests', () => {
         const touchTarget = container.querySelector('button');
         if (touchTarget) {
           touchStartTime = performance.now();
-          
+
           // Simulate touch event
           touchTarget.dispatchEvent(new Event('touchstart'));
           touchTarget.dispatchEvent(new Event('touchend'));
           touchTarget.dispatchEvent(new Event('click'));
-          
+
           touchEndTime = performance.now();
         }
       });
@@ -309,13 +309,13 @@ describe('HexagonClock Performance Tests', () => {
     it('maintains reasonable bundle footprint', () => {
       // This would require actual bundling to test properly
       // For now, verify component exports are tree-shakeable
-      
+
       const componentExports = Object.keys(require('@/components/hexagon-clock/HexagonClock'));
-      
+
       // Should export only what's necessary
       expect(componentExports).toContain('HexagonClock');
       expect(componentExports).toContain('default');
-      
+
       // Should not export everything wildly
       expect(componentExports.length).toBeLessThan(10);
     });
@@ -329,7 +329,7 @@ describe('HexagonClock Performance Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             size={300} // Fixed size for consistent pre-computation
           />
@@ -343,21 +343,21 @@ describe('HexagonClock Performance Tests', () => {
 
     it('reuses pre-computed SVG for same size', async () => {
       const size = 300;
-      
+
       await act(async () => {
         // First render
         const { unmount } = render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             size={size}
           />
         );
-        
+
         unmount();
-        
+
         // Second render with same size should reuse computation
         render(
-          <HexagonClock 
+          <HexagonClock
             data={{ ...mockCompletionData, physical: 90 }}
             size={size}
           />
@@ -373,7 +373,7 @@ describe('HexagonClock Performance Tests', () => {
     it('handles window resize events efficiently', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -382,13 +382,13 @@ describe('HexagonClock Performance Tests', () => {
       // Simulate multiple rapid resize events
       for (let i = 0; i < 10; i++) {
         mockPerformance.now.mockReturnValue(i * 10);
-        
+
         await act(async () => {
           // Mock window resize
-          Object.defineProperty(window, 'innerWidth', { 
-            value: 320 + i * 50 
+          Object.defineProperty(window, 'innerWidth', {
+            value: 320 + i * 50
           });
-          
+
           window.dispatchEvent(new Event('resize'));
         });
       }
@@ -400,7 +400,7 @@ describe('HexagonClock Performance Tests', () => {
     it('debounces resize calculations', async () => {
       let resizeCalculations = 0;
       const originalAddEventListener = window.addEventListener;
-      
+
       window.addEventListener = jest.fn((event, handler) => {
         if (event === 'resize') {
           resizeCalculations++;
@@ -410,7 +410,7 @@ describe('HexagonClock Performance Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -418,7 +418,7 @@ describe('HexagonClock Performance Tests', () => {
 
       // Should have registered resize listener
       expect(resizeCalculations).toBe(1);
-      
+
       window.addEventListener = originalAddEventListener;
     });
   });
@@ -442,7 +442,7 @@ describe('HexagonClock Performance Tests', () => {
       await act(async () => {
         const renderStart = performance.now();
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={jest.fn()}
           />
@@ -461,7 +461,7 @@ describe('HexagonClock Performance Tests', () => {
       // Performance targets achieved in previous optimizations
       expect(performanceMetrics.initialRender).toBeLessThan(100); // <100ms
       expect(performanceMetrics.touchResponse).toBeLessThan(50);  // <50ms
-      
+
       // Memory should be reasonable
       performanceMetrics.memoryUsage = mockPerformance.memory?.usedJSHeapSize || 0;
       expect(performanceMetrics.memoryUsage).toBeLessThan(8 * 1024 * 1024); // <8MB
@@ -472,12 +472,12 @@ describe('HexagonClock Performance Tests', () => {
     it('handles React 19 concurrent features efficiently', async () => {
       // Test concurrent rendering doesn't degrade performance
       const renderPromises: Promise<void>[] = [];
-      
+
       for (let i = 0; i < 5; i++) {
         renderPromises.push(
           act(async () => {
             render(
-              <HexagonClock 
+              <HexagonClock
                 data={{
                   ...mockCompletionData,
                   physical: i * 20, // Different data
@@ -489,7 +489,7 @@ describe('HexagonClock Performance Tests', () => {
       }
 
       await Promise.all(renderPromises);
-      
+
       // All renders should complete successfully
       const containers = document.querySelectorAll('.hexagon-clock-container');
       expect(containers.length).toBeGreaterThan(0);

@@ -109,7 +109,7 @@ const MockMyDayPage = () => {
           Current time: {new Date().toLocaleTimeString()}
         </div>
       </header>
-      
+
       <main className="time-planning-section" role="main" aria-label="Time Planning Interface">
         <React.Suspense fallback={<div>Loading time planner...</div>}>
           <HexagonClock
@@ -143,7 +143,7 @@ const MockMyDayPage = () => {
       </section>
 
       <aside className="timer-controls" role="complementary" aria-label="Timer Controls">
-        <button 
+        <button
           onClick={() => setActiveTimer(activeTimer ? null : { category: 'Physical', startTime: Date.now() })}
           className="timer-toggle"
         >
@@ -157,7 +157,7 @@ const MockMyDayPage = () => {
 describe('My Day HexagonClock Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset window size
     Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
     Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
@@ -172,7 +172,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         expect(screen.getByText('Plan My Day')).toBeInTheDocument();
         expect(screen.getByRole('main', { name: /Time Planning Interface/i })).toBeInTheDocument();
-        
+
         // HexagonClock should show time distribution mode
         expect(screen.getByText('Total Time')).toBeInTheDocument();
         expect(screen.getByText('6h 0m')).toBeInTheDocument(); // 360 minutes total
@@ -189,11 +189,11 @@ describe('My Day HexagonClock Integration', () => {
         expect(screen.getByText('2h 0m')).toBeInTheDocument(); // Physical: 120 minutes
         expect(screen.getByText('3h 0m')).toBeInTheDocument(); // Mental: 180 minutes
         expect(screen.getByText('1h 0m')).toBeInTheDocument(); // Emotional: 60 minutes
-        
+
         // Check for category buttons
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         const mentalButton = screen.getByRole('button', { name: /Mental/i });
-        
+
         expect(physicalButton).toBeInTheDocument();
         expect(mentalButton).toBeInTheDocument();
       });
@@ -208,7 +208,7 @@ describe('My Day HexagonClock Integration', () => {
         // Clock markers should be visible
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
-        
+
         // SVG should contain clock marker elements
         const svgElements = document.querySelectorAll('svg');
         expect(svgElements.length).toBeGreaterThan(0);
@@ -223,7 +223,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Current time should be shown in header
         expect(screen.getByText(/Current time:/)).toBeInTheDocument();
-        
+
         // Current time indicator should be visible in hexagon (if implemented)
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
@@ -234,16 +234,16 @@ describe('My Day HexagonClock Integration', () => {
   describe('Time Block Interactions', () => {
     it('handles time block clicks', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       await act(async () => {
         render(<MockMyDayPage />);
       });
 
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         await userEvent.click(physicalButton);
-        
+
         expect(consoleSpy).toHaveBeenCalledWith('Time block clicked:', expect.objectContaining({
           key: 'physical',
         }));
@@ -254,19 +254,19 @@ describe('My Day HexagonClock Integration', () => {
 
     it('handles time block dragging to different hours', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       await act(async () => {
         render(<MockMyDayPage />);
       });
 
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Simulate drag operation
         fireEvent.mouseDown(physicalButton);
         fireEvent.mouseMove(physicalButton, { clientX: 100, clientY: 50 });
         fireEvent.mouseUp(physicalButton);
-        
+
         // In a real implementation, this would trigger the drag handler
         expect(physicalButton).toBeInTheDocument();
       });
@@ -282,7 +282,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Check initial total time
         expect(screen.getByText('6h 0m')).toBeInTheDocument();
-        
+
         // After modification (would be triggered by real interactions)
         expect(screen.getByText('Total planned: 360 minutes')).toBeInTheDocument();
       });
@@ -298,9 +298,9 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(async () => {
         const startButton = screen.getByText('Start Timer');
         expect(startButton).toBeInTheDocument();
-        
+
         await userEvent.click(startButton);
-        
+
         await waitFor(() => {
           expect(screen.getByText('Stop Timer')).toBeInTheDocument();
         });
@@ -316,7 +316,7 @@ describe('My Day HexagonClock Integration', () => {
         // Start timer
         const startButton = screen.getByText('Start Timer');
         await userEvent.click(startButton);
-        
+
         // Active timer should affect hexagon display
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
@@ -330,11 +330,11 @@ describe('My Day HexagonClock Integration', () => {
 
       await waitFor(async () => {
         const timerButton = screen.getByRole('button', { name: /Timer/i });
-        
+
         // Toggle timer multiple times
         await userEvent.click(timerButton);
         await waitFor(() => expect(screen.getByText('Stop Timer')).toBeInTheDocument());
-        
+
         await userEvent.click(timerButton);
         await waitFor(() => expect(screen.getByText('Start Timer')).toBeInTheDocument());
       });
@@ -351,7 +351,7 @@ describe('My Day HexagonClock Integration', () => {
         // Physical should be at 12 o'clock (morning activities)
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         expect(physicalButton).toBeInTheDocument();
-        
+
         // Mental should be positioned based on typical work hours
         const mentalButton = screen.getByRole('button', { name: /Mental/i });
         expect(mentalButton).toBeInTheDocument();
@@ -367,7 +367,7 @@ describe('My Day HexagonClock Integration', () => {
         // Clock markers should be visible
         const svgElements = document.querySelectorAll('svg');
         expect(svgElements.length).toBeGreaterThan(0);
-        
+
         // Would check for specific clock markers in real implementation
       });
     });
@@ -380,7 +380,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Current time indicator should be visible
         expect(screen.getByText(/Current time:/)).toBeInTheDocument();
-        
+
         // Sun symbol or current time indicator should be on hexagon
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
@@ -401,7 +401,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
-        
+
         // Touch targets should meet requirements
         const buttons = screen.getAllByRole('button');
         buttons.forEach(button => {
@@ -415,20 +415,20 @@ describe('My Day HexagonClock Integration', () => {
 
     it('handles touch interactions for time block manipulation', async () => {
       Object.defineProperty(window, 'innerWidth', { value: 375 });
-      
+
       await act(async () => {
         render(<MockMyDayPage />);
       });
 
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Touch interaction sequence
         fireEvent.touchStart(physicalButton, {
           touches: [{ clientX: 100, clientY: 100 }]
         });
         fireEvent.touchEnd(physicalButton);
-        
+
         expect(physicalButton).toBeInTheDocument();
       });
     });
@@ -437,7 +437,7 @@ describe('My Day HexagonClock Integration', () => {
   describe('Performance in My Day Context', () => {
     it('renders efficiently with time distribution data', async () => {
       const renderStart = performance.now();
-      
+
       await act(async () => {
         render(<MockMyDayPage />);
       });
@@ -457,12 +457,12 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(async () => {
         const startButton = screen.getByText('Start Timer');
         await userEvent.click(startButton);
-        
+
         // Simulate timer ticks (would be handled by setInterval in real implementation)
         act(() => {
           // Timer state updates
         });
-        
+
         expect(screen.getByText('Stop Timer')).toBeInTheDocument();
       });
     });
@@ -477,7 +477,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Verify Supabase calls for data persistence
         expect(mockSupabaseClient.from).toHaveBeenCalled();
-        
+
         // Changes would trigger update calls in real implementation
       });
     });
@@ -490,7 +490,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(async () => {
         const startButton = screen.getByText('Start Timer');
         await userEvent.click(startButton);
-        
+
         // Timer start would trigger backend sync
         expect(mockSupabaseClient.from).toHaveBeenCalled();
       });
@@ -505,7 +505,7 @@ describe('My Day HexagonClock Integration', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Total planned: 360 minutes')).toBeInTheDocument();
-        
+
         // Individual time blocks
         expect(screen.getByText('Physical')).toBeInTheDocument();
         expect(screen.getByText('Mental')).toBeInTheDocument();
@@ -521,7 +521,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Initial total
         expect(screen.getByText('Total planned: 360 minutes')).toBeInTheDocument();
-        
+
         // After changes (would be triggered by real interactions)
         expect(screen.getByText('6h 0m')).toBeInTheDocument();
       });
@@ -548,9 +548,9 @@ describe('My Day HexagonClock Integration', () => {
 
       await waitFor(async () => {
         const timerButton = screen.getByRole('button', { name: /Timer/i });
-        
+
         await userEvent.click(timerButton);
-        
+
         // Timer state change should be announced
         expect(screen.getByText('Stop Timer')).toBeInTheDocument();
       });
@@ -558,7 +558,7 @@ describe('My Day HexagonClock Integration', () => {
 
     it('provides keyboard navigation for time blocks', async () => {
       const user = userEvent.setup();
-      
+
       await act(async () => {
         render(<MockMyDayPage />);
       });
@@ -566,11 +566,11 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(async () => {
         // Should be able to navigate through time block controls
         const buttons = screen.getAllByRole('button');
-        
+
         for (const button of buttons.slice(0, 3)) {
           await user.tab();
-          if (button.textContent?.includes('Physical') || 
-              button.textContent?.includes('Mental') || 
+          if (button.textContent?.includes('Physical') ||
+              button.textContent?.includes('Mental') ||
               button.textContent?.includes('Timer')) {
             expect(button).toHaveFocus();
           }
@@ -588,7 +588,7 @@ describe('My Day HexagonClock Integration', () => {
       await waitFor(() => {
         // Should integrate with time tracking
         expect(screen.getByText('Plan My Day')).toBeInTheDocument();
-        
+
         // Time distribution should reflect tracked time
         expect(screen.getByText('6h 0m')).toBeInTheDocument();
       });

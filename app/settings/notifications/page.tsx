@@ -1,11 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
-  Bell, 
-  Clock, 
-  Smartphone, 
-  Mail, 
+import {
+  Bell,
+  Clock,
+  Smartphone,
+  Mail,
   Zap,
   Brain,
   Target,
@@ -26,13 +26,14 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface NotificationPreferences {
   // Delivery Methods
   email_enabled: boolean
   push_enabled: boolean
   in_app_enabled: boolean
   sms_enabled: boolean
-  
+
   // Notification Types
   checkin_reminders: boolean
   streak_alerts: boolean
@@ -42,24 +43,24 @@ interface NotificationPreferences {
   motivation_messages: boolean
   social_updates: boolean
   system_updates: boolean
-  
+
   // Smart AI Features
   ai_optimal_timing: boolean
   ai_personalized_content: boolean
   ai_frequency_optimization: boolean
   ai_mood_aware: boolean
-  
+
   // Timing Preferences
   quiet_hours_enabled: boolean
   quiet_start_time: string
   quiet_end_time: string
   timezone_aware: boolean
-  
+
   // Frequency Settings
   daily_reminders_limit: number
   weekly_summary: boolean
   monthly_insights: boolean
-  
+
   // Advanced Settings
   notification_sound: string
   vibration_enabled: boolean
@@ -75,7 +76,7 @@ export default function NotificationSettingsPage() {
     push_enabled: true,
     in_app_enabled: true,
     sms_enabled: false,
-    
+
     // Notification Types
     checkin_reminders: true,
     streak_alerts: true,
@@ -85,24 +86,24 @@ export default function NotificationSettingsPage() {
     motivation_messages: true,
     social_updates: false,
     system_updates: true,
-    
+
     // Smart AI Features
     ai_optimal_timing: true,
     ai_personalized_content: true,
     ai_frequency_optimization: true,
     ai_mood_aware: true,
-    
+
     // Timing Preferences
     quiet_hours_enabled: true,
     quiet_start_time: '22:00',
     quiet_end_time: '07:00',
     timezone_aware: true,
-    
+
     // Frequency Settings
     daily_reminders_limit: 3,
     weekly_summary: true,
     monthly_insights: true,
-    
+
     // Advanced Settings
     notification_sound: 'gentle',
     vibration_enabled: true,
@@ -125,12 +126,15 @@ export default function NotificationSettingsPage() {
       // await updateNotificationPreferences(preferences)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       setHasChanges(false)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving notification preferences:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
     } finally {
       setIsSaving(false)
     }
@@ -161,8 +165,8 @@ export default function NotificationSettingsPage() {
   return (
     <SettingsLayout currentSection="notifications">
       {/* AI-Powered Notifications */}
-      <SettingsSection 
-        title="Smart Notifications" 
+      <SettingsSection
+        title="Smart Notifications"
         description="AI-powered notifications that adapt to your habits and preferences"
         icon={Brain}
         hasChanges={hasChanges}
@@ -234,8 +238,8 @@ export default function NotificationSettingsPage() {
       </SettingsSection>
 
       {/* Delivery Methods */}
-      <SettingsSection 
-        title="Delivery Methods" 
+      <SettingsSection
+        title="Delivery Methods"
         description="Choose how you want to receive notifications"
         icon={Bell}
         className="mb-6"
@@ -277,8 +281,8 @@ export default function NotificationSettingsPage() {
       </SettingsSection>
 
       {/* Notification Types */}
-      <SettingsSection 
-        title="Notification Types" 
+      <SettingsSection
+        title="Notification Types"
         description="Choose which types of notifications you want to receive"
         icon={Target}
         className="mb-6"
@@ -370,8 +374,8 @@ export default function NotificationSettingsPage() {
       </SettingsSection>
 
       {/* Timing & Schedule */}
-      <SettingsSection 
-        title="Timing & Schedule" 
+      <SettingsSection
+        title="Timing & Schedule"
         description="Control when notifications are delivered"
         icon={Clock}
         className="mb-6"
@@ -438,8 +442,8 @@ export default function NotificationSettingsPage() {
       </SettingsSection>
 
       {/* Advanced Settings */}
-      <SettingsSection 
-        title="Advanced Settings" 
+      <SettingsSection
+        title="Advanced Settings"
         description="Fine-tune your notification experience"
         icon={Settings}
         className="mb-6"
@@ -504,7 +508,7 @@ export default function NotificationSettingsPage() {
                 <span className="text-xs text-gray-500">2 min ago</span>
               </div>
             </div>
-            
+
             <div className="p-3 bg-white/5 rounded-lg border border-white/10">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-purple-500/20">
@@ -522,8 +526,8 @@ export default function NotificationSettingsPage() {
       </SettingsSection>
 
       {/* Notification Stats */}
-      <SettingsSection 
-        title="Notification Analytics" 
+      <SettingsSection
+        title="Notification Analytics"
         description="Track your notification engagement and optimize your settings"
         icon={TrendingUp}
         className="mb-6"

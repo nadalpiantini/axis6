@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Redis Connection Test Script for AXIS6
- * 
+ *
  * This script tests the Redis/Upstash connection and verifies
  * rate limiting functionality works correctly.
  */
@@ -22,7 +22,7 @@ interface TestResult {
 
 async function testRedisConnection(): Promise<TestResult> {
   const start = Date.now()
-  
+
   try {
     if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
       return {
@@ -67,7 +67,7 @@ async function testRedisConnection(): Promise<TestResult> {
 
 async function testRateLimiting(): Promise<TestResult> {
   const start = Date.now()
-  
+
   try {
     if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
       return {
@@ -91,7 +91,7 @@ async function testRateLimiting(): Promise<TestResult> {
     })
 
     const testIdentifier = `test:${Date.now()}`
-    
+
     // Test successful requests
     for (let i = 0; i < 5; i++) {
       const { success } = await ratelimit.limit(testIdentifier)
@@ -126,7 +126,7 @@ async function testRateLimiting(): Promise<TestResult> {
 
 async function testCaching(): Promise<TestResult> {
   const start = Date.now()
-  
+
   try {
     if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
       return {
@@ -189,7 +189,7 @@ async function testCaching(): Promise<TestResult> {
 
 async function runTests(): Promise<void> {
   console.log('🔴 AXIS6 Redis Connection Tests\n')
-  
+
   const tests = [
     testRedisConnection,
     testRateLimiting,
@@ -197,12 +197,12 @@ async function runTests(): Promise<void> {
   ]
 
   const results: TestResult[] = []
-  
+
   for (const test of tests) {
     console.log(`⏳ Running ${test.name}...`)
     const result = await test()
     results.push(result)
-    
+
     const status = result.success ? '✅' : '❌'
     const duration = result.duration ? ` (${result.duration}ms)` : ''
     console.log(`${status} ${result.name}${duration}`)
@@ -212,10 +212,10 @@ async function runTests(): Promise<void> {
   // Summary
   const successful = results.filter(r => r.success).length
   const total = results.length
-  
+
   console.log('📊 Test Summary:')
   console.log(`   ${successful}/${total} tests passed`)
-  
+
   if (successful === total) {
     console.log('🎉 All Redis tests passed! Your Redis configuration is working correctly.')
     process.exit(0)

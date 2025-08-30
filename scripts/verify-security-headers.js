@@ -89,7 +89,7 @@ async function verifySecurityHeaders(url) {
 
 // Check both development and production if available
 async function main() {
-  const devUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'
+  const devUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const prodUrl = 'https://axis6.app'
   
   console.log('🔐 AXIS6 Security Headers Verification')

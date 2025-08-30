@@ -11,7 +11,6 @@ import React, { Component, ReactNode } from 'react'
 
 import { Button } from '@/components/ui/Button'
 
-
 interface ErrorInfo {
   componentStack: string
   errorBoundary?: string
@@ -57,25 +56,25 @@ function DefaultErrorFallback({
   eventId
 }: ErrorFallbackProps) {
   const isPageLevel = level === 'page'
-  
+
   return (
     <div className={`flex flex-col items-center justify-center min-h-[400px] p-8 text-center ${
       isPageLevel ? 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100' : 'bg-red-50 rounded-lg border border-red-200'
     }`}>
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
         <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        
+
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           {isPageLevel ? 'Something went wrong' : 'Component Error'}
         </h2>
-        
+
         <p className="text-gray-600 mb-6">
-          {isPageLevel 
+          {isPageLevel
             ? "We're experiencing technical difficulties. Our team has been notified."
             : 'This feature is temporarily unavailable.'
           }
         </p>
-        
+
         {process.env.NODE_ENV === 'development' && error && (
           <details className="text-left mb-6 p-4 bg-gray-100 rounded text-sm">
             <summary className="font-semibold cursor-pointer">Error Details</summary>
@@ -90,10 +89,10 @@ function DefaultErrorFallback({
             </pre>
           </details>
         )}
-        
+
         <div className="flex gap-3 justify-center">
           {retryCount < 3 && (
-            <Button 
+            <Button
               onClick={resetError}
               variant="default"
               className="flex items-center gap-2"
@@ -102,7 +101,7 @@ function DefaultErrorFallback({
               Try Again
             </Button>
           )}
-          
+
           {isPageLevel && (
             <Button
               onClick={() => window.location.href = '/'}
@@ -114,7 +113,7 @@ function DefaultErrorFallback({
             </Button>
           )}
         </div>
-        
+
         {eventId && (
           <p className="text-xs text-gray-500 mt-4">
             Error ID: {eventId}
@@ -133,7 +132,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   constructor(props: ErrorBoundaryProps) {
     super(props)
-    
+
     this.state = {
       hasError: false,
       error: null,
@@ -193,7 +192,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   override componentDidUpdate(prevProps: ErrorBoundaryProps) {
     const { resetKeys, resetOnPropsChange } = this.props
     const { hasError } = this.state
-    
+
     if (hasError && prevProps.resetKeys !== resetKeys) {
       if (resetOnPropsChange) {
         this.handleReset()
@@ -225,7 +224,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   override render() {
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback
-      
+
       return (
         <FallbackComponent
           error={this.state.error}
@@ -256,7 +255,7 @@ export function withErrorBoundary<P extends object>(
   )
 
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
-  
+
   return WrappedComponent
 }
 

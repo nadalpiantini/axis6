@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 
-
 interface RealtimeState {
   isConnected: boolean
   error: string | null
@@ -34,11 +33,11 @@ export function useRealtimeCheckins(userId: string | undefined) {
       try {
         // Wait for authentication to be fully established
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
+
         if (sessionError) {
           throw new Error(`Session error: ${sessionError.message}`)
         }
-        
+
         if (!session?.access_token) {
           // If no session, wait a bit and retry (user might be logging in)
           if (attemptNumber < maxRetries) {
@@ -48,10 +47,10 @@ export function useRealtimeCheckins(userId: string | undefined) {
               setupRealtime(attemptNumber + 1)
             }, delay)
           } else {
-            setRealtimeState({ 
-              isConnected: false, 
-              error: 'No authenticated session available', 
-              retryCount: attemptNumber 
+            setRealtimeState({
+              isConnected: false,
+              error: 'No authenticated session available',
+              retryCount: attemptNumber
             })
           }
           return
@@ -83,27 +82,27 @@ export function useRealtimeCheckins(userId: string | undefined) {
             (payload) => {
               // Invalidate and refetch checkins data
               queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
-              
+
               // Also invalidate streaks as they depend on checkins
               queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-              
+
               // Log successful realtime update for debugging
               }
           )
           .subscribe((status, error) => {
             if (status === 'SUBSCRIBED') {
-              setRealtimeState({ 
-                isConnected: true, 
-                error: null, 
-                retryCount: 0 
+              setRealtimeState({
+                isConnected: true,
+                error: null,
+                retryCount: 0
               })
               } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-              setRealtimeState({ 
-                isConnected: false, 
-                error: error?.message || `Connection ${status.toLowerCase()}`, 
-                retryCount: attemptNumber 
+              setRealtimeState({
+                isConnected: false,
+                error: error?.message || `Connection ${status.toLowerCase()}`,
+                retryCount: attemptNumber
               })
-              
+
               // Attempt retry with backoff
               if (attemptNumber < maxRetries) {
                 const delay = retryDelays[attemptNumber] || 5000
@@ -118,12 +117,12 @@ export function useRealtimeCheckins(userId: string | undefined) {
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown realtime error'
-        setRealtimeState({ 
-          isConnected: false, 
-          error: errorMessage, 
-          retryCount: attemptNumber 
+        setRealtimeState({
+          isConnected: false,
+          error: errorMessage,
+          retryCount: attemptNumber
         })
-        
+
         // Don't retry on auth errors
         if (errorMessage.includes('Session error') && attemptNumber < maxRetries) {
           const delay = retryDelays[attemptNumber] || 5000
@@ -142,12 +141,12 @@ export function useRealtimeCheckins(userId: string | undefined) {
         clearTimeout(retryTimeoutRef.current)
         retryTimeoutRef.current = null
       }
-      
+
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current)
         channelRef.current = null
       }
-      
+
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
     }
   }, [userId, queryClient, supabase])
@@ -179,11 +178,11 @@ export function useRealtimeStreaks(userId: string | undefined) {
       try {
         // Wait for authentication to be fully established
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
+
         if (sessionError) {
           throw new Error(`Session error: ${sessionError.message}`)
         }
-        
+
         if (!session?.access_token) {
           if (attemptNumber < maxRetries) {
             const delay = retryDelays[attemptNumber] || 5000
@@ -192,10 +191,10 @@ export function useRealtimeStreaks(userId: string | undefined) {
               setupRealtime(attemptNumber + 1)
             }, delay)
           } else {
-            setRealtimeState({ 
-              isConnected: false, 
-              error: 'No authenticated session available', 
-              retryCount: attemptNumber 
+            setRealtimeState({
+              isConnected: false,
+              error: 'No authenticated session available',
+              retryCount: attemptNumber
             })
           }
           return
@@ -227,7 +226,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
             (payload) => {
               // Invalidate and refetch streaks data
               queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-              
+
               // Show achievement notification for milestone streaks
               if (payload.eventType === 'UPDATE' && payload.new) {
                 const newStreak = payload.new as any
@@ -238,18 +237,18 @@ export function useRealtimeStreaks(userId: string | undefined) {
           )
           .subscribe((status, error) => {
             if (status === 'SUBSCRIBED') {
-              setRealtimeState({ 
-                isConnected: true, 
-                error: null, 
-                retryCount: 0 
+              setRealtimeState({
+                isConnected: true,
+                error: null,
+                retryCount: 0
               })
               } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-              setRealtimeState({ 
-                isConnected: false, 
-                error: error?.message || `Connection ${status.toLowerCase()}`, 
-                retryCount: attemptNumber 
+              setRealtimeState({
+                isConnected: false,
+                error: error?.message || `Connection ${status.toLowerCase()}`,
+                retryCount: attemptNumber
               })
-              
+
               // Attempt retry with backoff
               if (attemptNumber < maxRetries) {
                 const delay = retryDelays[attemptNumber] || 5000
@@ -264,12 +263,12 @@ export function useRealtimeStreaks(userId: string | undefined) {
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown realtime error'
-        setRealtimeState({ 
-          isConnected: false, 
-          error: errorMessage, 
-          retryCount: attemptNumber 
+        setRealtimeState({
+          isConnected: false,
+          error: errorMessage,
+          retryCount: attemptNumber
         })
-        
+
         }
     }
 
@@ -281,12 +280,12 @@ export function useRealtimeStreaks(userId: string | undefined) {
         clearTimeout(retryTimeoutRef.current)
         retryTimeoutRef.current = null
       }
-      
+
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current)
         channelRef.current = null
       }
-      
+
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
     }
   }, [userId, queryClient, supabase])
@@ -298,7 +297,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
 export function useRealtimeDashboard(userId: string | undefined) {
   const checkinsState = useRealtimeCheckins(userId)
   const streaksState = useRealtimeStreaks(userId)
-  
+
   // Return combined state for monitoring
   return {
     checkins: checkinsState,

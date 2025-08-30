@@ -20,20 +20,15 @@ import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { LogoFull } from '@/components/ui/Logo'
 import { SkeletonDashboard } from '@/components/ui/Skeleton'
 import { useRealtimeDashboard } from '@/lib/hooks/useRealtimeCheckins'
-import { 
-  useUser, 
-  useCategories, 
-  useTodayCheckins, 
-  useToggleCheckIn, 
-  useStreaks 
-} from '@/lib/react-query/hooks'
+import { useDashboardDataOptimized } from '@/lib/react-query/hooks/useDashboardDataOptimized'
+import { useToggleCheckIn, useUser } from '@/lib/react-query/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 
 // Realtime hooks
 
 // Zustand stores
-import { 
-  useUIStore, 
+import {
+  useUIStore,
   usePreferencesStore
 } from '@/lib/stores/useAppStore'
 
@@ -41,10 +36,10 @@ import {
 import { useToast, ToastContainer } from '@/components/ui/Toast'
 
 // New Hexagon component wrapper with resonance features
-const HexagonVisualizationWithResonance = memo(({ 
-  axes, 
+const HexagonVisualizationWithResonance = memo(({
+  axes,
   onToggleAxis,
-  isToggling 
+  isToggling
 }: {
   axes: Array<{
     id: string | number
@@ -57,7 +52,7 @@ const HexagonVisualizationWithResonance = memo(({
   isToggling: boolean
 }) => {
   const { showResonance } = usePreferencesStore()
-  
+
   // Convert axes data to format expected by HexagonChartWithResonance
   const hexagonData = useMemo(() => {
     const defaultData = {
@@ -68,17 +63,17 @@ const HexagonVisualizationWithResonance = memo(({
       spiritual: 0,
       material: 0
     }
-    
+
     axes.forEach(axis => {
       const key = axis.name.toLowerCase()
       if (key in defaultData) {
         defaultData[key as keyof typeof defaultData] = axis.completed ? 100 : 0
       }
     })
-    
+
     return defaultData
   }, [axes])
-  
+
   return (
     <div className="flex justify-center mb-4 sm:mb-8 overflow-hidden" data-testid="hexagon-chart">
       <div className="w-full max-w-[95vw] sm:max-w-none flex justify-center">
@@ -101,10 +96,10 @@ const HexagonVisualizationWithResonance = memo(({
 HexagonVisualizationWithResonance.displayName = 'HexagonVisualizationWithResonance'
 
 // Memoized category card
-const MemoizedCategoryCard = memo(({ 
-  axis, 
+const MemoizedCategoryCard = memo(({
+  axis,
   onToggle,
-  isToggling 
+  isToggling
 }: {
   axis: {
     id: string | number
@@ -117,14 +112,14 @@ const MemoizedCategoryCard = memo(({
   isToggling: boolean
 }) => {
   const showAnimations = usePreferencesStore(state => state.showAnimations)
-  
+
   return (
     <button
       onClick={onToggle}
       disabled={isToggling}
       className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] hover:scale-[1.02] active:scale-[0.98] ${
-        axis.completed 
-          ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
+        axis.completed
+          ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30'
           : 'bg-white/5 hover:bg-white/10 border-white/10'
       } border`}
       aria-pressed={axis.completed}
@@ -133,7 +128,7 @@ const MemoizedCategoryCard = memo(({
     >
       <div className="flex items-center gap-2 sm:gap-3">
         <div className={`p-1.5 sm:p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
-          <AxisIcon 
+          <AxisIcon
             axis={axis.icon}
             size={18}
             color={axis.color}
@@ -156,17 +151,28 @@ export default function DashboardPageV2() {
   const router = useRouter()
   const { addNotification } = useUIStore()
   const { toasts, showToast, removeToast } = useToast()
-  
+
   // React Query client for manual invalidation
   const queryClient = useQueryClient()
-  
-  // Fetch all data in parallel with React Query
-  const { data: user, isLoading: userLoading, error: userError } = useUser()
-  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useCategories()
-  const { data: checkins = [], error: checkinsError } = useTodayCheckins(user?.id)
-  const { data: streaks = [], error: streaksError } = useStreaks(user?.id)
-  const toggleCheckIn = useToggleCheckIn(user?.id)
-  
+
+  // Get current user for authentication check
+  const { data: authUser, isLoading: authLoading } = useUser()
+
+  // Fetch all dashboard data with optimized single query
+  const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError, refetch } = useDashboardDataOptimized(authUser?.id)
+  const toggleCheckIn = useToggleCheckIn(authUser?.id)
+
+  // Extract data from unified response to maintain compatibility
+  const user = dashboardData?.user || authUser
+  const categories = dashboardData?.categories || []
+  const checkins = dashboardData?.todayCheckins || []
+  const streaks = dashboardData?.streaks || []
+  const stats = dashboardData?.stats
+
+  // Loading and error states
+  const isLoading = authLoading || dashboardLoading
+  const error = dashboardError
+
   // Enable realtime updates for this user (with connection monitoring)
   const realtimeStatus = useRealtimeDashboard(user?.id)
 
@@ -177,21 +183,21 @@ export default function DashboardPageV2() {
       if (!Array.isArray(categories) || categories.length === 0) {
         return []
       }
-      
+
       // 🛡️ SAFEGUARD: Limit to exactly 6 categories (AXIS6 hexagon design)
       const limitedCategories = categories.slice(0, 6)
-      
+
       // Create completed category IDs set inline to avoid circular dependency
       const completedCategoryIds = new Set(
-        Array.isArray(checkins) 
+        Array.isArray(checkins)
           ? checkins.map(c => Number(c.category_id)).filter(id => !isNaN(id))
           : []
       )
-      
+
       return limitedCategories.map(cat => {
         // 🛡️ IMPROVED JSONB NAME PARSING with multiple fallbacks
         let displayName = 'Unknown'
-        
+
         try {
           // Try object access first
           if (typeof cat.name === 'object' && cat.name?.en) {
@@ -210,7 +216,7 @@ export default function DashboardPageV2() {
           // If all parsing fails, use slug
           displayName = cat.slug || 'Unknown'
         }
-        
+
         return {
           id: cat.id,
           name: displayName,
@@ -225,34 +231,36 @@ export default function DashboardPageV2() {
 
   const currentStreak = useMemo(
     () => {
+      if (stats?.currentOverallStreak) return stats.currentOverallStreak
       if (!Array.isArray(streaks) || streaks.length === 0) return 0
-      
+
       const validStreaks = streaks
         .map(s => s.current_streak || 0)
         .filter(streak => typeof streak === 'number' && !isNaN(streak))
-      
+
       return validStreaks.length > 0 ? Math.max(...validStreaks) : 0
     },
-    [streaks]
+    [streaks, stats?.currentOverallStreak]
   )
 
   const longestStreak = useMemo(
     () => {
+      if (stats?.longestOverallStreak) return stats.longestOverallStreak
       if (!Array.isArray(streaks) || streaks.length === 0) return 0
-      
+
       const validStreaks = streaks
         .map(s => s.longest_streak || 0)
         .filter(streak => typeof streak === 'number' && !isNaN(streak))
-      
+
       return validStreaks.length > 0 ? Math.max(...validStreaks) : 0
     },
-    [streaks]
+    [streaks, stats?.longestOverallStreak]
   )
 
   // Handler with useCallback for optimization and immediate UI updates
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (toggleCheckIn.isPending) return // Prevent multiple clicks
-    
+
     const axis = axes.find(a => a.id === axisId)
     if (axis) {
       toggleCheckIn.mutate(
@@ -262,29 +270,28 @@ export default function DashboardPageV2() {
         },
         {
           onSuccess: (data) => {
-            const message = axis.completed 
-              ? `${axis.name} unchecked` 
+            const message = axis.completed
+              ? `${axis.name} unchecked`
               : `${axis.name} completed! 🎉`
-            
+
             // Show toast notification
             showToast(message, 'success', 2500)
-            
+
             // Also add to notification store for persistence
             addNotification({
               type: 'success',
               message: message
             })
-            
-            // Force immediate refetch of related queries
-            queryClient.invalidateQueries({ queryKey: ['checkins', 'today', user?.id] })
-            queryClient.invalidateQueries({ queryKey: ['streaks', user?.id] })
+
+            // Force immediate refetch of dashboard data
+            queryClient.invalidateQueries({ queryKey: ['dashboard-optimized', user?.id] })
           },
           onError: (error) => {
             const errorMessage = 'Failed to update. Please try again.'
-            
+
             // Show error toast
             showToast(errorMessage, 'error', 4000)
-            
+
             // Also add to notification store
             addNotification({
               type: 'error',
@@ -305,13 +312,13 @@ export default function DashboardPageV2() {
 
   // Handle authentication redirect
   useEffect(() => {
-    if (!userLoading && !user) {
+    if (!isLoading && !user) {
       router.push('/auth/login')
     }
-  }, [user, userLoading, router])
+  }, [user, isLoading, router])
 
   // Show loading state
-  if (userLoading || categoriesLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen text-white">
         <StandardHeader
@@ -328,13 +335,13 @@ export default function DashboardPageV2() {
   }
 
   // Show error state if critical data failed to load
-  if (userError || categoriesError) {
+  if (error) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 mb-2">Failed to load dashboard data</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition"
           >
             Retry
@@ -361,7 +368,7 @@ export default function DashboardPageV2() {
   return (
     <QueryErrorBoundary>
       <RealtimeErrorBoundary maxRetries={3}>
-        <div 
+        <div
           className="min-h-screen text-white"
           style={{
             paddingTop: 'env(safe-area-inset-top, 0px)',
@@ -383,18 +390,18 @@ export default function DashboardPageV2() {
             <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
               <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" priority={false} />
             </div>
-            
+
             {/* Welcome Section */}
             <main className="mb-3 sm:mb-6 lg:mb-8 px-1 sm:px-2" role="main">
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 text-center leading-tight">
                 Hello, {user.email?.split('@')[0]}! 👋
               </h1>
               <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center px-2">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
                 })}
               </p>
             </main>
@@ -411,7 +418,7 @@ export default function DashboardPageV2() {
                     </span>
                   </div>
 
-                  <HexagonVisualizationWithResonance 
+                  <HexagonVisualizationWithResonance
                     key={`hexagon-${axes.map(a => `${a.id}-${a.completed}`).join('-')}`}
                     axes={axes}
                     onToggleAxis={handleToggleAxis}
@@ -440,10 +447,10 @@ export default function DashboardPageV2() {
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400">Realtime</span>
                       <div className="flex items-center gap-2">
-                        <div 
+                        <div
                           className={`w-2 h-2 rounded-full ${
                             realtimeStatus.isAnyConnected ? 'bg-green-400' : 'bg-yellow-400'
-                          }`} 
+                          }`}
                         />
                         <span className={`text-xs ${
                           realtimeStatus.isAnyConnected ? 'text-green-400' : 'text-yellow-400'
@@ -470,7 +477,7 @@ export default function DashboardPageV2() {
                 }>
                   <DailyMantraCard />
                 </Suspense>
-                
+
                 {/* Quick Stats */}
                 <div className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6">
                   <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
@@ -496,7 +503,7 @@ export default function DashboardPageV2() {
 
                 {/* Actions */}
                 <div className="space-y-2 sm:space-y-3">
-                  <Link 
+                  <Link
                     href="/my-day"
                     className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 active:scale-[0.98] transition-all text-xs sm:text-sm lg:text-base touch-manipulation"
                     aria-label="Plan and track your daily activities"
@@ -504,7 +511,7 @@ export default function DashboardPageV2() {
                     <span className="font-medium">Plan My Day</span>
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 flex-shrink-0" aria-hidden="true" />
                   </Link>
-                  <Link 
+                  <Link
                     href="/analytics"
                     className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 active:scale-[0.98] transition-all text-xs sm:text-sm lg:text-base touch-manipulation"
                     aria-label="View complete progress analysis"
@@ -512,7 +519,7 @@ export default function DashboardPageV2() {
                     <span className="font-medium">View Complete Analysis</span>
                     <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 flex-shrink-0" aria-hidden="true" />
                   </Link>
-                  <Link 
+                  <Link
                     href="/achievements"
                     className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 active:scale-[0.98] transition-all text-xs sm:text-sm lg:text-base touch-manipulation"
                     aria-label="View your achievements and recognitions"
@@ -524,7 +531,7 @@ export default function DashboardPageV2() {
               </div>
             </div>
           </div>
-          
+
           {/* Toast Notifications */}
           <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>

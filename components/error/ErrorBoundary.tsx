@@ -32,7 +32,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Generate unique error ID for tracking
     const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    
+
     return {
       hasError: true,
       error,
@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   override componentDidCatch(error: Error, errorInfo: any) {
     // Log error using centralized logger
     logger.error('ErrorBoundary caught an error', error)
-    
+
     // Use enhanced error tracking system
     reportError(error, 'high', {
       component: 'ErrorBoundary',
@@ -56,13 +56,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         componentStack: errorInfo.componentStack,
       },
     })
-    
+
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
   }
-
 
   private handleReset = () => {
     this.setState({
@@ -108,7 +107,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <RefreshCw className="w-4 h-4" />
                 Intentar de nuevo
               </button>
-              
+
               <button
                 onClick={this.handleReload}
                 className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-lg transition-colors"
@@ -146,12 +145,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 // Async Error Boundary for handling async errors in components
-export function AsyncErrorBoundary({ 
-  children, 
-  onError 
-}: { 
+export function AsyncErrorBoundary({
+  children,
+  onError
+}: {
   children: ReactNode
-  onError?: (error: Error) => void 
+  onError?: (error: Error) => void
 }) {
   const handleError = (error: Error, _errorInfo: any) => {
     if (onError) {

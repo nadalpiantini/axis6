@@ -1,6 +1,5 @@
 'use client'
 
-
 import { motion } from 'framer-motion'
 import { AlertTriangle, RefreshCw, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -21,32 +20,32 @@ interface State {
 export class ProfileErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = { 
-      hasError: false, 
-      error: null, 
-      errorInfo: null 
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null
     }
   }
 
   static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI
-    return { 
-      hasError: true, 
-      error, 
-      errorInfo: null 
+    return {
+      hasError: true,
+      error,
+      errorInfo: null
     }
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error for debugging
     logger.error('Profile page error boundary caught an error:', error)
-    
+
     // Update state with error info
     this.setState({
       error,
       errorInfo
     })
-    
+
     // Report to monitoring service (if available)
     if (typeof window !== 'undefined' && 'gtag' in window) {
       ;(window as any).gtag('event', 'exception', {
@@ -57,10 +56,10 @@ export class ProfileErrorBoundary extends React.Component<Props, State> {
   }
 
   handleRetry = () => {
-    this.setState({ 
-      hasError: false, 
-      error: null, 
-      errorInfo: null 
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null
     })
   }
 

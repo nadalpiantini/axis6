@@ -17,12 +17,12 @@ interface PasswordResetEmailProps {
   resetUrl: string
 }
 
-export const PasswordResetEmail = ({ 
-  name = 'Usuario', 
-  resetUrl 
+export const PasswordResetEmail = ({
+  name = 'Usuario',
+  resetUrl
 }: PasswordResetEmailProps) => {
   const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
-  
+
   return (
     <Html>
       <Head />
@@ -53,9 +53,9 @@ export const PasswordResetEmail = ({
                   Hola {name}
                 </Text>
               </div>
-              
+
               <Text className="text-slate-700 mb-6 leading-relaxed">
-                Recibimos una solicitud para restablecer la contraseña de tu cuenta AXIS6. 
+                Recibimos una solicitud para restablecer la contraseña de tu cuenta AXIS6.
                 Si fuiste tú quien solicitó este cambio, puedes crear una nueva contraseña haciendo clic en el botón de abajo.
               </Text>
 
@@ -87,7 +87,7 @@ export const PasswordResetEmail = ({
                 🚨 ¿No solicitaste este cambio?
               </Heading>
               <Text className="text-red-800 text-sm mb-4">
-                Si no solicitaste restablecer tu contraseña, tu cuenta podría estar en riesgo. 
+                Si no solicitaste restablecer tu contraseña, tu cuenta podría estar en riesgo.
                 Te recomendamos:
               </Text>
               <ul className="text-red-800 text-sm space-y-1 m-0 pl-4">
@@ -116,7 +116,7 @@ export const PasswordResetEmail = ({
                 💬 ¿Necesitas ayuda?
               </Heading>
               <Text className="text-slate-700 text-sm mb-3">
-                Si tienes problemas para restablecer tu contraseña o tienes preguntas sobre la seguridad de tu cuenta, 
+                Si tienes problemas para restablecer tu contraseña o tienes preguntas sobre la seguridad de tu cuenta,
                 nuestro equipo de soporte está aquí para ayudarte.
               </Text>
               <Link href={`${baseUrl}/support`} className="text-blue-600 text-sm font-medium">

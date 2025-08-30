@@ -17,9 +17,9 @@ export function LoginForm() {
   const supabase = createClient()
   const { setUser } = useAuthStore()
   const { addNotification } = useUIStore()
-  
+
   const [showPassword, setShowPassword] = useState(false)
-  
+
   const {
     register,
     handleSubmit,
@@ -34,7 +34,7 @@ export function LoginForm() {
   const onSubmit = async (data: LoginInput) => {
     try {
       clearErrors()
-      
+
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password

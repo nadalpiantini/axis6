@@ -15,7 +15,7 @@ export interface Streak {
 
 async function fetchStreaks(userId: string): Promise<Streak[]> {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('axis6_streaks')
     .select('*')

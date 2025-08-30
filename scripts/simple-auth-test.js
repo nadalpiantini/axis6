@@ -74,7 +74,7 @@ async function main() {
   if (authWorking) {
     console.log('✅ Authentication is working!')
     console.log('\n🚀 READY TO TEST:')
-    console.log('1. Open http://localhost:6789')
+    console.log('1. Open http://localhost:3000')
     console.log('2. Go to Register page')
     console.log('3. Use a strong password like: MyStr0ng!Pass2024')
     console.log('4. Complete onboarding')

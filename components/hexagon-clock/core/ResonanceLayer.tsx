@@ -6,10 +6,10 @@
 'use client'
 
 import React, { memo } from 'react';
-import type { 
-  PrecomputedSVG, 
+import type {
+  PrecomputedSVG,
   ResponsiveSizing,
-  ResonanceData 
+  ResonanceData
 } from '../types/HexagonTypes';
 import { generateResonanceDotPositions } from '../utils/pathGeneration';
 import { HEXAGON_CATEGORIES } from '../utils/clockPositions';
@@ -113,12 +113,12 @@ const ResonanceConnections = memo(function ResonanceConnections({
   animate?: boolean;
 }) {
   if (!resonanceData || resonanceData.length < 2) return null;
-  
+
   const { center } = precomputedSVG;
   const activeAxes = resonanceData.filter(r => r.hasResonance);
-  
+
   if (activeAxes.length < 2) return null;
-  
+
   // Generate connection lines between axes with resonance
   const connections: Array<{
     start: { x: number; y: number };
@@ -126,29 +126,29 @@ const ResonanceConnections = memo(function ResonanceConnections({
     strength: number;
     color: string;
   }> = [];
-  
+
   for (let i = 0; i < activeAxes.length; i++) {
     for (let j = i + 1; j < activeAxes.length; j++) {
       const axis1 = activeAxes[i];
       const axis2 = activeAxes[j];
-      
+
       const cat1 = HEXAGON_CATEGORIES.find(c => c.key === axis1.axisSlug);
       const cat2 = HEXAGON_CATEGORIES.find(c => c.key === axis2.axisSlug);
-      
+
       if (!cat1 || !cat2) continue;
-      
-      const pos1 = precomputedSVG.clockPositions.find(p => 
+
+      const pos1 = precomputedSVG.clockPositions.find(p =>
         p.angle === cat1.clockPosition.angle
       );
-      const pos2 = precomputedSVG.clockPositions.find(p => 
+      const pos2 = precomputedSVG.clockPositions.find(p =>
         p.angle === cat2.clockPosition.angle
       );
-      
+
       if (!pos1 || !pos2) continue;
-      
+
       const strength = Math.min(axis1.resonanceCount + axis2.resonanceCount, 10) / 10;
       const blendedColor = blendColors(cat1.color, cat2.color);
-      
+
       connections.push({
         start: pos1,
         end: pos2,
@@ -157,7 +157,7 @@ const ResonanceConnections = memo(function ResonanceConnections({
       });
     }
   }
-  
+
   return (
     <g className="resonance-connections">
       {connections.map((conn, idx) => (
@@ -198,9 +198,9 @@ const ResonanceWhisper = memo(function ResonanceWhisper({
   fontSize?: string;
 }) {
   if (!visible || !text) return null;
-  
+
   return (
-    <g 
+    <g
       className="resonance-whisper"
       style={{
         opacity: visible ? 1 : 0,
@@ -220,7 +220,7 @@ const ResonanceWhisper = memo(function ResonanceWhisper({
         strokeWidth="1"
         strokeOpacity="0.5"
       />
-      
+
       {/* Whisper text */}
       <text
         x={position.x}
@@ -248,41 +248,41 @@ export const ResonanceLayer = memo(function ResonanceLayer({
   windowWidth = 640
 }: ResonanceLayerProps) {
   if (!showResonance || !resonanceData) return null;
-  
+
   const { center, radius } = precomputedSVG;
   const resonanceRadius = responsiveSizing.resonanceRadius;
   const dotSize = windowWidth < 640 ? 1.5 : 2;
-  
+
   // Generate resonance dot positions
   const dots = generateResonanceDotPositions(resonanceData, center, resonanceRadius);
-  
+
   // Find axes with strong resonance for ripple effects
   const strongResonanceAxes = resonanceData
     .filter(r => r.hasResonance && r.resonanceCount >= 3)
     .map(r => {
       const category = HEXAGON_CATEGORIES.find(c => c.key === r.axisSlug);
-      const position = precomputedSVG.clockPositions.find(p => 
+      const position = precomputedSVG.clockPositions.find(p =>
         category && p.angle === category.clockPosition.angle
       );
       return { ...r, category, position };
     })
     .filter(r => r.position);
-  
+
   return (
     <g className="resonance-layer">
       {/* Custom CSS animations */}
       <style jsx>{`
         @keyframes resonance-breathe {
-          0%, 100% { 
+          0%, 100% {
             transform: translateZ(0) scale(0.8);
             opacity: 0.4;
           }
-          50% { 
+          50% {
             transform: translateZ(0) scale(1.2);
             opacity: 0.8;
           }
         }
-        
+
         @keyframes resonance-ripple {
           0% {
             transform: translateZ(0) scale(0.5);
@@ -293,7 +293,7 @@ export const ResonanceLayer = memo(function ResonanceLayer({
             stroke-opacity: 0;
           }
         }
-        
+
         @keyframes resonance-flow {
           0%, 100% {
             stroke-dashoffset: 0;
@@ -305,14 +305,14 @@ export const ResonanceLayer = memo(function ResonanceLayer({
           }
         }
       `}</style>
-      
+
       {/* Resonance connections between active axes */}
       <ResonanceConnections
         precomputedSVG={precomputedSVG}
         resonanceData={resonanceData}
         animate={animate}
       />
-      
+
       {/* Ripple effects for strong resonance */}
       {strongResonanceAxes.map((axis, idx) => (
         <ResonanceRipple
@@ -324,7 +324,7 @@ export const ResonanceLayer = memo(function ResonanceLayer({
           animate={animate}
         />
       ))}
-      
+
       {/* Individual resonance dots */}
       {dots.map((dot, idx) => (
         <ResonanceDot
@@ -351,20 +351,20 @@ function blendColors(color1: string, color2: string): string {
   // Convert hex to RGB
   const hex1 = color1.replace('#', '');
   const hex2 = color2.replace('#', '');
-  
+
   const r1 = parseInt(hex1.substring(0, 2), 16);
   const g1 = parseInt(hex1.substring(2, 4), 16);
   const b1 = parseInt(hex1.substring(4, 6), 16);
-  
+
   const r2 = parseInt(hex2.substring(0, 2), 16);
   const g2 = parseInt(hex2.substring(2, 4), 16);
   const b2 = parseInt(hex2.substring(4, 6), 16);
-  
+
   // Blend by averaging
   const r = Math.round((r1 + r2) / 2);
   const g = Math.round((g1 + g2) / 2);
   const b = Math.round((b1 + b2) / 2);
-  
+
   // Convert back to hex
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }

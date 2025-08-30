@@ -33,7 +33,7 @@ export function ChatMessageList({
 }: ChatMessageListProps) {
   const topRef = useRef<HTMLDivElement>(null)
   const isIntersecting = useIntersection(topRef, { threshold: 0.1 })
-  
+
   // Load more messages when scrolling to top
   useEffect(() => {
     if (isIntersecting && hasMore && !isLoading) {
@@ -42,7 +42,7 @@ export function ChatMessageList({
   }, [isIntersecting, hasMore, isLoading, onLoadMore])
 
   return (
-    <ScrollArea 
+    <ScrollArea
       className={cn(
         "flex-1 px-4 py-2",
         "scrollbar-thin scrollbar-thumb-neutral-600 scrollbar-track-transparent",
@@ -75,7 +75,7 @@ export function ChatMessageList({
         <AnimatePresence initial={false}>
           {messages.map((message, index) => {
             const previousMessage = messages[index - 1]
-            const isGrouped = 
+            const isGrouped =
               previousMessage &&
               previousMessage.sender_id === message.sender_id &&
               new Date(message.created_at).getTime() - new Date(previousMessage.created_at).getTime() < 5 * 60 * 1000 // 5 minutes

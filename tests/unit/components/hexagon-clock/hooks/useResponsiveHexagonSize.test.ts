@@ -50,7 +50,7 @@ Element.prototype.getBoundingClientRect = jest.fn(() => ({
 const mockWindowResize = (width: number, height: number) => {
   Object.defineProperty(window, 'innerWidth', { value: width, writable: true });
   Object.defineProperty(window, 'innerHeight', { value: height, writable: true });
-  
+
   // Trigger resize event
   act(() => {
     window.dispatchEvent(new Event('resize'));
@@ -99,10 +99,10 @@ describe('useResponsiveHexagonSize Hook', () => {
 
     it('calculates appropriate dimensions based on container width', () => {
       const containerWidths = [200, 300, 400, 500];
-      
+
       containerWidths.forEach(width => {
         const { result } = renderHook(() => useResponsiveHexagonSize(width));
-        
+
         expect(result.current.size).toBeGreaterThan(0);
         expect(result.current.size).toBeLessThanOrEqual(width);
         expect(result.current.labelDistance).toBeGreaterThan(0);
@@ -155,17 +155,17 @@ describe('useResponsiveHexagonSize Hook', () => {
   describe('Touch Target Optimization', () => {
     it('ensures touch targets meet WCAG 2.1 AA requirements (44px minimum)', () => {
       const mobileSizes = [300, 375, 414]; // Common mobile widths
-      
+
       mobileSizes.forEach(width => {
         const { result } = renderHook(() => useResponsiveHexagonSize(width));
-        
+
         expect(result.current.touchTarget).toBeGreaterThanOrEqual(44);
       });
     });
 
     it('scales touch targets appropriately for different sizes', () => {
       const sizes = [200, 400, 600];
-      const results = sizes.map(size => 
+      const results = sizes.map(size =>
         renderHook(() => useResponsiveHexagonSize(size)).result.current
       );
 
@@ -197,7 +197,7 @@ describe('useResponsiveHexagonSize Hook', () => {
 
       const fontSize = result.current.fontSize;
       const sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl'];
-      
+
       const getLabelIndex = (sizeClass: string) => {
         const match = sizeClass.match(/text-(\w+)/);
         return match ? sizes.indexOf(match[1]) : -1;
@@ -209,7 +209,7 @@ describe('useResponsiveHexagonSize Hook', () => {
 
       // Center should typically be larger than labels
       expect(centerIndex).toBeGreaterThanOrEqual(labelIndex);
-      
+
       // All should be valid sizes
       expect(labelIndex).toBeGreaterThanOrEqual(0);
       expect(centerIndex).toBeGreaterThanOrEqual(0);
@@ -220,7 +220,7 @@ describe('useResponsiveHexagonSize Hook', () => {
   describe('Proportional Scaling', () => {
     it('maintains proper proportions across different sizes', () => {
       const sizes = [200, 300, 400, 500];
-      const results = sizes.map(size => 
+      const results = sizes.map(size =>
         renderHook(() => useResponsiveHexagonSize(size)).result.current
       );
 
@@ -260,7 +260,7 @@ describe('useResponsiveHexagonSize Hook', () => {
       );
 
       const firstResult = result.current;
-      
+
       // Re-render with same width
       rerender({ width: 400 });
       const secondResult = result.current;
@@ -275,7 +275,7 @@ describe('useResponsiveHexagonSize Hook', () => {
       );
 
       const firstResult = result.current;
-      
+
       // Re-render with different width
       rerender({ width: 500 });
       const secondResult = result.current;
@@ -312,7 +312,7 @@ describe('useContainerSize Hook', () => {
 
     expect(result.current).toHaveProperty('containerRef');
     expect(result.current).toHaveProperty('containerWidth');
-    
+
     expect(result.current.containerRef).toBeDefined();
     expect(typeof result.current.containerWidth).toBe('number');
   });
@@ -322,7 +322,7 @@ describe('useContainerSize Hook', () => {
 
     // Mock container element
     const mockElement = document.createElement('div');
-    
+
     act(() => {
       result.current.containerRef.current = mockElement;
     });
@@ -338,9 +338,9 @@ describe('useContainerSize Hook', () => {
 
   it('cleans up ResizeObserver on unmount', () => {
     const { unmount } = renderHook(() => useContainerSize());
-    
+
     unmount();
-    
+
     // Verify cleanup (mock ResizeObserver should have been disconnected)
     expect(true).toBe(true); // Test passes if no errors during unmount
   });
@@ -349,13 +349,13 @@ describe('useContainerSize Hook', () => {
 describe('useDeviceCapabilities Hook', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset navigator properties
     Object.defineProperty(window.navigator, 'hardwareConcurrency', { value: 8, writable: true });
     Object.defineProperty(window.navigator, 'deviceMemory', { value: 8, writable: true });
-    Object.defineProperty(window.navigator, 'connection', { 
-      value: { effectiveType: '4g', downlink: 10 }, 
-      writable: true 
+    Object.defineProperty(window.navigator, 'connection', {
+      value: { effectiveType: '4g', downlink: 10 },
+      writable: true
     });
   });
 
@@ -367,7 +367,7 @@ describe('useDeviceCapabilities Hook', () => {
     expect(result.current).toHaveProperty('memory');
     expect(result.current).toHaveProperty('connectionType');
     expect(result.current).toHaveProperty('performanceLevel');
-    
+
     expect(typeof result.current.cpuCores).toBe('number');
     expect(typeof result.current.memory).toBe('number');
     expect(typeof result.current.connectionType).toBe('string');
@@ -414,9 +414,9 @@ describe('useDeviceCapabilities Hook', () => {
 
   it('detects connection quality correctly', () => {
     const connectionTypes = ['4g', '3g', '2g', 'slow-2g'];
-    
+
     connectionTypes.forEach(type => {
-      Object.defineProperty(window.navigator, 'connection', { 
+      Object.defineProperty(window.navigator, 'connection', {
         value: { effectiveType: type, downlink: type === '4g' ? 10 : 1 },
         writable: true
       });
@@ -430,7 +430,7 @@ describe('useDeviceCapabilities Hook', () => {
     const { result, rerender } = renderHook(() => useDeviceCapabilities());
 
     const firstResult = result.current;
-    
+
     rerender();
     const secondResult = result.current;
 

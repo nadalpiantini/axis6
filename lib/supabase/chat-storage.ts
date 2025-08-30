@@ -41,7 +41,7 @@ export class ChatStorageService {
   private supabase = createClient()
   private readonly BUCKET_NAME = 'chat-files'
   private readonly MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
-  
+
   /**
    * Upload a file to chat storage
    */
@@ -86,7 +86,7 @@ export class ChatStorageService {
 
       if (uploadError) {
         logger.error('File upload failed:', uploadError)
-        
+
         // Update attachment status to error
         await this.updateAttachmentStatus(attachment_id, 'error')
         throw new Error('File upload failed')
@@ -278,7 +278,7 @@ export class ChatStorageService {
    */
 
   private async updateAttachmentStatus(
-    attachmentId: string, 
+    attachmentId: string,
     status: ChatAttachment['upload_status']
   ): Promise<void> {
     const { error } = await this.supabase

@@ -6,7 +6,6 @@ import Link from 'next/link'
 
 import { LogoFull } from '@/components/ui/Logo'
 
-
 const axes = [
   { name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },
   { name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600' },
@@ -24,7 +23,7 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div 
+    <div
       className="min-h-screen text-white"
       style={{
         paddingTop: 'env(safe-area-inset-top, 0px)',

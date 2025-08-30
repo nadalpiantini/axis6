@@ -39,9 +39,9 @@ export function CategoryCard({
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
+    visible: {
+      opacity: 1,
+      scale: 1,
       y: 0,
       transition: { delay: animationDelay * 0.1, duration: 0.4, ease: "easeOut" }
     },
@@ -49,7 +49,7 @@ export function CategoryCard({
       scale: 1.02,
       transition: { duration: 0.2, ease: "easeInOut" }
     },
-    tap: { 
+    tap: {
       scale: 0.98,
       transition: { duration: 0.1 }
     }
@@ -63,8 +63,8 @@ export function CategoryCard({
 
   const checkVariants = {
     hidden: { scale: 0, opacity: 0 },
-    visible: { 
-      scale: 1, 
+    visible: {
+      scale: 1,
       opacity: 1,
       transition: { type: "spring", stiffness: 300, damping: 25 }
     }
@@ -80,8 +80,8 @@ export function CategoryCard({
       onClick={disabled ? undefined : onClick}
       className={`
         relative glass rounded-2xl p-6 cursor-pointer transition-all duration-300
-        ${isSelected 
-          ? `ring-2 ring-[${brandColors.primary}] bg-white/20 shadow-lg ${brandColors.shadow}` 
+        ${isSelected
+          ? `ring-2 ring-[${brandColors.primary}] bg-white/20 shadow-lg ${brandColors.shadow}`
           : disabled
             ? 'opacity-50 cursor-not-allowed'
             : 'hover:bg-white/10 hover:shadow-md'
@@ -89,7 +89,7 @@ export function CategoryCard({
         group
       `}
       style={{
-        boxShadow: isSelected 
+        boxShadow: isSelected
           ? `0 0 20px rgba(${brandColors.rgb}, 0.3), 0 8px 32px rgba(${brandColors.rgb}, 0.1)`
           : undefined
       }}
@@ -103,7 +103,7 @@ export function CategoryCard({
       >
         <Check className="w-4 h-4 text-white" />
       </motion.div>
-      
+
       {/* Icon Container */}
       <motion.div
         variants={iconVariants}
@@ -118,21 +118,21 @@ export function CategoryCard({
         }}
       >
         {/* Icon Glow Effect */}
-        <div 
+        <div
           className="absolute inset-0 opacity-30 blur-sm"
           style={{
             background: `radial-gradient(circle, ${brandColors.primary}, transparent)`
           }}
         />
-        
-        <AxisIcon 
-          axis={category.slug} 
-          size={24} 
+
+        <AxisIcon
+          axis={category.slug}
+          size={24}
           color="white"
           className="relative z-10 drop-shadow-sm"
         />
       </motion.div>
-      
+
       {/* Content */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-white transition-colors">
@@ -142,7 +142,7 @@ export function CategoryCard({
           {description}
         </p>
       </div>
-      
+
       {/* Subtle border glow for selected state */}
       {isSelected && (
         <motion.div
@@ -155,7 +155,7 @@ export function CategoryCard({
           }}
         />
       )}
-      
+
       {/* Hover overlay */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </motion.div>

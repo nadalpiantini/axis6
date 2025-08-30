@@ -144,7 +144,7 @@ function main() {
   log('================================================', 'green')
   log('\n📋 Next Steps:', 'blue')
   log('1. Review bundle analysis at .next/analyze/client.html', 'reset')
-  log('2. Test analytics page: npm run dev → http://localhost:6789/analytics', 'reset')
+  log('2. Test analytics page: npm run dev → http://localhost:3000/analytics', 'reset')
   log('3. Run E2E tests: npm run test:e2e:analytics', 'reset')
   log('4. Monitor performance in production', 'reset')
   

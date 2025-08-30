@@ -18,77 +18,83 @@ interface HexagonChartProps {
 
 // THE RITUAL OS - Updated category system with brand colors
 const categories = [
-  { 
-    key: 'physical', 
-    label: 'Living Movement', 
+  {
+    key: 'physical',
+    label: 'Living Movement',
     shortLabel: 'Physical',
     color: '#D4845C', // Warm Terracotta
     softColor: '#F4E4DE',
     mantra: 'Today I inhabit my body with tenderness',
-    angle: 0 
+    angle: 0
   },
-  { 
-    key: 'mental', 
-    label: 'Inner Clarity', 
+  {
+    key: 'mental',
+    label: 'Inner Clarity',
     shortLabel: 'Mental',
     color: '#8B9DC3', // Sage Blue
     softColor: '#E8EDF4',
     mantra: 'Today I make space to think less',
-    angle: 60 
+    angle: 60
   },
-  { 
-    key: 'emotional', 
-    label: 'Creative Expression', 
+  {
+    key: 'emotional',
+    label: 'Creative Expression',
     shortLabel: 'Emotional',
     color: '#B8A4C9', // Light Lavender
     softColor: '#F0EAEF',
     mantra: 'Today I create not to show, but to free',
-    angle: 120 
+    angle: 120
   },
-  { 
-    key: 'social', 
-    label: 'Mirror Connection', 
+  {
+    key: 'social',
+    label: 'Mirror Connection',
     shortLabel: 'Social',
     color: '#A8C8B8', // Soft Sage Green
     softColor: '#E8F1EC',
     mantra: 'Today I connect without disappearing',
-    angle: 180 
+    angle: 180
   },
-  { 
-    key: 'spiritual', 
-    label: 'Elevated Presence', 
+  {
+    key: 'spiritual',
+    label: 'Elevated Presence',
     shortLabel: 'Spiritual',
     color: '#7B6C8D', // Deep Lavender
     softColor: '#E9E4ED',
     mantra: 'Today I find myself beyond doing',
-    angle: 240 
+    angle: 240
   },
-  { 
-    key: 'material', 
-    label: 'Earthly Sustenance', 
+  {
+    key: 'material',
+    label: 'Earthly Sustenance',
     shortLabel: 'Material',
     color: '#C19A6B', // Golden Brown
     softColor: '#F1EBE4',
     mantra: 'Today I sustain myself, not prove myself',
-    angle: 300 
+    angle: 300
   }
 ]
 
-const HexagonChart = memo(function HexagonChart({ 
-  data, 
+const HexagonChart = memo(function HexagonChart({
+  data,
   size = 300,
-  animate = true 
+  animate = true
 }: HexagonChartProps) {
   const [isClient, setIsClient] = useState(false)
   const [windowWidth, setWindowWidth] = useState(0)
-  
+
   // Responsive size based on screen width
   const responsiveSize = useMemo(() => {
     if (windowWidth < 640) return Math.min(windowWidth - 48, 280) // Mobile
     if (windowWidth < 768) return 350 // Tablet
     return size // Desktop
   }, [windowWidth, size])
-  
+
+  // Calculate center percentage value
+  const centerPercentage = useMemo(() =>
+    Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
+    [data]
+  )
+
   const center = responsiveSize / 2
   const radius = responsiveSize * 0.4
   const labelDistance = radius * 1.3
@@ -96,14 +102,14 @@ const HexagonChart = memo(function HexagonChart({
   useEffect(() => {
     setIsClient(true)
     setWindowWidth(window.innerWidth)
-    
+
     const handleResize = () => setWindowWidth(window.innerWidth)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   // Calculate hexagon points for the background
-  const hexagonPoints = useMemo(() => 
+  const hexagonPoints = useMemo(() =>
     categories.map((cat) => {
       const angleRad = (cat.angle * Math.PI) / 180
       const x = center + radius * Math.cos(angleRad)
@@ -114,7 +120,7 @@ const HexagonChart = memo(function HexagonChart({
   )
 
   // Calculate data polygon points
-  const dataPoints = useMemo(() => 
+  const dataPoints = useMemo(() =>
     categories.map((cat) => {
       const value = data[cat.key as keyof typeof data] / 100
       const angleRad = (cat.angle * Math.PI) / 180
@@ -125,7 +131,7 @@ const HexagonChart = memo(function HexagonChart({
     [data, center, radius]
   )
 
-  const dataPolygonPoints = useMemo(() => 
+  const dataPolygonPoints = useMemo(() =>
     dataPoints.map(p => `${p.x},${p.y}`).join(' '),
     [dataPoints]
   )
@@ -135,8 +141,8 @@ const HexagonChart = memo(function HexagonChart({
 
   if (!isClient) {
     return (
-      <div 
-        className="w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-3xl animate-pulse backdrop-blur-sm mx-auto" 
+      <div
+        className="w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-3xl animate-pulse backdrop-blur-sm mx-auto"
       />
     )
   }
@@ -204,8 +210,8 @@ const HexagonChart = memo(function HexagonChart({
           strokeWidth="3"
           initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ 
-            duration: 1.2, 
+          transition={{
+            duration: 1.2,
             ease: "easeOut",
             delay: 1
           }}
@@ -222,12 +228,12 @@ const HexagonChart = memo(function HexagonChart({
             stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="3"
             initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               opacity: 1
             }}
-            transition={{ 
-              delay: 1.2 + idx * 0.1, 
+            transition={{
+              delay: 1.2 + idx * 0.1,
               duration: 0.8,
               repeat: Infinity,
               repeatType: "reverse",
@@ -275,25 +281,25 @@ const HexagonChart = memo(function HexagonChart({
             }}
             initial={animate ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ 
+            transition={{
               delay: 1.5 + 0.1 * idx,
               duration: 0.6,
               type: "spring",
               stiffness: 200
             }}
           >
-            <motion.span 
+            <motion.span
               className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-white/80 border border-white/40 mb-0.5 sm:mb-1"
               style={{ color: cat.color }}
               title={cat.mantra}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 boxShadow: `0 4px 12px ${cat.color}30`
               }}
             >
               {cat.shortLabel}
             </motion.span>
-            <span 
+            <span
               className="text-[10px] sm:text-xs text-gray-600/80 font-medium px-1 sm:px-1.5 py-0.5 rounded bg-white/60"
             >
               {value}%
@@ -309,9 +315,9 @@ const HexagonChart = memo(function HexagonChart({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 2 }}
       >
-        <motion.div 
+        <motion.div
           className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg border border-white/40"
-          style={{ 
+          style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(244,228,222,0.8) 100%)',
             color: '#A86847'
           }}
@@ -324,12 +330,9 @@ const HexagonChart = memo(function HexagonChart({
             ease: "easeInOut"
           }}
         >
-          {useMemo(() => 
-            Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
-            [data]
-          )}%
+          {centerPercentage}%
         </motion.div>
-        <motion.div 
+        <motion.div
           className="text-xs sm:text-sm text-gray-600/80 font-medium mt-1 sm:mt-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

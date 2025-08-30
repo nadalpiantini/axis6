@@ -1,12 +1,12 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Save, 
+import {
+  X,
+  Plus,
+  Edit3,
+  Trash2,
+  Save,
   Loader2,
   CheckCircle,
   AlertCircle,
@@ -15,17 +15,18 @@ import {
 import { useState, useEffect, useMemo } from 'react'
 
 import { AxisIcon } from '@/components/icons'
-import { 
-  useAxisActivities, 
-  useCreateActivity, 
-  useUpdateActivity, 
-  useDeleteActivity 
+import {
+  useAxisActivities,
+  useCreateActivity,
+  useUpdateActivity,
+  useDeleteActivity
 } from '@/lib/react-query/hooks/useAxisActivities'
+import { handleError, handleMutationError } from '@/lib/error/standardErrorHandler'
 
 // Predefined activity suggestions for each axis
 const ACTIVITY_SUGGESTIONS: Record<string, string[]> = {
   physical: [
-    'Running', 'Yoga', 'Swimming', 'Cycling', 'Gym workout', 
+    'Running', 'Yoga', 'Swimming', 'Cycling', 'Gym workout',
     'Tennis', 'Padel', 'Basketball', 'Soccer', 'Walking',
     'Hiking', 'Dancing', 'Boxing', 'Pilates', 'CrossFit',
     'Rock climbing', 'Martial arts', 'Stretching', 'Jump rope', 'Rowing'
@@ -80,17 +81,17 @@ interface ActivityForm {
   description: string
 }
 
-export function AxisActivitiesModal({ 
-  isOpen, 
-  onClose, 
-  userId, 
-  axis 
+export function AxisActivitiesModal({
+  isOpen,
+  onClose,
+  userId,
+  axis
 }: AxisActivitiesModalProps) {
   const { data: activities = [], isLoading, refetch } = useAxisActivities(userId, axis.id)
   const createActivity = useCreateActivity()
   const updateActivity = useUpdateActivity()
   const deleteActivity = useDeleteActivity()
-  
+
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [formData, setFormData] = useState<ActivityForm>({
@@ -102,11 +103,11 @@ export function AxisActivitiesModal({
     type: 'success' | 'error'
     message: string
   }>({ show: false, type: 'success', message: '' })
-  
+
   // Track used suggestions to avoid immediate repeats
   const [usedSuggestions, setUsedSuggestions] = useState<Set<string>>(new Set())
   const [displayedSuggestions, setDisplayedSuggestions] = useState<string[]>([])
-  
+
   // Get the axis type from the icon name
   const axisType = useMemo(() => {
     const iconToType: Record<string, string> = {
@@ -119,17 +120,17 @@ export function AxisActivitiesModal({
     }
     return iconToType[axis.icon] || 'physical'
   }, [axis.icon])
-  
+
   // Get random suggestions that haven't been used recently
   const getRandomSuggestions = (count: number = 6) => {
     const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType]
     if (!availableSuggestions) return []
     const unused = availableSuggestions.filter(s => !usedSuggestions.has(s))
     const pool = unused.length >= count ? unused : availableSuggestions
-    
+
     const selected: string[] = []
     const tempSet = new Set(selected)
-    
+
     while (selected.length < count && selected.length < pool.length) {
       const randomIndex = Math.floor(Math.random() * pool.length)
       const suggestion = pool[randomIndex]
@@ -138,22 +139,22 @@ export function AxisActivitiesModal({
         tempSet.add(suggestion)
       }
     }
-    
+
     return selected
   }
-  
+
   // Initialize suggestions when adding new activity
   useEffect(() => {
     if (isAddingNew) {
       setDisplayedSuggestions(getRandomSuggestions())
     }
   }, [isAddingNew, axisType])
-  
+
   // Handle suggestion click
   const handleSuggestionClick = (suggestion: string, index: number) => {
     setFormData(prev => ({ ...prev, activity_name: suggestion }))
     setUsedSuggestions(prev => new Set(prev).add(suggestion))
-    
+
     // Replace the clicked suggestion with a new one
     const newSuggestions = [...displayedSuggestions]
     const suggestions = ACTIVITY_SUGGESTIONS[axisType]
@@ -161,7 +162,7 @@ export function AxisActivitiesModal({
     const availableSuggestions = suggestions.filter(
       s => !displayedSuggestions.includes(s) && s !== suggestion
     )
-    
+
     if (availableSuggestions.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableSuggestions.length)
       const newSuggestion = availableSuggestions[randomIndex]
@@ -224,14 +225,19 @@ export function AxisActivitiesModal({
         })
         showNotification('success', 'Activity updated successfully!')
       }
-      
+
       handleCancel()
       refetch()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving activity:', error);
+      handleMutationError(error, {
+        mutationName: editingActivity ? 'update_activity' : 'create_activity',
+        component: 'AxisActivitiesModal',
+        showToast: false, // Using custom notification
+        context: {
+          activityName: formData.activity_name,
+          categoryId: selectedCategory?.id
+        }
+      })
       showNotification('error', 'Failed to save activity')
     }
   }
@@ -246,10 +252,12 @@ export function AxisActivitiesModal({
       showNotification('success', 'Activity deleted successfully!')
       refetch()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error deleting activity:', error);
+      handleMutationError(error, {
+        mutationName: 'delete_activity',
+        component: 'AxisActivitiesModal',
+        showToast: false, // Using custom notification
+        context: { activityId: id }
+      })
       showNotification('error', 'Failed to delete activity')
     }
   }
@@ -262,10 +270,16 @@ export function AxisActivitiesModal({
       })
       refetch()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error toggling activity:', error);
+      handleMutationError(error, {
+        mutationName: 'toggle_activity_status',
+        component: 'AxisActivitiesModal',
+        level: 'warning',
+        userMessage: 'Unable to toggle activity status',
+        context: {
+          activityId: activity.id,
+          newStatus: !activity.is_active
+        }
+      })
     }
   }
 
@@ -292,7 +306,7 @@ export function AxisActivitiesModal({
             className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 lg:p-6"
           >
             <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-2xl max-h-[95vh] sm:max-h-[90vh] glass rounded-2xl overflow-hidden flex flex-col"
-                 style={{ 
+                 style={{
                    paddingTop: 'env(safe-area-inset-top, 0px)',
                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
                    paddingLeft: 'env(safe-area-inset-left, 0px)',
@@ -302,11 +316,11 @@ export function AxisActivitiesModal({
               <div className="flex-shrink-0 p-4 sm:p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div 
+                    <div
                       className="p-2 rounded-lg flex-shrink-0"
                       style={{ backgroundColor: `${axis.color  }20` }}
                     >
-                      <AxisIcon 
+                      <AxisIcon
                         axis={axis.icon}
                         size={24}
                         color={axis.color}
@@ -334,7 +348,7 @@ export function AxisActivitiesModal({
               {/* Content */}
               <div className="flex-1 overflow-hidden">
                 <div className="p-4 sm:p-6 h-full overflow-y-auto overscroll-contain"
-                     style={{ 
+                     style={{
                        scrollbarWidth: 'thin',
                        WebkitOverflowScrolling: 'touch'
                      }}>
@@ -392,13 +406,13 @@ export function AxisActivitiesModal({
                               </div>
                             </div>
                           )}
-                          
+
                           <input
                             type="text"
                             value={formData.activity_name}
-                            onChange={(e) => setFormData(prev => ({ 
-                              ...prev, 
-                              activity_name: e.target.value 
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              activity_name: e.target.value
                             }))}
                             placeholder="Activity name (e.g., 'Go for a run')"
                             className="w-full px-4 py-3 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 min-h-[44px] touch-manipulation"
@@ -407,9 +421,9 @@ export function AxisActivitiesModal({
                           />
                           <textarea
                             value={formData.description}
-                            onChange={(e) => setFormData(prev => ({ 
-                              ...prev, 
-                              description: e.target.value 
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              description: e.target.value
                             }))}
                             placeholder="Description (optional)"
                             className="w-full px-4 py-3 text-sm sm:text-base bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 resize-none touch-manipulation"
@@ -544,8 +558,8 @@ export function AxisActivitiesModal({
                 >
                   <div className={`
                     flex items-center gap-2 px-4 py-3 rounded-lg backdrop-blur-md min-h-[44px]
-                    ${notification.type === 'success' 
-                      ? 'bg-green-500/20 border border-green-500/50 text-green-400' 
+                    ${notification.type === 'success'
+                      ? 'bg-green-500/20 border border-green-500/50 text-green-400'
                       : 'bg-red-500/20 border border-red-500/50 text-red-400'
                     }
                   `}>

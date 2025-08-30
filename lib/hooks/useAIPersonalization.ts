@@ -241,28 +241,28 @@ export function useAIPersonalization() {
   return {
     // State
     ...state,
-    
+
     // Loading states
     isGeneratingNotifications: generateNotificationsMutation.isPending,
     isMarkingNotification: markNotificationMutation.isPending,
-    
+
     // Actions
     generateNotifications,
     markNotification,
     refreshAIData,
-    
+
     // Utilities
     getNotificationsByPriority,
     getActiveInsights,
     getInsightsByType,
-    
+
     // Computed values
     hasActiveNotifications: state.notifications.some(n => !n.delivered),
     hasHighPriorityNotifications: state.notifications.some(n => n.priority === 'high' || n.priority === 'urgent'),
-    behaviorAnalysisAge: behaviorData?.data?.profile?.last_analyzed 
+    behaviorAnalysisAge: behaviorData?.data?.profile?.last_analyzed
       ? Math.floor((new Date().getTime() - new Date(behaviorData.data.profile.last_analyzed).getTime()) / (1000 * 60 * 60))
       : null,
-    optimalTimeScore: state.optimalTimes.length > 0 
+    optimalTimeScore: state.optimalTimes.length > 0
       ? state.optimalTimes.reduce((sum, t) => sum + t.probability, 0) / state.optimalTimes.length
       : 0
   }
@@ -337,17 +337,17 @@ export function useAIRecommendations() {
     getActivityRecommendations: getActivityRecommendations.mutate,
     getGoalRecommendations: getGoalRecommendations.mutate,
     generateAdaptiveReminders: generateAdaptiveReminders.mutate,
-    
+
     // Loading states
     isLoadingActivities: getActivityRecommendations.isPending,
     isLoadingGoals: getGoalRecommendations.isPending,
     isLoadingReminders: generateAdaptiveReminders.isPending,
-    
+
     // Data
     activityData: getActivityRecommendations.data,
     goalData: getGoalRecommendations.data,
     reminderData: generateAdaptiveReminders.data,
-    
+
     // Errors
     activityError: getActivityRecommendations.error,
     goalError: getGoalRecommendations.error,

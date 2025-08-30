@@ -9,7 +9,7 @@ const fs = require('fs')
 const path = require('path')
 
 // Configuration
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 const TEST_EMAIL = 'test@axis6.app'
 const TEST_PASSWORD = 'TestPassword123!'
 

@@ -21,10 +21,10 @@ export function createClientSafe() {
   try {
     // Use the main client instance to avoid multiple GoTrueClient instances
     const client = createClient()
-    
+
     // Cache the successful instance
     safeClientInstance = client
-    
+
     return client
   } catch (error) {
     // Cache the error to prevent repeated failed initializations

@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/Button'
 import { SearchResult, SearchStats } from '@/lib/services/message-search'
 import { cn } from '@/lib/utils'
 
-
 interface SearchResultsProps {
   results: SearchResult[]
   stats: SearchStats | null
@@ -46,7 +45,7 @@ export function SearchResults({
           return 0
       }
     })
-    
+
     if (groupByRoom) {
       const grouped = sorted.reduce((acc, result) => {
         const roomId = result.room.id
@@ -56,16 +55,16 @@ export function SearchResults({
         acc[roomId].push(result)
         return acc
       }, {} as Record<string, SearchResult[]>)
-      
+
       return Object.entries(grouped).flatMap(([roomId, roomResults]) => roomResults)
     }
-    
+
     return sorted
   }, [results, sortBy, groupByRoom])
 
   const groupedResults = React.useMemo(() => {
     if (!groupByRoom) return null
-    
+
     return sortedResults.reduce((acc, result) => {
       const roomId = result.room.id
       if (!acc[roomId]) {
@@ -85,15 +84,15 @@ export function SearchResults({
 
   const highlightQuery = (text: string) => {
     if (!query.trim()) return text
-    
+
     const terms = query.trim().split(/\s+/).filter(term => term.length > 1)
     let highlighted = text
-    
+
     terms.forEach(term => {
       const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
       highlighted = highlighted.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>')
     })
-    
+
     return highlighted
   }
 
@@ -205,7 +204,7 @@ export function SearchResults({
                   {roomResults.length} results
                 </Badge>
               </div>
-              
+
               <div className="space-y-2">
                 {roomResults.map((result, index) => (
                   <SearchResultItem
@@ -261,7 +260,7 @@ function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResu
             </span>
           </div>
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
             <span className="font-medium text-white">
@@ -280,15 +279,15 @@ function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResu
               {(result.match_rank * 100).toFixed(0)}% match
             </Badge>
           </div>
-          
-          <div 
+
+          <div
             className="text-sm text-neutral-300 leading-relaxed"
-            dangerouslySetInnerHTML={{ 
-              __html: highlightQuery(result.content) 
+            dangerouslySetInnerHTML={{
+              __html: highlightQuery(result.content)
             }}
           />
         </div>
-        
+
         <div className="flex-shrink-0">
           <ArrowUpDown className="h-4 w-4 text-neutral-500" />
         </div>

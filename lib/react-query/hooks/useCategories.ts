@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { createClient } from '@/lib/supabase/client'
+import { handleError } from '@/lib/error/standardErrorHandler'
 
 export interface Category {
   id: number
@@ -21,51 +22,55 @@ async function fetchCategories(): Promise<Category[]> {
     .order('position')
 
   if (error) throw error
-  
+
   // 🛡️ SAFEGUARD: Ensure we don't have more than 6 categories
   const rawData = data || []
   if (rawData.length > 6) {
     }
-  
+
   // Transform the data to ensure proper typing for JSONB fields
   const categories = rawData.slice(0, 6).map(category => {
     let parsedName = category.name
     let parsedDescription = category.description
-    
+
     // 🛡️ SAFE JSONB PARSING with error handling
     try {
       if (typeof category.name === 'string') {
         parsedName = JSON.parse(category.name)
       }
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error(`⚠️ AXIS6: Failed to parse name JSONB for category ${category.id}:`, error);
+      handleError(error, {
+      operation: 'parse_category_name_jsonb', component: 'useCategories',
+        level: 'warning',
+        showToast: false, // Data transformation errors shouldn't show to user
+        context: { categoryId: category.id, rawName: category.name }
+      })
       // Keep original string value as fallback
       parsedName = category.name
     }
-    
+
     try {
       if (typeof category.description === 'string') {
         parsedDescription = JSON.parse(category.description)
       }
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error(`⚠️ AXIS6: Failed to parse description JSONB for category ${category.id}:`, error);
+      handleError(error, {
+      operation: 'parse_category_description_jsonb', component: 'useCategories',
+        level: 'warning',
+        showToast: false, // Data transformation errors shouldn't show to user
+        context: { categoryId: category.id, rawDescription: category.description }
+      })
       // Keep original string value as fallback
       parsedDescription = category.description
     }
-    
+
     return {
       ...category,
       name: parsedName,
       description: parsedDescription
     }
   }) as Category[]
-  
+
   return categories
 }
 

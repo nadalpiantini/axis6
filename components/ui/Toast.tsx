@@ -98,9 +98,9 @@ export function useToast() {
   }
 }
 
-export function ToastContainer({ toasts, onRemove }: { 
+export function ToastContainer({ toasts, onRemove }: {
   toasts: ToastData[]
-  onRemove: (id: string) => void 
+  onRemove: (id: string) => void
 }) {
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 space-y-2">
@@ -109,10 +109,10 @@ export function ToastContainer({ toasts, onRemove }: {
           <motion.div
             key={toast.id}
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ 
-              opacity: 1, 
-              y: index * 60, 
-              scale: 1 
+            animate={{
+              opacity: 1,
+              y: index * 60,
+              scale: 1
             }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.3 }}

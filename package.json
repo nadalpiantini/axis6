@@ -7,9 +7,9 @@
     "node": "20.x"
   },
   "scripts": {
-    "dev": "next dev -p 6789",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "lint:strict": "next lint --max-warnings 0",
@@ -59,6 +59,8 @@
     "setup:resend": "node scripts/configure-resend.js",
     "setup:supabase-email": "node scripts/configure-supabase-email.js",
     "setup:check": "node scripts/check-status.js",
+    "setup:chat": "node scripts/complete-chat-integration.js",
+    "setup:chat-storage": "node scripts/setup-chat-storage.js",
     "production:health": "node scripts/production-health-check.js",
     "production:deploy": "npm run build:production && npm run verify:production",
     "deploy:pre": "node scripts/pre-deploy.js",

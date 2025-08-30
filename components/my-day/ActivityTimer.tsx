@@ -1,8 +1,8 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
+import {
+  X,
   Play,
   Pause,
   Square,
@@ -15,6 +15,7 @@ import { useState, useEffect, useRef } from 'react'
 import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
 import { useStartTimer, useStopTimer } from '@/lib/react-query/hooks/useMyDay'
+import { handleError, handleMutationError } from '@/lib/error/standardErrorHandler'
 
 interface ActivityTimerProps {
   isOpen: boolean
@@ -46,13 +47,13 @@ export function ActivityTimer({
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   const startTimer = useStartTimer()
   const stopTimer = useStopTimer()
-  
+
   // Fetch activities for selected category
   const { data: activities = [] } = useAxisActivities(userId, selectedCategoryId)
-  
+
   // Update activity name when selection changes
   useEffect(() => {
     if (selectedActivityId) {
@@ -62,7 +63,7 @@ export function ActivityTimer({
       }
     }
   }, [selectedActivityId, activities])
-  
+
   // Timer logic
   useEffect(() => {
     if (isRunning) {
@@ -75,34 +76,34 @@ export function ActivityTimer({
         intervalRef.current = null
       }
     }
-    
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
       }
     }
   }, [isRunning])
-  
+
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
-  
+
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const secs = seconds % 60
-    
+
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
-  
+
   const handleStart = async () => {
     setError(null)
-    
+
     if (!activityName.trim()) {
       setError('Please enter an activity name')
       return
     }
-    
+
     try {
       const result = await startTimer.mutateAsync({
         user_id: userId,
@@ -111,45 +112,55 @@ export function ActivityTimer({
         activity_name: activityName.trim(),
         time_block_id: timeBlock?.time_block_id
       })
-      
+
       setActiveLogId(result.log_id)
       setIsRunning(true)
       setElapsedSeconds(0)
     } catch (error: any) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error starting timer:', error);
+      handleMutationError(error, {
+        mutationName: 'start_activity_timer',
+        component: 'ActivityTimer',
+        userId,
+        showToast: false, // Using local error state
+        context: {
+          categoryId: selectedCategoryId,
+          activityName: activityName.trim(),
+          timeBlockId: timeBlock?.time_block_id
+        }
+      })
       setError(error?.message || 'Failed to start timer. Please try again.')
     }
   }
-  
+
   const handlePause = () => {
     setIsRunning(false)
   }
-  
+
   const handleResume = () => {
     setIsRunning(true)
   }
-  
+
   const handleStop = async () => {
     if (!activeLogId) return
-    
+
     try {
       await stopTimer.mutateAsync({
         user_id: userId,
         log_id: activeLogId
       })
-      
+
       setIsRunning(false)
       setElapsedSeconds(0)
       setActiveLogId(null)
       onClose()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error stopping timer:', error);
+      handleMutationError(error, {
+        mutationName: 'stop_activity_timer',
+        component: 'ActivityTimer',
+        userId,
+        userMessage: 'Failed to stop timer properly. Your time may not be saved.',
+        context: { logId: activeLogId }
+      })
     }
   }
 
@@ -212,7 +223,7 @@ export function ActivityTimer({
                     <span className="text-sm text-red-400">{error}</span>
                   </motion.div>
                 )}
-                
+
                 {/* Timer Display */}
                 <motion.div
                   className="text-center py-8"
@@ -249,7 +260,7 @@ export function ActivityTimer({
                           <div className="flex items-center gap-2">
                             {selectedCategoryData && (
                               <>
-                                <div 
+                                <div
                                   className="w-3 h-3 rounded-full"
                                   style={{ backgroundColor: selectedCategoryData.color }}
                                 />
@@ -264,7 +275,7 @@ export function ActivityTimer({
                           </div>
                           <ChevronDown className="w-4 h-4 text-gray-400" />
                         </button>
-                        
+
                         {showCategoryDropdown && (
                           <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-10">
                             {categories.map(category => (
@@ -278,7 +289,7 @@ export function ActivityTimer({
                                 }}
                                 className="w-full px-4 py-3 flex items-center gap-2 hover:bg-white/10 transition-colors text-left"
                               >
-                                <div 
+                                <div
                                   className="w-3 h-3 rounded-full"
                                   style={{ backgroundColor: category.color }}
                                 />
@@ -323,7 +334,7 @@ export function ActivityTimer({
                           No activities configured for this axis
                         </p>
                       )}
-                      
+
                       {(!selectedActivityId || activities.length === 0) && (
                         <input
                           type="text"
@@ -344,7 +355,7 @@ export function ActivityTimer({
                     className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl"
                   >
                     <div className="flex items-center gap-3">
-                      <div 
+                      <div
                         className="w-10 h-10 rounded-lg flex items-center justify-center"
                         style={{ backgroundColor: `${selectedCategoryData?.color  }30` }}
                       >

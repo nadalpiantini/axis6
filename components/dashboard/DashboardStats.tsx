@@ -43,16 +43,16 @@ const StatCard = memo<{
 
 StatCard.displayName = 'StatCard'
 
-export const DashboardStats = memo<DashboardStatsProps>(({ 
-  completedToday, 
-  totalCategories, 
-  currentStreak, 
+export const DashboardStats = memo<DashboardStatsProps>(({
+  completedToday,
+  totalCategories,
+  currentStreak,
   longestStreak,
-  weeklyProgress 
+  weeklyProgress
 }) => {
   // Calculate completion rate
-  const completionRate = totalCategories > 0 
-    ? Math.round((completedToday / totalCategories) * 100) 
+  const completionRate = totalCategories > 0
+    ? Math.round((completedToday / totalCategories) * 100)
     : 0
 
   // Calculate weekly average
@@ -69,7 +69,7 @@ export const DashboardStats = memo<DashboardStatsProps>(({
         subtitle={`${completedToday}/${totalCategories} completed`}
         trend={completionRate > 50 ? 'up' : 'neutral'}
       />
-      
+
       <StatCard
         icon={<Trophy className="w-5 h-5 text-orange-400" />}
         label="Current Streak"
@@ -77,14 +77,14 @@ export const DashboardStats = memo<DashboardStatsProps>(({
         subtitle="days in a row"
         trend={currentStreak > 0 ? 'up' : 'neutral'}
       />
-      
+
       <StatCard
         icon={<Calendar className="w-5 h-5 text-green-400" />}
         label="Best Streak"
         value={longestStreak}
         subtitle="personal record"
       />
-      
+
       <StatCard
         icon={<TrendingUp className="w-5 h-5 text-blue-400" />}
         label="Weekly Average"

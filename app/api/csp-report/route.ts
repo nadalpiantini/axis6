@@ -11,13 +11,13 @@ import { logger } from '@/lib/utils/logger'
 export async function POST(_request: NextRequest) {
   try {
     const violation: { 'csp-report': CSPViolation } = await _request.json()
-    
+
     if (!violation['csp-report']) {
       return NextResponse.json({ error: 'Invalid CSP report format' }, { status: 400 })
     }
 
     const report = violation['csp-report']
-    
+
     // Log the violation
     logger.warn('CSP Violation Reported', {
       directive: report['violated-directive'],

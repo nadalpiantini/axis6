@@ -1,3 +1,4 @@
+import { handleError } from '@/lib/error/standardErrorHandler'
 /**
  * Production Circuit Breaker System
  * Prevents cascading failures and provides graceful degradation
@@ -30,7 +31,7 @@ interface ServiceCall<T> {
 class CircuitBreaker {
   private states: Map<string, CircuitBreakerState> = new Map()
   private config: CircuitBreakerConfig
-  
+
   constructor(config: Partial<CircuitBreakerConfig> = {}) {
     this.config = {
       failureThreshold: 5, // Open circuit after 5 failures
@@ -41,13 +42,13 @@ class CircuitBreaker {
       ...config
     }
   }
-  
+
   /**
    * Execute a service call with circuit breaker protection
    */
   async execute<T>(serviceCall: ServiceCall<T>): Promise<T> {
     const state = this.getState(serviceCall.name)
-    
+
     // Check if circuit is open
     if (state.state === 'OPEN') {
       if (Date.now() < state.nextAttemptTime) {
@@ -61,30 +62,30 @@ class CircuitBreaker {
         this.transitionToHalfOpen(serviceCall.name)
       }
     }
-    
+
     try {
       // Execute the actual service call with timeout
       const result = await this.executeWithTimeout(
         serviceCall.fn,
         serviceCall.timeout || this.config.timeout
       )
-      
+
       // Success - record it
       this.onSuccess(serviceCall.name)
       return result
     } catch (error) {
       // Failure - record it and possibly open circuit
       this.onFailure(serviceCall.name, error as Error)
-      
+
       // Use fallback if available
       if (serviceCall.fallback) {
         return this.executeFallback(serviceCall)
       }
-      
+
       throw error
     }
   }
-  
+
   /**
    * Get current state for a service
    */
@@ -99,10 +100,10 @@ class CircuitBreaker {
         requestCount: 0
       })
     }
-    
+
     return this.states.get(serviceName)!
   }
-  
+
   /**
    * Execute function with timeout
    */
@@ -117,7 +118,7 @@ class CircuitBreaker {
       )
     ])
   }
-  
+
   /**
    * Execute fallback function
    */
@@ -129,7 +130,7 @@ class CircuitBreaker {
       throw new Error(`Service ${serviceCall.name} failed and fallback also failed: ${error}`)
     }
   }
-  
+
   /**
    * Handle successful service call
    */
@@ -137,7 +138,7 @@ class CircuitBreaker {
     const state = this.getState(serviceName)
     state.successes++
     state.requestCount++
-    
+
     if (state.state === 'HALF_OPEN') {
       if (state.successes >= this.config.successThreshold) {
         this.transitionToClosed(serviceName)
@@ -146,10 +147,10 @@ class CircuitBreaker {
       // Reset failure count on success
       state.failures = 0
     }
-    
+
     this.cleanupOldRequests(serviceName)
   }
-  
+
   /**
    * Handle failed service call
    */
@@ -158,10 +159,10 @@ class CircuitBreaker {
     state.failures++
     state.lastFailureTime = Date.now()
     state.requestCount++
-    
+
     // Log the failure
     this.logFailure(serviceName, error)
-    
+
     if (state.state === 'HALF_OPEN') {
       // Go back to open on any failure in half-open state
       this.transitionToOpen(serviceName)
@@ -171,10 +172,10 @@ class CircuitBreaker {
         this.transitionToOpen(serviceName)
       }
     }
-    
+
     this.cleanupOldRequests(serviceName)
   }
-  
+
   /**
    * Transition circuit to OPEN state
    */
@@ -182,14 +183,14 @@ class CircuitBreaker {
     const state = this.getState(serviceName)
     state.state = 'OPEN'
     state.nextAttemptTime = Date.now() + this.config.resetTimeout
-    
+
     // Report circuit breaker open event
     this.reportCircuitBreakerEvent(serviceName, 'OPEN', {
       failures: state.failures,
       lastFailureTime: state.lastFailureTime
     })
   }
-  
+
   /**
    * Transition circuit to HALF_OPEN state
    */
@@ -197,10 +198,10 @@ class CircuitBreaker {
     const state = this.getState(serviceName)
     state.state = 'HALF_OPEN'
     state.successes = 0 // Reset success counter
-    
+
     this.reportCircuitBreakerEvent(serviceName, 'HALF_OPEN')
   }
-  
+
   /**
    * Transition circuit to CLOSED state
    */
@@ -209,38 +210,31 @@ class CircuitBreaker {
     state.state = 'CLOSED'
     state.failures = 0
     state.successes = 0
-    
+
     this.reportCircuitBreakerEvent(serviceName, 'CLOSED')
   }
-  
+
   /**
    * Clean up old request counts outside monitoring window
    */
   private cleanupOldRequests(serviceName: string) {
     const state = this.getState(serviceName)
     const cutoff = Date.now() - this.config.monitoringWindow
-    
+
     // Reset counters if outside monitoring window
     if (state.lastFailureTime < cutoff) {
       state.failures = 0
       state.requestCount = 0
     }
   }
-  
+
   /**
    * Log circuit breaker failures
    */
   private logFailure(serviceName: string, error: Error) {
-    // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error(`Circuit breaker failure for ${serviceName}:`, {
-    //   error: error.message,
-    //   stack: error.stack,
-    //   timestamp: new Date();.toISOString()
-    // })
+    // Error handled by standardErrorHandler
   }
-  
+
   /**
    * Report circuit breaker events for monitoring
    */
@@ -265,13 +259,13 @@ class CircuitBreaker {
       })
     }
   }
-  
+
   /**
    * Get current status of all circuit breakers
    */
   getStatus() {
     const status: Record<string, any> = {}
-    
+
     for (const [serviceName, state] of this.states) {
       status[serviceName] = {
         state: state.state,
@@ -283,26 +277,26 @@ class CircuitBreaker {
         healthScore: this.calculateHealthScore(state)
       }
     }
-    
+
     return status
   }
-  
+
   /**
    * Calculate health score for a service (0-100)
    */
   private calculateHealthScore(state: CircuitBreakerState): number {
     if (state.requestCount === 0) return 100
-    
+
     const successRate = (state.requestCount - state.failures) / state.requestCount
     const baseScore = successRate * 100
-    
+
     // Penalty for open circuit
     if (state.state === 'OPEN') return Math.min(baseScore * 0.5, 25)
     if (state.state === 'HALF_OPEN') return Math.min(baseScore * 0.75, 50)
-    
+
     return baseScore
   }
-  
+
   /**
    * Reset circuit breaker for a specific service
    */
@@ -311,7 +305,7 @@ class CircuitBreaker {
       this.states.delete(serviceName)
       }
   }
-  
+
   /**
    * Force open circuit for a specific service (for maintenance)
    */
@@ -319,7 +313,7 @@ class CircuitBreaker {
     const state = this.getState(serviceName)
     state.state = 'OPEN'
     state.nextAttemptTime = Date.now() + duration
-    
+
     }
 }
 
@@ -339,7 +333,7 @@ export const protectedServices = {
         fallback: fallback ? () => Promise.resolve(fallback()) : undefined,
         timeout: 5000
       }),
-    
+
     mutation: <T>(mutationFn: () => Promise<T>) =>
       circuitBreaker.execute({
         name: 'database_mutation',
@@ -347,7 +341,7 @@ export const protectedServices = {
         timeout: 10000
       })
   },
-  
+
   // Email service
   email: {
     send: (emailFn: () => Promise<any>) =>
@@ -360,7 +354,7 @@ export const protectedServices = {
         timeout: 15000
       })
   },
-  
+
   // External API calls
   external: {
     api: <T>(apiFn: () => Promise<T>, fallback?: () => T) =>
@@ -371,7 +365,7 @@ export const protectedServices = {
         timeout: 8000
       })
   },
-  
+
   // Redis cache
   cache: {
     get: <T>(cacheFn: () => Promise<T>) =>
@@ -381,7 +375,7 @@ export const protectedServices = {
         fallback: () => null, // Cache miss fallback
         timeout: 2000
       }),
-    
+
     set: (cacheFn: () => Promise<void>) =>
       circuitBreaker.execute({
         name: 'cache_set',

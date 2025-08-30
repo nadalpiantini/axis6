@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
+import {
   User,
   Mail,
   Globe,
@@ -23,6 +23,7 @@ import { SettingsSection, SettingItem, SettingGroup } from '@/components/setting
 import { useUser } from '@/lib/react-query/hooks'
 import { createClient } from '@/lib/supabase/client'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface UserPreferences {
   theme_preference: string
   language: string
@@ -61,7 +62,7 @@ export default function AccountSettingsPage() {
       screen_reader: false
     }
   })
-  
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
@@ -78,7 +79,7 @@ export default function AccountSettingsPage() {
 
       try {
         const supabase = createClient()
-        
+
         // Load profile
         const { data: profileData } = await supabase
           .from('axis6_profiles')
@@ -118,9 +119,12 @@ export default function AccountSettingsPage() {
           })
         }
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error loading user data:', error);
+        handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+          userMessage: 'Settings operation failed. Please try again.'
+
+        })
         showNotification('error', 'Failed to load settings')
       } finally {
         setLoading(false)
@@ -166,7 +170,7 @@ export default function AccountSettingsPage() {
     setSaving(true)
     try {
       const supabase = createClient()
-      
+
       // Save profile changes
       if (profile) {
         const { error: profileError } = await supabase
@@ -194,9 +198,12 @@ export default function AccountSettingsPage() {
       setHasChanges(false)
       showNotification('success', 'Settings saved successfully!')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving settings:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
       showNotification('error', 'Failed to save settings')
     } finally {
       setSaving(false)
@@ -227,7 +234,7 @@ export default function AccountSettingsPage() {
 
     try {
       const supabase = createClient()
-      
+
       // Fetch all user data
       const [checkinsRes, streaksRes, categoriesRes, profileRes] = await Promise.all([
         supabase.from('axis6_checkins').select('*').eq('user_id', user.id),
@@ -258,9 +265,12 @@ export default function AccountSettingsPage() {
 
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error exporting data:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
       showNotification('error', 'Failed to export data')
     }
   }
@@ -278,15 +288,18 @@ export default function AccountSettingsPage() {
       const supabase = createClient()
       await supabase.auth.signOut()
       showNotification('success', 'Account deletion initiated. You will receive a confirmation email.')
-      
+
       // Redirect to home after a delay
       setTimeout(() => {
         window.location.href = '/'
       }, 2000)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error deleting account:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
       showNotification('error', 'Failed to delete account')
     }
   }
@@ -538,8 +551,8 @@ export default function AccountSettingsPage() {
         >
           <div className={`
             flex items-center gap-3 px-6 py-3 rounded-lg backdrop-blur-md
-            ${notification.type === 'success' 
-              ? 'bg-green-500/20 border border-green-500/50 text-green-400' 
+            ${notification.type === 'success'
+              ? 'bg-green-500/20 border border-green-500/50 text-green-400'
               : 'bg-red-500/20 border border-red-500/50 text-red-400'
             }
           `}>

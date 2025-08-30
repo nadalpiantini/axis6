@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
 import { createClient } from '@/lib/supabase/client'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 export interface OnboardingState {
   selectedCategories: number[]
   loading: boolean
@@ -15,7 +16,7 @@ export interface OnboardingState {
 export function useOnboarding() {
   const router = useRouter()
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories()
-  
+
   const [state, setState] = useState<OnboardingState>({
     selectedCategories: [],
     loading: false,
@@ -29,7 +30,7 @@ export function useOnboarding() {
         : prev.selectedCategories.length < 6
           ? [...prev.selectedCategories, categoryId]
           : prev.selectedCategories
-      
+
       return {
         ...prev,
         selectedCategories: newSelected,
@@ -38,12 +39,11 @@ export function useOnboarding() {
     })
   }
 
-
   const completeOnboarding = async () => {
     if (state.selectedCategories.length !== 6) {
-      setState(prev => ({ 
-        ...prev, 
-        error: 'You must select exactly 6 dimensions to continue' 
+      setState(prev => ({
+        ...prev,
+        error: 'You must select exactly 6 dimensions to continue'
       }))
       return
     }
@@ -52,10 +52,10 @@ export function useOnboarding() {
 
     try {
       const supabase = createClient()
-      
+
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser()
-      
+
       if (userError || !user) {
         throw new Error('User not authenticated')
       }
@@ -93,16 +93,22 @@ export function useOnboarding() {
 
       // Redirect to dashboard
       router.push('/dashboard')
-      
+
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Onboarding failed:', error);
-      setState(prev => ({ 
-        ...prev, 
+      handleError(error, {
+
+        operation: 'unknown_operation',
+
+        component: 'useOnboarding',
+
+        userMessage: 'Something went wrong. Please try again.'
+
+      })
+    // // Handled by standardErrorHandler;
+      setState(prev => ({
+        ...prev,
         error: error instanceof Error ? error.message : 'Error during setup process',
-        loading: false 
+        loading: false
       }))
     }
   }
@@ -115,20 +121,20 @@ export function useOnboarding() {
   return {
     // Data
     categories: categories || [],
-    
+
     // State
     selectedCategories: state.selectedCategories,
     loading: state.loading,
     error: state.error,
-    
+
     // Loading states
     categoriesLoading,
     categoriesError: categoriesError as Error | null,
-    
+
     // Actions
     toggleCategory,
     completeOnboarding,
-    
+
     // Helpers
     isSelected,
     canComplete,

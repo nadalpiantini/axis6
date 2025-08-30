@@ -1,10 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
+import {
+  ArrowLeft,
+  User,
+  Mail,
   Calendar,
   Trophy,
   Flame,
@@ -39,6 +39,7 @@ import { TemperamentResults } from '@/components/psychology/TemperamentResults'
 import { LogoIcon } from '@/components/ui/Logo'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
 import { createClient } from '@/lib/supabase/client'
+import { handleError, handleDatabaseError } from '@/lib/error/standardErrorHandler'
 
 interface UserProfile {
   email: string
@@ -84,7 +85,7 @@ export default function ProfilePage() {
   const { data: user, isLoading: userLoading } = useUser()
   const { data: streaks = [], isLoading: streaksLoading } = useStreaks(user?.id || '')
   const { data: checkins = [], isLoading: checkinsLoading } = useTodayCheckins(user?.id || '')
-  
+
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [temperamentProfile, setTemperamentProfile] = useState<TemperamentProfile | null>(null)
@@ -107,10 +108,10 @@ export default function ProfilePage() {
         setProfileLoading(false)
         return
       }
-      
+
       try {
         const supabase = createClient()
-        
+
         // Fetch basic profile (use maybeSingle to handle non-existent profiles)
         const { data: profileData, error: profileError } = await supabase
           .from('axis6_profiles')
@@ -119,10 +120,13 @@ export default function ProfilePage() {
           .maybeSingle()
 
         if (profileError && profileError.code !== 'PGRST116') {
-          // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching profile:', profileError);
+          handleDatabaseError(profileError, {
+            table: 'axis6_profiles',
+            operation: 'select',
+            userId: user.id,
+            component: 'ProfilePage',
+            userMessage: 'Unable to load your profile. Please try refreshing the page.'
+          })
         }
 
         if (profileData) {
@@ -137,7 +141,7 @@ export default function ProfilePage() {
         } else {
           // Profile doesn't exist, create default profile and auto-save it
           const defaultName = user.email?.split('@')[0] || 'User'
-          
+
           const safeProfile = {
             email: user.email || '',
             name: defaultName,
@@ -145,7 +149,7 @@ export default function ProfilePage() {
           }
           setProfile(safeProfile)
           setEditedName(defaultName)
-          
+
           // Auto-create profile for new users
           try {
             const { error: createError } = await supabase
@@ -158,7 +162,7 @@ export default function ProfilePage() {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               })
-            
+
             if (createError) {
               } else {
               }
@@ -174,11 +178,11 @@ export default function ProfilePage() {
             .select('*')
             .eq('user_id', user.id)
             .maybeSingle()
-          
+
           if (!error && temperamentData) {
             // 🛡️ VALIDATE: Ensure temperament data has required structure
-            if (temperamentData && 
-                temperamentData.primary_temperament && 
+            if (temperamentData &&
+                temperamentData.primary_temperament &&
                 temperamentData.temperament_scores &&
                 typeof temperamentData.temperament_scores === 'object' &&
                 temperamentData.personality_insights &&
@@ -191,17 +195,20 @@ export default function ProfilePage() {
             }
         } catch (err) {
           // 🛡️ CATCH-ALL: Handle any unexpected errors gracefully
-          // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('⚠️ Failed to fetch temperament profile:', err);
+          handleError(err, {
+            operation: 'fetch_temperament_profile', component: 'ProfilePage',
+            userId: user.id,
+            level: 'warning',
+            showToast: false, // Graceful degradation - psychology features optional
+            userMessage: 'Psychology features temporarily unavailable'
+          })
           // Profile page continues to work without psychology features
         }
       } finally {
         setProfileLoading(false)
       }
     }
-    
+
     if (!userLoading) {
       fetchProfile()
     }
@@ -209,7 +216,7 @@ export default function ProfilePage() {
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     if (!type || !message) return
-    
+
     setNotification({ show: true, type, message })
     setTimeout(() => {
       setNotification(prev => ({ ...prev, show: false }))
@@ -218,7 +225,7 @@ export default function ProfilePage() {
 
   const handleSaveName = async () => {
     if (!user || !editedName || !editedName.trim()) return
-    
+
     setSaving(true)
     try {
       const supabase = createClient()
@@ -238,10 +245,14 @@ export default function ProfilePage() {
       setIsEditing(false)
       showNotification('success', 'Profile updated successfully!')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error updating profile:', error);
+      handleDatabaseError(error, {
+        table: 'axis6_profiles',
+        operation: 'upsert',
+        userId: user.id,
+        component: 'ProfilePage',
+        userMessage: 'Unable to save your profile changes. Please try again.',
+        showToast: false // Using custom notification instead
+      })
       showNotification('error', 'Failed to update profile')
     } finally {
       setSaving(false)
@@ -250,10 +261,10 @@ export default function ProfilePage() {
 
   const handleExportData = async () => {
     if (!user || !profile) return
-    
+
     try {
       const supabase = createClient()
-      
+
       // Fetch all user data
       const [checkinsRes, streaksRes, categoriesRes] = await Promise.all([
         supabase.from('axis6_checkins').select('*').eq('user_id', user.id),
@@ -286,10 +297,12 @@ export default function ProfilePage() {
 
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error exporting data:', error);
+      handleError(error, {
+      operation: 'export_user_data', component: 'ProfilePage',
+        userId: user.id,
+        userMessage: 'Unable to export your data. Please check your connection and try again.',
+        showToast: false // Using custom notification instead
+      })
       showNotification('error', 'Failed to export data')
     }
   }
@@ -305,22 +318,25 @@ export default function ProfilePage() {
 
     try {
       const supabase = createClient()
-      
+
       // Sign out first
       await supabase.auth.signOut()
-      
+
       // Note: Actual account deletion would need to be handled by a server-side function
       // for security reasons. This is a simplified version.
-      
+
       showNotification('success', 'Account deletion requested. You will receive an email confirmation.')
       setTimeout(() => {
         router.push('/')
       }, 2000)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error deleting account:', error);
+      handleError(error, {
+      operation: 'delete_account', component: 'ProfilePage',
+        userId: user.id,
+        level: 'error',
+        userMessage: 'Account deletion failed. Please contact support if this continues.',
+        showToast: false // Using custom notification instead
+      })
       showNotification('error', 'Failed to delete account')
       // Still redirect even if deletion fails
       setTimeout(() => {
@@ -335,10 +351,12 @@ export default function ProfilePage() {
       await supabase.auth.signOut()
       router.push('/auth/login')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error during logout:', error);
+      handleError(error, {
+      operation: 'user_logout', component: 'ProfilePage',
+        userId: user?.id,
+        level: 'warning',
+        userMessage: 'Logout may have failed, but you will be redirected to login.'
+      })
       // Still redirect even if logout fails
       router.push('/auth/login')
     }
@@ -350,11 +368,11 @@ export default function ProfilePage() {
 
   const handleAssessmentComplete = (result: TemperamentResult) => {
     if (!result) return
-    
+
     setAssessmentResult(result)
     setShowQuestionnaire(false)
     setShowResults(true)
-    
+
     // Refresh temperament profile
     if (user && user.id) {
       const fetchTemperamentProfile = async () => {
@@ -370,10 +388,15 @@ export default function ProfilePage() {
             setTemperamentProfile(temperamentData)
           }
         } catch (err) {
-          // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching temperament profile:', err);
+          handleDatabaseError(err, {
+            table: 'axis6_temperament_profiles',
+            operation: 'select',
+            userId: user.id,
+            component: 'ProfilePage',
+            level: 'warning',
+            showToast: false, // Background refresh - don't interrupt user
+            userMessage: 'Unable to refresh temperament profile'
+          })
         }
       }
       fetchTemperamentProfile()
@@ -403,7 +426,7 @@ export default function ProfilePage() {
     },
     melancholic: {
       name: 'Melancholic',
-      subtitle: 'The Analyst', 
+      subtitle: 'The Analyst',
       color: '#45B7D1',
       icon: Brain,
       bgGradient: 'from-blue-500/20 to-indigo-500/20'
@@ -458,17 +481,17 @@ export default function ProfilePage() {
   }
 
   // 🛡️ SAFE: Calculate stats with defensive programming
-  const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0 
+  const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0
     ? Math.max(...streaks.map(s => s?.current_streak || 0))
     : 0
-    
+
   const longestStreak = streaks && Array.isArray(streaks) && streaks.length > 0
     ? Math.max(...streaks.map(s => s?.longest_streak || 0))
     : 0
-    
+
   const totalCheckins = checkins && Array.isArray(checkins) ? checkins.length : 0
-  
-  const memberDays = profile?.created_at 
+
+  const memberDays = profile?.created_at
     ? (() => {
         try {
           const createdDate = new Date(profile.created_at)
@@ -511,17 +534,17 @@ export default function ProfilePage() {
                 <Brain className="w-6 h-6 text-purple-400" />
                 Psychological Profile
               </h2>
-              
+
               {temperamentProfile && temperamentProfile.primary_temperament ? (
                 <div className="space-y-4">
                   {/* Primary Temperament Display */}
                   {(() => {
                     // 🛡️ SAFE: Defensive access to temperament data
                     if (!temperamentProfile) return null
-                    
+
                     const primaryTemp = temperamentProfile.primary_temperament
                     const scores = temperamentProfile.temperament_scores
-                    
+
                     if (!primaryTemp || !scores || typeof scores !== 'object') {
                       return (
                         <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
@@ -529,10 +552,10 @@ export default function ProfilePage() {
                         </div>
                       )
                     }
-                    
+
                     const tempData = temperamentData[primaryTemp as keyof typeof temperamentData] || temperamentData.melancholic
                     const tempScore = scores[primaryTemp as keyof typeof scores] || 0
-                    
+
                     if (!tempData) {
                       return (
                         <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
@@ -540,20 +563,20 @@ export default function ProfilePage() {
                         </div>
                       )
                     }
-                    
+
                     const TempIcon = tempData.icon || Brain
                     const iconColor = tempData.color || '#8B5CF6'
                     const bgGradient = tempData.bgGradient || 'from-gray-500/20 to-gray-600/20'
                     const percentage = Math.round((tempScore || 0) * 100)
                     const safePercentage = Math.max(0, Math.min(100, percentage)) // Ensure percentage is between 0-100
-                    
+
                     return (
                       <div className={`p-4 rounded-xl bg-gradient-to-r ${bgGradient}`}>
                         <div className="flex items-center gap-3">
                           <div className="p-2 rounded-lg bg-white/20">
                             {TempIcon && typeof TempIcon === 'function' ? (
-                              <TempIcon 
-                                className="w-5 h-5" 
+                              <TempIcon
+                                className="w-5 h-5"
                                 style={{ color: iconColor }}
                               />
                             ) : (
@@ -569,7 +592,7 @@ export default function ProfilePage() {
                             </p>
                           </div>
                           <div className="ml-auto">
-                            <div 
+                            <div
                               className="px-3 py-1 rounded-full text-sm font-bold text-white"
                               style={{ backgroundColor: iconColor }}
                             >
@@ -585,11 +608,11 @@ export default function ProfilePage() {
                   {temperamentProfile && temperamentProfile.personality_insights && typeof temperamentProfile.personality_insights === 'object' && (() => {
                     const insights = temperamentProfile.personality_insights
                     if (!insights) return null
-                    
+
                     const strengths = Array.isArray(insights.strengths) ? insights.strengths : []
                     const workStyle = insights.work_style
                     const socialStyle = insights.social_style
-                    
+
                     const strengthsText = strengths.length > 0 ? strengths.slice(0, 2).join(', ') : 'Not available'
                     const workStyleText = typeof workStyle === 'string' && workStyle.length > 0
                       ? workStyle.length > 40 ? `${workStyle.slice(0, 40)}...` : workStyle
@@ -597,7 +620,7 @@ export default function ProfilePage() {
                     const socialStyleText = typeof socialStyle === 'string' && socialStyle.length > 0
                       ? socialStyle.length > 40 ? `${socialStyle.slice(0, 40)}...` : socialStyle
                       : 'Not available'
-                    
+
                     return (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
@@ -621,7 +644,7 @@ export default function ProfilePage() {
 
                   <div className="flex items-center justify-between pt-2">
                     <p className="text-xs text-gray-400">
-                      {temperamentProfile && temperamentProfile.completed_at 
+                      {temperamentProfile && temperamentProfile.completed_at
                         ? (() => {
                             try {
                               const completedDate = new Date(temperamentProfile.completed_at)
@@ -650,7 +673,7 @@ export default function ProfilePage() {
                       Take our psychological assessment to get personalized wellness recommendations based on the four temperaments system.
                     </p>
                   </div>
-                  
+
                   <div className="flex flex-col items-center gap-3">
                     <button
                       onClick={handleStartAssessment}
@@ -659,7 +682,7 @@ export default function ProfilePage() {
                       <span>Take Personality Assessment</span>
                       {useAIEnhanced && <Sparkles className="w-4 h-4" />}
                     </button>
-                    
+
                     <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
                       <input
                         type="checkbox"
@@ -678,7 +701,7 @@ export default function ProfilePage() {
             {/* Profile Form */}
             <div className="glass rounded-2xl p-6" data-testid="profile-form-container">
               <h2 className="text-xl font-semibold mb-6">Profile Information</h2>
-              <ProfileForm 
+              <ProfileForm
                 userId={user.id}
                 initialData={{
                   name: profile.name || '',
@@ -711,7 +734,7 @@ export default function ProfilePage() {
             {/* User Details */}
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Account Summary</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -801,7 +824,7 @@ export default function ProfilePage() {
             {/* Account Actions */}
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Account Actions</h2>
-              
+
               <div className="space-y-3">
                 <button
                   onClick={handleExportData}
@@ -836,7 +859,7 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Your Statistics</h2>
-              
+
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
                   <div className="flex items-center justify-between">
@@ -943,8 +966,8 @@ export default function ProfilePage() {
         >
           <div className={`
             flex items-center gap-3 px-6 py-3 rounded-lg backdrop-blur-md
-            ${notification.type === 'success' 
-              ? 'bg-green-500/20 border border-green-500/50 text-green-400' 
+            ${notification.type === 'success'
+              ? 'bg-green-500/20 border border-green-500/50 text-green-400'
               : 'bg-red-500/20 border border-red-500/50 text-red-400'
             }
           `}>

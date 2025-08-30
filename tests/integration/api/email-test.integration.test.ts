@@ -61,16 +61,16 @@ describe('/api/email/test Integration Tests', () => {
     id: 'user-123',
     email: 'test@example.com'
   }
-  
+
   let mockEmailService: any
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     // Get the mocked email service
     const emailModule = require('@/lib/email/service')
     mockEmailService = emailModule.emailService
-    
+
     // Default: authenticated user
     mockSupabaseAuth.getUser.mockResolvedValue({
       data: { user: mockUser },
@@ -126,7 +126,7 @@ describe('/api/email/test Integration Tests', () => {
 
     it('should apply rate limiting', async () => {
       const { withEnhancedRateLimit } = require('@/lib/middleware/enhanced-rate-limit')
-      
+
       const request = new NextRequest('http://localhost:3000/api/email/test')
       await GET(request)
 
@@ -138,7 +138,7 @@ describe('/api/email/test Integration Tests', () => {
 
     it('should handle rate limit blocking', async () => {
       const { withEnhancedRateLimit } = require('@/lib/middleware/enhanced-rate-limit')
-      
+
       const mockRateLimitResponse = new Response('Rate limited', { status: 429 })
       withEnhancedRateLimit.mockResolvedValueOnce({
         response: mockRateLimitResponse,
@@ -188,9 +188,9 @@ describe('/api/email/test Integration Tests', () => {
 
     it('should send welcome email with user profile', async () => {
       mockSupabaseSingle.mockResolvedValue({
-        data: { 
+        data: {
           full_name: 'Test User',
-          first_name: 'Test' 
+          first_name: 'Test'
         }
       })
 
@@ -247,16 +247,16 @@ describe('/api/email/test Integration Tests', () => {
 
       const request = new NextRequest('http://localhost:3000/api/email/test', {
         method: 'POST',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           type: 'test',
           to: 'custom@example.com'
         })
       })
 
       const response = await POST(request)
-      
+
       expect(mockEmailService.sendTestEmail).toHaveBeenCalledWith('custom@example.com')
-      
+
       const data = await response.json()
       expect(data.recipient).toBe('custom@***')
     })
@@ -320,7 +320,7 @@ describe('/api/email/test Integration Tests', () => {
 
       const request = new NextRequest('http://localhost:3000/api/email/test', {
         method: 'POST',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           type: 'test',
           to: 'sensitive.email@private-domain.com'
         })
@@ -335,7 +335,7 @@ describe('/api/email/test Integration Tests', () => {
 
     it('should log email sending attempts', async () => {
       const { logger } = require('@/lib/utils/logger')
-      
+
       mockEmailService.sendTestEmail.mockResolvedValue({
         success: true,
         id: 'email-log-test'
@@ -384,7 +384,7 @@ describe('/api/email/test Integration Tests', () => {
 
     it('should handle profile query failures gracefully', async () => {
       mockSupabaseSingle.mockRejectedValue(new Error('Profile query failed'))
-      
+
       mockEmailService.sendWelcome.mockResolvedValue({
         success: true,
         id: 'email-profile-error'

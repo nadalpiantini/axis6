@@ -14,7 +14,7 @@ const leaderboardQuerySchema = z.object({
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -31,9 +31,9 @@ export async function GET(_request: NextRequest) {
 
     if (streaksError) {
       logger.error('Error fetching streaks:', streaksError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to fetch streaks',
-        details: streaksError.message 
+        details: streaksError.message
       }, { status: 500 })
     }
 
@@ -72,7 +72,7 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Streaks fetch error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to fetch streaks'
     }, { status: 500 })
@@ -83,14 +83,14 @@ export async function GET(_request: NextRequest) {
 async function getLeaderboard(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Parse query parameters
     const { searchParams } = new URL(_request.url)
     const queryParams = {
       streakType: searchParams.get('streakType') || 'daily',
       limit: parseInt(searchParams.get('limit') || '20')
     }
-    
+
     const validatedQuery = leaderboardQuerySchema.parse(queryParams)
 
     // Call RPC function to get leaderboard
@@ -104,9 +104,9 @@ async function getLeaderboard(_request: NextRequest) {
 
     if (leaderboardError) {
       logger.error('Error fetching leaderboard:', leaderboardError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to fetch leaderboard',
-        details: leaderboardError.message 
+        details: leaderboardError.message
       }, { status: 500 })
     }
 
@@ -132,14 +132,14 @@ async function getLeaderboard(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid query parameters',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Leaderboard fetch error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to fetch leaderboard'
     }, { status: 500 })

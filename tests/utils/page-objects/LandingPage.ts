@@ -12,17 +12,17 @@ export class LandingPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Hero section elements
     this.heroTitle = page.locator('h1');
     this.hexagonChart = page.locator('[data-testid="hexagon-chart"]').or(page.locator('svg')).first();
     this.featuresSection = page.locator('[data-testid="features-section"]').or(page.locator('section').nth(1));
-    
+
     // Navigation buttons
     this.loginButton = page.locator('a[href*="/auth/login"]', { hasText: /login|iniciar/i });
     this.registerButton = page.locator('a[href*="/auth/register"]', { hasText: /register|registro/i });
     this.getStartedButton = page.locator('a', { hasText: /get started|comenzar|empezar/i });
-    
+
     // Call-to-action section
     this.ctaSection = page.locator('[data-testid="cta-section"]').or(page.locator('section').last());
   }
@@ -35,11 +35,11 @@ export class LandingPage {
   async verifyLandingPageLoaded() {
     // Wait for main content to be visible
     await this.heroTitle.waitFor({ state: 'visible' });
-    
+
     // Verify essential elements are present
     await this.heroTitle.isVisible();
     await this.hexagonChart.isVisible();
-    
+
     return true;
   }
 

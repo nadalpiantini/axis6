@@ -29,14 +29,14 @@ export function useHexagonResonance(userId?: string, date?: string) {
           totalResonance: 0
         }
       }
-      
+
       const supabase = createClient()
       const dateParam = date || new Date().toISOString().split('T')[0]
-      
+
       try {
         // Check session before making request
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
+
         if (sessionError || !session) {
           return {
             success: true,
@@ -67,7 +67,7 @@ export function useHexagonResonance(userId?: string, date?: string) {
 
         const data = await response.json()
         return data
-        
+
       } catch (error) {
         return {
           success: true,
@@ -88,7 +88,7 @@ export function useHexagonResonance(userId?: string, date?: string) {
       if (error && typeof error === 'object' && 'status' in error && (error.status === 401 || error.status === 403)) {
         return false
       }
-      
+
       // Retry other errors up to 2 times
       return failureCount < 2
     },

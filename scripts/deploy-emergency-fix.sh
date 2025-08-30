@@ -1,75 +1,60 @@
 #!/bin/bash
 
-# =====================================================
-# AXIS6 EMERGENCY FIX DEPLOYMENT SCRIPT
-# =====================================================
-# This script applies the emergency database fixes for 400/500 errors
-# =====================================================
+# AXIS6 Emergency Fix Deployment Script
+# This script helps deploy the emergency fix for all current issues
 
-set -e
+echo "🚨 AXIS6 EMERGENCY FIX DEPLOYMENT"
+echo "=================================="
+echo ""
+echo "This script will help you fix ALL current issues:"
+echo "✅ Sentry import errors (already fixed in code)"
+echo "✅ 404 errors for get_dashboard_data_optimized function"
+echo "✅ 400 errors for axis6_profiles table queries"
+echo "✅ Missing database functions and indexes"
+echo ""
+echo "IMPORTANT: You need to manually execute the SQL script in Supabase SQL Editor."
+echo ""
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Function to print colored output
-print_status() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Check if we're in the right directory
-if [ ! -f "package.json" ]; then
-    print_error "Please run this script from the project root directory"
+# Check if the emergency fix script exists
+if [ ! -f "scripts/EMERGENCY_FIX_ALL_ISSUES.sql" ]; then
+    echo "❌ Error: scripts/EMERGENCY_FIX_ALL_ISSUES.sql not found!"
     exit 1
 fi
 
-print_status "🚨 Starting AXIS6 Emergency Fix Deployment"
-print_status "This will fix all 400/500 errors in production"
-
-# Step 1: Apply database fixes
-print_status "Step 1: Applying database schema fixes..."
-print_warning "Please execute the following SQL in Supabase Dashboard:"
+echo "✅ Emergency fix script found: scripts/EMERGENCY_FIX_ALL_ISSUES.sql"
 echo ""
-echo "1. Go to: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql/new"
-echo "2. Copy and paste the contents of: scripts/EMERGENCY_FIX_400_500_ERRORS.sql"
-echo "3. Click 'Run' to execute the SQL"
+echo "📋 Steps to deploy:"
+echo "1. Go to: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql"
+echo "2. Click 'New Query'"
+echo "3. Copy the contents of scripts/EMERGENCY_FIX_ALL_ISSUES.sql"
+echo "4. Paste it into the SQL Editor"
+echo "5. Click 'Run'"
 echo ""
-read -p "Press Enter after you've executed the SQL in Supabase..."
+echo "📝 Script contents (first 10 lines):"
+head -10 scripts/EMERGENCY_FIX_ALL_ISSUES.sql
+echo "..."
+echo ""
+echo "📊 Full script size: $(wc -l < scripts/EMERGENCY_FIX_ALL_ISSUES.sql) lines"
+echo ""
+echo "🔗 Direct link to Supabase SQL Editor:"
+echo "https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql"
+echo ""
+echo "⚠️  WARNING: This script will:"
+echo "   - Drop and recreate all axis6_* tables"
+echo "   - Delete all existing data"
+echo "   - Create fresh tables with correct structure"
+echo "   - Deploy all missing functions"
+echo "   - Set up proper RLS policies"
+echo ""
+echo "🔄 After running the SQL script:"
+echo "1. Restart your development server: npm run dev"
+echo "2. Test the application"
+echo "3. All errors should be resolved"
+echo ""
+echo "📞 If you need help, check the verification queries at the end of the SQL script"
+echo ""
 
-# Step 2: Deploy code changes
-print_status "Step 2: Deploying code fixes to production..."
-
-# Check if Vercel CLI is installed
-if ! command -v vercel &> /dev/null; then
-    print_error "Vercel CLI is not installed. Please install it first:"
-    echo "npm i -g vercel"
-    exit 1
-fi
-
-# Deploy to production
-print_status "Deploying to Vercel production..."
-vercel --prod
-
-print_success "✅ Emergency fix deployment completed!"
-print_status "The following issues have been resolved:"
-echo "  • 400 errors on axis6_checkins (constraint issues)"
-echo "  • 500 errors on /api/time-blocks (missing table)"
-echo "  • 400 errors on axis6_profiles (constraint issues)"
-echo "  • Missing database functions and RLS policies"
-
-print_status "Please test the application to verify all errors are resolved."
+# Show the script location
+echo "📁 Script location: $(pwd)/scripts/EMERGENCY_FIX_ALL_ISSUES.sql"
+echo ""
+echo "🚀 Ready to deploy! Follow the steps above."

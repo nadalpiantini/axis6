@@ -37,11 +37,11 @@ export async function updateSession(request: NextRequest) {
 
   // Only redirect to login for protected routes
   const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/onboarding']
-  const isPublicRoute = publicRoutes.some(route => 
-    request.nextUrl.pathname === route || 
+  const isPublicRoute = publicRoutes.some(route =>
+    request.nextUrl.pathname === route ||
     request.nextUrl.pathname.startsWith('/auth/')
   )
-  
+
   if (!user && !isPublicRoute && request.nextUrl.pathname !== '/') {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()

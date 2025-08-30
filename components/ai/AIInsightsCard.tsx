@@ -1,13 +1,13 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Brain, 
-  TrendingUp, 
-  Lightbulb, 
-  Target, 
-  Clock, 
-  ChevronDown, 
+import {
+  Brain,
+  TrendingUp,
+  Lightbulb,
+  Target,
+  Clock,
+  ChevronDown,
   ChevronUp,
   Sparkles,
   BarChart3,
@@ -25,7 +25,6 @@ import { Progress } from '@/components/ui/progress'
 import { PersonalizedInsight } from '@/lib/ai/behavioral-analyzer'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
 
-
 interface AIInsightsCardProps {
   className?: string
   showAll?: boolean
@@ -33,13 +32,13 @@ interface AIInsightsCardProps {
 }
 
 export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: AIInsightsCardProps) {
-  const { 
-    insights, 
-    behaviorProfile, 
-    isLoading, 
+  const {
+    insights,
+    behaviorProfile,
+    isLoading,
     error,
     getActiveInsights,
-    getInsightsByType 
+    getInsightsByType
   } = useAIPersonalization()
 
   const [expandedInsights, setExpandedInsights] = useState<Set<string>>(new Set())
@@ -165,9 +164,9 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                           </Badge>
                         </div>
                       </div>
-                      
+
                       <p className="text-sm text-gray-600">{insight.content}</p>
-                      
+
                       {insight.action_items && insight.action_items.length > 0 && (
                         <Collapsible
                           open={expandedInsights.has(insight.id)}
@@ -193,8 +192,8 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                           <CollapsibleContent>
                             <div className="mt-3 space-y-2">
                               {insight.action_items.map((action, actionIndex) => (
-                                <div 
-                                  key={actionIndex} 
+                                <div
+                                  key={actionIndex}
                                   className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 p-2 rounded"
                                 >
                                   <CheckCircle2 className="w-4 h-4 text-purple-600 flex-shrink-0" />
@@ -205,13 +204,13 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                           </CollapsibleContent>
                         </Collapsible>
                       )}
-                      
+
                       {insight.personalization_score && (
                         <div className="flex items-center gap-2 mt-3">
                           <span className="text-xs text-gray-500">Relevance:</span>
                           <div className="flex-1 max-w-24">
-                            <Progress 
-                              value={insight.personalization_score * 100} 
+                            <Progress
+                              value={insight.personalization_score * 100}
                               className="h-2"
                             />
                           </div>
@@ -225,7 +224,7 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                 </motion.div>
               ))}
             </AnimatePresence>
-            
+
             {activeInsights.length > maxInsights && !showAll && (
               <div className="text-center pt-4">
                 <Button variant="outline" size="sm">
@@ -235,7 +234,7 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
             )}
           </div>
         )}
-        
+
         {behaviorProfile && (
           <div className="mt-6 pt-4 border-t">
             <div className="flex items-center gap-2 mb-3">
@@ -290,7 +289,7 @@ export function InsightTypeFilter() {
       {insightTypes.map(type => {
         const Icon = type.icon
         const count = type.value === 'all' ? 0 : getInsightsByType(type.value as any).length
-        
+
         return (
           <Button
             key={type.value}

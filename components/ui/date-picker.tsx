@@ -20,21 +20,21 @@ export interface DatePickerProps {
 }
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-  ({ 
-    className, 
-    label, 
-    error, 
-    helperText, 
-    value, 
-    onChange, 
-    placeholder = "Select date", 
+  ({
+    className,
+    label,
+    error,
+    helperText,
+    value,
+    onChange,
+    placeholder = "Select date",
     disabled,
     required,
     name,
-    ...props 
+    ...props
   }, ref) => {
     const datePickerId = React.useId()
-    
+
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const dateValue = e.target.value
       if (dateValue && onChange) {
@@ -43,7 +43,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         onChange(undefined)
       }
     }
-    
+
     const formatDateForInput = (date: Date | string | undefined): string => {
       if (!date) return ""
       try {
@@ -54,11 +54,11 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         return ""
       }
     }
-    
+
     return (
       <div className="space-y-2">
         {label && (
-          <label 
+          <label
             htmlFor={datePickerId}
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-white"
           >
@@ -77,8 +77,8 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             required={required}
             className={cn(
               "flex h-10 w-full rounded-md border bg-white/10 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-white [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:hover:opacity-100",
-              error 
-                ? "border-red-500/50 focus-visible:ring-red-500" 
+              error
+                ? "border-red-500/50 focus-visible:ring-red-500"
                 : "border-white/20 focus-visible:ring-purple-500",
               className
             )}

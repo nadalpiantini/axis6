@@ -6,25 +6,25 @@ import React, { Suspense, useMemo } from 'react'
 import { performanceUtils } from '@/lib/production/performance-optimizer'
 
 // Dynamic imports with loading states for better performance
-const LineChart = dynamic(() => 
+const LineChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.LineChart })), {
   loading: () => <ChartSkeleton type="line" />,
   ssr: false
 })
 
-const BarChart = dynamic(() => 
+const BarChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.BarChart })), {
   loading: () => <ChartSkeleton type="bar" />,
   ssr: false
 })
 
-const PieChart = dynamic(() => 
+const PieChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.PieChart })), {
   loading: () => <ChartSkeleton type="pie" />,
   ssr: false
 })
 
-const ResponsiveContainer = dynamic(() => 
+const ResponsiveContainer = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), {
   loading: () => <div className="w-full h-full animate-pulse bg-white/5 rounded" />,
   ssr: false
@@ -49,7 +49,7 @@ interface ChartSkeletonProps {
 
 function ChartSkeleton({ type, height = 300 }: ChartSkeletonProps) {
   return (
-    <div 
+    <div
       className="w-full animate-pulse bg-gradient-to-br from-white/5 to-white/10 rounded-lg"
       style={{ height }}
     >
@@ -72,7 +72,7 @@ function ChartSkeleton({ type, height = 300 }: ChartSkeletonProps) {
 export const useOptimizedChartData = (data: any[], maxDataPoints = 50) => {
   return useMemo(() => {
     if (!data || data.length <= maxDataPoints) return data
-    
+
     // Sample data to reduce chart rendering complexity
     const step = Math.ceil(data.length / maxDataPoints)
     return data.filter((_, index) => index % step === 0)
@@ -88,10 +88,10 @@ interface OptimizedChartProps {
   priority?: 'high' | 'medium' | 'low'
 }
 
-export function OptimizedChart({ 
-  children, 
-  height = 300, 
-  className = '', 
+export function OptimizedChart({
+  children,
+  height = 300,
+  className = '',
   'data-testid': testId,
   priority = 'medium'
 }: OptimizedChartProps) {
@@ -101,7 +101,7 @@ export function OptimizedChart({
   // Intersection Observer for lazy loading
   React.useEffect(() => {
     if (priority === 'high') return // High priority charts render immediately
-    
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -109,9 +109,9 @@ export function OptimizedChart({
           observer.disconnect()
         }
       },
-      { 
+      {
         rootMargin: '100px', // Start loading before chart enters viewport
-        threshold: 0.1 
+        threshold: 0.1
       }
     )
 
@@ -123,7 +123,7 @@ export function OptimizedChart({
   }, [priority])
 
   return (
-    <div 
+    <div
       ref={chartRef}
       className={`recharts-wrapper ${className}`}
       data-testid={testId}
@@ -151,16 +151,16 @@ interface CompletionRateChartProps {
   height?: number
 }
 
-export const CompletionRateChart = React.memo(function CompletionRateChart({ 
-  data, 
-  height = 300 
+export const CompletionRateChart = React.memo(function CompletionRateChart({
+  data,
+  height = 300
 }: CompletionRateChartProps) {
   const optimizedData = useOptimizedChartData(data, 30) // Limit to 30 data points
 
   const formatDate = React.useCallback((date: string) => {
-    return new Date(date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
     })
   }, [])
 
@@ -173,30 +173,30 @@ export const CompletionRateChart = React.memo(function CompletionRateChart({
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={optimizedData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
-            dataKey="date" 
+          <XAxis
+            dataKey="date"
             stroke="#9CA3AF"
             fontSize={12}
             tickFormatter={formatDate}
           />
-          <YAxis 
+          <YAxis
             stroke="#9CA3AF"
             fontSize={12}
             tickFormatter={formatPercentage}
           />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151', 
-              borderRadius: '8px' 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1F2937',
+              border: '1px solid #374151',
+              borderRadius: '8px'
             }}
             labelFormatter={formatDate}
             formatter={(value: number) => [formatPercentage(value), 'Completion Rate']}
           />
-          <Line 
-            type="monotone" 
-            dataKey="completion_rate" 
-            stroke="#8B5CF6" 
+          <Line
+            type="monotone"
+            dataKey="completion_rate"
+            stroke="#8B5CF6"
             strokeWidth={2}
             dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
             activeDot={{ r: 6 }}
@@ -217,11 +217,11 @@ interface CategoryPerformanceChartProps {
   height?: number
 }
 
-export const CategoryPerformanceChart = React.memo(function CategoryPerformanceChart({ 
-  data, 
-  height = 300 
+export const CategoryPerformanceChart = React.memo(function CategoryPerformanceChart({
+  data,
+  height = 300
 }: CategoryPerformanceChartProps) {
-  const chartData = useMemo(() => 
+  const chartData = useMemo(() =>
     Object.entries(data).map(([name, stats]) => ({
       name,
       value: stats.count,
@@ -233,16 +233,16 @@ export const CategoryPerformanceChart = React.memo(function CategoryPerformanceC
     <OptimizedChart height={height} data-testid="chart-7" priority="medium">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151', 
-              borderRadius: '8px' 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1F2937',
+              border: '1px solid #374151',
+              borderRadius: '8px'
             }}
             formatter={(value: number) => [`${value}`, 'Check-ins']}
           />
           <Legend />
-          <Pie 
+          <Pie
             data={chartData}
             cx="50%"
             cy="50%"
@@ -271,9 +271,9 @@ interface DailyActivityChartProps {
   height?: number
 }
 
-export const DailyActivityChart = React.memo(function DailyActivityChart({ 
-  data, 
-  height = 200 
+export const DailyActivityChart = React.memo(function DailyActivityChart({
+  data,
+  height = 200
 }: DailyActivityChartProps) {
   const optimizedData = useOptimizedChartData(data, 14) // Last 2 weeks
 
@@ -286,18 +286,18 @@ export const DailyActivityChart = React.memo(function DailyActivityChart({
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={optimizedData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
-            dataKey="date" 
+          <XAxis
+            dataKey="date"
             stroke="#9CA3AF"
             fontSize={10}
             tickFormatter={formatDate}
           />
           <YAxis stroke="#9CA3AF" fontSize={10} />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151', 
-              borderRadius: '8px' 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1F2937',
+              border: '1px solid #374151',
+              borderRadius: '8px'
             }}
             labelFormatter={formatDate}
           />
@@ -317,9 +317,9 @@ interface MoodTrendChartProps {
   height?: number
 }
 
-export const MoodTrendChart = React.memo(function MoodTrendChart({ 
-  data, 
-  height = 200 
+export const MoodTrendChart = React.memo(function MoodTrendChart({
+  data,
+  height = 200
 }: MoodTrendChartProps) {
   const optimizedData = useOptimizedChartData(data, 14)
 
@@ -332,26 +332,26 @@ export const MoodTrendChart = React.memo(function MoodTrendChart({
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={optimizedData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
-            dataKey="date" 
+          <XAxis
+            dataKey="date"
             stroke="#9CA3AF"
             fontSize={10}
             tickFormatter={formatDate}
           />
           <YAxis stroke="#9CA3AF" fontSize={10} domain={[0, 10]} />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151', 
-              borderRadius: '8px' 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1F2937',
+              border: '1px solid #374151',
+              borderRadius: '8px'
             }}
             labelFormatter={formatDate}
             formatter={(value: number) => [`${value}/10`, 'Avg Mood']}
           />
-          <Line 
-            type="monotone" 
-            dataKey="averageMood" 
-            stroke="#10B981" 
+          <Line
+            type="monotone"
+            dataKey="averageMood"
+            stroke="#10B981"
             strokeWidth={2}
             dot={{ fill: '#10B981' }}
           />
@@ -370,9 +370,9 @@ interface WeeklyProgressChartProps {
   height?: number
 }
 
-export const WeeklyProgressChart = React.memo(function WeeklyProgressChart({ 
-  data, 
-  height = 200 
+export const WeeklyProgressChart = React.memo(function WeeklyProgressChart({
+  data,
+  height = 200
 }: WeeklyProgressChartProps) {
   const optimizedData = useOptimizedChartData(data, 7)
 
@@ -389,22 +389,22 @@ export const WeeklyProgressChart = React.memo(function WeeklyProgressChart({
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={optimizedData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
-            dataKey="date" 
+          <XAxis
+            dataKey="date"
             stroke="#9CA3AF"
             fontSize={10}
             tickFormatter={formatDate}
           />
-          <YAxis 
-            stroke="#9CA3AF" 
+          <YAxis
+            stroke="#9CA3AF"
             fontSize={10}
             tickFormatter={formatPercentage}
           />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151', 
-              borderRadius: '8px' 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1F2937',
+              border: '1px solid #374151',
+              borderRadius: '8px'
             }}
             formatter={(value: number) => [formatPercentage(value), 'Completion']}
           />

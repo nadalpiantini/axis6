@@ -1,9 +1,9 @@
 'use client'
 
-import { 
-  TrendingUp, 
-  Calendar, 
-  Target, 
+import {
+  TrendingUp,
+  Calendar,
+  Target,
   Award,Download,
   BarChart3,
   PieChart,
@@ -13,14 +13,14 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { 
-  LineChart, 
-  Line, 
-  BarChart, 
-  Bar, 
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
   PieChart as RechartsPieChart,
   Pie,
-  Cell, 
+  Cell,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -93,15 +93,15 @@ export default function AnalyticsPage() {
     try {
       setLoading(true)
       setError(null)
-      
+
       const params = new URLSearchParams({period})
-      
+
       const response = await fetch(`/api/analytics?${params}`)
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch analytics')
       }
-      
+
       const data = await response.json()
       setAnalytics(data.analytics)
     } catch (err) {
@@ -119,16 +119,16 @@ export default function AnalyticsPage() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           format,
           includeAllData: true
         })
       })
-      
+
       if (!response.ok) {
         throw new Error('Export failed')
       }
-      
+
       if (format === 'csv') {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -222,7 +222,7 @@ export default function AnalyticsPage() {
         showBackButton={true}
         backUrl="/dashboard"
       />
-      
+
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         {/* Controls */}
         <div data-testid="analytics-controls" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
@@ -230,7 +230,7 @@ export default function AnalyticsPage() {
             <TrendingUp className="w-6 h-6 text-purple-400" />
             <h2 data-testid="analytics-title" className="text-lg font-semibold">Your Analytics</h2>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
             <select
               data-testid="period-filter"
@@ -243,7 +243,7 @@ export default function AnalyticsPage() {
               <option value="90">Last 90 days</option>
               <option value="365">Last year</option>
             </select>
-            
+
             <div className="flex items-center gap-2">
               <button
                 data-testid="export-csv"
@@ -279,7 +279,7 @@ export default function AnalyticsPage() {
               {Math.round(analytics.overview.totalCheckins / Math.max(analytics.overview.totalDays, 1) * 10) / 10} per day avg
             </p>
           </div>
-          
+
           <div data-testid="active-days-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
@@ -292,7 +292,7 @@ export default function AnalyticsPage() {
               {analytics.overview.dataCompleteness}% of {analytics.overview.period}
             </p>
           </div>
-          
+
           <div data-testid="completion-rate-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
@@ -303,7 +303,7 @@ export default function AnalyticsPage() {
             </p>
             <p className="text-xs sm:text-sm text-gray-400">Average daily completion</p>
           </div>
-          
+
           <div data-testid="current-streak-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
@@ -331,26 +331,26 @@ export default function AnalyticsPage() {
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analytics.dailyStats.slice(-14)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis 
-                      dataKey="date" 
+                    <XAxis
+                      dataKey="date"
                       stroke="#9CA3AF"
                       fontSize={12}
                       tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     />
-                    <YAxis 
+                    <YAxis
                       stroke="#9CA3AF"
                       fontSize={12}
                       tickFormatter={(value) => `${Math.round(value * 100)}%`}
                     />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       labelFormatter={(date) => new Date(date).toLocaleDateString()}
                       formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion Rate']}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="completion_rate" 
-                      stroke="#8B5CF6" 
+                    <Line
+                      type="monotone"
+                      dataKey="completion_rate"
+                      stroke="#8B5CF6"
                       strokeWidth={2}
                       dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
                       activeDot={{ r: 6 }}
@@ -371,7 +371,7 @@ export default function AnalyticsPage() {
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPieChart>
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       formatter={(value) => [`${value}`, 'Check-ins']}
                     />
@@ -413,14 +413,14 @@ export default function AnalyticsPage() {
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={analytics.dailyStats.slice(-7)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis 
-                      dataKey="date" 
+                    <XAxis
+                      dataKey="date"
                       stroke="#9CA3AF"
                       fontSize={10}
                       tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
                     />
                     <YAxis stroke="#9CA3AF" fontSize={10} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       labelFormatter={(date) => new Date(date).toLocaleDateString()}
                     />
@@ -442,22 +442,22 @@ export default function AnalyticsPage() {
                 <ResponsiveContainer width="100%" height={200}>
                   <LineChart data={analytics.moodTrend.slice(-7)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis 
-                      dataKey="date" 
+                    <XAxis
+                      dataKey="date"
                       stroke="#9CA3AF"
                       fontSize={10}
                       tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
                     />
                     <YAxis stroke="#9CA3AF" fontSize={10} domain={[0, 10]} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       labelFormatter={(date) => new Date(date).toLocaleDateString()}
                       formatter={(value) => [`${value}/10`, 'Avg Mood']}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="averageMood" 
-                      stroke="#10B981" 
+                    <Line
+                      type="monotone"
+                      dataKey="averageMood"
+                      stroke="#10B981"
                       strokeWidth={2}
                       dot={{ fill: '#10B981' }}
                     />
@@ -478,18 +478,18 @@ export default function AnalyticsPage() {
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={analytics.dailyStats.slice(-7)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis 
-                      dataKey="date" 
+                    <XAxis
+                      dataKey="date"
                       stroke="#9CA3AF"
                       fontSize={10}
                       tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
                     />
-                    <YAxis 
-                      stroke="#9CA3AF" 
+                    <YAxis
+                      stroke="#9CA3AF"
                       fontSize={10}
                       tickFormatter={(value) => `${Math.round(value * 100)}%`}
                     />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
                       formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion']}
                     />
@@ -512,8 +512,8 @@ export default function AnalyticsPage() {
               {Object.entries(analytics.categoryStats).map(([category, stats]) => (
                 <div key={category} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
+                    <div
+                      className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: stats.color }}
                     />
                     <span className="font-medium">{category}</span>
@@ -538,8 +538,8 @@ export default function AnalyticsPage() {
               {analytics.streakAnalysis.currentStreaks.map((streak, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
+                    <div
+                      className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: streak.color }}
                     />
                     <span className="font-medium">{streak.category}</span>

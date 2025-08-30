@@ -7,10 +7,10 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -18,7 +18,7 @@ export async function GET(_request: NextRequest) {
     // Get query parameters
     const { searchParams } = new URL(_request.url)
     const categoryId = searchParams.get('categoryId')
-    
+
     let query = supabase
       .from('axis6_streaks')
       .select(`
@@ -40,7 +40,7 @@ export async function GET(_request: NextRequest) {
     }
 
     const { data: streaks, error } = await query
-    
+
     if (error) {
       logger.error('Error fetching streaks', error)
       return NextResponse.json({ error: 'Failed to fetch streaks' }, { status: 500 })
@@ -67,10 +67,10 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Sparkles, CheckCircle, RefreshCw } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface Mantra {
   id: number
   content: {
@@ -33,12 +34,15 @@ export function DailyMantraCard() {
         setMantra(data.mantra)
         setCompleted(data.completed || false)
       }
-    } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to fetch daily mantra:', error);
-    } finally {
+            } catch (error) {
+          handleError(error, {
+      operation: 'mantra_operation', component: 'DailyMantraCard',
+
+            userMessage: 'Failed to load daily mantra. Please try refreshing.'
+
+          })
+          // Error logged via handleError
+        } finally {
       setLoading(false)
     }
   }
@@ -52,15 +56,18 @@ export function DailyMantraCard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mantraId: mantra.id })
       })
-      
+
       if (response.ok) {
         setCompleted(true)
       }
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to mark mantra as complete:', error);
+      handleError(error, {
+      operation: 'mantra_operation', component: 'DailyMantraCard',
+
+        userMessage: 'Failed to load daily mantra. Please try refreshing.'
+
+      })
+            // Error logged via handleError
     }
   }
 
@@ -127,8 +134,8 @@ export function DailyMantraCard() {
       {!completed && (
         <button
           onClick={markAsComplete}
-          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 
-                     hover:from-purple-500/30 hover:to-pink-500/30 rounded-lg 
+          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20
+                     hover:from-purple-500/30 hover:to-pink-500/30 rounded-lg
                      transition-all flex items-center justify-center gap-2 text-sm"
         >
           <CheckCircle className="w-4 h-4" />

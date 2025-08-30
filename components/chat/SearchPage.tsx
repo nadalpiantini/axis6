@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 import { MessageSearch } from './MessageSearch'
 import { SearchResults } from './SearchResults'
 
-
 interface SearchPageProps {
   onBack?: () => void
   onResultSelect?: (result: SearchResult) => void
@@ -63,7 +62,7 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
             <ArrowLeft className="h-4 w-4" />
           </Button>
         )}
-        
+
         <h1 className="text-lg font-semibold text-white flex items-center gap-2">
           <Search className="h-5 w-5 text-purple-400" />
           Message Search
@@ -228,13 +227,19 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-20"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          style={{
+            paddingTop: 'max(env(safe-area-inset-top, 0px), 1rem)',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 1rem)',
+            paddingLeft: 'max(env(safe-area-inset-left, 0px), 1rem)',
+            paddingRight: 'max(env(safe-area-inset-right, 0px), 1rem)'
+          }}
           onClick={(e) => e.target === e.currentTarget && handleSearchClose()}
         >
           <MessageSearch
             onClose={handleSearchClose}
             onResultSelect={handleResultSelect}
-            className="mx-4 w-full max-w-2xl"
+            className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-2xl max-h-[90vh] sm:max-h-[85vh]"
           />
         </motion.div>
       )}

@@ -10,57 +10,57 @@ class AXIS6Reporter implements Reporter {
   private startTime = Date.now();
   private results: TestResult[] = [];
   private testCases: TestCase[] = [];
-  
+
   onBegin(config: any, suite: Suite) {
     console.log(`🚀 Starting AXIS6 Test Suite with ${suite.allTests().length} tests`);
     console.log(`📍 Base URL: ${config.projects[0].use.baseURL}`);
     console.log(`🌐 Projects: ${config.projects.map((p: any) => p.name).join(', ')}`);
   }
-  
+
   onTestBegin(test: TestCase) {
     console.log(`▶️  Running: ${test.title}`);
   }
-  
+
   onTestEnd(test: TestCase, result: TestResult) {
     this.testCases.push(test);
     this.results.push(result);
-    
-    const status = result.status === 'passed' ? '✅' : 
-                   result.status === 'failed' ? '❌' : 
+
+    const status = result.status === 'passed' ? '✅' :
+                   result.status === 'failed' ? '❌' :
                    result.status === 'skipped' ? '⏭️' : '⚠️';
-    
+
     console.log(`${status} ${test.title} (${result.duration}ms)`);
-    
+
     if (result.status === 'failed' && result.error) {
       console.log(`   Error: ${result.error.message}`);
     }
   }
-  
+
   onEnd(result: FullResult) {
     const duration = Date.now() - this.startTime;
-    
+
     // Generate comprehensive report
     const report = this.generateReport(duration);
-    
+
     // Write reports
     this.writeHTMLReport(report);
     this.writeJSONReport(report);
     this.writeMarkdownSummary(report);
-    
+
     // Console summary
     this.printSummary(report);
   }
-  
+
   private generateReport(duration: number) {
     const passed = this.results.filter(r => r.status === 'passed').length;
     const failed = this.results.filter(r => r.status === 'failed').length;
     const skipped = this.results.filter(r => r.status === 'skipped').length;
     const total = this.results.length;
-    
+
     const categories = this.categorizeTests();
     const performance = this.analyzePerformance();
     const browsers = this.analyzeBrowsers();
-    
+
     return {
       summary: {
         total,
@@ -80,7 +80,7 @@ class AXIS6Reporter implements Reporter {
       coverage: this.calculateCoverage()
     };
   }
-  
+
   private categorizeTests() {
     const categories = {
       authentication: { total: 0, passed: 0, failed: 0 },
@@ -91,11 +91,11 @@ class AXIS6Reporter implements Reporter {
       security: { total: 0, passed: 0, failed: 0 },
       visual: { total: 0, passed: 0, failed: 0 }
     };
-    
+
     this.testCases.forEach((test, index) => {
       const result = this.results[index];
       const fileName = test.location.file.toLowerCase();
-      
+
       let category = 'other';
       if (fileName.includes('auth')) category = 'authentication';
       else if (fileName.includes('dashboard')) category = 'dashboard';
@@ -104,7 +104,7 @@ class AXIS6Reporter implements Reporter {
       else if (fileName.includes('accessibility')) category = 'accessibility';
       else if (fileName.includes('security')) category = 'security';
       else if (fileName.includes('visual')) category = 'visual';
-      
+
       if (categories[category as keyof typeof categories]) {
         const cat = categories[category as keyof typeof categories];
         cat.total++;
@@ -112,19 +112,19 @@ class AXIS6Reporter implements Reporter {
         else if (result.status === 'failed') cat.failed++;
       }
     });
-    
+
     return categories;
   }
-  
+
   private analyzePerformance() {
-    const performanceTests = this.testCases.filter((test, index) => 
+    const performanceTests = this.testCases.filter((test, index) =>
       test.location.file.toLowerCase().includes('performance')
     );
-    
+
     const avgDuration = this.results.reduce((acc, result) => acc + result.duration, 0) / this.results.length;
     const slowestTest = Math.max(...this.results.map(r => r.duration));
     const fastestTest = Math.min(...this.results.map(r => r.duration));
-    
+
     return {
       totalPerformanceTests: performanceTests.length,
       avgTestDuration: Math.round(avgDuration),
@@ -133,26 +133,26 @@ class AXIS6Reporter implements Reporter {
       performanceScore: this.calculatePerformanceScore()
     };
   }
-  
+
   private analyzeBrowsers() {
     const browsers: { [key: string]: { total: number, passed: number, failed: number } } = {};
-    
+
     this.testCases.forEach((test, index) => {
       const result = this.results[index];
       const browser = test.parent.project()?.name || 'unknown';
-      
+
       if (!browsers[browser]) {
         browsers[browser] = { total: 0, passed: 0, failed: 0 };
       }
-      
+
       browsers[browser].total++;
       if (result.status === 'passed') browsers[browser].passed++;
       else if (result.status === 'failed') browsers[browser].failed++;
     });
-    
+
     return browsers;
   }
-  
+
   private analyzeFailures() {
     const failures = this.results
       .map((result, index) => ({ result, test: this.testCases[index] }))
@@ -164,19 +164,19 @@ class AXIS6Reporter implements Reporter {
         duration: result.duration,
         project: test.parent.project()?.name || 'unknown'
       }));
-    
+
     const errorPatterns = this.identifyErrorPatterns(failures);
-    
+
     return {
       failures,
       errorPatterns,
       flakyTests: this.identifyFlakyTests()
     };
   }
-  
+
   private identifyErrorPatterns(failures: any[]) {
     const patterns: { [key: string]: number } = {};
-    
+
     failures.forEach(failure => {
       const error = failure.error.toLowerCase();
       if (error.includes('timeout')) patterns['timeout'] = (patterns['timeout'] || 0) + 1;
@@ -185,20 +185,20 @@ class AXIS6Reporter implements Reporter {
       else if (error.includes('authentication')) patterns['auth'] = (patterns['auth'] || 0) + 1;
       else patterns['other'] = (patterns['other'] || 0) + 1;
     });
-    
+
     return patterns;
   }
-  
+
   private identifyFlakyTests() {
     // In a real implementation, this would track test history
     // For now, return empty array
     return [];
   }
-  
+
   private calculateCoverage() {
     const features = [
       'Landing Page',
-      'User Registration', 
+      'User Registration',
       'User Login',
       'Dashboard Loading',
       'Hexagon Visualization',
@@ -211,28 +211,28 @@ class AXIS6Reporter implements Reporter {
       'Cross-browser Support',
       'Mobile Responsiveness'
     ];
-    
+
     const testedFeatures = features.length; // Simplified
     const coveragePercent = ((testedFeatures / features.length) * 100).toFixed(1);
-    
+
     return {
       totalFeatures: features.length,
       testedFeatures,
       coveragePercent
     };
   }
-  
+
   private calculatePerformanceScore() {
-    const performanceResults = this.results.filter((_, index) => 
+    const performanceResults = this.results.filter((_, index) =>
       this.testCases[index].location.file.toLowerCase().includes('performance')
     );
-    
+
     if (performanceResults.length === 0) return 0;
-    
+
     const passRate = (performanceResults.filter(r => r.status === 'passed').length / performanceResults.length) * 100;
     return Math.round(passRate);
   }
-  
+
   private writeHTMLReport(report: any) {
     const html = `
 <!DOCTYPE html>
@@ -279,7 +279,7 @@ class AXIS6Reporter implements Reporter {
             <p>Generated on ${new Date(report.summary.timestamp).toLocaleString()}</p>
             <p>Commit: ${report.summary.commit} • Branch: ${report.summary.branch}</p>
         </div>
-        
+
         <div class="summary">
             <div class="metric passed">
                 <div class="metric-value">${report.summary.passed}</div>
@@ -306,7 +306,7 @@ class AXIS6Reporter implements Reporter {
                 <div class="metric-label">Feature Coverage</div>
             </div>
         </div>
-        
+
         <div class="section">
             <h2>📊 Test Categories</h2>
             <div class="category-grid">
@@ -321,7 +321,7 @@ class AXIS6Reporter implements Reporter {
                 `).join('')}
             </div>
         </div>
-        
+
         <div class="section">
             <h2>🌐 Browser Compatibility</h2>
             <div class="browser-grid">
@@ -336,7 +336,7 @@ class AXIS6Reporter implements Reporter {
                 `).join('')}
             </div>
         </div>
-        
+
         ${report.failures.failures.length > 0 ? `
             <div class="section">
                 <h2>❌ Test Failures</h2>
@@ -351,7 +351,7 @@ class AXIS6Reporter implements Reporter {
                 </div>
             </div>
         ` : ''}
-        
+
         <div class="section">
             <h2>⚡ Performance Metrics</h2>
             <p><strong>Average Test Duration:</strong> ${report.performance.avgTestDuration}ms</p>
@@ -362,27 +362,27 @@ class AXIS6Reporter implements Reporter {
     </div>
 </body>
 </html>`;
-    
+
     const reportDir = 'axis6-test-reports';
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(path.join(reportDir, 'index.html'), html);
   }
-  
+
   private writeJSONReport(report: any) {
     const reportDir = 'axis6-test-reports';
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(
-      path.join(reportDir, 'results.json'), 
+      path.join(reportDir, 'results.json'),
       JSON.stringify(report, null, 2)
     );
   }
-  
+
   private writeMarkdownSummary(report: any) {
     const markdown = `# 🎯 AXIS6 Test Results
 
@@ -396,18 +396,18 @@ class AXIS6Reporter implements Reporter {
 - **Performance Score:** ${report.performance.performanceScore}/100
 
 ## Test Categories
-${Object.entries(report.categories).map(([name, data]: [string, any]) => 
+${Object.entries(report.categories).map(([name, data]: [string, any]) =>
   `- **${name.replace(/([A-Z])/g, ' $1').trim()}:** ${data.passed}/${data.total} (${((data.passed / data.total * 100) || 0).toFixed(1)}%)`
 ).join('\n')}
 
 ## Browser Compatibility
-${Object.entries(report.browsers).map(([name, data]: [string, any]) => 
+${Object.entries(report.browsers).map(([name, data]: [string, any]) =>
   `- **${name}:** ${data.passed}/${data.total} (${((data.passed / data.total * 100) || 0).toFixed(1)}%)`
 ).join('\n')}
 
 ${report.failures.failures.length > 0 ? `
 ## ❌ Failures
-${report.failures.failures.map((failure: any) => 
+${report.failures.failures.map((failure: any) =>
   `- **${failure.test}** (${failure.file}): ${failure.error}`
 ).join('\n')}
 ` : '## ✅ All tests passed!'}
@@ -425,10 +425,10 @@ ${report.failures.failures.map((failure: any) =>
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(path.join(reportDir, 'summary.md'), markdown);
   }
-  
+
   private printSummary(report: any) {
     console.log('\n' + '='.repeat(60));
     console.log('🎯 AXIS6 TEST SUITE SUMMARY');
@@ -440,14 +440,14 @@ ${report.failures.failures.map((failure: any) =>
     console.log(`⏱️  Duration: ${(report.summary.duration / 1000).toFixed(1)}s`);
     console.log(`⚡ Performance Score: ${report.performance.performanceScore}/100`);
     console.log(`📈 Feature Coverage: ${report.coverage.coveragePercent}%`);
-    
+
     if (report.failures.failures.length > 0) {
       console.log('\n❌ FAILED TESTS:');
       report.failures.failures.forEach((failure: any) => {
         console.log(`  • ${failure.test} (${failure.file})`);
       });
     }
-    
+
     console.log('\n📁 Reports generated in: axis6-test-reports/');
     console.log('='.repeat(60));
   }

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Activity, Brain, Heart, Users, Sparkles, Briefcase, Clock, Globe, Lock, UserCheck } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface QuickActionComposerProps {
   isOpen: boolean
   onClose: () => void
@@ -47,11 +48,11 @@ const MICRO_SUGGESTIONS = [
   'Organize workspace'
 ]
 
-export function QuickActionComposer({ 
-  isOpen, 
-  onClose, 
+export function QuickActionComposer({
+  isOpen,
+  onClose,
   isMorningWindow = false,
-  onSuccess 
+  onSuccess
 }: QuickActionComposerProps) {
   const [selectedAxis, setSelectedAxis] = useState<string>('')
   const [winText, setWinText] = useState('')
@@ -92,18 +93,21 @@ export function QuickActionComposer({
       }
 
       toast.success(data.message || 'Micro win recorded!')
-      
+
       // Reset form
       setSelectedAxis('')
       setWinText('')
       setMinutes(null)
       setPrivacy('public')
-      
+
       onSuccess?.()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error recording micro win:', error);
+      handleError(error, {
+      operation: 'general_operation', component: 'QuickActionComposer',
+
+        userMessage: 'Operation failed. Please try again.'
+
+      })
       toast.error(error instanceof Error ? error.message : 'Failed to record micro win')
     } finally {
       setIsSubmitting(false)
@@ -138,8 +142,8 @@ export function QuickActionComposer({
                     onClick={() => setSelectedAxis(axis.value)}
                     className={`
                       p-3 rounded-lg border-2 transition-all duration-200
-                      ${selectedAxis === axis.value 
-                        ? 'border-white bg-navy-700' 
+                      ${selectedAxis === axis.value
+                        ? 'border-white bg-navy-700'
                         : 'border-navy-600 hover:border-navy-500 bg-navy-800/50'
                       }
                     `}
@@ -205,8 +209,8 @@ export function QuickActionComposer({
                   onClick={() => setMinutes(minutes === min ? null : min)}
                   className={`
                     px-3 py-2 rounded-lg border transition-all
-                    ${minutes === min 
-                      ? 'border-white bg-navy-700 text-white' 
+                    ${minutes === min
+                      ? 'border-white bg-navy-700 text-white'
                       : 'border-navy-600 hover:border-navy-500 text-navy-400'
                     }
                   `}
@@ -228,13 +232,13 @@ export function QuickActionComposer({
                   const Icon = option.icon
                   return (
                     <div key={option.value} className="flex items-center">
-                      <RadioGroupItem 
-                        value={option.value} 
+                      <RadioGroupItem
+                        value={option.value}
                         id={option.value}
                         className="text-white border-navy-600"
                       />
-                      <Label 
-                        htmlFor={option.value} 
+                      <Label
+                        htmlFor={option.value}
                         className="ml-2 flex items-center gap-1 text-sm text-navy-300 cursor-pointer"
                       >
                         <Icon className="w-3 h-3" />

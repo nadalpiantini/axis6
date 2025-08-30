@@ -7,10 +7,10 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -19,7 +19,7 @@ export async function GET(_request: NextRequest) {
     const { searchParams } = new URL(_request.url)
     const date = searchParams.get('date')
     const categoryId = searchParams.get('categoryId')
-    
+
     let query = supabase
       .from('axis6_checkins')
       .select(`
@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
     }
 
     const { data: checkins, error } = await query
-    
+
     if (error) {
       logger.error('Error fetching check-ins', error)
       return NextResponse.json({ error: 'Failed to fetch check-ins' }, { status: 500 })
@@ -64,10 +64,10 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -108,7 +108,7 @@ export async function POST(_request: NextRequest) {
           .eq('id', existingCheckin.id)
           .select()
           .single()
-        
+
         checkin = updatedCheckin
         error = updateError
       } else {
@@ -125,7 +125,7 @@ export async function POST(_request: NextRequest) {
           })
           .select()
           .single()
-        
+
         checkin = newCheckin
         error = insertError
       }
@@ -177,10 +177,10 @@ export async function POST(_request: NextRequest) {
 export async function PUT(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -222,10 +222,10 @@ export async function PUT(_request: NextRequest) {
 export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

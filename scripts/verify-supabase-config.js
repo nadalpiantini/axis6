@@ -13,7 +13,7 @@ const { createClient } = require('@supabase/supabase-js')
 // Configuration
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 console.log('🔍 AXIS6 SUPABASE CONFIGURATION VERIFICATION')
 console.log('='.repeat(50))
@@ -114,8 +114,8 @@ async function verifySupabaseConfig() {
     console.log('   -', `${APP_URL}/**`) // Wildcard for development
     
     if (APP_URL.includes('localhost')) {
-      console.log('   -', 'http://localhost:6789/auth/callback')
-      console.log('   -', 'http://localhost:6789/**')
+      console.log('   -', 'http://localhost:3000/auth/callback')
+      console.log('   -', 'http://localhost:3000/**')
     }
     
     console.log('')

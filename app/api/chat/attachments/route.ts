@@ -12,7 +12,7 @@ export const GET = withChatAuth(async (_context, request) => {
   try {
     const { searchParams } = new URL(request.url)
     const messageId = searchParams.get('message_id')
-    
+
     if (!messageId) {
       return NextResponse.json(
         { error: 'Message ID is required' },

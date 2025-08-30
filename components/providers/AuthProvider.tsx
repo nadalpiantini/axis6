@@ -43,10 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only redirect to login if we're on a protected route
         const publicPaths = ['/', '/auth', '/login', '/register']
         const currentPath = window.location.pathname
-        const isPublicPath = publicPaths.some(path => 
+        const isPublicPath = publicPaths.some(path =>
           currentPath === path || currentPath.startsWith(`${path}/`)
         )
-        
+
         if (!isPublicPath) {
           router.push('/auth/login')
         }

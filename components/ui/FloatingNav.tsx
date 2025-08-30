@@ -39,15 +39,15 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
           <div className="flex items-center justify-around py-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href
-              
+
               return (
                 <Link
                   key={item.id}
                   href={item.href}
                   className={`
                     flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all
-                    ${isActive 
-                      ? 'text-white' 
+                    ${isActive
+                      ? 'text-white'
                       : 'text-gray-400 hover:text-gray-200'
                     }
                   `}
@@ -57,8 +57,8 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
                     whileTap={{ scale: 0.95 }}
                     className={`
                       p-2 rounded-xl transition-all
-                      ${isActive 
-                        ? 'bg-gradient-to-br from-physical/20 to-spiritual/20' 
+                      ${isActive
+                        ? 'bg-gradient-to-br from-physical/20 to-spiritual/20'
                         : 'hover:bg-white/5'
                       }
                     `}
@@ -69,7 +69,7 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
                 </Link>
               )
             })}
-            
+
             {/* Floating Action Button for mobile */}
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -107,7 +107,7 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
         <div className="flex flex-col gap-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href
-            
+
             return (
               <Link
                 key={item.id}
@@ -119,15 +119,15 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
                   whileTap={{ scale: 0.95 }}
                   className={`
                     p-3 rounded-xl transition-all
-                    ${isActive 
-                      ? 'bg-gradient-to-br from-physical/20 to-spiritual/20 text-white' 
+                    ${isActive
+                      ? 'bg-gradient-to-br from-physical/20 to-spiritual/20 text-white'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                     }
                   `}
                 >
                   {item.icon}
                 </motion.div>
-                
+
                 {/* Tooltip */}
                 <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 pointer-events-none">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-md px-3 py-1 rounded-lg whitespace-nowrap">

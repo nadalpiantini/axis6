@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
+import {
   Brain,
   Heart,
   Users,
@@ -53,7 +53,7 @@ const temperamentData = {
   sanguine: {
     name: { en: 'Sanguine', es: 'Sanguíneo' },
     subtitle: { en: 'The Enthusiast', es: 'El Entusiasta' },
-    description: { 
+    description: {
       en: 'You are naturally optimistic, social, and energetic. You thrive on interaction and bring joy to those around you.',
       es: 'Eres naturalmente optimista, social y enérgico. Prosperas en la interacción y traes alegría a quienes te rodean.'
     },
@@ -69,7 +69,7 @@ const temperamentData = {
   choleric: {
     name: { en: 'Choleric', es: 'Colérico' },
     subtitle: { en: 'The Leader', es: 'El Líder' },
-    description: { 
+    description: {
       en: 'You are ambitious, goal-oriented, and natural leader. You excel at getting things done efficiently.',
       es: 'Eres ambicioso, orientado a objetivos y líder natural. Sobresales en hacer las cosas de manera eficiente.'
     },
@@ -85,7 +85,7 @@ const temperamentData = {
   melancholic: {
     name: { en: 'Melancholic', es: 'Melancólico' },
     subtitle: { en: 'The Analyst', es: 'El Analista' },
-    description: { 
+    description: {
       en: 'You are thoughtful, analytical, and detail-oriented. You value quality and deep understanding.',
       es: 'Eres reflexivo, analítico y detallista. Valoras la calidad y la comprensión profunda.'
     },
@@ -101,7 +101,7 @@ const temperamentData = {
   phlegmatic: {
     name: { en: 'Phlegmatic', es: 'Flemático' },
     subtitle: { en: 'The Peacemaker', es: 'El Pacificador' },
-    description: { 
+    description: {
       en: 'You are calm, stable, and diplomatic. You excel at maintaining harmony and supporting others.',
       es: 'Eres tranquilo, estable y diplomático. Sobresales en mantener la armonía y apoyar a otros.'
     },
@@ -116,16 +116,16 @@ const temperamentData = {
   }
 }
 
-export function TemperamentResults({ 
-  result, 
-  insights, 
-  onContinue, 
-  language = 'en' 
+export function TemperamentResults({
+  result,
+  insights,
+  onContinue,
+  language = 'en'
 }: TemperamentResultsProps) {
   const [showDetails, setShowDetails] = useState(false)
 
   const primaryTemp = temperamentData[result.primary_temperament as keyof typeof temperamentData]
-  const secondaryTemp = result.secondary_temperament 
+  const secondaryTemp = result.secondary_temperament
     ? temperamentData[result.secondary_temperament as keyof typeof temperamentData]
     : null
 
@@ -149,7 +149,7 @@ export function TemperamentResults({
     en: {
       yourTemperament: 'Your Temperament Profile',
       primary: 'Primary',
-      secondary: 'Secondary', 
+      secondary: 'Secondary',
       scores: 'Detailed Scores',
       strengths: 'Your Strengths',
       challenges: 'Growth Areas',
@@ -164,7 +164,7 @@ export function TemperamentResults({
       yourTemperament: 'Tu Perfil de Temperamento',
       primary: 'Primario',
       secondary: 'Secundario',
-      scores: 'Puntajes Detallados', 
+      scores: 'Puntajes Detallados',
       strengths: 'Tus Fortalezas',
       challenges: 'Áreas de Crecimiento',
       recommendations: 'Recomendaciones',
@@ -209,12 +209,12 @@ export function TemperamentResults({
               className={`relative p-6 rounded-2xl bg-gradient-to-br ${primaryTemp.bgGradient} border ${primaryTemp.borderColor}`}
             >
               <div className="flex items-center gap-3 mb-4">
-                <div 
+                <div
                   className="p-3 rounded-xl"
                   style={{ backgroundColor: `${primaryTemp.color}20` }}
                 >
-                  <PrimaryIcon 
-                    className="w-6 h-6" 
+                  <PrimaryIcon
+                    className="w-6 h-6"
                     style={{ color: primaryTemp.color }}
                   />
                 </div>
@@ -230,7 +230,7 @@ export function TemperamentResults({
                   </p>
                 </div>
               </div>
-              
+
               <p className="text-gray-300 mb-4 text-sm sm:text-base">
                 {primaryTemp.description[language]}
               </p>
@@ -240,10 +240,10 @@ export function TemperamentResults({
                 <h4 className="text-sm font-semibold text-white">Key Traits:</h4>
                 <div className="flex flex-wrap gap-2">
                   {primaryTemp.traits[language].map((trait, index) => (
-                    <span 
+                    <span
                       key={index}
                       className="px-2 py-1 text-xs rounded-full border"
-                      style={{ 
+                      style={{
                         backgroundColor: `${primaryTemp.color}15`,
                         borderColor: `${primaryTemp.color}30`,
                         color: primaryTemp.color
@@ -257,7 +257,7 @@ export function TemperamentResults({
 
               {/* Score Badge */}
               <div className="absolute top-4 right-4">
-                <div 
+                <div
                   className="px-3 py-1 rounded-full text-sm font-bold text-white"
                   style={{ backgroundColor: primaryTemp.color }}
                 >
@@ -275,12 +275,12 @@ export function TemperamentResults({
                 className={`relative p-6 rounded-2xl bg-gradient-to-br ${secondaryTemp.bgGradient} border ${secondaryTemp.borderColor} opacity-80`}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div 
+                  <div
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: `${secondaryTemp.color}20` }}
                   >
-                    <SecondaryIcon 
-                      className="w-6 h-6" 
+                    <SecondaryIcon
+                      className="w-6 h-6"
                       style={{ color: secondaryTemp.color }}
                     />
                   </div>
@@ -296,14 +296,14 @@ export function TemperamentResults({
                     </p>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-300 text-sm">
                   {secondaryTemp.description[language]}
                 </p>
 
                 {/* Score Badge */}
                 <div className="absolute top-4 right-4">
-                  <div 
+                  <div
                     className="px-3 py-1 rounded-full text-sm font-bold text-white"
                     style={{ backgroundColor: secondaryTemp.color }}
                   >
@@ -337,11 +337,11 @@ export function TemperamentResults({
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {scorePercentages.map((item, index) => (
                       <div key={item.temperament} className="text-center">
-                        <div 
+                        <div
                           className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center"
                           style={{ backgroundColor: `${item.data.color}20` }}
                         >
-                          <item.data.icon 
+                          <item.data.icon
                             className="w-8 h-8"
                             style={{ color: item.data.color }}
                           />
@@ -349,7 +349,7 @@ export function TemperamentResults({
                         <h4 className="text-sm font-medium text-white">
                           {item.data.name[language]}
                         </h4>
-                        <div 
+                        <div
                           className="text-2xl font-bold mt-1"
                           style={{ color: item.data.color }}
                         >

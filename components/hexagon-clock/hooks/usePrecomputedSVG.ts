@@ -28,21 +28,21 @@ export function useMemoizedDataPolygon(
 ): string {
   return useMemo(() => {
     if (!data || typeof data !== 'object') return '';
-    
+
     const { center, radius } = precomputedSVG;
-    
+
     // Use pre-computed clock positions for data points
     const points = precomputedSVG.clockPositions.map((pos, index) => {
       const category = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'][index];
       const value = (data[category] || 0) / 100;
-      
+
       // Scale position based on completion percentage
       const x = center.x + (pos.x - center.x) * value;
       const y = center.y + (pos.y - center.y) * value;
-      
+
       return `${x},${y}`;
     }).join(' ');
-    
+
     return points;
   }, [data, precomputedSVG]);
 }
@@ -56,13 +56,13 @@ export function useMemoizedDataPoints(
 ): Array<{ x: number; y: number; value: number; category: string }> {
   return useMemo(() => {
     if (!data || typeof data !== 'object') return [];
-    
+
     const { center, radius } = precomputedSVG;
-    
+
     return precomputedSVG.clockPositions.map((pos, index) => {
       const category = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'][index];
       const value = (data[category] || 0) / 100;
-      
+
       return {
         x: center.x + (pos.x - center.x) * value,
         y: center.y + (pos.y - center.y) * value,
@@ -95,17 +95,17 @@ export function useMemoizedTimeBlockPaths(
 }> {
   return useMemo(() => {
     if (!distribution || !Array.isArray(distribution)) return [];
-    
+
     const { center, radius } = precomputedSVG;
     const sectorAngle = 60; // 360 / 6 categories
-    
+
     return distribution.map((item, index) => {
       const startAngle = (index * sectorAngle) - 30; // Center on clock position
       const endAngle = startAngle + sectorAngle;
-      
+
       // Determine time block state
       let state: 'empty' | 'planned' | 'active' | 'completed' | 'overflowing' = 'empty';
-      
+
       if (item.actual_minutes > 0 && item.planned_minutes > 0) {
         if (item.actual_minutes >= item.planned_minutes) {
           state = item.actual_minutes > item.planned_minutes * 1.2 ? 'overflowing' : 'completed';
@@ -115,14 +115,14 @@ export function useMemoizedTimeBlockPaths(
       } else if (item.planned_minutes > 0) {
         state = 'planned';
       }
-      
+
       // Generate arc path
       const innerRadius = radius * 0.3;
       const outerRadius = radius * (0.6 + (item.percentage / 100) * 0.4); // Variable outer radius
-      
+
       const startRad = (startAngle * Math.PI) / 180;
       const endRad = (endAngle * Math.PI) / 180;
-      
+
       const x1 = center.x + innerRadius * Math.cos(startRad);
       const y1 = center.y + innerRadius * Math.sin(startRad);
       const x2 = center.x + outerRadius * Math.cos(startRad);
@@ -131,7 +131,7 @@ export function useMemoizedTimeBlockPaths(
       const y3 = center.y + outerRadius * Math.sin(endRad);
       const x4 = center.x + innerRadius * Math.cos(endRad);
       const y4 = center.y + innerRadius * Math.sin(endRad);
-      
+
       const path = [
         `M ${x1} ${y1}`,
         `L ${x2} ${y2}`,
@@ -140,7 +140,7 @@ export function useMemoizedTimeBlockPaths(
         `A ${innerRadius} ${innerRadius} 0 0 0 ${x1} ${y1}`,
         'Z'
       ].join(' ');
-      
+
       return {
         path,
         category: item.category_name,
@@ -169,19 +169,19 @@ export function useOptimizedLabelPositions(
     const { center, radius } = precomputedSVG;
     const actualLabelDistance = labelDistance || radius * 1.3;
     const edgeOffset = 20;
-    
+
     return precomputedSVG.clockPositions.map((pos, index) => {
       const category = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'][index];
-      
+
       // Calculate label position at specified distance
       const angle = pos.angle * Math.PI / 180;
       const baseX = center.x + actualLabelDistance * Math.cos(angle);
       const baseY = center.y + actualLabelDistance * Math.sin(angle);
-      
+
       // Adjust to prevent edge overflow
       const adjustedX = Math.max(edgeOffset, Math.min(containerSize - edgeOffset, baseX));
       const adjustedY = Math.max(edgeOffset, Math.min(containerSize - edgeOffset, baseY));
-      
+
       return {
         x: adjustedX,
         y: adjustedY,

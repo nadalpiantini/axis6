@@ -30,7 +30,7 @@ export interface UpdateActivityInput {
 // Fetch activities for a specific user and category
 async function fetchActivities(userId?: string, categoryId?: number): Promise<AxisActivity[]> {
   if (!userId) return []
-  
+
   const supabase = createClient()
   let query = supabase
     .from('axis6_axis_activities')
@@ -65,7 +65,7 @@ async function createActivity(input: CreateActivityInput): Promise<AxisActivity>
 async function updateActivity(input: UpdateActivityInput): Promise<AxisActivity> {
   const { id, ...updates } = input
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('axis6_axis_activities')
     .update({
@@ -110,8 +110,8 @@ export function useCreateActivity() {
     mutationFn: createActivity,
     onSuccess: (data) => {
       // Invalidate and refetch activities
-      queryClient.invalidateQueries({ 
-        queryKey: ['axis-activities', data.user_id] 
+      queryClient.invalidateQueries({
+        queryKey: ['axis-activities', data.user_id]
       })
     },
   })
@@ -125,8 +125,8 @@ export function useUpdateActivity() {
     mutationFn: updateActivity,
     onSuccess: (data) => {
       // Invalidate and refetch activities
-      queryClient.invalidateQueries({ 
-        queryKey: ['axis-activities', data.user_id] 
+      queryClient.invalidateQueries({
+        queryKey: ['axis-activities', data.user_id]
       })
     },
   })
@@ -140,8 +140,8 @@ export function useDeleteActivity() {
     mutationFn: deleteActivity,
     onSuccess: () => {
       // Invalidate all activities queries since we don't have user_id here
-      queryClient.invalidateQueries({ 
-        queryKey: ['axis-activities'] 
+      queryClient.invalidateQueries({
+        queryKey: ['axis-activities']
       })
     },
   })

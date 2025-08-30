@@ -18,7 +18,7 @@ export function generateHexagonPath(center: { x: number; y: number }, radius: nu
     const y = center.y + radius * Math.sin(angleRad);
     return `${x},${y}`;
   }).join(' ');
-  
+
   return points;
 }
 
@@ -27,8 +27,8 @@ export function generateHexagonPath(center: { x: number; y: number }, radius: nu
  * Creates multiple hexagon rings at different scales
  */
 export function generateGridPaths(
-  center: { x: number; y: number }, 
-  radius: number, 
+  center: { x: number; y: number },
+  radius: number,
   levels: number[]
 ): string[] {
   return levels.map(level => {
@@ -53,7 +53,7 @@ export function generateDataPolygonPath(
     const y = center.y + radius * value * Math.sin(angleRad);
     return `${x},${y}`;
   }).join(' ');
-  
+
   return points;
 }
 
@@ -72,7 +72,7 @@ export function generateTimeBlockArcPath(
   const actualEndAngle = startAngle + ((endAngle - startAngle) * percentage);
   const startRad = (startAngle * Math.PI) / 180;
   const endRad = (actualEndAngle * Math.PI) / 180;
-  
+
   // Calculate arc points
   const x1 = center.x + innerRadius * Math.cos(startRad);
   const y1 = center.y + innerRadius * Math.sin(startRad);
@@ -82,10 +82,10 @@ export function generateTimeBlockArcPath(
   const y3 = center.y + outerRadius * Math.sin(endRad);
   const x4 = center.x + innerRadius * Math.cos(endRad);
   const y4 = center.y + innerRadius * Math.sin(endRad);
-  
+
   // Determine if large arc flag is needed
   const largeArcFlag = Math.abs(actualEndAngle - startAngle) > 180 ? 1 : 0;
-  
+
   return [
     `M ${x1} ${y1}`,
     `L ${x2} ${y2}`,
@@ -125,24 +125,24 @@ export function generateResonanceDotPositions(
   resonanceRadius: number
 ): Array<{ x: number; y: number; color: string; delay: number; intensity: number }> {
   if (!resonanceData || !Array.isArray(resonanceData)) return [];
-  
+
   const dots: Array<{ x: number; y: number; color: string; delay: number; intensity: number }> = [];
-  
+
   HEXAGON_CATEGORIES.forEach((cat) => {
     const resonanceInfo = resonanceData.find(r => r?.axisSlug === cat.key);
     if (!resonanceInfo || !resonanceInfo.hasResonance) return;
-    
+
     const { clockPosition } = cat;
     const angleRad = (clockPosition.angle * Math.PI) / 180;
     const dotsCount = Math.min(resonanceInfo.resonanceCount || 0, 8); // Max 8 dots per axis
-    
+
     for (let i = 0; i < dotsCount; i++) {
       // Create spiral pattern around each axis point
       const dotAngle = angleRad + (i * Math.PI / 6); // Spread dots around axis
       const dotRadius = resonanceRadius + (i % 2) * 15; // Alternating distances
       const x = center.x + dotRadius * Math.cos(dotAngle);
       const y = center.y + dotRadius * Math.sin(dotAngle);
-      
+
       dots.push({
         x,
         y,
@@ -152,7 +152,7 @@ export function generateResonanceDotPositions(
       });
     }
   });
-  
+
   return dots;
 }
 
@@ -166,21 +166,21 @@ export function generateCurrentTimeIndicator(
   const now = new Date();
   const hour = now.getHours() % 12;
   const minute = now.getMinutes();
-  
+
   // Calculate precise position including minutes
   const hourAngle = (hour * 30) + (minute * 0.5) - 90; // -90 to start at 12 o'clock
   const angleRad = (hourAngle * Math.PI) / 180;
-  
+
   const sunRadius = radius * 0.9;
   const x = center.x + sunRadius * Math.cos(angleRad);
   const y = center.y + sunRadius * Math.sin(angleRad);
-  
+
   // Create sun path (circle with rays)
   const sunSize = 8;
   const rayLength = 12;
-  
+
   let path = `M ${x} ${y} m -${sunSize} 0 a ${sunSize} ${sunSize} 0 1 0 ${sunSize * 2} 0 a ${sunSize} ${sunSize} 0 1 0 -${sunSize * 2} 0`;
-  
+
   // Add 8 sun rays
   for (let i = 0; i < 8; i++) {
     const rayAngle = (i * 45) * Math.PI / 180;
@@ -188,10 +188,10 @@ export function generateCurrentTimeIndicator(
     const rayStartY = y + (sunSize + 2) * Math.sin(rayAngle);
     const rayEndX = x + (sunSize + rayLength) * Math.cos(rayAngle);
     const rayEndY = y + (sunSize + rayLength) * Math.sin(rayAngle);
-    
+
     path += ` M ${rayStartX} ${rayStartY} L ${rayEndX} ${rayEndY}`;
   }
-  
+
   return {
     x,
     y,
@@ -207,7 +207,7 @@ export function generateCurrentTimeIndicator(
 export function precomputeAllSVGPaths(size: number): PrecomputedSVG {
   const center = { x: size / 2, y: size / 2 };
   const radius = size * 0.38;
-  
+
   // Generate all paths upfront
   const hexagonPath = generateHexagonPath(center, radius);
   const gridPaths = generateGridPaths(center, radius, [0.2, 0.4, 0.6, 0.8, 1.0]);
@@ -220,7 +220,7 @@ export function precomputeAllSVGPaths(size: number): PrecomputedSVG {
       angle: clockPosition.angle
     };
   });
-  
+
   return {
     hexagonPath,
     gridPaths,

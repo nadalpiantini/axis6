@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { ChatAttachment } from '@/lib/supabase/chat-storage'
 import { cn } from '@/lib/utils'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface ImageLightboxProps {
   isOpen: boolean
   onClose: () => void
@@ -102,9 +103,12 @@ export function ImageLightbox({
       link.click()
       document.body.removeChild(link)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to download image:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'ImageLightbox',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
     }
   }
 
@@ -147,7 +151,7 @@ export function ImageLightbox({
                 {Math.round(zoom * 100)}%
               </span>
             </div>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -156,7 +160,7 @@ export function ImageLightbox({
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -165,7 +169,7 @@ export function ImageLightbox({
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -174,7 +178,7 @@ export function ImageLightbox({
             >
               <RotateCw className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -183,7 +187,7 @@ export function ImageLightbox({
             >
               <Download className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"

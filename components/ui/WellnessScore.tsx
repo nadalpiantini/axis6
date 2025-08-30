@@ -67,7 +67,7 @@ export default function WellnessScore({
               strokeDashoffset={`${2 * Math.PI * 54 * (1 - score / 100)}`}
             />
           </svg>
-          
+
           {/* Score Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <motion.div

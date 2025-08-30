@@ -11,10 +11,10 @@ export async function GET(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat room details auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -70,7 +70,7 @@ export async function GET(
     }
 
     return NextResponse.json({ room })
-    
+
   } catch (error) {
     logger.error('Chat room details API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -85,10 +85,10 @@ export async function PUT(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat room update auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -129,7 +129,7 @@ export async function PUT(
     }
 
     return NextResponse.json({ room })
-    
+
   } catch (error) {
     logger.error('Chat room update API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -144,10 +144,10 @@ export async function DELETE(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat room delete auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -190,7 +190,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Room deleted successfully' })
-    
+
   } catch (error) {
     logger.error('Chat room delete API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

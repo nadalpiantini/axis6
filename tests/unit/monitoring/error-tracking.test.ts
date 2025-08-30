@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 
-import { 
-  categorizeError, 
-  generateFingerprint, 
+import {
+  categorizeError,
+  generateFingerprint,
   reportError,
   reportEvent,
   useErrorTracking
@@ -42,16 +42,16 @@ describe('Error Tracking System', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     const sentry = require('@sentry/nextjs')
     mockSentryWithScope = sentry.withScope
     mockSentryCaptureException = sentry.captureException
     mockSentryAddBreadcrumb = sentry.addBreadcrumb
     mockSentryStartSpan = sentry.startSpan
-    
+
     const logger = require('@/lib/utils/logger')
     mockLogger = logger.logger
-    
+
     mockSentryWithScope.mockImplementation((callback) => {
       const mockScope = {
         setLevel: jest.fn(),
@@ -185,7 +185,7 @@ describe('Error Tracking System', () => {
     it('should extract first line of stack trace', () => {
       const error = new Error('Test error')
       error.stack = 'Error: Test error\\n    at Function.test (file.js:10:5)\\n    at Object.run (other.js:20:10)'
-      
+
       const fingerprint = generateFingerprint(error)
       // The fingerprint should contain the full stack for proper error grouping
       expect(fingerprint.stack).toContain('Error: Test error')
@@ -241,7 +241,7 @@ describe('Error Tracking System', () => {
         setContext: jest.fn(),
         setFingerprint: jest.fn(),
       }
-      
+
       scopeCallback(mockScope)
 
       expect(mockScope.setLevel).toHaveBeenCalledWith('fatal') // critical maps to fatal
@@ -257,7 +257,7 @@ describe('Error Tracking System', () => {
 
     it('should handle missing context gracefully', () => {
       const error = new Error('Simple error')
-      
+
       reportError(error, 'normal')
 
       expect(mockSentryWithScope).toHaveBeenCalled()
@@ -275,12 +275,12 @@ describe('Error Tracking System', () => {
 
       severityMappings.forEach(({ input, expected }) => {
         mockSentryWithScope.mockClear()
-        
+
         reportError(error, input)
 
         const scopeCallback = mockSentryWithScope.mock.calls[0][0]
         const mockScope = { setLevel: jest.fn(), setTag: jest.fn(), setUser: jest.fn(), setContext: jest.fn(), setFingerprint: jest.fn() }
-        
+
         scopeCallback(mockScope)
         expect(mockScope.setLevel).toHaveBeenCalledWith(expected)
       })
@@ -309,12 +309,12 @@ describe('Error Tracking System', () => {
 
     it('should handle different event levels', () => {
       const levels: ('info' | 'warning' | 'error')[] = ['info', 'warning', 'error']
-      
+
       levels.forEach(level => {
         mockSentryAddBreadcrumb.mockClear()
-        
+
         reportEvent('test_event', {}, level)
-        
+
         expect(mockSentryAddBreadcrumb).toHaveBeenCalledWith({
           message: 'test_event',
           category: 'custom',
@@ -328,10 +328,10 @@ describe('Error Tracking System', () => {
   describe('useErrorTracking hook', () => {
     it('should create component error reporter', () => {
       const { reportComponentError } = useErrorTracking('TestComponent')
-      
+
       const error = new Error('Component error')
       const errorInfo = { componentStack: 'at TestComponent' }
-      
+
       reportComponentError(error, errorInfo)
 
       expect(mockSentryWithScope).toHaveBeenCalled()
@@ -339,7 +339,7 @@ describe('Error Tracking System', () => {
 
     it('should include component context in error reports', () => {
       const { reportComponentError } = useErrorTracking('UserProfile')
-      
+
       const error = new Error('Render error')
       reportComponentError(error)
 
@@ -351,10 +351,10 @@ describe('Error Tracking System', () => {
         setContext: jest.fn(),
         setFingerprint: jest.fn(),
       }
-      
+
       scopeCallback(mockScope)
 
-      expect(mockScope.setContext).toHaveBeenCalledWith('errorContext', 
+      expect(mockScope.setContext).toHaveBeenCalledWith('errorContext',
         expect.objectContaining({
           component: 'UserProfile'
         })
@@ -369,7 +369,7 @@ describe('Error Tracking System', () => {
       })
 
       const transaction = reportError.__proto__.constructor.startTransaction?.('test-operation', 'custom')
-      
+
       // Note: This would need the actual implementation of startTransaction
       // The current implementation returns a timing object
     })
@@ -412,12 +412,12 @@ describe('Error Tracking System', () => {
         setContext: jest.fn(),
         setFingerprint: jest.fn(),
       }
-      
+
       scopeCallback(mockScope)
 
       // Should still set user ID but not expose full email
       expect(mockScope.setUser).toHaveBeenCalledWith({ id: 'user123' })
-      
+
       process.env['NODE_ENV'] = originalEnv
     })
   })

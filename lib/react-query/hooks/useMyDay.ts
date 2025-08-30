@@ -33,7 +33,7 @@ export function useTimeDistribution(userId: string, date: string) {
 // Create time block
 export function useCreateTimeBlock() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (data: {
       user_id: string
@@ -53,11 +53,11 @@ export function useCreateTimeBlock() {
         },
         body: JSON.stringify(data),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to create time block')
       }
-      
+
       return response.json()
     },
     onSuccess: (data, variables) => {
@@ -70,7 +70,7 @@ export function useCreateTimeBlock() {
 // Update time block
 export function useUpdateTimeBlock() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -89,11 +89,11 @@ export function useUpdateTimeBlock() {
         },
         body: JSON.stringify(data),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to update time block')
       }
-      
+
       return response.json()
     },
     onSuccess: () => {
@@ -106,17 +106,17 @@ export function useUpdateTimeBlock() {
 // Delete time block
 export function useDeleteTimeBlock() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/time-blocks?id=${id}`, {
         method: 'DELETE',
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to delete time block')
       }
-      
+
       return response.json()
     },
     onSuccess: () => {
@@ -129,7 +129,7 @@ export function useDeleteTimeBlock() {
 // Start activity timer
 export function useStartTimer() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (data: {
       user_id: string
@@ -148,11 +148,11 @@ export function useStartTimer() {
           ...data
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to start timer')
       }
-      
+
       return response.json()
     },
     onSuccess: () => {
@@ -165,7 +165,7 @@ export function useStartTimer() {
 // Stop activity timer
 export function useStopTimer() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (data: {
       user_id: string
@@ -181,11 +181,11 @@ export function useStopTimer() {
           ...data
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to stop timer')
       }
-      
+
       return response.json()
     },
     onSuccess: () => {

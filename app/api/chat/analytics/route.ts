@@ -11,7 +11,7 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
 export const GET = withChatAuth(async (_context, _request) => {
   try {
     const { searchParams } = new URL(_request.url)
-    
+
     const type = searchParams.get('type') // 'overview', 'room', 'user', 'realtime'
     const roomId = searchParams.get('room_id')
 
@@ -28,7 +28,7 @@ export const GET = withChatAuth(async (_context, _request) => {
             { status: 400 }
           )
         }
-        
+
         const { data: roomData, error: roomError } = await supabase.rpc('get_room_analytics', {
           p_room_id: roomId
         })

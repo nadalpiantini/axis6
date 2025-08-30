@@ -6,9 +6,7 @@ import { ReactNode } from 'react'
 
 import { logger } from '@/lib/utils/logger';
 
-
 import { ErrorBoundary } from './ErrorBoundary'
-
 
 interface QueryErrorBoundaryProps {
   children: ReactNode

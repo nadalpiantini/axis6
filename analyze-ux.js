@@ -31,7 +31,7 @@ async function analyzeAXIS6UX() {
     
     // 1. Landing Page
     console.log('📱 Analyzing Landing Page...');
-    await page.goto('http://localhost:6789');
+    await page.goto('http://localhost:3000');
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: `${screenshotDir}/01-landing-page.png`, fullPage: true });
     
@@ -48,7 +48,7 @@ async function analyzeAXIS6UX() {
 
     analysis.pages.push({
       name: 'Landing Page',
-      url: 'http://localhost:6789',
+      url: 'http://localhost:3000',
       elements: landingElements,
       engagementScore: 7, // Initial assessment
       notes: 'Entry point - critical for first impressions and conversion'
@@ -80,7 +80,7 @@ async function analyzeAXIS6UX() {
     // 3. Register Page
     console.log('📝 Analyzing Register Page...');
     try {
-      await page.goto('http://localhost:6789/auth/register');
+      await page.goto('http://localhost:3000/auth/register');
       await page.waitForLoadState('networkidle');
       await page.screenshot({ path: `${screenshotDir}/03-register-page.png`, fullPage: true });
 
@@ -107,7 +107,7 @@ async function analyzeAXIS6UX() {
     // 4. Dashboard (main app page)
     console.log('📊 Analyzing Dashboard...');
     try {
-      await page.goto('http://localhost:6789/dashboard');
+      await page.goto('http://localhost:3000/dashboard');
       await page.waitForTimeout(2000); // Wait for any redirects or auth checks
       
       const currentUrl = page.url();
@@ -138,7 +138,7 @@ async function analyzeAXIS6UX() {
     // 5. Analytics Page
     console.log('📈 Analyzing Analytics Page...');
     try {
-      await page.goto('http://localhost:6789/analytics');
+      await page.goto('http://localhost:3000/analytics');
       await page.waitForTimeout(2000);
       
       const currentUrl = page.url();
@@ -166,7 +166,7 @@ async function analyzeAXIS6UX() {
     // 6. Achievements Page
     console.log('🏆 Analyzing Achievements Page...');
     try {
-      await page.goto('http://localhost:6789/achievements');
+      await page.goto('http://localhost:3000/achievements');
       await page.waitForTimeout(2000);
       
       const currentUrl = page.url();
@@ -194,7 +194,7 @@ async function analyzeAXIS6UX() {
     // 7. Profile/Settings Page
     console.log('⚙️ Analyzing Profile/Settings Page...');
     try {
-      await page.goto('http://localhost:6789/profile');
+      await page.goto('http://localhost:3000/profile');
       await page.waitForTimeout(2000);
       
       const currentUrl = page.url();

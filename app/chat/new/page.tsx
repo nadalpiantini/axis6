@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 type RoomType = 'group' | 'category' | 'support'
 
 export default function NewChatRoomPage() {
   const router = useRouter()
   const supabase = createClient()
-  
+
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState<RoomType>('group')
@@ -37,7 +37,7 @@ export default function NewChatRoomPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    
+
     if (!name.trim()) {
       setError('Room name is required')
       return
@@ -45,7 +45,7 @@ export default function NewChatRoomPage() {
 
     try {
       setLoading(true)
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
@@ -90,9 +90,9 @@ export default function NewChatRoomPage() {
           room_id: room.id,
           sender_id: user.id,
           content: `Welcome to ${name}! This room was created for ${
-            type === 'category' && categoryId 
+            type === 'category' && categoryId
               ? `${categories.find(c => c.id === categoryId)?.name} wellness discussions`
-              : type === 'support' 
+              : type === 'support'
                 ? 'getting help and support'
                 : 'group discussions'
           }.`,
@@ -102,9 +102,12 @@ export default function NewChatRoomPage() {
       // Navigate to the new room
       router.push(`/chat?room=${room.id}`)
     } catch (err) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error creating room:', err);
+      handleError(error, {
+      operation: 'chat_operation', component: 'page',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       setError('Failed to create room. Please try again.')
     } finally {
       setLoading(false)
@@ -273,7 +276,7 @@ export default function NewChatRoomPage() {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                {isPrivate 
+                {isPrivate
                   ? 'Only invited members can join this room'
                   : 'Anyone in AXIS6 can discover and join this room'
                 }

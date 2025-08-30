@@ -15,7 +15,7 @@ export async function GET(_request: NextRequest) {
     _request,
     'api'
   )
-  
+
   if (rateLimitResponse) {
     return rateLimitResponse
   }
@@ -42,7 +42,7 @@ export async function GET(_request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { 
+        {
           status: 401,
           headers: Object.fromEntries(
             Object.entries(headers).map(([k, v]) => [k, v])
@@ -69,7 +69,7 @@ export async function GET(_request: NextRequest) {
 
     // Get rate limiting analytics
     const analytics = await getRateLimitAnalytics()
-    
+
     // Additional statistics
     const stats = {
       timestamp: new Date().toISOString(),
@@ -98,12 +98,12 @@ export async function GET(_request: NextRequest) {
       }
     }
 
-    logger.info('Rate limit stats requested', { 
+    logger.info('Rate limit stats requested', {
       userId: user.id,
-      timestamp: stats.timestamp 
+      timestamp: stats.timestamp
     })
 
-    return NextResponse.json(stats, { 
+    return NextResponse.json(stats, {
       status: 200,
       headers: Object.fromEntries(
         Object.entries(headers).map(([k, v]) => [k, v])
@@ -112,13 +112,13 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Failed to get rate limit stats', error as Error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
         message: 'Failed to retrieve rate limiting statistics'
       },
-      { 
+      {
         status: 500,
         headers: Object.fromEntries(
           Object.entries(headers).map(([k, v]) => [k, v])

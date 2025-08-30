@@ -9,9 +9,9 @@ interface DashboardHeaderProps {
   onLogout: () => void
 }
 
-export const DashboardHeader = memo<DashboardHeaderProps>(({ 
-  currentStreak, 
-  onLogout 
+export const DashboardHeader = memo<DashboardHeaderProps>(({
+  currentStreak,
+  onLogout
 }) => {
   return (
     <header className="glass border-b border-white/10" role="banner">
@@ -23,7 +23,7 @@ export const DashboardHeader = memo<DashboardHeaderProps>(({
             <p className="text-sm text-gray-400">Dashboard</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
           {/* Current Streak Display */}
           {currentStreak > 0 && (
@@ -34,18 +34,18 @@ export const DashboardHeader = memo<DashboardHeaderProps>(({
               </span>
             </div>
           )}
-          
+
           {/* Navigation Links */}
-          <Link 
-            href="/my-day" 
+          <Link
+            href="/my-day"
             className="p-2 glass rounded-full hover:bg-white/20 transition-colors"
             aria-label="My Day"
           >
             <Calendar className="w-5 h-5 text-gray-300" />
           </Link>
-          
-          <Link 
-            href="/chat" 
+
+          <Link
+            href="/chat"
             className="p-2 glass rounded-full hover:bg-white/20 transition-colors relative"
             aria-label="Chat"
           >
@@ -53,23 +53,23 @@ export const DashboardHeader = memo<DashboardHeaderProps>(({
             {/* Optional: Add notification badge */}
             {/* <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span> */}
           </Link>
-          
-          <Link 
-            href="/dashboard/analytics" 
+
+          <Link
+            href="/dashboard/analytics"
             className="p-2 glass rounded-full hover:bg-white/20 transition-colors"
             aria-label="View analytics"
           >
             <TrendingUp className="w-5 h-5 text-gray-300" />
           </Link>
-          
-          <Link 
-            href="/settings" 
+
+          <Link
+            href="/settings"
             className="p-2 glass rounded-full hover:bg-white/20 transition-colors"
             aria-label="Settings"
           >
             <Settings className="w-5 h-5 text-gray-300" />
           </Link>
-          
+
           <button
             onClick={onLogout}
             className="p-2 glass rounded-full hover:bg-white/20 transition-colors"

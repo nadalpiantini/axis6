@@ -1,12 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
-  Shield, 
-  Eye, 
+import {
+  Shield,
+  Eye,
   EyeOff,
-  Database, 
-  Share2, 
+  Database,
+  Share2,
   Lock,
   Globe,
   Users,
@@ -31,51 +31,52 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface PrivacySettings {
   // Data Collection & Usage
   collect_wellness_data: boolean
   collect_usage_analytics: boolean
   collect_performance_metrics: boolean
   collect_crash_reports: boolean
-  
+
   // AI & Personalization
   ai_data_analysis: boolean
   ai_insights_generation: boolean
   ai_personalization: boolean
   ai_predictive_modeling: boolean
   share_anonymized_ai_training: boolean
-  
+
   // Sharing & Visibility
   profile_visibility: 'private' | 'friends' | 'public'
   activity_sharing: boolean
   achievement_sharing: boolean
   streak_visibility: boolean
   mood_data_private: boolean
-  
+
   // Third-Party Integrations
   allow_integrations: boolean
   share_with_health_apps: boolean
   share_with_fitness_trackers: boolean
   allow_social_logins: boolean
-  
+
   // Marketing & Communications
   marketing_emails: boolean
   product_announcements: boolean
   survey_invitations: boolean
   beta_program_participation: boolean
   research_participation: boolean
-  
+
   // Data Retention & Control
   data_retention_period: 'forever' | '1year' | '2years' | '5years'
   auto_delete_inactive: boolean
   export_data_monthly: boolean
-  
+
   // Cookie & Tracking
   essential_cookies: boolean
   analytics_cookies: boolean
   marketing_cookies: boolean
   personalization_cookies: boolean
-  
+
   // Advanced Privacy
   ip_address_anonymization: boolean
   location_data_collection: boolean
@@ -91,45 +92,45 @@ export default function PrivacySettingsPage() {
     collect_usage_analytics: true,
     collect_performance_metrics: true,
     collect_crash_reports: true,
-    
+
     // AI & Personalization
     ai_data_analysis: true,
     ai_insights_generation: true,
     ai_personalization: true,
     ai_predictive_modeling: false,
     share_anonymized_ai_training: false,
-    
+
     // Sharing & Visibility
     profile_visibility: 'private',
     activity_sharing: false,
     achievement_sharing: false,
     streak_visibility: false,
     mood_data_private: true,
-    
+
     // Third-Party Integrations
     allow_integrations: false,
     share_with_health_apps: false,
     share_with_fitness_trackers: false,
     allow_social_logins: true,
-    
+
     // Marketing & Communications
     marketing_emails: false,
     product_announcements: true,
     survey_invitations: false,
     beta_program_participation: false,
     research_participation: false,
-    
+
     // Data Retention & Control
     data_retention_period: '2years',
     auto_delete_inactive: false,
     export_data_monthly: false,
-    
+
     // Cookie & Tracking
     essential_cookies: true,
     analytics_cookies: true,
     marketing_cookies: false,
     personalization_cookies: true,
-    
+
     // Advanced Privacy
     ip_address_anonymization: true,
     location_data_collection: false,
@@ -152,12 +153,15 @@ export default function PrivacySettingsPage() {
       // await updatePrivacySettings(settings)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       setHasChanges(false)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving privacy settings:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
     } finally {
       setIsSaving(false)
     }
@@ -201,8 +205,8 @@ export default function PrivacySettingsPage() {
   return (
     <SettingsLayout currentSection="privacy">
       {/* Privacy Dashboard */}
-      <SettingsSection 
-        title="Privacy Dashboard" 
+      <SettingsSection
+        title="Privacy Dashboard"
         description="Your privacy settings and data control overview"
         icon={Shield}
         hasChanges={hasChanges}
@@ -219,13 +223,13 @@ export default function PrivacySettingsPage() {
                 <div className="relative w-20 h-20 mx-auto mb-4">
                   <svg className="w-20 h-20 transform -rotate-90">
                     <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="8" fill="none" className="text-gray-700" />
-                    <circle 
-                      cx="40" 
-                      cy="40" 
-                      r="36" 
-                      stroke="currentColor" 
-                      strokeWidth="8" 
-                      fill="none" 
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="36"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="none"
                       strokeDasharray={`${2 * Math.PI * 36}`}
                       strokeDashoffset={`${2 * Math.PI * 36 * (1 - privacyScore / 100)}`}
                       className="text-green-400"
@@ -311,8 +315,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Data Collection & Usage */}
-      <SettingsSection 
-        title="Data Collection & Usage" 
+      <SettingsSection
+        title="Data Collection & Usage"
         description="Control what data AXIS6 collects and how it's used"
         icon={Database}
         className="mb-6"
@@ -353,8 +357,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* AI & Personalization */}
-      <SettingsSection 
-        title="AI & Personalization" 
+      <SettingsSection
+        title="AI & Personalization"
         description="Control how AI uses your data for personalized experiences"
         icon={Brain}
         className="mb-6"
@@ -403,8 +407,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Sharing & Visibility */}
-      <SettingsSection 
-        title="Sharing & Visibility" 
+      <SettingsSection
+        title="Sharing & Visibility"
         description="Control who can see your data and activities"
         icon={Eye}
         className="mb-6"
@@ -458,8 +462,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Third-Party Integrations */}
-      <SettingsSection 
-        title="Third-Party Integrations" 
+      <SettingsSection
+        title="Third-Party Integrations"
         description="Control data sharing with external apps and services"
         icon={ExternalLink}
         className="mb-6"
@@ -502,8 +506,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Marketing & Communications */}
-      <SettingsSection 
-        title="Marketing & Communications" 
+      <SettingsSection
+        title="Marketing & Communications"
         description="Control marketing emails and research participation"
         icon={Mail}
         className="mb-6"
@@ -556,8 +560,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Data Retention & Control */}
-      <SettingsSection 
-        title="Data Retention & Control" 
+      <SettingsSection
+        title="Data Retention & Control"
         description="Manage how long your data is stored and control data exports"
         icon={Settings}
         className="mb-6"
@@ -608,8 +612,8 @@ export default function PrivacySettingsPage() {
       </SettingsSection>
 
       {/* Cookie & Tracking */}
-      <SettingsSection 
-        title="Cookies & Tracking" 
+      <SettingsSection
+        title="Cookies & Tracking"
         description="Control cookies and tracking technologies"
         icon={Cookie}
         className="mb-6"

@@ -16,21 +16,21 @@ export class RegisterPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Form elements using data-testid attributes
-    this.nameInput = page.locator('[data-testid="name-input"]').or(page.locator('input[id="name"]'));
-    this.emailInput = page.locator('[data-testid="email-input"]').or(page.locator('input[id="email"]')).or(page.locator('input[type="email"]'));
-    this.passwordInput = page.locator('[data-testid="password-input"]').or(page.locator('input[id="password"]'));
-    this.confirmPasswordInput = page.locator('[data-testid="confirm-password-input"]').or(page.locator('input[id="confirmPassword"]'));
-    this.registerButton = page.locator('button[type="submit"]').or(page.locator('button', { hasText: /register|registro|crear|create/i }));
-    
+    this.nameInput = page.locator('[data-testid="name-input"]');
+    this.emailInput = page.locator('[data-testid="email-input"]');
+    this.passwordInput = page.locator('[data-testid="password-input"]');
+    this.confirmPasswordInput = page.locator('[data-testid="confirm-password-input"]');
+    this.registerButton = page.locator('[data-testid="register-submit"]');
+
     // Navigation and additional elements
-    this.loginLink = page.locator('a[href*="/auth/login"]').or(page.locator('a', { hasText: /login|iniciar/i }));
+    this.loginLink = page.locator('a[href*="/auth/login"]');
     this.termsCheckbox = page.locator('input[type="checkbox"]');
     this.termsLink = page.locator('a', { hasText: /terms|términos|condiciones/i });
-    
+
     // Feedback messages
-    this.errorMessage = page.locator('[data-testid="error-message"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    this.errorMessage = page.locator('[role="alert"]');
     this.successMessage = page.locator('[data-testid="success-message"]').or(page.locator('.success'));
     this.loadingSpinner = page.locator('[data-testid="loading"]').or(page.locator('.loading')).or(page.locator('.spinner'));
   }
@@ -44,7 +44,7 @@ export class RegisterPage {
     await this.emailInput.waitFor({ state: 'visible' });
     await this.passwordInput.waitFor({ state: 'visible' });
     await this.registerButton.waitFor({ state: 'visible' });
-    
+
     return true;
   }
 
@@ -60,10 +60,9 @@ export class RegisterPage {
   }
 
   async fillName(name: string) {
-    if (await this.nameInput.isVisible()) {
-      await this.nameInput.clear();
-      await this.nameInput.fill(name);
-    }
+    await this.nameInput.waitFor({ state: 'visible' });
+    await this.nameInput.clear();
+    await this.nameInput.fill(name);
   }
 
   async fillEmail(email: string) {
@@ -86,17 +85,31 @@ export class RegisterPage {
 
   async acceptTermsIfPresent() {
     try {
-      if (await this.termsCheckbox.isVisible()) {
-        await this.termsCheckbox.check();
+      // Wait for form to be ready and terms checkbox to be visible
+      await this.page.waitForTimeout(500);
+      const checkbox = this.page.locator('input[type="checkbox"]').first();
+      if (await checkbox.isVisible()) {
+        const isChecked = await checkbox.isChecked();
+        if (!isChecked) {
+          await checkbox.check();
+          // Wait for any validation to complete
+          await this.page.waitForTimeout(500);
+        }
       }
     } catch {
-      // Terms checkbox not present, continue
+      // Terms checkbox not present or already checked, continue
     }
   }
 
   async clickRegister() {
+    // Wait for button to be enabled
+    await this.page.waitForFunction(() => {
+      const button = document.querySelector('[data-testid="register-submit"]') as HTMLButtonElement;
+      return button && !button.disabled;
+    }, { timeout: 10000 });
+
     await this.registerButton.click();
-    
+
     // Wait for either navigation or error message
     await Promise.race([
       this.page.waitForURL(/\/(dashboard|auth)/),

@@ -8,6 +8,7 @@ import { Activity, Brain, Heart, Users, Sparkles, Briefcase, Clock, Star, Trendi
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface MicroWin {
   id: string
   userId: string
@@ -56,7 +57,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
     try {
       setLoading(true)
       const offset = reset ? 0 : page * 20
-      
+
       const params = new URLSearchParams({
         feedType,
         limit: '20',
@@ -75,9 +76,12 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       setHasMore(data.pagination.hasMore)
       if (!reset) setPage(page + 1)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching feed:', error);
+      handleError(error, {
+      operation: 'general_operation', component: 'ResonanceFeed',
+
+        userMessage: 'Operation failed. Please try again.'
+
+      })
       toast.error('Failed to load feed')
     } finally {
       setLoading(false)
@@ -101,17 +105,20 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       }
 
       // Update local state
-      setFeed(feed.map(win => 
-        win.id === winId 
+      setFeed(feed.map(win =>
+        win.id === winId
           ? { ...win, userReacted: true, resonanceCount: win.resonanceCount + 1 }
           : win
       ))
 
       toast.success('Support added!')
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error adding reaction:', error);
+      handleError(error, {
+      operation: 'general_operation', component: 'ResonanceFeed',
+
+        userMessage: 'Operation failed. Please try again.'
+
+      })
       toast.error('Failed to add support')
     }
   }
@@ -126,7 +133,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <div 
+              <div
                 className="p-1.5 rounded-lg"
                 style={{ backgroundColor: `${axisColor}20` }}
               >
@@ -166,7 +173,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
                 </span>
               )}
             </div>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -174,8 +181,8 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
               disabled={win.userReacted}
               className={`
                 h-8 px-3
-                ${win.userReacted 
-                  ? 'text-yellow-400 hover:text-yellow-400' 
+                ${win.userReacted
+                  ? 'text-yellow-400 hover:text-yellow-400'
                   : 'text-navy-400 hover:text-white'
                 }
               `}
@@ -255,7 +262,7 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
             {feed.map((win) => (
               <MicroWinCard key={win.id} win={win} />
             ))}
-            
+
             {hasMore && (
               <Button
                 variant="outline"

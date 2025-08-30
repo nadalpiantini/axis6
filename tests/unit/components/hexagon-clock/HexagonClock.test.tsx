@@ -110,7 +110,7 @@ describe('HexagonClock Component', () => {
   describe('Basic Rendering', () => {
     it('renders loading state during SSR/hydration', () => {
       const { container } = render(<HexagonClock {...defaultProps} />);
-      
+
       // Should show loading placeholder initially
       const loadingElement = container.querySelector('.animate-pulse');
       expect(loadingElement).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe('HexagonClock Component', () => {
     it('renders dashboard mode with completion data', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -135,7 +135,7 @@ describe('HexagonClock Component', () => {
     it('renders planning mode with time distribution', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             distribution={mockTimeDistribution}
           />
@@ -163,7 +163,7 @@ describe('HexagonClock Component', () => {
     it('positions categories at correct clock hours', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             showClockMarkers={true}
@@ -175,7 +175,7 @@ describe('HexagonClock Component', () => {
         // Physical should be at 12 o'clock position (top)
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         expect(physicalButton).toBeInTheDocument();
-        
+
         // Check if labels are positioned correctly (visual regression would be better)
         const categoryLabels = screen.getAllByRole('button');
         expect(categoryLabels).toHaveLength(6); // 6 categories
@@ -185,7 +185,7 @@ describe('HexagonClock Component', () => {
     it('calculates center values correctly', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -202,10 +202,10 @@ describe('HexagonClock Component', () => {
   describe('Interactive Features', () => {
     it('handles category clicks', async () => {
       const mockCategoryClick = jest.fn();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             onCategoryClick={mockCategoryClick}
@@ -216,7 +216,7 @@ describe('HexagonClock Component', () => {
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         fireEvent.click(physicalButton);
-        
+
         expect(mockCategoryClick).toHaveBeenCalledWith(
           expect.objectContaining({
             key: 'physical',
@@ -228,10 +228,10 @@ describe('HexagonClock Component', () => {
 
     it('handles toggle axis callback', async () => {
       const mockToggleAxis = jest.fn();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             onToggleAxis={mockToggleAxis}
@@ -261,7 +261,7 @@ describe('HexagonClock Component', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -271,7 +271,7 @@ describe('HexagonClock Component', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Verify responsive sizing classes are applied
         expect(container).toHaveClass('ritual-card');
       });
@@ -279,10 +279,10 @@ describe('HexagonClock Component', () => {
 
     it('applies mobile optimizations for touch devices', async () => {
       Object.defineProperty(window, 'innerWidth', { value: 375 });
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             mobileOptimized={true}
@@ -307,7 +307,7 @@ describe('HexagonClock Component', () => {
     it('provides proper ARIA labels and roles', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -327,10 +327,10 @@ describe('HexagonClock Component', () => {
 
     it('meets touch target size requirements (44px minimum)', async () => {
       Object.defineProperty(window, 'innerWidth', { value: 375 }); // Mobile width
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             mobileOptimized={true}
@@ -350,7 +350,7 @@ describe('HexagonClock Component', () => {
     it('supports keyboard navigation', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             onCategoryClick={jest.fn()}
@@ -360,11 +360,11 @@ describe('HexagonClock Component', () => {
 
       await waitFor(() => {
         const firstButton = screen.getAllByRole('button')[0];
-        
+
         // Tab to first button
         firstButton.focus();
         expect(firstButton).toHaveFocus();
-        
+
         // Enter should trigger click
         fireEvent.keyDown(firstButton, { key: 'Enter' });
         // Would need to verify click was triggered
@@ -376,7 +376,7 @@ describe('HexagonClock Component', () => {
     it('handles missing data gracefully', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={undefined}
             distribution={undefined}
@@ -402,7 +402,7 @@ describe('HexagonClock Component', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={malformedData}
           />
@@ -423,7 +423,7 @@ describe('HexagonClock Component', () => {
     it('uses flexbox centering instead of transform', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -433,7 +433,7 @@ describe('HexagonClock Component', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         const styles = window.getComputedStyle(container?.parentElement || container!);
         expect(styles.display).toBe('flex');
         expect(styles.alignItems).toBe('center');
@@ -444,7 +444,7 @@ describe('HexagonClock Component', () => {
     it('applies safe area support for notched devices', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -454,7 +454,7 @@ describe('HexagonClock Component', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Check that safe area CSS custom properties are used
         const styles = window.getComputedStyle(container?.parentElement || container!);
         expect(styles.padding).toContain('env(safe-area-inset');
@@ -513,7 +513,7 @@ describe('HexagonClock Component', () => {
     it('renders hexagon SVG elements', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
           />
@@ -523,7 +523,7 @@ describe('HexagonClock Component', () => {
       await waitFor(() => {
         const svgElements = document.querySelectorAll('svg');
         expect(svgElements.length).toBeGreaterThan(0);
-        
+
         // Check for hexagon path elements
         const pathElements = document.querySelectorAll('path');
         expect(pathElements.length).toBeGreaterThan(0);
@@ -533,7 +533,7 @@ describe('HexagonClock Component', () => {
     it('applies hardware acceleration classes when enabled', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             hardwareAccelerated={true}
@@ -552,7 +552,7 @@ describe('HexagonClock Component', () => {
     it('disables animations when animate=false', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             animate={false}
@@ -572,7 +572,7 @@ describe('HexagonClock Component', () => {
     it('applies staggered animations when animate=true', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             animate={true}
@@ -593,7 +593,7 @@ describe('HexagonClock Component', () => {
     it('displays resonance indicators', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             showResonance={true}
@@ -611,7 +611,7 @@ describe('HexagonClock Component', () => {
     it('shows community count in center display', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...defaultProps}
             data={mockCompletionData}
             showResonance={true}

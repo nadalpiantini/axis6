@@ -44,7 +44,7 @@ export function useConstellation(date?: string) {
     queryKey: ['constellation', date],
     queryFn: async () => {
       const supabase = createClient()
-      
+
       const dateParam = date || new Date().toISOString().split('T')[0]
       const response = await fetch(`/api/constellation?date=${dateParam}`, {
         method: 'GET',

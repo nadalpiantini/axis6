@@ -30,9 +30,9 @@ describe('Logger Utility', () => {
     it('should log info messages with proper formatting', () => {
       const message = 'Test info message'
       const context = { userId: '123', action: 'test' }
-      
+
       logger.info(message, context)
-      
+
       expect(console.info).toHaveBeenCalled()
       const logCall = (console.info as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[INFO]')
@@ -41,9 +41,9 @@ describe('Logger Utility', () => {
 
     it('should handle info messages without context', () => {
       const message = 'Simple info message'
-      
+
       logger.info(message)
-      
+
       expect(console.info).toHaveBeenCalled()
     })
   })
@@ -52,9 +52,9 @@ describe('Logger Utility', () => {
     it('should log errors with stack traces', () => {
       const error = new Error('Test error')
       const message = 'Error occurred'
-      
+
       logger.error(message, error)
-      
+
       expect(console.error).toHaveBeenCalled()
       const logCall = (console.error as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[ERROR]')
@@ -66,17 +66,17 @@ describe('Logger Utility', () => {
     it('should handle error logging without context', () => {
       const error = new Error('Simple error')
       const message = 'Error message'
-      
+
       logger.error(message, error)
-      
+
       expect(console.error).toHaveBeenCalled()
     })
 
     it('should handle string errors', () => {
       const message = 'Error occurred'
-      
+
       logger.error(message, 'String error')
-      
+
       expect(console.error).toHaveBeenCalled()
     })
   })
@@ -85,9 +85,9 @@ describe('Logger Utility', () => {
     it('should log warnings with proper formatting', () => {
       const message = 'Test warning'
       const context = { component: 'TestComponent' }
-      
+
       logger.warn(message, context)
-      
+
       expect(console.warn).toHaveBeenCalled()
       const logCall = (console.warn as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[WARN]')
@@ -99,24 +99,24 @@ describe('Logger Utility', () => {
     it('should log debug messages in development', () => {
       const originalEnv = process.env['NODE_ENV']
       process.env['NODE_ENV'] = 'development'
-      
+
       const message = 'Debug message'
       logger.debug(message)
-      
+
       expect(console.debug).toHaveBeenCalled()
-      
+
       process.env['NODE_ENV'] = originalEnv
     })
 
     it('should not log debug messages in production', () => {
       const originalEnv = process.env['NODE_ENV']
       process.env['NODE_ENV'] = 'production'
-      
+
       const message = 'Debug message'
       logger.debug(message)
-      
+
       expect(console.debug).not.toHaveBeenCalled()
-      
+
       process.env['NODE_ENV'] = originalEnv
     })
   })
@@ -124,9 +124,9 @@ describe('Logger Utility', () => {
   describe('contextual loggers', () => {
     it('should use pre-configured contextual loggers', () => {
       const { authLogger } = require('@/lib/utils/logger')
-      
+
       authLogger.info('Authentication successful')
-      
+
       expect(console.info).toHaveBeenCalled()
       const logCall = (console.info as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[Auth]')
@@ -135,9 +135,9 @@ describe('Logger Utility', () => {
 
     it('should use database contextual logger', () => {
       const { dbLogger } = require('@/lib/utils/logger')
-      
+
       dbLogger.warn('Database connection slow')
-      
+
       expect(console.warn).toHaveBeenCalled()
       const logCall = (console.warn as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[Database]')
@@ -152,9 +152,9 @@ describe('Logger Utility', () => {
         request: { method: 'POST', url: '/api/test' },
         performance: { duration: 150 }
       }
-      
+
       logger.info('Complex operation completed', complexContext)
-      
+
       expect(console.info).toHaveBeenCalled()
     })
 
@@ -163,9 +163,9 @@ describe('Logger Utility', () => {
         categories: ['Physical', 'Mental', 'Emotional'],
         scores: [8, 7, 9]
       }
-      
+
       logger.info('Categories processed', arrayContext)
-      
+
       expect(console.info).toHaveBeenCalled()
     })
   })
@@ -174,22 +174,22 @@ describe('Logger Utility', () => {
     it('should start performance timer', () => {
       const originalConsoleTime = console.time
       console.time = jest.fn()
-      
+
       logger.time('test-operation')
-      
+
       expect(console.time).toHaveBeenCalledWith('test-operation')
-      
+
       console.time = originalConsoleTime
     })
 
     it('should end performance timer', () => {
       const originalConsoleTimeEnd = console.timeEnd
       console.timeEnd = jest.fn()
-      
+
       logger.timeEnd('test-operation')
-      
+
       expect(console.timeEnd).toHaveBeenCalledWith('test-operation')
-      
+
       console.timeEnd = originalConsoleTimeEnd
     })
   })
@@ -199,14 +199,14 @@ describe('Logger Utility', () => {
       // In test environment, logger should work normally
       const message = 'Test environment message'
       logger.info(message)
-      
+
       expect(console.info).toHaveBeenCalled()
     })
 
     it('should handle different log levels', () => {
       logger.warn('Warning message')
       logger.error('Error message')
-      
+
       expect(console.warn).toHaveBeenCalled()
       expect(console.error).toHaveBeenCalled()
     })
@@ -216,9 +216,9 @@ describe('Logger Utility', () => {
     it('should format errors for error boundaries', () => {
       const error = new Error('Component error')
       error.stack = 'Error: Component error\\n    at Component.render'
-      
+
       logger.error('Component failed to render', error)
-      
+
       expect(console.error).toHaveBeenCalled()
       const logCall = (console.error as jest.Mock).mock.calls[0]
       expect(logCall[0]).toContain('[ERROR]')

@@ -32,64 +32,64 @@ interface HexagonChartWithResonanceProps {
 
 // THE RITUAL OS - Updated category system with brand colors (moved outside component to prevent infinite loops)
 const HEXAGON_CATEGORIES = [
-  { 
-    key: 'physical', 
-    label: 'Living Movement', 
+  {
+    key: 'physical',
+    label: 'Living Movement',
     shortLabel: 'Physical',
     color: '#D4845C', // Warm Terracotta
     softColor: '#F4E4DE',
     mantra: 'Today I inhabit my body with tenderness',
-    angle: 0 
+    angle: 0
   },
-  { 
-    key: 'mental', 
-    label: 'Inner Clarity', 
+  {
+    key: 'mental',
+    label: 'Inner Clarity',
     shortLabel: 'Mental',
     color: '#8B9DC3', // Sage Blue
     softColor: '#E8EDF4',
     mantra: 'Today I make space to think less',
-    angle: 60 
+    angle: 60
   },
-  { 
-    key: 'emotional', 
-    label: 'Creative Expression', 
+  {
+    key: 'emotional',
+    label: 'Creative Expression',
     shortLabel: 'Emotional',
     color: '#B8A4C9', // Light Lavender
     softColor: '#F0EAEF',
     mantra: 'Today I create not to show, but to free',
-    angle: 120 
+    angle: 120
   },
-  { 
-    key: 'social', 
-    label: 'Mirror Connection', 
+  {
+    key: 'social',
+    label: 'Mirror Connection',
     shortLabel: 'Social',
     color: '#A8C8B8', // Soft Sage Green
     softColor: '#E8F1EC',
     mantra: 'Today I connect without disappearing',
-    angle: 180 
+    angle: 180
   },
-  { 
-    key: 'spiritual', 
-    label: 'Elevated Presence', 
+  {
+    key: 'spiritual',
+    label: 'Elevated Presence',
     shortLabel: 'Spiritual',
     color: '#7B6C8D', // Deep Lavender
     softColor: '#E9E4ED',
     mantra: 'Today I find myself beyond doing',
-    angle: 240 
+    angle: 240
   },
-  { 
-    key: 'material', 
-    label: 'Earthly Sustenance', 
+  {
+    key: 'material',
+    label: 'Earthly Sustenance',
     shortLabel: 'Material',
     color: '#C19A6B', // Golden Brown
     softColor: '#F1EBE4',
     mantra: 'Today I sustain myself, not prove myself',
-    angle: 300 
+    angle: 300
   }
 ] as const
 
-const HexagonChartWithResonance = memo(function HexagonChartWithResonance({ 
-  data, 
+const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
+  data,
   size = 300,
   animate = true,
   showResonance = true,
@@ -99,17 +99,17 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
 }: HexagonChartWithResonanceProps) {
   const [isClient, setIsClient] = useState(false)
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 640)
-  
+
   // Get user data and resonance data
   const { data: user, isLoading: userLoading } = useUser()
   // Memoize the date to prevent unnecessary re-renders
   const today = useMemo(() => new Date().toISOString().split('T')[0], [])
-  
+
   const { data: resonanceData, isLoading: resonanceLoading } = useHexagonResonance(
-    user?.id || '', 
+    user?.id || '',
     today
   )
-  
+
   // Enhanced responsive size based on screen width and safe areas
   const responsiveSize = useMemo(() => {
     if (windowWidth < 375) return Math.min(windowWidth - 32, 260) // Small mobile
@@ -118,24 +118,30 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
     if (windowWidth < 1024) return 380 // Tablet
     return size // Desktop
   }, [windowWidth, size])
-  
+
   // Memoize calculated values to prevent infinite re-renders
   const center = useMemo(() => responsiveSize / 2, [responsiveSize])
   const radius = useMemo(() => responsiveSize * 0.38, [responsiveSize]) // Slightly smaller for better mobile fit
   const labelDistance = useMemo(() => windowWidth < 640 ? radius * 1.25 : radius * 1.3, [windowWidth, radius]) // Closer labels on mobile
   const resonanceRadius = useMemo(() => radius * 1.15, [radius]) // Radius for resonance dots
 
+  // Calculate center percentage value
+  const centerPercentage = useMemo(() =>
+    Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
+    [data]
+  )
+
   useEffect(() => {
     setIsClient(true)
     setWindowWidth(window.innerWidth)
-    
+
     const handleResize = () => setWindowWidth(window.innerWidth)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   // Calculate hexagon points for the background (same as original)
-  const hexagonPoints = useMemo(() => 
+  const hexagonPoints = useMemo(() =>
     HEXAGON_CATEGORIES.map((cat) => {
       const angleRad = (cat.angle * Math.PI) / 180
       const x = center + radius * Math.cos(angleRad)
@@ -148,7 +154,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   // Calculate data polygon points (same as original)
   const dataPoints = useMemo(() => {
     if (!data || typeof data !== 'object') return []
-    
+
     return HEXAGON_CATEGORIES.map((cat) => {
       const value = (data[cat.key as keyof typeof data] || 0) / 100
       const angleRad = (cat.angle * Math.PI) / 180
@@ -158,7 +164,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
     })
   }, [data, center, radius])
 
-  const dataPolygonPoints = useMemo(() => 
+  const dataPolygonPoints = useMemo(() =>
     dataPoints.map(p => `${p.x},${p.y}`).join(' '),
     [dataPoints]
   )
@@ -166,23 +172,23 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
   // Calculate resonance dots positions
   const resonancePoints = useMemo(() => {
     if (!showResonance || !resonanceData?.resonance || !Array.isArray(resonanceData.resonance)) return []
-    
+
     try {
       return HEXAGON_CATEGORIES.map((cat, index) => {
         const resonanceInfo = resonanceData.resonance.find(r => r?.axisSlug === cat.key)
         if (!resonanceInfo || !resonanceInfo.hasResonance) return null
-        
+
         const angleRad = (cat.angle * Math.PI) / 180
         const dotsCount = Math.min(resonanceInfo.resonanceCount || 0, 8) // Max 8 dots per axis
         const dots = []
-        
+
         for (let i = 0; i < dotsCount; i++) {
           // Create spiral pattern around each axis point
           const dotAngle = angleRad + (i * Math.PI / 6) // Spread dots around axis
           const dotRadius = resonanceRadius + (i % 2) * 15 // Alternating distances
           const x = center + dotRadius * Math.cos(dotAngle)
           const y = center + dotRadius * Math.sin(dotAngle)
-          
+
           dots.push({
             x,
             y,
@@ -191,7 +197,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
             intensity: Math.min((resonanceInfo.resonanceCount || 0) / 5, 1) // Scale intensity
           })
         }
-        
+
         return dots
       }).filter(Boolean).flat()
     } catch (error) {
@@ -204,8 +210,8 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
 
   if (!isClient || userLoading) {
     return (
-      <div 
-        className="w-full max-w-[260px] xs:max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-2xl sm:rounded-3xl animate-pulse backdrop-blur-sm mx-auto" 
+      <div
+        className="w-full max-w-[260px] xs:max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-square bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-2xl sm:rounded-3xl animate-pulse backdrop-blur-sm mx-auto"
       />
     )
   }
@@ -264,7 +270,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
             fill={dot.color}
             opacity={0.6}
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ 
+            animate={{
               scale: [0.8, 1.2, 0.8],
               opacity: [0.4, 0.8, 0.4]
             }}
@@ -300,8 +306,8 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
           strokeWidth="3"
           initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ 
-            duration: 1.2, 
+          transition={{
+            duration: 1.2,
             ease: "easeOut",
             delay: 1
           }}
@@ -311,7 +317,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         {dataPoints.map((point, idx) => {
           const pointRadius = windowWidth < 640 ? "5" : "6"
           const strokeWidth = windowWidth < 640 ? "2" : "3"
-          
+
           return (
             <motion.circle
               key={idx}
@@ -322,12 +328,12 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
               stroke="rgba(255, 255, 255, 0.9)"
               strokeWidth={strokeWidth}
               initial={animate ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-              animate={{ 
+              animate={{
                 scale: [1, 1.2, 1],
                 opacity: 1
               }}
-              transition={{ 
-                delay: 1.2 + idx * 0.1, 
+              transition={{
+                delay: 1.2 + idx * 0.1,
                 duration: 0.8,
                 repeat: Infinity,
                 repeatType: "reverse",
@@ -365,10 +371,10 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         const x = center + labelDistance * Math.cos(angleRad)
         const y = center + labelDistance * Math.sin(angleRad)
         const value = data[cat.key as keyof typeof data]
-        
+
         // Get resonance info for balance whisper
         const resonanceInfo = resonanceData?.resonance?.find(r => r.axisSlug === cat.key)
-        const whisperText = resonanceInfo?.hasResonance 
+        const whisperText = resonanceInfo?.hasResonance
           ? `${resonanceInfo.resonanceCount} others found balance in ${cat.shortLabel} today`
           : cat.mantra
 
@@ -394,18 +400,18 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
             }}
             initial={animate ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ 
+            transition={{
               delay: 1.5 + 0.1 * idx,
               duration: 0.6,
               type: "spring",
               stiffness: 200
             }}
           >
-            <motion.span 
+            <motion.span
               className="text-[9px] xs:text-[10px] sm:text-xs font-semibold px-1.5 xs:px-2 sm:px-2.5 py-1 xs:py-1.5 sm:py-2 rounded-full bg-white/85 border border-white/50 mb-1 sm:mb-1.5 cursor-pointer select-none"
               style={{ color: cat.color }}
               title={whisperText}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 boxShadow: `0 4px 12px ${cat.color}30`
               }}
@@ -417,7 +423,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
                 <motion.span
                   className="ml-1 inline-block w-1 h-1 rounded-full"
                   style={{ backgroundColor: cat.color }}
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.6, 1, 0.6]
                   }}
@@ -429,7 +435,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
                 />
               )}
             </motion.span>
-            <span 
+            <span
               className="text-[9px] xs:text-[10px] sm:text-xs text-gray-600/80 font-medium px-1.5 xs:px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white/70 border border-white/30 tabular-nums"
             >
               {value}%
@@ -445,13 +451,13 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 2 }}
       >
-        <motion.div 
+        <motion.div
           className={`font-serif font-bold bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl px-2.5 xs:px-3 sm:px-4 py-1 xs:py-1.5 sm:py-2 shadow-lg border border-white/40 min-h-[44px] sm:min-h-auto flex items-center justify-center select-none ${
             windowWidth < 375 ? 'text-xl' :
-            windowWidth < 640 ? 'text-2xl' : 
+            windowWidth < 640 ? 'text-2xl' :
             windowWidth < 768 ? 'text-3xl' : 'text-4xl'
           }`}
-          style={{ 
+          style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(244,228,222,0.8) 100%)',
             color: '#A86847'
           }}
@@ -464,12 +470,9 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
             ease: "easeInOut"
           }}
         >
-          {useMemo(() => 
-            Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
-            [data]
-          )}%
+          {centerPercentage}%
         </motion.div>
-        <motion.div 
+        <motion.div
           className={`text-gray-600/80 font-medium mt-1 sm:mt-2 px-2 xs:px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/70 border border-white/30 select-none ${
             windowWidth < 640 ? 'text-xs' : 'text-sm'
           }`}

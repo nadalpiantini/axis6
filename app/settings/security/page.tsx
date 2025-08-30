@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
-  Lock, 
-  Shield, 
+import {
+  Lock,
+  Shield,
   Key,
   Smartphone,
   Monitor,
@@ -36,6 +36,7 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface SecuritySettings {
   // Password & Authentication
   password_strength: 'weak' | 'medium' | 'strong'
@@ -43,26 +44,26 @@ interface SecuritySettings {
   two_factor_method: 'sms' | 'email' | 'authenticator'
   biometric_enabled: boolean
   passkey_enabled: boolean
-  
+
   // Session Management
   session_timeout: number // minutes
   concurrent_sessions_limit: number
   auto_logout_inactive: boolean
   remember_device_enabled: boolean
-  
+
   // Security Monitoring
   login_alerts_enabled: boolean
   suspicious_activity_alerts: boolean
   new_device_alerts: boolean
   location_based_alerts: boolean
   failed_login_lockout: boolean
-  
+
   // Account Protection
   account_recovery_email: string
   account_recovery_phone: string
   emergency_contact_enabled: boolean
   backup_codes_generated: boolean
-  
+
   // Advanced Security
   ip_whitelist_enabled: boolean
   api_access_enabled: boolean
@@ -100,26 +101,26 @@ export default function SecuritySettingsPage() {
     two_factor_method: 'authenticator',
     biometric_enabled: false,
     passkey_enabled: false,
-    
+
     // Session Management
     session_timeout: 30,
     concurrent_sessions_limit: 3,
     auto_logout_inactive: true,
     remember_device_enabled: true,
-    
+
     // Security Monitoring
     login_alerts_enabled: true,
     suspicious_activity_alerts: true,
     new_device_alerts: true,
     location_based_alerts: false,
     failed_login_lockout: true,
-    
+
     // Account Protection
     account_recovery_email: user?.email || '',
     account_recovery_phone: '',
     emergency_contact_enabled: false,
     backup_codes_generated: true,
-    
+
     // Advanced Security
     ip_whitelist_enabled: false,
     api_access_enabled: false,
@@ -207,12 +208,15 @@ export default function SecuritySettingsPage() {
       // await updateSecuritySettings(settings)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       setHasChanges(false)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving security settings:', error);
+      handleError(error, {
+      operation: 'settings_operation', component: 'page',
+
+        userMessage: 'Settings operation failed. Please try again.'
+
+      })
     } finally {
       setIsSaving(false)
     }
@@ -224,26 +228,26 @@ export default function SecuritySettingsPage() {
 
   const getSecurityScore = () => {
     let score = 0
-    
+
     // Password strength
     if (settings.password_strength === 'strong') score += 25
     else if (settings.password_strength === 'medium') score += 15
     else score += 5
-    
+
     // Two-factor authentication
     if (settings.two_factor_enabled) score += 25
-    
+
     // Biometric/Passkey
     if (settings.biometric_enabled || settings.passkey_enabled) score += 15
-    
+
     // Security monitoring
     if (settings.login_alerts_enabled) score += 10
     if (settings.suspicious_activity_alerts) score += 10
-    
+
     // Account protection
     if (settings.backup_codes_generated) score += 10
     if (settings.account_recovery_email) score += 5
-    
+
     return Math.min(score, 100)
   }
 
@@ -293,8 +297,8 @@ export default function SecuritySettingsPage() {
   return (
     <SettingsLayout currentSection="security">
       {/* Security Dashboard */}
-      <SettingsSection 
-        title="Security Dashboard" 
+      <SettingsSection
+        title="Security Dashboard"
         description="Your account security status and activity overview"
         icon={Shield}
         hasChanges={hasChanges}
@@ -311,13 +315,13 @@ export default function SecuritySettingsPage() {
                 <div className="relative w-20 h-20 mx-auto mb-4">
                   <svg className="w-20 h-20 transform -rotate-90">
                     <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="8" fill="none" className="text-gray-700" />
-                    <circle 
-                      cx="40" 
-                      cy="40" 
-                      r="36" 
-                      stroke="currentColor" 
-                      strokeWidth="8" 
-                      fill="none" 
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="36"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="none"
                       strokeDasharray={`${2 * Math.PI * 36}`}
                       strokeDashoffset={`${2 * Math.PI * 36 * (1 - securityScore / 100)}`}
                       className={securityScore >= 80 ? 'text-green-400' : securityScore >= 60 ? 'text-yellow-400' : 'text-red-400'}
@@ -401,8 +405,8 @@ export default function SecuritySettingsPage() {
       </SettingsSection>
 
       {/* Password & Authentication */}
-      <SettingsSection 
-        title="Password & Authentication" 
+      <SettingsSection
+        title="Password & Authentication"
         description="Manage your password and authentication methods"
         icon={Key}
         className="mb-6"
@@ -418,7 +422,7 @@ export default function SecuritySettingsPage() {
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-white mb-2">New Password</label>
                 <div className="relative">
@@ -436,7 +440,7 @@ export default function SecuritySettingsPage() {
                   </button>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-white mb-2">Confirm New Password</label>
                 <div className="relative">
@@ -503,7 +507,7 @@ export default function SecuritySettingsPage() {
                   <QrCode className="w-4 h-4" />
                   Setup Authenticator App
                 </button>
-                
+
                 <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 rounded-lg transition-colors">
                   <Download className="w-4 h-4" />
                   Download Backup Codes
@@ -515,8 +519,8 @@ export default function SecuritySettingsPage() {
       </SettingsSection>
 
       {/* Active Sessions */}
-      <SettingsSection 
-        title="Active Sessions" 
+      <SettingsSection
+        title="Active Sessions"
         description="Monitor and manage devices with access to your account"
         icon={Monitor}
         className="mb-6"
@@ -595,8 +599,8 @@ export default function SecuritySettingsPage() {
       </SettingsSection>
 
       {/* Security Monitoring */}
-      <SettingsSection 
-        title="Security Monitoring" 
+      <SettingsSection
+        title="Security Monitoring"
         description="Get alerts about security events and monitor account activity"
         icon={Activity}
         className="mb-6"
@@ -694,8 +698,8 @@ export default function SecuritySettingsPage() {
       </SettingsSection>
 
       {/* Account Recovery */}
-      <SettingsSection 
-        title="Account Recovery" 
+      <SettingsSection
+        title="Account Recovery"
         description="Set up recovery methods in case you lose access to your account"
         icon={RefreshCw}
         className="mb-6"
@@ -744,8 +748,8 @@ export default function SecuritySettingsPage() {
       </SettingsSection>
 
       {/* Advanced Security */}
-      <SettingsSection 
-        title="Advanced Security" 
+      <SettingsSection
+        title="Advanced Security"
         description="Additional security features for enhanced protection"
         icon={Settings}
         className="mb-6"

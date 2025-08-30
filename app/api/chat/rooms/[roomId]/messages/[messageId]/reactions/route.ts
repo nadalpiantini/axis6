@@ -12,10 +12,10 @@ export async function POST(
     const supabase = await createClient()
     const params = await context.params
     const { roomId: _roomId, messageId } = params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Add reaction auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -51,8 +51,8 @@ export async function POST(
 
     // Validate emoji
     if (!emoji || typeof emoji !== 'string' || emoji.length > 10) {
-      return NextResponse.json({ 
-        error: 'Invalid emoji format' 
+      return NextResponse.json({
+        error: 'Invalid emoji format'
       }, { status: 400 })
     }
 
@@ -81,7 +81,7 @@ export async function POST(
     }
 
     return NextResponse.json({ reaction }, { status: 201 })
-    
+
   } catch (error) {
     logger.error('Add reaction API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -97,10 +97,10 @@ export async function DELETE(
     const supabase = await createClient()
     const params = await context.params
     const { roomId: _roomId, messageId } = params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Remove reaction auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -111,8 +111,8 @@ export async function DELETE(
     const emoji = searchParams.get('emoji')
 
     if (!emoji) {
-      return NextResponse.json({ 
-        error: 'Emoji parameter is required' 
+      return NextResponse.json({
+        error: 'Emoji parameter is required'
       }, { status: 400 })
     }
 
@@ -130,7 +130,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Reaction removed successfully' })
-    
+
   } catch (error) {
     logger.error('Remove reaction API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

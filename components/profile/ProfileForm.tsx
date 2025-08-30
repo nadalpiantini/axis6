@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { profileFormSchema, type ProfileFormData, timezoneOptions } from "@/lib/validation/profile"
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface ProfileFormProps {
   userId: string
   initialData?: Partial<ProfileFormData>
@@ -78,9 +79,12 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
       toast.success("Profile updated successfully!")
       onSuccess?.()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error updating profile:', error);
+      handleError(error, {
+      operation: 'profile_operation', component: 'ProfileForm',
+
+        userMessage: 'Profile operation failed. Please try again.'
+
+      })
       toast.error("Failed to update profile. Please try again.")
     }
   }

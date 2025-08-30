@@ -29,14 +29,14 @@ const fullLogoSizes = {
   '3xl': { width: 400, height: 160 },
 }
 
-export function Logo({ 
-  variant = 'full', 
-  size = 'md', 
+export function Logo({
+  variant = 'full',
+  size = 'md',
   className,
-  priority = false 
+  priority = false
 }: LogoProps) {
   const dimensions = variant === 'full' ? fullLogoSizes[size] : sizeMap[size]
-  
+
   const logoSrc = {
     full: '/brand/logo/logo.png',
     icon: '/brand/logo/logo-icon.png',

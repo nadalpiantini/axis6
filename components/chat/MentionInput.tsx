@@ -37,7 +37,7 @@ export function MentionInput({
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionRange, setMentionRange] = useState<{ start: number; end: number } | null>(null)
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const debouncedQuery = useDebounce(mentionQuery, 300)
@@ -51,7 +51,7 @@ export function MentionInput({
             user,
             score: calculateRelevanceScore(user, debouncedQuery)
           })).sort((a, b) => b.score - a.score)
-          
+
           setSuggestions(scoredSuggestions)
           setShowSuggestions(scoredSuggestions.length > 0)
           setSelectedIndex(0)
@@ -66,22 +66,22 @@ export function MentionInput({
   const calculateRelevanceScore = (user: MentionUser, query: string): number => {
     const name = user.name.toLowerCase()
     const q = query.toLowerCase()
-    
+
     if (name === q) return 100
     if (name.startsWith(q)) return 80
     if (name.includes(q)) return 60
-    
+
     // Fuzzy matching
     let score = 0
     let queryIndex = 0
-    
+
     for (let i = 0; i < name.length && queryIndex < q.length; i++) {
       if (name[i] === q[queryIndex]) {
         score += 10
         queryIndex++
       }
     }
-    
+
     return queryIndex === q.length ? score : 0
   }
 
@@ -89,12 +89,12 @@ export function MentionInput({
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value
     const cursorPosition = e.target.selectionStart
-    
+
     onChange(newValue)
-    
+
     // Check for mentions
     const mentionMatch = findActiveMention(newValue, cursorPosition)
-    
+
     if (mentionMatch) {
       setMentionQuery(mentionMatch.query)
       setMentionRange(mentionMatch.range)
@@ -109,27 +109,27 @@ export function MentionInput({
   const findActiveMention = (text: string, cursorPos: number): { query: string; range: { start: number; end: number } } | null => {
     const beforeCursor = text.slice(0, cursorPos)
     const afterCursor = text.slice(cursorPos)
-    
+
     // Find the last @ before cursor
     const lastAtIndex = beforeCursor.lastIndexOf('@')
     if (lastAtIndex === -1) return null
-    
+
     // Check if there's a space before @ (or it's at start)
     const beforeAt = beforeCursor[lastAtIndex - 1]
     if (beforeAt && beforeAt !== ' ' && beforeAt !== '\n') return null
-    
+
     // Find the end of the mention (space, newline, or end of text)
     const afterAtText = beforeCursor.slice(lastAtIndex + 1) + afterCursor
     const endMatch = afterAtText.match(/^(\w*)/)
-    
+
     if (!endMatch) return null
-    
+
     const query = endMatch[1]
     const endIndex = lastAtIndex + 1 + query.length
-    
+
     // Only show suggestions if cursor is within the mention
     if (cursorPos < lastAtIndex + 1 || cursorPos > endIndex) return null
-    
+
     return {
       query,
       range: { start: lastAtIndex, end: endIndex }
@@ -139,22 +139,22 @@ export function MentionInput({
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return
-    
+
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev < suggestions.length - 1 ? prev + 1 : 0
         )
         break
-        
+
       case 'ArrowUp':
         e.preventDefault()
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev > 0 ? prev - 1 : suggestions.length - 1
         )
         break
-        
+
       case 'Enter':
       case 'Tab':
         e.preventDefault()
@@ -162,7 +162,7 @@ export function MentionInput({
           handleMentionSelect(suggestions[selectedIndex].user)
         }
         break
-        
+
       case 'Escape':
         setShowSuggestions(false)
         break
@@ -172,19 +172,19 @@ export function MentionInput({
   // Handle mention selection
   const handleMentionSelect = useCallback((user: MentionUser) => {
     if (!mentionRange) return
-    
-    const newValue = 
-      `${value.slice(0, mentionRange.start)  
-      }@${user.name} ${  
+
+    const newValue =
+      `${value.slice(0, mentionRange.start)
+      }@${user.name} ${
       value.slice(mentionRange.end)}`
-    
+
     onChange(newValue)
-    
+
     // Reset mention state
     setShowSuggestions(false)
     setMentionQuery('')
     setMentionRange(null)
-    
+
     // Focus back to textarea
     setTimeout(() => {
       if (textareaRef.current) {
@@ -193,7 +193,7 @@ export function MentionInput({
         textareaRef.current.setSelectionRange(newCursorPos, newCursorPos)
       }
     }, 0)
-    
+
     // Notify parent
     onMentionSelect?.(user, {
       start: mentionRange.start,
@@ -270,7 +270,7 @@ export function MentionInput({
                       {suggestion.user.name.charAt(0).toUpperCase()}
                     </div>
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">
                       {suggestion.user.name}
@@ -281,7 +281,7 @@ export function MentionInput({
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="flex-shrink-0">
                     <User className="h-4 w-4 text-neutral-500" />
                   </div>

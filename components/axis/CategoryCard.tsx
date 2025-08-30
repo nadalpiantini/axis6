@@ -34,9 +34,9 @@ const iconMap = {
 const movementAnimations = {
   latido: {
     rest: { scale: 1 },
-    hover: { 
+    hover: {
       scale: [1, 1.05, 1],
-      transition: { 
+      transition: {
         duration: 0.8,
         repeat: Infinity,
         ease: "easeInOut" as const
@@ -45,9 +45,9 @@ const movementAnimations = {
   },
   fade: {
     rest: { opacity: 1 },
-    hover: { 
+    hover: {
       opacity: [1, 0.7, 1],
-      transition: { 
+      transition: {
         duration: 1.5,
         repeat: Infinity,
         ease: "easeInOut" as const
@@ -56,7 +56,7 @@ const movementAnimations = {
   },
   expand: {
     rest: { scale: 1 },
-    hover: { 
+    hover: {
       scale: 1.02,
       boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
       transition: { duration: 0.3 }
@@ -64,9 +64,9 @@ const movementAnimations = {
   },
   wave: {
     rest: { x: 0 },
-    hover: { 
+    hover: {
       x: [0, -5, 5, 0],
-      transition: { 
+      transition: {
         duration: 0.5,
         repeat: Infinity,
         repeatDelay: 0.5
@@ -82,7 +82,7 @@ const movementAnimations = {
         '0 0 20px 10px rgba(76, 29, 149, 0.2)',
         '0 0 0 0 rgba(76, 29, 149, 0)',
       ],
-      transition: { 
+      transition: {
         duration: 1.5,
         repeat: Infinity,
         ease: "easeOut" as const
@@ -91,9 +91,9 @@ const movementAnimations = {
   },
   vibrate: {
     rest: { rotate: 0 },
-    hover: { 
+    hover: {
       rotate: [0, -1, 1, -1, 1, 0],
-      transition: { 
+      transition: {
         duration: 0.3,
         repeat: Infinity,
         repeatDelay: 1
@@ -105,15 +105,15 @@ const movementAnimations = {
 const CategoryCard = memo(function CategoryCard({ category, isCompleted = false, streakCount = 0, onToggle }: CategoryCardProps) {
   const [showActions, setShowActions] = useState(false)
   const [selectedAction, setSelectedAction] = useState<number | null>(null)
-  
+
   const handleToggleActions = useCallback(() => {
     setShowActions(prev => !prev)
   }, [])
-  
+
   const handleSelectAction = useCallback((index: number) => {
     setSelectedAction(prev => prev === index ? null : index)
   }, [])
-  
+
   const Icon = iconMap[category.icon as keyof typeof iconMap]
   const animation = movementAnimations[category.movement as keyof typeof movementAnimations]
 
@@ -128,13 +128,13 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
         className={`
           ritual-card relative overflow-hidden p-6
           transition-all duration-500 group-hover:shadow-2xl
-          ${isCompleted 
-            ? 'border-2 border-white/40 shadow-2xl' 
+          ${isCompleted
+            ? 'border-2 border-white/40 shadow-2xl'
             : 'border border-white/30 hover:border-white/50'
           }
         `}
         style={{
-          background: isCompleted 
+          background: isCompleted
             ? `linear-gradient(135deg, ${category.color}25, ${category.softColor}35, rgba(255,255,255,0.9))`
             : undefined
         }}
@@ -146,7 +146,7 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
              style={{
                background: `radial-gradient(ellipse 80% 120% at 30% 70%, ${category.color}40, transparent 70%)`
              }} />
-        
+
         {/* Flowing accent */}
         <div className="absolute bottom-0 left-0 w-full h-2 organic-wave opacity-30"
              style={{ backgroundColor: `${category.color}20` }} />
@@ -157,34 +157,34 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             <motion.div
               className={`
                 p-3 rounded-2xl flex items-center justify-center backdrop-blur-sm
-                ${isCompleted 
-                  ? 'bg-white/95 shadow-lg' 
+                ${isCompleted
+                  ? 'bg-white/95 shadow-lg'
                   : 'bg-gradient-to-br from-white/60 to-white/40 border border-white/30'
                 }
               `}
               style={{
-                background: !isCompleted 
+                background: !isCompleted
                   ? `linear-gradient(135deg, ${category.softColor}60, rgba(255,255,255,0.8))`
                   : undefined,
-                boxShadow: isCompleted 
+                boxShadow: isCompleted
                   ? `0 4px 20px ${category.color}20`
                   : undefined
               }}
-              whileHover={{ 
+              whileHover={{
                 rotate: 360,
                 scale: 1.05,
                 boxShadow: `0 8px 25px ${category.color}30`
               }}
               transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
             >
-              <Icon 
+              <Icon
                 className={`w-6 h-6 ritual-icon ${isCompleted ? 'ritual-pulse' : ''}`}
                 style={{ color: isCompleted ? category.color : category.darkColor }}
               />
             </motion.div>
-            
+
             <div>
-              <h3 
+              <h3
                 className="font-serif font-bold text-lg leading-tight"
                 style={{ color: category.darkColor }}
               >
@@ -199,30 +199,30 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             onClick={onToggle}
             className={`
               relative p-2 rounded-2xl backdrop-blur-sm transition-all duration-300
-              ${isCompleted 
-                ? 'bg-white/90 shadow-lg' 
+              ${isCompleted
+                ? 'bg-white/90 shadow-lg'
                 : 'bg-white/40 hover:bg-white/60 border border-white/30'
               }
             `}
-            whileHover={{ 
+            whileHover={{
               scale: 1.1,
               rotate: isCompleted ? 0 : 15,
               boxShadow: `0 4px 20px ${category.color}30`
             }}
             whileTap={{ scale: 0.95 }}
             style={{
-              boxShadow: isCompleted 
+              boxShadow: isCompleted
                 ? `0 4px 15px ${category.color}25`
                 : undefined
             }}
           >
             {isCompleted ? (
-              <CheckCircle2 
+              <CheckCircle2
                 className="w-6 h-6 ritual-pulse"
                 style={{ color: category.color }}
               />
             ) : (
-              <Circle 
+              <Circle
                 className="w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors"
               />
             )}
@@ -254,14 +254,14 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
                 <motion.div
                   key={i}
                   className="w-3 h-3 rounded-full shadow-sm"
-                  style={{ 
+                  style={{
                     background: `linear-gradient(135deg, ${category.color}, ${category.darkColor})`,
                     boxShadow: `0 2px 4px ${category.color}30`
                   }}
                   initial={{ scale: 0, rotate: 0 }}
                   animate={{ scale: 1, rotate: 360 }}
-                  transition={{ 
-                    delay: 0.4 + i * 0.1, 
+                  transition={{
+                    delay: 0.4 + i * 0.1,
                     duration: 0.5,
                     type: "spring",
                     stiffness: 200
@@ -269,7 +269,7 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
                 />
               ))}
             </div>
-            <motion.span 
+            <motion.span
               className="text-sm font-semibold px-2 py-1 rounded-full bg-white/60 backdrop-blur-sm"
               style={{ color: category.darkColor }}
               whileHover={{ scale: 1.05 }}
@@ -295,13 +295,13 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
                 key={index}
                 className={`
                   p-2 rounded-lg text-sm cursor-pointer transition-all
-                  ${selectedAction === index 
-                    ? 'bg-gradient-to-r text-white' 
+                  ${selectedAction === index
+                    ? 'bg-gradient-to-r text-white'
                     : 'bg-gray-50 hover:bg-gray-100'
                   }
                 `}
                 style={{
-                  background: selectedAction === index 
+                  background: selectedAction === index
                     ? `linear-gradient(135deg, ${category.color}, ${category.softColor})`
                     : undefined
                 }}
@@ -323,7 +323,7 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             color: category.darkColor,
             background: `linear-gradient(135deg, ${category.softColor}40, rgba(255,255,255,0.6))`,
           }}
-          whileHover={{ 
+          whileHover={{
             scale: 1.02,
             background: `linear-gradient(135deg, ${category.softColor}60, rgba(255,255,255,0.8))`,
             boxShadow: `0 4px 15px ${category.color}20`

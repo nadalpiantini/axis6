@@ -55,7 +55,7 @@ export function ChatMessage({
 
   const handleReaction = (emoji: string) => {
     const existingReaction = message.reactions.find(r => r.user.id === message.sender_id && r.emoji === emoji)
-    
+
     if (existingReaction) {
       removeReaction(emoji)
     } else {
@@ -89,7 +89,7 @@ export function ChatMessage({
         "text-white ml-auto max-w-[75%]"
       )
     }
-    
+
     return cn(
       "bg-neutral-800 text-white mr-auto max-w-[75%]",
       "border border-neutral-700"
@@ -191,7 +191,7 @@ export function ChatMessage({
           {/* Quick Actions */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
               opacity: showActions ? 1 : 0,
               scale: showActions ? 1 : 0.8
             }}

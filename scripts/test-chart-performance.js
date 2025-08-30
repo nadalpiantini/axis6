@@ -27,7 +27,7 @@ class ChartPerformanceTester {
   constructor() {
     this.browser = null
     this.page = null
-    this.baseUrl = 'http://localhost:6789'
+    this.baseUrl = 'http://localhost:3000'
     this.results = {
       pageLoad: {},
       chartRendering: {},

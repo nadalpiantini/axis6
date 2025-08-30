@@ -1,6 +1,5 @@
 'use client'
 
-
 import { motion } from 'framer-motion'
 import { Database, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
@@ -22,29 +21,29 @@ interface State {
 export class DatabaseErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = { 
-      hasError: false, 
-      error: null, 
-      errorInfo: null 
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null
     }
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { 
-      hasError: true, 
-      error, 
-      errorInfo: null 
+    return {
+      hasError: true,
+      error,
+      errorInfo: null
     }
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     logger.error('Database error boundary caught an error:', error)
-    
+
     this.setState({
       error,
       errorInfo
     })
-    
+
     // Report database errors
     if (typeof window !== 'undefined' && 'gtag' in window) {
       ;(window as any).gtag('event', 'exception', {
@@ -55,10 +54,10 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
   }
 
   handleRetry = () => {
-    this.setState({ 
-      hasError: false, 
-      error: null, 
-      errorInfo: null 
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null
     })
     // Force a page refresh to retry database connections
     window.location.reload()
@@ -70,7 +69,7 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
       if (this.props.fallback) {
         return this.props.fallback
       }
-      
+
       return (
         <div className="min-h-screen text-white flex items-center justify-center p-4">
           <div className="max-w-md w-full">

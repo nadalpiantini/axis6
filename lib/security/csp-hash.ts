@@ -5,6 +5,7 @@
 
 import crypto from 'crypto'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 // Track generated hashes for CSP header
 const scriptHashes = new Set<string>()
 const styleHashes = new Set<string>()
@@ -147,7 +148,7 @@ export function getCSPHeader(): string {
  */
 export function addCSPHeaders(headers: Headers): void {
   const cspHeader = getCSPHeader()
-  
+
   headers.set('Content-Security-Policy', cspHeader)
   headers.set('X-Content-Security-Policy', cspHeader) // IE compatibility
   headers.set('X-WebKit-CSP', cspHeader) // Webkit compatibility
@@ -172,18 +173,22 @@ export interface CSPViolation {
 export function handleCSPViolation(violation: CSPViolation): void {
   // In development, log to console
   if (process.env['NODE_ENV'] === 'development') {
-    // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('CSP Violation:', violation);
+    handleError(error, {
+      operation: 'security_operation', component: 'csp-hash',
+
+      userMessage: 'Security operation failed.'
+
+    })
   }
-  
+
   // In production, send to monitoring service
   if (process.env['NODE_ENV'] === 'production') {
     // Could send to Sentry, DataDog, etc.
-    // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('CSP Violation in production:', violation);
+    handleError(error, {
+      operation: 'security_operation', component: 'csp-hash',
+
+      userMessage: 'Security operation failed.'
+
+    })
   }
 }

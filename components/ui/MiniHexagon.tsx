@@ -45,11 +45,11 @@ const categoryIds = {
   material: 6
 }
 
-export default function MiniHexagon({ 
-  data, 
+export default function MiniHexagon({
+  data,
   size = 200,
   onCategoryClick,
-  selectedCategory 
+  selectedCategory
 }: MiniHexagonProps) {
   const centerX = size / 2
   const centerY = size / 2
@@ -71,7 +71,7 @@ export default function MiniHexagon({
   const createDataPath = () => {
     const categories = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'] as const
     const points: string[] = []
-    
+
     categories.forEach((category, i) => {
       const angle = (Math.PI / 3) * i - Math.PI / 2
       const value = data[category] / 100
@@ -79,7 +79,7 @@ export default function MiniHexagon({
       const y = centerY + radius * value * Math.sin(angle)
       points.push(`${x},${y}`)
     })
-    
+
     return `M ${points.join(' L ')} Z`
   }
 
@@ -87,12 +87,12 @@ export default function MiniHexagon({
   const createSegment = (index: number) => {
     const angle1 = (Math.PI / 3) * index - Math.PI / 2
     const angle2 = (Math.PI / 3) * (index + 1) - Math.PI / 2
-    
+
     const x1 = centerX + radius * Math.cos(angle1)
     const y1 = centerY + radius * Math.sin(angle1)
     const x2 = centerX + radius * Math.cos(angle2)
     const y2 = centerY + radius * Math.sin(angle2)
-    
+
     return `M ${centerX},${centerY} L ${x1},${y1} L ${x2},${y2} Z`
   }
 
@@ -148,7 +148,7 @@ export default function MiniHexagon({
           const categoryId = categoryIds[category]
           const isSelected = selectedCategory === categoryId
           const isCompleted = data[category] > 0
-          
+
           return (
             <g key={category}>
               <path
@@ -211,7 +211,7 @@ export default function MiniHexagon({
         const x = centerX + labelRadius * Math.cos(angle)
         const y = centerY + labelRadius * Math.sin(angle)
         const isCompleted = data[category] > 0
-        
+
         return (
           <motion.div
             key={category}

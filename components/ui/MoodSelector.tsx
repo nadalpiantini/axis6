@@ -40,7 +40,7 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
         {moods.map((mood, index) => {
           const isSelected = selected === mood.id
           const isHovered = hoveredMood === mood.id
-          
+
           return (
             <motion.div
               key={mood.id}
@@ -57,8 +57,8 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
                 onMouseLeave={() => setHoveredMood(null)}
                 className={`
                   relative text-4xl sm:text-5xl p-3 sm:p-4 rounded-2xl transition-all duration-300
-                  ${isSelected 
-                    ? 'bg-white/20 shadow-lg shadow-white/10' 
+                  ${isSelected
+                    ? 'bg-white/20 shadow-lg shadow-white/10'
                     : 'bg-white/5 hover:bg-white/10'
                   }
                 `}
@@ -69,7 +69,7 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
                 <span className="block transform transition-transform">
                   {mood.emoji}
                 </span>
-                
+
                 {/* Glow effect */}
                 {isSelected && (
                   <motion.div
@@ -104,12 +104,12 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
               {/* Label */}
               <motion.span
                 initial={{ opacity: 0 }}
-                animate={{ 
+                animate={{
                   opacity: isSelected || isHovered ? 1 : 0.5,
                   scale: isSelected ? 1.1 : 1
                 }}
                 className="text-xs font-medium transition-all"
-                style={{ 
+                style={{
                   color: isSelected ? mood.color : 'rgba(255, 255, 255, 0.6)'
                 }}
               >

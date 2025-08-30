@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Production Readiness Verification Script for AXIS6
- * 
+ *
  * This script verifies that all production requirements are met
  * before deployment.
  */
@@ -53,7 +53,7 @@ function checkEnvironmentVariables(): void {
       category: 'Configuration',
       required: true,
       passed: !!process.env[variable],
-      message: process.env[variable] 
+      message: process.env[variable]
         ? 'Required environment variable is set'
         : 'Missing required environment variable',
       fix: `Add ${variable} to your .env.local file`
@@ -66,7 +66,7 @@ function checkEnvironmentVariables(): void {
       category: 'Configuration',
       required: false,
       passed: !!process.env[variable],
-      message: process.env[variable] 
+      message: process.env[variable]
         ? 'Production environment variable is set'
         : 'Optional production variable not set',
       fix: `Add ${variable} to your .env.local for production features`
@@ -81,8 +81,8 @@ function checkEnvironmentVariables(): void {
       category: 'Security',
       required: true,
       passed: csrfSecret.length >= 32,
-      message: csrfSecret.length >= 32 
-        ? 'CSRF secret is strong enough' 
+      message: csrfSecret.length >= 32
+        ? 'CSRF secret is strong enough'
         : 'CSRF secret should be at least 32 characters',
       fix: 'Generate a new CSRF secret: openssl rand -base64 32'
     })
@@ -95,7 +95,7 @@ function checkSecurityConfiguration(): void {
   const middlewarePath = join(process.cwd(), 'middleware.ts')
   if (existsSync(middlewarePath)) {
     const middleware = readFileSync(middlewarePath, 'utf-8')
-    
+
     addCheck({
       name: 'Security Headers Middleware',
       category: 'Security',
@@ -133,7 +133,7 @@ function checkPerformanceConfiguration(): void {
   const nextConfigPath = join(process.cwd(), 'next.config.js')
   if (existsSync(nextConfigPath)) {
     const nextConfig = readFileSync(nextConfigPath, 'utf-8')
-    
+
     addCheck({
       name: 'Image Optimization',
       category: 'Performance',
@@ -170,7 +170,7 @@ function checkMonitoringConfiguration(): void {
   // Check Sentry configuration
   const sentryClientPath = join(process.cwd(), 'sentry.client.config.ts')
   const sentryServerPath = join(process.cwd(), 'sentry.server.config.ts')
-  
+
   addCheck({
     name: 'Sentry Client Configuration',
     category: 'Monitoring',
@@ -195,7 +195,7 @@ function checkBuildConfiguration(): void {
   try {
     // Check if project builds successfully
     execSync('npm run build', { stdio: 'pipe' })
-    
+
     addCheck({
       name: 'Production Build',
       category: 'Configuration',
@@ -219,7 +219,7 @@ function checkBuildConfiguration(): void {
   if (existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
     const requiredScripts = ['build', 'start', 'lint']
-    
+
     for (const script of requiredScripts) {
       addCheck({
         name: `NPM Script: ${script}`,
@@ -240,7 +240,7 @@ function checkDatabaseConfiguration(): void {
   if (existsSync(migrationsDir)) {
     const files = require('fs').readdirSync(migrationsDir)
     const migrationFiles = files.filter((f: string) => f.endsWith('.sql'))
-    
+
     addCheck({
       name: 'Database Migrations',
       category: 'Database',
@@ -258,34 +258,34 @@ async function runVerification(): Promise<void> {
   // Run all checks
   console.log('⏳ Checking environment variables...')
   checkEnvironmentVariables()
-  
+
   console.log('⏳ Checking security configuration...')
   checkSecurityConfiguration()
-  
+
   console.log('⏳ Checking performance configuration...')
   checkPerformanceConfiguration()
-  
+
   console.log('⏳ Checking monitoring configuration...')
   checkMonitoringConfiguration()
-  
+
   console.log('⏳ Checking build configuration...')
   checkBuildConfiguration()
-  
+
   console.log('⏳ Checking database configuration...')
   checkDatabaseConfiguration()
 
   // Group checks by category
   const categories = [...new Set(checks.map(c => c.category))]
-  
+
   console.log('\n📋 Verification Results:\n')
-  
+
   for (const category of categories) {
     console.log(`🔧 ${category}:`)
-    
+
     const categoryChecks = checks.filter(c => c.category === category)
     const passed = categoryChecks.filter(c => c.passed).length
     const required = categoryChecks.filter(c => c.required).length
-    
+
     for (const check of categoryChecks) {
       const status = check.passed ? '✅' : (check.required ? '❌' : '⚠️')
       const requiredText = check.required ? '' : ' (optional)'
@@ -295,7 +295,7 @@ async function runVerification(): Promise<void> {
         console.log(`      💡 Fix: ${check.fix}`)
       }
     }
-    
+
     console.log(`   📊 ${passed}/${categoryChecks.length} checks passed (${required} required)\n`)
   }
 
@@ -303,18 +303,18 @@ async function runVerification(): Promise<void> {
   const totalPassed = checks.filter(c => c.passed).length
   const totalRequired = checks.filter(c => c.required).length
   const requiredPassed = checks.filter(c => c.required && c.passed).length
-  
+
   console.log('🎯 Overall Summary:')
   console.log(`   Total: ${totalPassed}/${checks.length} checks passed`)
   console.log(`   Required: ${requiredPassed}/${totalRequired} required checks passed`)
-  
+
   if (requiredPassed === totalRequired) {
     console.log('\n🎉 All required checks passed! Your application is ready for production.')
-    
+
     if (totalPassed < checks.length) {
       console.log('💡 Consider addressing optional checks for enhanced production readiness.')
     }
-    
+
     process.exit(0)
   } else {
     const failedRequired = totalRequired - requiredPassed

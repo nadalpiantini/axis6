@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { logger } from '@/lib/utils/logger';
 
-
 export type ErrorLevel = 'info' | 'warn' | 'error' | 'critical'
 export type ErrorCategory = 'auth' | 'database' | 'api' | 'email' | 'ui' | 'network' | 'validation' | 'performance'
 
@@ -77,7 +76,7 @@ class ErrorHandler {
     const prefix = `[${errorLog.level.toUpperCase()}][${errorLog.category}]`
     const contextStr = errorLog.context ? ` | Context: ${JSON.stringify(errorLog.context, null, 2)}` : ''
     const errorStr = errorLog.error ? ` | Error: ${errorLog.error.stack || errorLog.error.message}` : ''
-    
+
     const fullMessage = `${prefix} ${errorLog.message}${contextStr}${errorStr}`
 
     switch (errorLog.level) {
@@ -129,7 +128,7 @@ class ErrorHandler {
   private async storeInDatabase(errorLog: ErrorLog) {
     try {
       const supabase = createClient()
-      
+
       // Check if we have a session to get user info
       const { data: { user } } = await supabase.auth.getUser()
 
@@ -201,8 +200,8 @@ class ErrorHandler {
 
   // Performance monitoring
   performanceWarn(message: string, metrics?: Record<string, number>, context?: ErrorContext) {
-    return this.warn('performance', message, undefined, { 
-      ...context, 
+    return this.warn('performance', message, undefined, {
+      ...context,
       action: 'performance_check',
       metadata: { metrics, ...context?.metadata }
     })

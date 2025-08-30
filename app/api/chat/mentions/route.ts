@@ -12,10 +12,10 @@ export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
     const { searchParams } = new URL(_request.url)
-    
+
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
-    
+
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 

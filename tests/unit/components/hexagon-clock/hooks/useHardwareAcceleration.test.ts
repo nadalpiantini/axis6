@@ -34,7 +34,7 @@ describe('useHardwareAcceleration Hook', () => {
       expect(result.current).toBeDefined();
       expect(result.current).toHaveProperty('animationClasses');
       expect(result.current).toHaveProperty('cssVariables');
-      
+
       expect(typeof result.current.animationClasses).toBe('string');
       expect(typeof result.current.cssVariables).toBe('object');
     });
@@ -49,13 +49,13 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       // Should include GPU acceleration
       expect(cssVars).toHaveProperty('--gpu-acceleration');
-      
+
       // Should include animation timing
       expect(cssVars).toHaveProperty('--animation-timing');
-      
+
       // Should include perspective optimization
       expect(cssVars).toHaveProperty('--perspective');
     });
@@ -66,7 +66,7 @@ describe('useHardwareAcceleration Hook', () => {
       const { result, rerender } = renderHook(() => useHardwareAcceleration());
 
       const firstResult = result.current;
-      
+
       // Re-render without changes
       rerender();
       const secondResult = result.current;
@@ -79,10 +79,10 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       // Should include transform3d for hardware acceleration
       expect(cssVars['--gpu-acceleration']).toContain('translateZ(0)');
-      
+
       // Should include appropriate animation timing
       expect(cssVars['--animation-timing']).toMatch(/cubic-bezier/);
     });
@@ -91,11 +91,11 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       // Should include perspective for 3D transforms
       expect(cssVars).toHaveProperty('--perspective');
       expect(cssVars['--perspective']).toBe('1000px');
-      
+
       // Should include animation duration
       expect(cssVars).toHaveProperty('--animation-duration');
       expect(cssVars['--animation-duration']).toBe('0.3s');
@@ -107,7 +107,7 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const classes = result.current.animationClasses.split(' ');
-      
+
       expect(classes).toContain('transform-gpu');
       expect(classes).toContain('will-change-transform');
       expect(classes).toContain('backface-visibility-hidden');
@@ -118,7 +118,7 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const classes = result.current.animationClasses.split(' ');
-      
+
       // Should include GPU-optimized classes
       expect(classes).toContain('transform-gpu');
       expect(classes).toContain('will-change-transform');
@@ -131,7 +131,7 @@ describe('useHardwareAcceleration Hook', () => {
 
       const cssVars = result.current.cssVariables;
       const varNames = Object.keys(cssVars);
-      
+
       // All variables should start with --
       varNames.forEach(name => {
         expect(name).toMatch(/^--/);
@@ -160,7 +160,7 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       expect(cssVars['--gpu-acceleration']).toBe('translateZ(0)');
       expect(cssVars['--animation-timing']).toBe('cubic-bezier(0.4, 0, 0.2, 1)');
       expect(cssVars['--animation-duration']).toBe('0.3s');
@@ -216,11 +216,11 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const classes = result.current.animationClasses.split(' ');
-      
+
       // Should include classes that work well with Tailwind
       expect(classes).toContain('transform-gpu');
       expect(classes).toContain('will-change-transform');
-      
+
       // Classes should be valid CSS class names
       classes.forEach(className => {
         expect(className).toMatch(/^[a-zA-Z][a-zA-Z0-9-_]*$/);
@@ -231,7 +231,7 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       // Should be directly usable in React style props
       const testStyle = {
         transform: cssVars['--gpu-acceleration'],
@@ -250,10 +250,10 @@ describe('useHardwareAcceleration Hook', () => {
       const { result } = renderHook(() => useHardwareAcceleration());
 
       const cssVars = result.current.cssVariables;
-      
+
       // Optimizations should target 60fps performance
       expect(cssVars['--gpu-acceleration']).toBe('translateZ(0)');
-      
+
       // Should use hardware-optimized timing functions
       expect(cssVars['--animation-timing']).toBe('cubic-bezier(0.4, 0, 0.2, 1)');
     });
@@ -263,7 +263,7 @@ describe('useHardwareAcceleration Hook', () => {
 
       const cssVars = result.current.cssVariables;
       const duration = parseFloat(cssVars['--animation-duration']);
-      
+
       // Should be between 100ms and 1000ms for good UX
       expect(duration).toBeGreaterThanOrEqual(0.1);
       expect(duration).toBeLessThanOrEqual(1.0);

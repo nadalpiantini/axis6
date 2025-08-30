@@ -2,13 +2,13 @@
 
 import { format, formatDistanceToNow, parseISO } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bell, 
-  BellRing, 
-  Clock, 
-  Target, 
-  Heart, 
-  Lightbulb, 
+import {
+  Bell,
+  BellRing,
+  Clock,
+  Target,
+  Heart,
+  Lightbulb,
   Trophy,
   X,
   Check,
@@ -28,21 +28,21 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { SmartNotification } from '@/lib/ai/smart-notifications'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface SmartNotificationPanelProps {
   className?: string
   maxNotifications?: number
   showActions?: boolean
 }
 
-export function SmartNotificationPanel({ 
-  className, 
+export function SmartNotificationPanel({
+  className,
   maxNotifications = 5,
-  showActions = true 
+  showActions = true
 }: SmartNotificationPanelProps) {
-  const { 
-    notifications, 
-    isLoading, 
+  const {
+    notifications,
+    isLoading,
     error,
     markNotification,
     generateNotifications,
@@ -87,11 +87,12 @@ export function SmartNotificationPanel({
 
       await markNotification(notification.id, markAction, feedback)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to handle notification action:', error);
-    }
+      handleError(error, {
+      operation: 'ai_operation', component: 'SmartNotificationPanel',
+
+        userMessage: 'AI operation failed. Please try again.'
+
+      })}
   }
 
   const getNotificationIcon = (type: string) => {
@@ -224,8 +225,8 @@ export function SmartNotificationPanel({
                         <div className="flex items-start justify-between">
                           <h4 className="font-medium text-sm">{notification.title}</h4>
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <Badge 
-                              variant={getPriorityBadgeVariant(notification.priority)} 
+                            <Badge
+                              variant={getPriorityBadgeVariant(notification.priority)}
                               className="text-xs"
                             >
                               {notification.priority}
@@ -235,9 +236,9 @@ export function SmartNotificationPanel({
                             </Badge>
                           </div>
                         </div>
-                        
+
                         <p className="text-sm">{notification.message}</p>
-                        
+
                         <div className="flex items-center gap-4 text-xs text-gray-500">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -250,19 +251,19 @@ export function SmartNotificationPanel({
                             </div>
                           )}
                         </div>
-                        
+
                         {notification.personalization_score && (
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-gray-500">Relevance:</span>
                             <div className="flex-1 max-w-24">
-                              <Progress 
-                                value={notification.personalization_score * 100} 
+                              <Progress
+                                value={notification.personalization_score * 100}
                                 className="h-1.5"
                               />
                             </div>
                           </div>
                         )}
-                        
+
                         {showActions && (
                           <div className="flex items-center gap-2 pt-2">
                             <Button
@@ -307,7 +308,7 @@ export function SmartNotificationPanel({
             </div>
           </ScrollArea>
         )}
-        
+
         {notifications.length > maxNotifications && (
           <div className="mt-4 text-center text-xs text-gray-500">
             Showing {Math.min(maxNotifications, activeNotifications.length)} of {notifications.filter(n => !n.delivered).length} active notifications
@@ -319,11 +320,11 @@ export function SmartNotificationPanel({
 }
 
 export function NotificationSummary() {
-  const { 
-    notifications, 
+  const {
+    notifications,
     getNotificationsByPriority,
     hasActiveNotifications,
-    hasHighPriorityNotifications 
+    hasHighPriorityNotifications
   } = useAIPersonalization()
 
   const activeCount = notifications.filter(n => !n.delivered).length
@@ -340,7 +341,7 @@ export function NotificationSummary() {
           {activeCount} active notification{activeCount !== 1 ? 's' : ''}
         </span>
       </div>
-      
+
       {(urgentCount > 0 || highCount > 0) && (
         <div className="flex items-center gap-2">
           {urgentCount > 0 && (

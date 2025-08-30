@@ -7,11 +7,11 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { animations } from '@/lib/design-system/theme'
-import { 
-  useChatRoom, 
-  useChatMessages, 
-  useSendMessage, 
-  useTypingIndicator 
+import {
+  useChatRoom,
+  useChatMessages,
+  useSendMessage,
+  useTypingIndicator
 } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants, ChatMessageWithSender } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
@@ -22,6 +22,7 @@ import { ChatMessageList } from './ChatMessageList'
 import { ChatParticipants } from './ChatParticipants'
 import { TypingIndicator } from './TypingIndicator'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface ChatRoomProps {
   room: ChatRoomWithParticipants
   userId: string
@@ -33,7 +34,7 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
   const [showParticipants, setShowParticipants] = useState(false)
   const [replyToMessage, setReplyToMessage] = useState<ChatMessageWithSender | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  
+
   // Chat hooks
   const {
     isConnected,
@@ -41,58 +42,61 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
     onlineUsers,
     sendTyping
   } = useChatRoom(room.id, userId)
-  
+
   const {
     data: messagesData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
   } = useChatMessages(room.id)
-  
+
   const sendMessage = useSendMessage(room.id)
   const { startTyping, stopTyping } = useTypingIndicator(room.id)
-  
+
   // Flatten messages from pages
   const messages = messagesData?.pages.flatMap(page => page.data) || []
-  
+
   // Auto scroll to bottom on new messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages.length])
-  
+
   // Handle message send
   const handleSendMessage = async (content: string, messageType?: 'text' | 'image' | 'file' | 'achievement') => {
     if (!content.trim()) return
-    
+
     try {
       await sendMessage.mutateAsync({
         content: content.trim(),
         messageType,
         replyToId: replyToMessage?.id
       })
-      
+
       setReplyToMessage(null)
       stopTyping()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to send message:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'ChatRoom',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
     }
   }
-  
+
   // Handle typing events
   const handleTypingStart = () => {
     startTyping()
   }
-  
+
   const handleTypingStop = () => {
     stopTyping()
   }
 
   return (
-    <Card 
+    <Card
       className={cn(
         "flex flex-col h-full bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950",
         "border-neutral-800 shadow-2xl",
@@ -121,14 +125,14 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
               isLoading={isFetchingNextPage}
               hasMore={hasNextPage}
             />
-            
+
             {/* Typing Indicator */}
             {typingUsers.length > 0 && (
               <div className="px-4 pb-2">
                 <TypingIndicator users={typingUsers} />
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 

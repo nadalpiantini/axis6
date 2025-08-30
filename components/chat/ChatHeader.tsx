@@ -82,25 +82,25 @@ export function ChatHeader({
             <h2 className="text-lg font-semibold text-white truncate">
               {room.name}
             </h2>
-            
+
             {room.category && (
               <Badge
                 variant="secondary"
                 className="text-xs px-2 py-1"
-                style={{ 
+                style={{
                   backgroundColor: `${room.category.color}20`,
                   color: room.category.color,
                   borderColor: `${room.category.color}40`
                 }}
               >
-                {typeof room.category.name === 'object' 
-                  ? room.category.name.en || room.category.name.es 
+                {typeof room.category.name === 'object'
+                  ? room.category.name.en || room.category.name.es
                   : room.category.name
                 }
               </Badge>
             )}
           </div>
-          
+
           {room.description && (
             <p className="text-sm text-neutral-400 truncate mt-1">
               {room.description}

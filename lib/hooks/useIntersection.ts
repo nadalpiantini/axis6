@@ -20,7 +20,7 @@ export function useIntersection(
     const observer = new IntersectionObserver(
       ([entry]) => {
         const isElementIntersecting = entry.isIntersecting
-        
+
         if (!freezeOnceVisible || !isIntersecting) {
           setIsIntersecting(isElementIntersecting)
         }

@@ -111,16 +111,16 @@ describe('Enhanced Rate Limiting Middleware', () => {
 
     it('should block requests when limit exceeded', async () => {
       const testIp = '192.168.1.200' // Unique IP for this test
-      
+
       // Simulate multiple rapid requests from same IP
       const results = []
-      
+
       for (let i = 0; i < 102; i++) {
         const request = createMockRequest(testIp)
         const result = await withEnhancedRateLimit(request, 'api')
         results.push(result)
       }
-      
+
       // First 100 should be allowed
       for (let i = 0; i < 100; i++) {
         expect(results[i].response).toBeNull()
@@ -135,7 +135,7 @@ describe('Enhanced Rate Limiting Middleware', () => {
 
     it('should include proper headers in rate limit response', async () => {
       const testIp = '192.168.1.600'
-      
+
       // Hit the limit first
       for (let i = 0; i < 100; i++) {
         const request = createMockRequest(testIp)
@@ -148,7 +148,7 @@ describe('Enhanced Rate Limiting Middleware', () => {
 
       expect(response).not.toBeNull()
       expect(response!.status).toBe(429)
-      
+
       const headers = Object.fromEntries(response!.headers.entries())
       expect(headers['x-ratelimit-limit']).toBe('100')
       expect(headers['x-ratelimit-remaining']).toBe('0')
@@ -199,7 +199,7 @@ describe('Enhanced Rate Limiting Middleware', () => {
       // Test that different window formats work with different IPs
       const authRequest = createMockRequest('192.168.1.300')
       const apiRequest = createMockRequest('192.168.1.301')
-      
+
       const authResult = await withEnhancedRateLimit(authRequest, 'auth')
       const apiResult = await withEnhancedRateLimit(apiRequest, 'api')
 
@@ -209,7 +209,7 @@ describe('Enhanced Rate Limiting Middleware', () => {
       // Auth window (15m) should be longer than API window (1m)
       const authTime = authResult.rateLimitInfo.reset.getTime() - Date.now()
       const apiTime = apiResult.rateLimitInfo.reset.getTime() - Date.now()
-      
+
       // Allow for some timing variance
       expect(authTime).toBeGreaterThan(apiTime - 1000) // 1 second tolerance
     })
@@ -261,7 +261,7 @@ describe('Enhanced Rate Limiting Middleware', () => {
       // The actual cleanup is probabilistic (1% chance)
       const results = []
       const testIp = '192.168.1.800'
-      
+
       for (let i = 0; i < 200; i++) {
         const request = createMockRequest(testIp)
         const result = await withEnhancedRateLimit(request, 'api')

@@ -231,8 +231,8 @@ async function main() {
     
     log('\nNext steps:', 'cyan')
     log('1. If any errors, run the SQL fix script in Supabase Dashboard', 'blue')
-    log('2. Test the dashboard at http://localhost:6789/dashboard', 'blue')
-    log('3. Test the profile page at http://localhost:6789/profile', 'blue')
+    log('2. Test the dashboard at http://localhost:3000/dashboard', 'blue')
+    log('3. Test the profile page at http://localhost:3000/profile', 'blue')
     log('4. Verify AI features work correctly', 'blue')
     
   } catch (error) {

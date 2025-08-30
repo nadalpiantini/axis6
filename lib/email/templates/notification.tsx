@@ -61,7 +61,7 @@ export const NotificationEmail = ({
             <Text style={notificationEmoji}>{emoji}</Text>
             <Text style={{ ...heading, color }}>{title}</Text>
             <Text style={paragraph}>{message}</Text>
-            
+
             {/* Dynamic content based on notification type */}
             {type === 'streak-milestone' && data.streak && (
               <Section style={statsSection}>
@@ -80,7 +80,7 @@ export const NotificationEmail = ({
                   📊 <strong>{data.completionRate}%</strong> completado esta semana
                 </Text>
                 <Text style={statsSubtext}>
-                  {data.completionRate >= 70 
+                  {data.completionRate >= 70
                     ? '¡Excelente progreso!'
                     : 'Aún hay tiempo para mejorar'
                   }
@@ -106,12 +106,12 @@ export const NotificationEmail = ({
             <Section style={progressSection}>
               <Text style={sectionTitle}>Tu progreso esta semana</Text>
               <Hr style={divider} />
-              
+
               {data.weeklyProgress.map((item: any, index: number) => (
                 <div key={index} style={progressItem}>
                   <Text style={progressCategory}>{item.category}</Text>
                   <div style={progressBarContainer}>
-                    <div 
+                    <div
                       style={{
                         ...progressBar,
                         width: `${item.percentage}%`,

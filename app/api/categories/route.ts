@@ -7,10 +7,10 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session (optional for categories)
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     // Get query parameters
     const { searchParams } = new URL(_request.url)
     const includeInactive = searchParams.get('includeInactive') === 'true'
@@ -27,7 +27,7 @@ export async function GET(_request: NextRequest) {
     }
 
     const { data: categories, error } = await query
-    
+
     if (error) {
       logger.error('Error fetching categories', error)
       return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
@@ -72,10 +72,10 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -123,10 +123,10 @@ export async function POST(_request: NextRequest) {
 export async function PUT(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -172,10 +172,10 @@ export async function PUT(_request: NextRequest) {
 export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -196,8 +196,8 @@ export async function DELETE(_request: NextRequest) {
       .limit(1)
 
     if (checkins && checkins.length > 0) {
-      return NextResponse.json({ 
-        error: 'Cannot delete category with existing check-ins. Consider deactivating instead.' 
+      return NextResponse.json({
+        error: 'Cannot delete category with existing check-ins. Consider deactivating instead.'
       }, { status: 400 })
     }
 

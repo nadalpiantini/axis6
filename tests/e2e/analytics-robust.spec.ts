@@ -2,14 +2,14 @@ import { test, expect, Page } from '@playwright/test';
 
 /**
  * AXIS6 Analytics & Achievements Robust Testing Strategy
- * 
+ *
  * Features:
  * - Progressive enhancement testing (static cards → charts)
  * - Graceful degradation for missing components
  * - Future-ready selectors for chart implementation
  * - Comprehensive data-testid strategy
  * - Performance-aware testing with realistic expectations
- * 
+ *
  * Execution: npm run test:e2e -- tests/e2e/analytics-robust.spec.ts
  */
 
@@ -18,7 +18,7 @@ const REAL_USER_CREDENTIALS = {
   password: 'Teclados#13'
 };
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:6789';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 interface TestResult {
   component: string;
@@ -31,7 +31,7 @@ interface TestResult {
 class AnalyticsTestStrategy {
   private page: Page;
   private results: TestResult[] = [];
-  
+
   constructor(page: Page) {
     this.page = page;
   }
@@ -39,16 +39,16 @@ class AnalyticsTestStrategy {
   async login() {
     await this.page.goto(`${BASE_URL}/auth/login`);
     await this.page.waitForLoadState('networkidle');
-    
+
     const emailInput = this.page.locator('input[type="email"], input[name="email"]').first();
     const passwordInput = this.page.locator('input[type="password"], input[name="password"]').first();
     const loginButton = this.page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first();
-    
+
     await emailInput.fill(REAL_USER_CREDENTIALS.email);
     await passwordInput.fill(REAL_USER_CREDENTIALS.password);
     await loginButton.click();
     await this.page.waitForTimeout(3000);
-    
+
     const currentUrl = this.page.url();
     if (currentUrl.includes('/auth/login')) {
       throw new Error('Login failed - still on login page');
@@ -63,14 +63,14 @@ class AnalyticsTestStrategy {
       severity,
       suggestions
     });
-    
+
     const statusIcon = {
       pass: '✅',
       partial: '⚠️',
       fail: '❌',
       missing: 'ℹ️'
     };
-    
+
     console.log(`${statusIcon[status]} ${component}: ${details}`);
     if (suggestions && suggestions.length > 0) {
       suggestions.forEach(suggestion => console.log(`   💡 ${suggestion}`));
@@ -142,23 +142,23 @@ class AnalyticsTestStrategy {
    */
   async testDataCards(): Promise<void> {
     const expectedDataCards = [
-      { 
-        selector: '[data-testid="total-checkins"], .glass:has-text("Total Check-ins")', 
+      {
+        selector: '[data-testid="total-checkins"], .glass:has-text("Total Check-ins")',
         name: 'Total Checkins Card',
         content: ['Total Check-ins', 'per day avg']
       },
-      { 
-        selector: '[data-testid="active-days"], .glass:has-text("Active Days")', 
+      {
+        selector: '[data-testid="active-days"], .glass:has-text("Active Days")',
         name: 'Active Days Card',
         content: ['Active Days', '% of']
       },
-      { 
-        selector: '[data-testid="completion-rate"], .glass:has-text("Completion Rate")', 
+      {
+        selector: '[data-testid="completion-rate"], .glass:has-text("Completion Rate")',
         name: 'Completion Rate Card',
         content: ['Completion Rate', '%', 'Average daily']
       },
-      { 
-        selector: '[data-testid="current-streak"], .glass:has-text("Current Streak")', 
+      {
+        selector: '[data-testid="current-streak"], .glass:has-text("Current Streak")',
         name: 'Current Streak Card',
         content: ['Current Streak', 'categories active']
       }
@@ -167,12 +167,12 @@ class AnalyticsTestStrategy {
     for (const card of expectedDataCards) {
       const element = this.page.locator(card.selector);
       const count = await element.count();
-      
+
       if (count > 0) {
         // Check if card has expected content
         const cardText = await element.first().textContent();
         const hasExpectedContent = card.content.some(text => cardText?.includes(text));
-        
+
         if (hasExpectedContent) {
           this.addResult(card.name, 'pass', 'Card found with expected content', 'info');
         } else {
@@ -188,14 +188,14 @@ class AnalyticsTestStrategy {
     // Test Category Performance Section
     const categorySection = this.page.locator('[data-testid="category-performance"], .glass:has-text("Category Performance")');
     const categoryCount = await categorySection.count();
-    
+
     if (categoryCount > 0) {
       this.addResult('Category Performance Section', 'pass', 'Section found and accessible', 'info');
-      
+
       // Test category items within the section
       const categoryItems = categorySection.locator('div:has([style*="backgroundColor"])');
       const itemCount = await categoryItems.count();
-      
+
       if (itemCount > 0) {
         this.addResult('Category Items', 'pass', `Found ${itemCount} category items`, 'info');
       } else {
@@ -240,7 +240,7 @@ class AnalyticsTestStrategy {
       // Test current implementation
       const currentElement = this.page.locator(chart.current);
       const currentCount = await currentElement.count();
-      
+
       // Test future readiness
       const futureElement = this.page.locator(chart.future);
       const futureCount = await futureElement.count();
@@ -260,10 +260,10 @@ class AnalyticsTestStrategy {
     // Test chart interaction readiness (should not fail if no charts)
     const interactiveElements = this.page.locator('svg[role="img"], canvas, [data-testid*="chart"]');
     const interactiveCount = await interactiveElements.count();
-    
+
     if (interactiveCount > 0) {
       this.addResult('Chart Interactivity', 'pass', `Found ${interactiveCount} interactive chart elements`, 'info');
-      
+
       // Test first few for interaction capability
       for (let i = 0; i < Math.min(interactiveCount, 3); i++) {
         const element = interactiveElements.nth(i);
@@ -288,16 +288,16 @@ class AnalyticsTestStrategy {
     // Test Period Filter
     const periodFilter = this.page.locator('select, [data-testid="period-filter"]');
     const periodCount = await periodFilter.count();
-    
+
     if (periodCount > 0) {
       try {
         const initialValue = await periodFilter.first().inputValue();
         const options = await periodFilter.locator('option').count();
-        
+
         if (options > 1) {
           await periodFilter.first().selectOption({ index: 1 });
           await this.page.waitForTimeout(2000); // Allow time for data reload
-          
+
           const newValue = await periodFilter.first().inputValue();
           if (newValue !== initialValue) {
             this.addResult('Period Filter Functionality', 'pass', 'Filter changes and triggers data update', 'info');
@@ -318,15 +318,15 @@ class AnalyticsTestStrategy {
     // Test Export Functionality
     const exportButtons = this.page.locator('button:has-text("CSV"), button:has-text("JSON"), [data-testid*="export"]');
     const exportCount = await exportButtons.count();
-    
+
     if (exportCount > 0) {
       this.addResult('Export Controls', 'pass', `Found ${exportCount} export options`, 'info');
-      
+
       // Test actual export functionality (first button only to avoid multiple downloads)
       try {
         const downloadPromise = this.page.waitForEvent('download', { timeout: 5000 });
         await exportButtons.first().click();
-        
+
         try {
           const download = await downloadPromise;
           this.addResult('Export Functionality', 'pass', `Export successful: ${download.suggestedFilename()}`, 'info');
@@ -384,7 +384,7 @@ class AnalyticsTestStrategy {
     for (const selector of achievementSelectors) {
       const elements = this.page.locator(selector.selector);
       const count = await elements.count();
-      
+
       if (count >= selector.expectedMin && count <= selector.expectedMax) {
         if (count > 0) {
           this.addResult(selector.name, 'pass', `Found ${count} ${selector.name.toLowerCase()}`, 'info');
@@ -399,7 +399,7 @@ class AnalyticsTestStrategy {
     // Test achievement interactions
     const unlocked = this.page.locator('.border-green-500\\/20, [data-achievement-status="unlocked"]');
     const unlockedCount = await unlocked.count();
-    
+
     if (unlockedCount > 0) {
       try {
         await unlocked.first().click();
@@ -464,7 +464,7 @@ class AnalyticsTestStrategy {
     console.log('🔗 Testing API integration...');
 
     const apiCalls: { url: string; method: string; status: number; }[] = [];
-    
+
     this.page.on('response', response => {
       const url = response.url();
       if (url.includes('/api/analytics') || url.includes('/api/achievements')) {
@@ -500,11 +500,11 @@ class AnalyticsTestStrategy {
     if (errorCalls.length === 0) {
       this.addResult('API Integration', 'pass', `All ${apiCalls.length} API calls successful`, 'info');
     } else {
-      this.addResult('API Integration', 'fail', 
+      this.addResult('API Integration', 'fail',
         `${errorCalls.length} failed API calls out of ${apiCalls.length} total`, 'high');
-      
+
       errorCalls.forEach((call, index) => {
-        this.addResult(`API Error ${index + 1}`, 'fail', 
+        this.addResult(`API Error ${index + 1}`, 'fail',
           `${call.method} ${call.url} - Status: ${call.status}`, 'medium');
       });
     }
@@ -523,7 +523,7 @@ class AnalyticsTestStrategy {
     const high = this.results.filter(r => r.severity === 'high').length;
     const medium = this.results.filter(r => r.severity === 'medium').length;
     const low = this.results.filter(r => r.severity === 'low').length;
-    
+
     const passes = this.results.filter(r => r.status === 'pass').length;
     const fails = this.results.filter(r => r.status === 'fail').length;
     const partials = this.results.filter(r => r.status === 'partial').length;
@@ -562,9 +562,9 @@ class AnalyticsTestStrategy {
 // Test suite with progressive enhancement approach
 test.describe('Analytics & Achievements Robust Testing', () => {
   let strategy: AnalyticsTestStrategy;
-  
+
   test.setTimeout(120000); // 2 minutes for comprehensive testing
-  
+
   test.beforeEach(async ({ page }) => {
     strategy = new AnalyticsTestStrategy(page);
     await strategy.login();
@@ -592,10 +592,10 @@ test.describe('Analytics & Achievements Robust Testing', () => {
 
   test.afterAll(async () => {
     const report = strategy.generateReport();
-    
+
     console.log('\n🎯 ROBUST TESTING COMPLETE!');
     console.log('============================');
-    
+
     // Output actionable recommendations
     if (report.summary.critical > 0 || report.summary.high > 0) {
       console.log('\n🚨 HIGH PRIORITY FIXES NEEDED:');
@@ -622,9 +622,9 @@ test.describe('Analytics & Achievements Robust Testing', () => {
     }
 
     // Chart implementation readiness report
-    const chartResults = strategy['results'].filter(r => 
+    const chartResults = strategy['results'].filter(r =>
       r.component.includes('Chart') || r.component.includes('Visualization'));
-    
+
     if (chartResults.length > 0) {
       console.log('\n📈 CHART IMPLEMENTATION READINESS:');
       chartResults.forEach((result, index) => {

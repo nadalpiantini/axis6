@@ -1,6 +1,6 @@
 /**
  * Redis-based Rate Limiting for Production
- * 
+ *
  * This module provides distributed rate limiting using Redis/Upstash
  * for better scalability and persistence across server instances.
  */
@@ -108,16 +108,16 @@ function getClientIdentifier(request: NextRequest, userId?: string): string {
   const forwardedFor = request.headers.get('x-forwarded-for')
   const realIp = request.headers.get('x-real-ip')
   const cfConnectingIp = request.headers.get('cf-connecting-ip') // Cloudflare
-  
+
   const ip = cfConnectingIp || forwardedFor?.split(',')[0] || realIp || 'unknown'
-  
+
   // Get session ID from cookie if available
   const sessionId = request.cookies.get('session-id')?.value
-  
+
   if (sessionId) {
     return `session:${sessionId}:${ip}`
   }
-  
+
   return `ip:${ip}`
 }
 
@@ -131,16 +131,16 @@ function checkMemoryRateLimit(
 ): { success: boolean; remaining: number; reset: Date } {
   const now = Date.now()
   const resetTime = now + windowMs
-  
+
   // Clean expired entries
   for (const [key, value] of memoryStore.entries()) {
     if (value.resetTime < now) {
       memoryStore.delete(key)
     }
   }
-  
+
   const entry = memoryStore.get(identifier)
-  
+
   if (!entry || entry.resetTime < now) {
     // New window
     memoryStore.set(identifier, { count: 1, resetTime })
@@ -150,7 +150,7 @@ function checkMemoryRateLimit(
       reset: new Date(resetTime)
     }
   }
-  
+
   if (entry.count >= maxRequests) {
     return {
       success: false,
@@ -158,7 +158,7 @@ function checkMemoryRateLimit(
       reset: new Date(entry.resetTime)
     }
   }
-  
+
   entry.count++
   return {
     success: true,
@@ -177,9 +177,9 @@ export async function withRateLimitRedis(
 ): Promise<NextResponse | null> {
   const identifier = getClientIdentifier(request, userId)
   const limiter = rateLimiters[limiterKey]
-  
+
   let result: { success: boolean; remaining: number; reset: Date; limit?: number }
-  
+
   if (limiter) {
     // Use Redis-based rate limiter
     const { success, limit, remaining, reset } = await limiter.limit(identifier)
@@ -195,21 +195,21 @@ export async function withRateLimitRedis(
       write: { max: 50, window: 60 * 1000 },
       read: { max: 300, window: 60 * 1000 },
     }[limiterKey] || { max: 100, window: 60 * 1000 }
-    
+
     result = checkMemoryRateLimit(identifier, config.max, config.window)
     result.limit = config.max
   }
-  
+
   // Add rate limit headers to all responses
   const headers = {
     'X-RateLimit-Limit': result.limit?.toString() || '100',
     'X-RateLimit-Remaining': result.remaining.toString(),
     'X-RateLimit-Reset': result.reset.toISOString(),
   }
-  
+
   if (!result.success) {
     const retryAfter = Math.ceil((result.reset.getTime() - Date.now()) / 1000)
-    
+
     return NextResponse.json(
       {
         error: 'Rate limit exceeded',
@@ -225,7 +225,7 @@ export async function withRateLimitRedis(
       }
     )
   }
-  
+
   // Request is allowed - return null to continue
   // The calling function should add these headers to the successful response
   return null
@@ -244,7 +244,7 @@ function getRateLimitMessage(limiterKey: string): string {
     write: 'Too many write operations. Please slow down.',
     read: 'Too many read operations. Please slow down.',
   }
-  
+
   return messages[limiterKey as keyof typeof messages] || 'Rate limit exceeded. Please try again later.'
 }
 
@@ -273,13 +273,13 @@ export async function getRateLimitStatus(
   userId?: string
 ): Promise<{ used: number; remaining: number; total: number }> {
   const identifier = getClientIdentifier(request, userId)
-  
+
   if (redis) {
     // This would need implementation based on the Upstash rate limit internals
     // For now, return a default response
     return { used: 0, remaining: 100, total: 100 }
   }
-  
+
   const entry = memoryStore.get(identifier)
   const config = {
     login: 5,
@@ -290,11 +290,11 @@ export async function getRateLimitStatus(
     write: 50,
     read: 300,
   }[limiterKey] || 100
-  
+
   if (!entry || entry.resetTime < Date.now()) {
     return { used: 0, remaining: config, total: config }
   }
-  
+
   return {
     used: entry.count,
     remaining: Math.max(0, config - entry.count),

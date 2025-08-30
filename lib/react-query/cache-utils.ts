@@ -48,7 +48,7 @@ export function updateStreaksCache(
     ['streaks', userId],
     (old: any) => {
       if (!old) return old
-      
+
       return old.map((streak: any) => {
         if (streak.category_id === categoryId) {
           if (completed) {
@@ -56,12 +56,12 @@ export function updateStreaksCache(
             const yesterday = new Date()
             yesterday.setDate(yesterday.getDate() - 1)
             const lastCheckin = new Date(streak.last_checkin_date)
-            
-            const isConsecutive = 
+
+            const isConsecutive =
               lastCheckin.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]
-            
+
             const newStreak = isConsecutive ? streak.current_streak + 1 : 1
-            
+
             return {
               ...streak,
               current_streak: newStreak,
@@ -118,7 +118,7 @@ export function smartInvalidate(
   mutationType: 'checkin' | 'streak' | 'profile' | 'all'
 ) {
   const invalidations: Promise<void>[] = []
-  
+
   switch (mutationType) {
     case 'checkin':
       invalidations.push(
@@ -146,7 +146,7 @@ export function smartInvalidate(
       )
       break
   }
-  
+
   return Promise.all(invalidations)
 }
 
@@ -156,11 +156,11 @@ export function smartInvalidate(
 export function setupBackgroundRefetch(queryClient: QueryClient, userId: string) {
   // Refetch dashboard data every 30 seconds
   const interval = setInterval(() => {
-    queryClient.invalidateQueries({ 
+    queryClient.invalidateQueries({
       queryKey: ['checkins', 'today', userId],
       refetchType: 'active'
     })
   }, 30000)
-  
+
   return () => clearInterval(interval)
 }

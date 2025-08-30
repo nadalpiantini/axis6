@@ -13,18 +13,18 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Form elements using data-testid attributes
-    this.emailInput = page.locator('[data-testid="email-input"]').or(page.locator('input[id="email"]')).or(page.locator('input[type="email"]'));
-    this.passwordInput = page.locator('[data-testid="password-input"]').or(page.locator('input[id="password"]')).or(page.locator('input[type="password"]'));
-    this.loginButton = page.locator('[data-testid="login-submit"]').or(page.locator('button[type="submit"]')).or(page.locator('button', { hasText: /sign in|login|iniciar/i }));
-    
+    this.emailInput = page.locator('[data-testid="email-input"]');
+    this.passwordInput = page.locator('[data-testid="password-input"]');
+    this.loginButton = page.locator('[data-testid="login-submit"]');
+
     // Navigation links
     this.forgotPasswordLink = page.locator('a', { hasText: /forgot|olvidé|recuperar/i });
-    this.registerLink = page.locator('a[href*="/auth/register"]').or(page.locator('a', { hasText: /register|registro/i }));
-    
+    this.registerLink = page.locator('a[href*="/auth/register"]');
+
     // Feedback messages
-    this.errorMessage = page.locator('[data-testid="error-message"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    this.errorMessage = page.locator('[role="alert"]');
     this.successMessage = page.locator('[data-testid="success-message"]').or(page.locator('.success'));
     this.loadingSpinner = page.locator('[data-testid="loading"]').or(page.locator('.loading')).or(page.locator('.spinner'));
   }
@@ -38,7 +38,7 @@ export class LoginPage {
     await this.emailInput.waitFor({ state: 'visible' });
     await this.passwordInput.waitFor({ state: 'visible' });
     await this.loginButton.waitFor({ state: 'visible' });
-    
+
     return true;
   }
 
@@ -60,7 +60,7 @@ export class LoginPage {
 
   async clickLogin() {
     await this.loginButton.click();
-    
+
     // Wait for either navigation or error message
     await Promise.race([
       this.page.waitForURL(/\/(dashboard|auth)/),
@@ -118,26 +118,42 @@ export class LoginPage {
     // Navigate to register page
     await this.page.goto('/auth/register');
     await this.page.waitForLoadState('networkidle');
-    
+
     // Fill registration form
-    const emailInput = this.page.locator('input[type="email"]');
-    const passwordInput = this.page.locator('input[type="password"]');
-    const nameInput = this.page.locator('input[name="name"], input[name="full_name"]');
-    const submitButton = this.page.locator('button[type="submit"]');
-    
-    await emailInput.fill(email);
-    await passwordInput.fill(password);
-    
-    if (name && await nameInput.count() > 0) {
+    const nameInput = this.page.locator('[data-testid="name-input"]');
+    const emailInput = this.page.locator('[data-testid="email-input"]');
+    const passwordInput = this.page.locator('[data-testid="password-input"]');
+    const confirmPasswordInput = this.page.locator('[data-testid="confirm-password-input"]');
+    const termsCheckbox = this.page.locator('input[type="checkbox"]').first();
+    const submitButton = this.page.locator('[data-testid="register-submit"]');
+
+    // Fill form fields
+    if (name) {
       await nameInput.fill(name);
     }
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
+    await confirmPasswordInput.fill(password);
     
+    // Accept terms if checkbox is present
+    if (await termsCheckbox.isVisible()) {
+      await termsCheckbox.check();
+      // Wait for validation
+      await this.page.waitForTimeout(500);
+    }
+
+    // Wait for button to be enabled
+    await this.page.waitForFunction(() => {
+      const button = document.querySelector('[data-testid="register-submit"]') as HTMLButtonElement;
+      return button && !button.disabled;
+    }, { timeout: 10000 });
+
     await submitButton.click();
-    
-    // Wait for either success redirect or error
+
+    // Wait for registration completion
     await Promise.race([
-      this.page.waitForURL(/\/dashboard/, { timeout: 15000 }),
-      this.page.waitForURL(/\/auth\/login/, { timeout: 15000 }),
+      this.page.waitForURL(/\/(dashboard|auth\/onboarding)/, { timeout: 15000 }),
+      this.page.waitForURL(/\/(auth\/login)/, { timeout: 15000 }),
       this.errorMessage.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null)
     ]);
   }
@@ -149,7 +165,7 @@ export class LoginPage {
     await this.goto();
     await this.waitForFormReady();
     await this.login(email, password);
-    
+
     // Wait for successful login redirect
     try {
       await this.page.waitForURL(/\/dashboard/, { timeout: 15000 });

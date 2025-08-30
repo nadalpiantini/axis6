@@ -1,5 +1,6 @@
 import { createClient } from './client'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 export interface CheckInData {
   user_id: string
   category_id: number
@@ -28,10 +29,10 @@ export const CATEGORY_MAP: CategoryMap = {
 export async function toggleCheckIn(categoryKey: string, mood?: number, notes?: string) {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   // Get current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+
   if (userError || !user) {
     throw new Error('User not authenticated')
   }
@@ -60,12 +61,12 @@ export async function toggleCheckIn(categoryKey: string, mood?: number, notes?: 
       .from('axis6_checkins')
       .delete()
       .eq('id', existingCheckin.id)
-    
+
     if (deleteError) throw deleteError
-    
+
     // Recalculate streak
     await recalculateStreak(user.id, categoryId)
-    
+
     return { action: 'removed', completed: false }
   } else {
     // Add check-in
@@ -78,12 +79,12 @@ export async function toggleCheckIn(categoryKey: string, mood?: number, notes?: 
         notes,
         mood
       })
-    
+
     if (insertError) throw insertError
-    
+
     // Recalculate streak
     await recalculateStreak(user.id, categoryId)
-    
+
     return { action: 'added', completed: true }
   }
 }
@@ -94,9 +95,9 @@ export async function toggleCheckIn(categoryKey: string, mood?: number, notes?: 
 export async function getTodayCheckIns() {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+
   if (userError || !user) {
     throw new Error('User not authenticated')
   }
@@ -117,7 +118,7 @@ export async function getTodayCheckIns() {
 
   // Transform to category map
   const checkIns: { [key: string]: boolean } = {}
-  
+
   if (data) {
     data.forEach(checkIn => {
       const category = checkIn.axis6_categories as any
@@ -135,9 +136,9 @@ export async function getTodayCheckIns() {
  */
 export async function getStreaks() {
   const supabase = createClient()
-  
+
   const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+
   if (userError || !user) {
     throw new Error('User not authenticated')
   }
@@ -155,7 +156,7 @@ export async function getStreaks() {
 
   // Transform to category map
   const streaks: { [key: string]: { current: number, longest: number } } = {}
-  
+
   if (data) {
     data.forEach(streak => {
       const category = streak.axis6_categories as any
@@ -176,7 +177,7 @@ export async function getStreaks() {
  */
 async function recalculateStreak(userId: string, categoryId: number) {
   const supabase = createClient()
-  
+
   // Call the PostgreSQL function to recalculate streaks
   const { error } = await supabase.rpc('axis6_calculate_streak', {
     p_user_id: userId,
@@ -184,10 +185,12 @@ async function recalculateStreak(userId: string, categoryId: number) {
   })
 
   if (error) {
-    // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error recalculating streak:', error);
+    handleError(error, {
+      operation: 'database_operation', component: 'checkins',
+
+      userMessage: 'Database operation failed. Please try again.'
+
+    })
     // Don't throw - this shouldn't block the check-in
   }
 }
@@ -197,9 +200,9 @@ async function recalculateStreak(userId: string, categoryId: number) {
  */
 export async function getUserStats(days = 30) {
   const supabase = createClient()
-  
+
   const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+
   if (userError || !user) {
     throw new Error('User not authenticated')
   }

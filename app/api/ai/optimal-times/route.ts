@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -30,7 +30,7 @@ export async function GET(_request: NextRequest) {
 
     // Predict optimal times
     const optimalTimes = await behavioralAnalyzer.predictOptimalTimes(user.id)
-    
+
     const responseTime = Date.now() - startTime
 
     // Track usage
@@ -39,7 +39,7 @@ export async function GET(_request: NextRequest) {
       feature_name: 'optimal_time_prediction',
       response_time_ms: responseTime,
       was_successful: optimalTimes.best_times.length > 0,
-      confidence_score: optimalTimes.best_times.length > 0 
+      confidence_score: optimalTimes.best_times.length > 0
         ? optimalTimes.best_times.reduce((sum, t) => sum + t.probability, 0) / optimalTimes.best_times.length
         : null
     })
@@ -52,7 +52,7 @@ export async function GET(_request: NextRequest) {
         meta: {
           analysis_time_ms: responseTime,
           time_slots_found: optimalTimes.best_times.length,
-          average_probability: optimalTimes.best_times.length > 0 
+          average_probability: optimalTimes.best_times.length > 0
             ? optimalTimes.best_times.reduce((sum, t) => sum + t.probability, 0) / optimalTimes.best_times.length
             : 0
         }
@@ -60,9 +60,9 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Optimal times prediction API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to predict optimal times',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
@@ -78,7 +78,7 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -89,7 +89,7 @@ export async function POST(_request: NextRequest) {
     }
 
     const body = await _request.json()
-    const { 
+    const {
       enable_reminders = true,
       preferred_hours = null, // User can override with preferred hours
       reminder_types = ['daily_checkin', 'streak_maintenance']
@@ -99,7 +99,7 @@ export async function POST(_request: NextRequest) {
 
     // Generate adaptive reminders
     const reminders = await smartNotificationService.generateAdaptiveReminders(user.id)
-    
+
     // If user provided preferred hours, filter reminders
     let filteredReminders = reminders
     if (preferred_hours && Array.isArray(preferred_hours)) {
@@ -152,7 +152,7 @@ export async function POST(_request: NextRequest) {
       feature_name: 'adaptive_reminders',
       response_time_ms: responseTime,
       was_successful: filteredReminders.length > 0,
-      confidence_score: filteredReminders.length > 0 
+      confidence_score: filteredReminders.length > 0
         ? filteredReminders.reduce((sum, r) => sum + r.personalization_score, 0) / filteredReminders.length
         : null
     })
@@ -169,7 +169,7 @@ export async function POST(_request: NextRequest) {
         meta: {
           generation_time_ms: responseTime,
           reminders_generated: filteredReminders.length,
-          average_personalization_score: filteredReminders.length > 0 
+          average_personalization_score: filteredReminders.length > 0
             ? filteredReminders.reduce((sum, r) => sum + r.personalization_score, 0) / filteredReminders.length
             : 0
         }
@@ -177,9 +177,9 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Adaptive reminders API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate adaptive reminders',
         details: error instanceof Error ? error.message : 'Unknown error'
       },

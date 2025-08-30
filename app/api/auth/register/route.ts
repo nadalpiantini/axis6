@@ -36,7 +36,7 @@ export async function POST(_request: NextRequest) {
     // Create Supabase client directly
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    
+
     if (!supabaseUrl || !supabaseAnonKey) {
       logger.error('Missing Supabase environment variables')
       return NextResponse.json(
@@ -44,7 +44,7 @@ export async function POST(_request: NextRequest) {
         { status: 500 }
       )
     }
-    
+
     const supabase = await createClient()
 
     // Sign up user

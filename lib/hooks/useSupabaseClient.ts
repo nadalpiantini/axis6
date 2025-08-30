@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { getClientSafe } from '@/lib/supabase/client-safe'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface UseSupabaseClientReturn {
   client: ReturnType<typeof createClient> | null
   error: Error | null
@@ -39,12 +40,18 @@ export function useSupabaseClient(): UseSupabaseClientReturn {
       const error = err instanceof Error ? err : new Error('Failed to initialize Supabase client')
       setError(error)
       setIsLoading(false)
-      
+
       // Log error for debugging
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Supabase client initialization failed:', error);
+      handleError(error, {
+
+        operation: 'unknown_operation',
+
+        component: 'useSupabaseClient',
+
+        userMessage: 'Something went wrong. Please try again.'
+
+      })
+    // // Handled by standardErrorHandler;
     }
   }, [])
 

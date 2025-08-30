@@ -11,7 +11,7 @@ const { createClient } = require('@supabase/supabase-js')
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 console.log('🔐 AXIS6 AUTH CONFIGURATION')
 console.log('='.repeat(40))

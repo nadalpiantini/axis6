@@ -65,10 +65,10 @@ class InMemoryRateLimiter {
   async limit(identifier: string) {
     const now = Date.now()
     const requests = this.requests.get(identifier) || []
-    
+
     // Remove old requests outside the window
     const validRequests = requests.filter(time => now - time < this.window)
-    
+
     if (validRequests.length >= this.limit) {
       return {
         success: false,
@@ -107,13 +107,13 @@ export async function withRateLimit(
   type: keyof typeof rateLimiters = 'api'
 ) {
   // Get identifier (IP address or user ID)
-  const identifier = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
+  const identifier = request.headers.get('x-forwarded-for') ||
+                     request.headers.get('x-real-ip') ||
                      'anonymous'
 
   // Use Redis rate limiter in production, in-memory in development
   const limiter = redis ? rateLimiters[type] : devRateLimiters[type]
-  
+
   if (!limiter) {
     // If no limiter configured, allow the request
     return { success: true }
@@ -136,7 +136,7 @@ export async function withRateLimit(
     )
   }
 
-  return { 
+  return {
     success: true,
     headers: {
       'X-RateLimit-Limit': result.limit?.toString() || '0',

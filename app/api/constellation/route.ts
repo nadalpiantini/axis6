@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Parse query parameters
     const { searchParams } = new URL(_request.url)
     const dateParam = searchParams.get('date')
@@ -22,9 +22,9 @@ export async function GET(_request: NextRequest) {
 
     if (constellationError) {
       logger.error('Error fetching constellation data:', constellationError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to fetch constellation data',
-        details: constellationError.message 
+        details: constellationError.message
       }, { status: 500 })
     }
 
@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest) {
       const angle = (Math.PI / 3) * index - Math.PI / 2 // Start from top
       const baseRadius = 100 // Base radius for hexagon
       const intensityRadius = baseRadius * (axis.resonance_intensity || 1.0)
-      
+
       return {
         axisSlug: axis.axis_slug,
         completionCount: axis.completion_count,
@@ -51,13 +51,13 @@ export async function GET(_request: NextRequest) {
 
     // Calculate overall community metrics
     const totalCompletions = constellationPoints.reduce(
-      (sum, point) => sum + (point.completionCount || 0), 
+      (sum, point) => sum + (point.completionCount || 0),
       0
     )
-    
-    const averageIntensity = constellationPoints.length > 0 
+
+    const averageIntensity = constellationPoints.length > 0
       ? constellationPoints.reduce(
-          (sum, point) => sum + (point.resonanceIntensity || 1.0), 
+          (sum, point) => sum + (point.resonanceIntensity || 1.0),
           0
         ) / constellationPoints.length
       : 1.0
@@ -94,7 +94,7 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Constellation API error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to process constellation request'
     }, { status: 500 })

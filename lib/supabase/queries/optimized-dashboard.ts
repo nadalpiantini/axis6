@@ -1,6 +1,6 @@
 /**
  * Optimized Dashboard Queries for AXIS6
- * 
+ *
  * Single JOIN query approach to eliminate N+1 problems
  * and leverage the new performance indexes
  */
@@ -49,22 +49,22 @@ export async function fetchOptimizedDashboardData(userId: string): Promise<Dashb
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-  
+
   // Main dashboard query - single JOIN replacing 6 separate queries
-  const mainQuery = supabase.rpc('get_dashboard_data', { 
+  const mainQuery = supabase.rpc('get_dashboard_data', {
     p_user_id: userId,
-    p_today: today 
+    p_today: today
   })
-  
+
   // Alternative: Raw SQL approach if RPC not available
   const dashboardQuery = `
     WITH user_data AS (
-      SELECT id, name, timezone, onboarded 
-      FROM axis6_profiles 
+      SELECT id, name, timezone, onboarded
+      FROM axis6_profiles
       WHERE id = $1
     ),
     categories_data AS (
-      SELECT 
+      SELECT
         c.id, c.slug, c.name, c.color, c.icon, c.position,
         CASE WHEN ch.id IS NOT NULL THEN true ELSE false END as today_completed,
         COALESCE(s.current_streak, 0) as current_streak,
@@ -72,17 +72,17 @@ export async function fetchOptimizedDashboardData(userId: string): Promise<Dashb
         s.last_checkin
       FROM axis6_categories c
       LEFT JOIN axis6_checkins ch ON (
-        ch.category_id = c.id 
-        AND ch.user_id = $1 
+        ch.category_id = c.id
+        AND ch.user_id = $1
         AND ch.completed_at = $2
       )
       LEFT JOIN axis6_streaks s ON (
-        s.category_id = c.id 
+        s.category_id = c.id
         AND s.user_id = $1
       )
       ORDER BY c.position
     )
-    SELECT 
+    SELECT
       json_build_object(
         'user', (SELECT row_to_json(user_data) FROM user_data),
         'categories', (SELECT json_agg(row_to_json(categories_data)) FROM categories_data)
@@ -92,19 +92,19 @@ export async function fetchOptimizedDashboardData(userId: string): Promise<Dashb
   // Parallel queries for additional data
   const [dashboardResult, weeklyStatsResult, recentActivityResult] = await Promise.all([
     // Main dashboard data (replaces 4 queries with 1)
-    supabase.rpc('get_dashboard_data_optimized', { 
+    supabase.rpc('get_dashboard_data_optimized', {
       p_user_id: userId,
-      p_today: today 
+      p_today: today
     }),
-    
-    // Weekly statistics 
+
+    // Weekly statistics
     supabase
       .from('axis6_checkins')
       .select('completed_at, category_id')
       .eq('user_id', userId)
       .gte('completed_at', weekAgo)
       .lte('completed_at', today),
-    
+
     // Recent activity from pre-calculated stats
     supabase
       .from('axis6_daily_stats')
@@ -150,8 +150,8 @@ export async function fetchOptimizedDashboardData(userId: string): Promise<Dashb
     categories: dashboardData.categories,
     weeklyStats: {
       totalCheckins: weeklyCheckins.length,
-      completionRate: maxPossibleCheckins > 0 
-        ? Math.round((weeklyCheckins.length / maxPossibleCheckins) * 100) 
+      completionRate: maxPossibleCheckins > 0
+        ? Math.round((weeklyCheckins.length / maxPossibleCheckins) * 100)
         : 0,
       perfectDays,
     },
@@ -171,7 +171,7 @@ export async function fetchOptimizedDashboardData(userId: string): Promise<Dashb
 async function fetchDashboardDataFallback(userId: string): Promise<DashboardData> {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   // Optimized individual queries leveraging new indexes
   const [userResult, categoriesResult, todayCheckinsResult, streaksResult] = await Promise.all([
     // User profile
@@ -180,20 +180,20 @@ async function fetchDashboardDataFallback(userId: string): Promise<DashboardData
       .select('id, name, timezone, onboarded')
       .eq('id', userId)
       .single(),
-    
+
     // Categories (static data, cache heavily)
     supabase
       .from('axis6_categories')
       .select('id, slug, name, color, icon, position')
       .order('position'),
-    
+
     // Today's check-ins (uses idx_axis6_checkins_today_lookup)
     supabase
       .from('axis6_checkins')
       .select('category_id')
       .eq('user_id', userId)
       .eq('completed_at', today),
-    
+
     // User streaks (uses idx_axis6_streaks_user_category)
     supabase
       .from('axis6_streaks')
@@ -209,7 +209,7 @@ async function fetchDashboardDataFallback(userId: string): Promise<DashboardData
   const todayCompletedIds = new Set(
     todayCheckinsResult.data?.map(c => c.category_id) || []
   )
-  
+
   const streaksByCategory = (streaksResult.data || []).reduce((acc, streak) => {
     acc[streak.category_id] = streak
     return acc
@@ -237,8 +237,8 @@ async function fetchDashboardDataFallback(userId: string): Promise<DashboardData
  * Uses idx_axis6_checkins_user_category_date for fast lookup
  */
 export async function toggleCheckinOptimized(
-  userId: string, 
-  categoryId: number, 
+  userId: string,
+  categoryId: number,
   date: string = new Date().toISOString().split('T')[0]
 ) {
   const supabase = createClient()
@@ -258,7 +258,7 @@ export async function toggleCheckinOptimized(
       .from('axis6_checkins')
       .delete()
       .eq('id', existing.id)
-    
+
     if (error) throw error
   } else {
     // Add checkin
@@ -271,7 +271,7 @@ export async function toggleCheckinOptimized(
         mood: null,
         notes: null,
       })
-    
+
     if (error) throw error
   }
 

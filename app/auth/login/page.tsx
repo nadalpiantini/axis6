@@ -1,6 +1,5 @@
 'use client'
 
-
 import { Mail, Lock, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,11 +20,11 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+
     try {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
-      
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -33,7 +32,7 @@ export default function LoginPage() {
 
       if (error) {
         logger.error('Login error:', error)
-        
+
         // Handle specific error cases with user-friendly messages
         if (error.message.toLowerCase().includes('invalid login credentials')) {
           setError('Invalid email or password. Please check your credentials and try again.')

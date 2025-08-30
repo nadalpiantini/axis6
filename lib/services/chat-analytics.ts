@@ -125,7 +125,7 @@ export class ChatAnalyticsService {
 
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatChatAnalytics(parsedAnalytics)
-      
+
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -154,7 +154,7 @@ export class ChatAnalyticsService {
 
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatRoomAnalytics(parsedAnalytics)
-      
+
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -181,7 +181,7 @@ export class ChatAnalyticsService {
 
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatUserAnalytics(parsedAnalytics)
-      
+
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -226,14 +226,14 @@ export class ChatAnalyticsService {
   async exportAnalytics(format: 'json' | 'csv' = 'json'): Promise<Blob> {
     try {
       const analytics = await this.getChatAnalytics()
-      
+
       if (format === 'json') {
         return new Blob(
           [JSON.stringify(analytics, null, 2)],
           { type: 'application/json' }
         )
       }
-      
+
       // Convert to CSV format
       const csvData = this.convertToCSV(analytics)
       return new Blob([csvData], { type: 'text/csv' })

@@ -6,20 +6,20 @@ import { logger } from '@/lib/logger'
 export async function POST(_request: NextRequest) {
   try {
     const { email } = await _request.json()
-    
+
     if (!email) {
       return NextResponse.json(
         { error: 'Email address is required' },
         { status: 400 }
       )
     }
-    
+
     const result = await sendEmail({
       to: email,
       type: 'test',
       data: {}
     })
-    
+
     if (result.success) {
       return NextResponse.json({
         message: 'Test email sent successfully!',

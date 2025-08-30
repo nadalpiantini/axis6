@@ -22,27 +22,27 @@ export interface SystemHealth {
 
 class HealthCheckManager {
   private startTime = Date.now()
-  
+
   /**
    * Database connectivity and performance check
    */
   async checkDatabase(): Promise<HealthCheckResult> {
     const start = Date.now()
-    
+
     try {
       const supabase = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       )
-      
+
       // Test basic connectivity with a simple query
       const { data, error } = await supabase
         .from('axis6_categories')
         .select('id')
         .limit(1)
-      
+
       const responseTime = Date.now() - start
-      
+
       if (error) {
         return {
           service: 'database',
@@ -52,10 +52,10 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       // Performance thresholds
       const status = responseTime > 1000 ? 'degraded' : 'healthy'
-      
+
       return {
         service: 'database',
         status,
@@ -73,13 +73,13 @@ class HealthCheckManager {
       }
     }
   }
-  
+
   /**
    * Redis cache connectivity check
    */
   async checkRedis(): Promise<HealthCheckResult> {
     const start = Date.now()
-    
+
     try {
       // Check if Redis is configured
       if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -91,9 +91,9 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       // Check if using placeholder values
-      if (process.env.UPSTASH_REDIS_REST_URL.includes('your-redis-url') || 
+      if (process.env.UPSTASH_REDIS_REST_URL.includes('your-redis-url') ||
           process.env.UPSTASH_REDIS_REST_TOKEN.includes('your-redis-token')) {
         return {
           service: 'redis',
@@ -103,18 +103,18 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       const { Redis } = await import('@upstash/redis')
       const redis = Redis.fromEnv()
-      
+
       // Test set/get operation
       const testKey = `health:${Date.now()}`
       await redis.set(testKey, 'ok', { ex: 10 })
       const result = await redis.get(testKey)
       await redis.del(testKey)
-      
+
       const responseTime = Date.now() - start
-      
+
       if (result !== 'ok') {
         return {
           service: 'redis',
@@ -124,9 +124,9 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       const status = responseTime > 500 ? 'degraded' : 'healthy'
-      
+
       return {
         service: 'redis',
         status,
@@ -144,13 +144,13 @@ class HealthCheckManager {
       }
     }
   }
-  
+
   /**
    * Email service connectivity check
    */
   async checkEmailService(): Promise<HealthCheckResult> {
     const start = Date.now()
-    
+
     try {
       if (!process.env.RESEND_API_KEY) {
         return {
@@ -161,10 +161,10 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       const { Resend } = await import('resend')
       const resend = new Resend(process.env.RESEND_API_KEY)
-      
+
       // Check API key validity without sending email
       const response = await fetch('https://api.resend.com/domains', {
         headers: {
@@ -172,9 +172,9 @@ class HealthCheckManager {
           'Content-Type': 'application/json'
         }
       })
-      
+
       const responseTime = Date.now() - start
-      
+
       if (!response.ok) {
         return {
           service: 'email',
@@ -184,9 +184,9 @@ class HealthCheckManager {
           timestamp: new Date().toISOString()
         }
       }
-      
+
       const status = responseTime > 2000 ? 'degraded' : 'healthy'
-      
+
       return {
         service: 'email',
         status,
@@ -204,34 +204,34 @@ class HealthCheckManager {
       }
     }
   }
-  
+
   /**
    * External dependencies check
    */
   async checkExternalServices(): Promise<HealthCheckResult> {
     const start = Date.now()
-    
+
     try {
       // Check critical external services
       const checks = await Promise.allSettled([
-        fetch('https://api.vercel.com/v1/user', { 
+        fetch('https://api.vercel.com/v1/user', {
           method: 'HEAD',
           signal: AbortSignal.timeout(5000)
         }),
-        fetch('https://api.github.com', { 
+        fetch('https://api.github.com', {
           method: 'HEAD',
           signal: AbortSignal.timeout(5000)
         })
       ])
-      
+
       const responseTime = Date.now() - start
       const failedChecks = checks.filter(check => check.status === 'rejected').length
-      
+
       let status: 'healthy' | 'degraded' | 'unhealthy'
       if (failedChecks === 0) status = 'healthy'
       else if (failedChecks < checks.length) status = 'degraded'
       else status = 'unhealthy'
-      
+
       return {
         service: 'external',
         status,
@@ -249,25 +249,25 @@ class HealthCheckManager {
       }
     }
   }
-  
+
   /**
    * Memory usage check
    */
   checkMemoryUsage(): HealthCheckResult {
     const start = Date.now()
-    
+
     try {
       const memoryUsage = process.memoryUsage()
       const heapUsedMB = Math.round(memoryUsage.heapUsed / 1024 / 1024)
       const heapTotalMB = Math.round(memoryUsage.heapTotal / 1024 / 1024)
       const memoryUtilization = (heapUsedMB / heapTotalMB) * 100
-      
+
       let status: 'healthy' | 'degraded' | 'unhealthy'
       // More lenient thresholds for development and production environments
       if (memoryUtilization < 90) status = 'healthy'
       else if (memoryUtilization < 98) status = 'degraded'
       else status = 'unhealthy'
-      
+
       return {
         service: 'memory',
         status,
@@ -285,7 +285,7 @@ class HealthCheckManager {
       }
     }
   }
-  
+
   /**
    * Run comprehensive health check
    */
@@ -297,7 +297,7 @@ class HealthCheckManager {
       this.checkExternalServices(),
       Promise.resolve(this.checkMemoryUsage())
     ])
-    
+
     const results: HealthCheckResult[] = checks.map(check => {
       if (check.status === 'fulfilled') {
         return check.value
@@ -310,16 +310,16 @@ class HealthCheckManager {
         timestamp: new Date().toISOString()
       }
     })
-    
+
     // Determine overall health
     const unhealthy = results.filter(r => r.status === 'unhealthy').length
     const degraded = results.filter(r => r.status === 'degraded').length
-    
+
     let overall: 'healthy' | 'degraded' | 'unhealthy'
     if (unhealthy > 0) overall = 'unhealthy'
     else if (degraded > 0) overall = 'degraded'
     else overall = 'healthy'
-    
+
     return {
       overall,
       checks: results,

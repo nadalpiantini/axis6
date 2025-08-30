@@ -99,7 +99,7 @@ describe('HexagonClock Mobile Tests', () => {
 
         await act(async () => {
           render(
-            <HexagonClock 
+            <HexagonClock
               data={mockCompletionData}
               mobileOptimized={true}
               animate={false}
@@ -125,7 +125,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -148,7 +148,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -159,7 +159,7 @@ describe('HexagonClock Mobile Tests', () => {
         // Ensure no transform-based centering is used
         const elementsWithTransform = document.querySelectorAll('[style*="transform: translate(-50%, -50%)"]');
         const containerElement = document.querySelector('.hexagon-clock-container');
-        
+
         // Container itself should NOT use transform centering
         expect(containerElement).not.toHaveStyle({
           transform: 'translate(-50%, -50%)'
@@ -173,13 +173,13 @@ describe('HexagonClock Mobile Tests', () => {
       setViewportSize(375, 812); // iPhone 12 mini
 
       // Mock getBoundingClientRect to return proper touch target sizes
-      Element.prototype.getBoundingClientRect = jest.fn(() => 
+      Element.prototype.getBoundingClientRect = jest.fn(() =>
         createMockBoundingClientRect(44, 44)
       );
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
             onCategoryClick={jest.fn()}
@@ -208,7 +208,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -230,7 +230,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -262,7 +262,7 @@ describe('HexagonClock Mobile Tests', () => {
 
         await act(async () => {
           render(
-            <HexagonClock 
+            <HexagonClock
               data={mockCompletionData}
               size="auto" // Enable responsive sizing
             />
@@ -288,7 +288,7 @@ describe('HexagonClock Mobile Tests', () => {
 
         await act(async () => {
           render(
-            <HexagonClock 
+            <HexagonClock
               data={mockCompletionData}
               size="auto"
             />
@@ -303,7 +303,7 @@ describe('HexagonClock Mobile Tests', () => {
           const styles = window.getComputedStyle(container!);
           const width = parseInt(styles.width || styles.maxWidth);
           const height = parseInt(styles.height || styles.maxHeight);
-          
+
           // Allow small tolerance for rounding
           expect(Math.abs(width - height)).toBeLessThan(5);
         });
@@ -317,7 +317,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -328,7 +328,7 @@ describe('HexagonClock Mobile Tests', () => {
         // Check that mobile-specific font size classes are applied
         const centerLabel = screen.getByText('Balance Ritual');
         const categoryLabels = screen.getAllByRole('button');
-        
+
         expect(centerLabel).toBeInTheDocument();
         expect(categoryLabels.length).toBeGreaterThan(0);
 
@@ -346,7 +346,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -376,7 +376,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={mockCategoryClick}
             mobileOptimized={true}
@@ -386,7 +386,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Simulate mobile touch sequence
         fireEvent.touchStart(physicalButton);
         fireEvent.touchEnd(physicalButton);
@@ -402,7 +402,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={mockCategoryClick}
             mobileOptimized={true}
@@ -412,7 +412,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Simulate touch and drag (scroll gesture)
         fireEvent.touchStart(physicalButton, {
           touches: [{ clientX: 100, clientY: 100 }]
@@ -435,7 +435,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -460,10 +460,10 @@ describe('HexagonClock Mobile Tests', () => {
       setViewportSize(375, 812);
 
       const renderStart = performance.now();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
             hardwareAccelerated={true}
@@ -483,7 +483,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={true}
             mobileOptimized={true}
@@ -505,7 +505,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -514,14 +514,14 @@ describe('HexagonClock Mobile Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         buttons.forEach(button => {
           // Should have proper ARIA attributes
           expect(button).toHaveAttribute('title');
-          
+
           // Should be focusable
           expect(button).not.toHaveAttribute('tabindex', '-1');
-          
+
           // Should meet minimum touch target size
           expect(button.style.minHeight).toBe('44px');
           expect(button.style.minWidth).toBe('44px');
@@ -534,7 +534,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -543,7 +543,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         // Each button should have meaningful text content
         buttons.forEach(button => {
           expect(button.textContent).toBeTruthy();
@@ -578,7 +578,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -599,7 +599,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -609,7 +609,7 @@ describe('HexagonClock Mobile Tests', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Should not overflow or break layout
         const styles = window.getComputedStyle(container!);
         expect(styles.overflow).not.toBe('visible');
@@ -621,7 +621,7 @@ describe('HexagonClock Mobile Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -631,7 +631,7 @@ describe('HexagonClock Mobile Tests', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Should center properly even on wide screens
         const parentStyles = window.getComputedStyle(container?.parentElement || container!);
         expect(parentStyles.display).toBe('flex');

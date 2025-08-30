@@ -1,12 +1,12 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { 
-  Bell, 
-  Settings, 
-  User, 
-  LogOut, 
-  Sparkles, 
+import {
+  Bell,
+  Settings,
+  User,
+  LogOut,
+  Sparkles,
   Flame,
   TrendingUp,
   Calendar,
@@ -35,7 +35,7 @@ interface StandardHeaderProps {
   subtitle?: string
 }
 
-export const StandardHeader = memo<StandardHeaderProps>(({ 
+export const StandardHeader = memo<StandardHeaderProps>(({
   user,
   onLogout,
   completionPercentage = 0,
@@ -52,7 +52,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 50], [0.95, 1])
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
@@ -69,7 +69,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
     }
     return undefined
   }, [showDropdown])
-  
+
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Buenos días'
@@ -106,7 +106,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
 
   return (
     <>
-      <motion.header 
+      <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         style={{ opacity: headerOpacity }}
@@ -129,7 +129,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                   <ChevronLeft className="w-5 h-5 text-gray-300" />
                 </motion.button>
               )}
-              
+
               <Link href="/dashboard" className="flex items-center gap-3">
                 <LogoIcon size="md" className="h-10 w-10" />
                 <div>
@@ -180,8 +180,8 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                     key={item.href}
                     href={item.href}
                     className={`p-2 rounded-lg transition-all ${
-                      isActive 
-                        ? 'bg-white/10 text-white' 
+                      isActive
+                        ? 'bg-white/10 text-white'
                         : 'text-gray-400 hover:bg-white/5 hover:text-gray-300'
                     }`}
                     title={item.label}
@@ -253,14 +253,14 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                     className="absolute right-0 mt-2 w-48 glass-premium rounded-lg overflow-hidden shadow-xl"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Link 
+                    <Link
                       href="/profile"
                       className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-white/5 transition-colors flex items-center gap-3"
                     >
                       <User className="w-4 h-4" />
                       Mi Perfil
                     </Link>
-                    <Link 
+                    <Link
                       href="/settings"
                       className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-white/5 transition-colors flex items-center gap-3 sm:hidden"
                     >
@@ -313,8 +313,8 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                     key={item.href}
                     href={item.href}
                     className={`flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-all ${
-                      isActive 
-                        ? 'text-white bg-white/10' 
+                      isActive
+                        ? 'text-white bg-white/10'
                         : 'text-gray-400'
                     }`}
                   >
@@ -327,7 +327,7 @@ export const StandardHeader = memo<StandardHeaderProps>(({
           </nav>
         </div>
       </motion.header>
-      
+
       {/* Spacer for fixed header */}
       <div className={variant === 'dashboard' ? 'h-32 md:h-16' : 'h-28 md:h-16'} />
     </>

@@ -30,7 +30,7 @@ const config: Config = {
       padding: {
         DEFAULT: '1rem',
         'xs': '0.75rem',
-        'sm': '1.5rem', 
+        'sm': '1.5rem',
         'md': '2rem',
         'lg': '2rem',
         'xl': '2rem',
@@ -176,11 +176,11 @@ const config: Config = {
         },
         // Mobile-optimized animations
         "mobile-fade-in": {
-          from: { 
+          from: {
             opacity: "0",
             transform: "translateY(10px)",
           },
-          to: { 
+          to: {
             opacity: "1",
             transform: "translateY(0)",
           },
@@ -194,21 +194,21 @@ const config: Config = {
           to: { transform: "translateY(0)" },
         },
         "mobile-scale-in": {
-          from: { 
+          from: {
             opacity: "0",
             transform: "scale(0.95)",
           },
-          to: { 
+          to: {
             opacity: "1",
             transform: "scale(1)",
           },
         },
         "mobile-scale-out": {
-          from: { 
+          from: {
             opacity: "1",
             transform: "scale(1)",
           },
-          to: { 
+          to: {
             opacity: "0",
             transform: "scale(0.95)",
           },
@@ -234,11 +234,11 @@ const config: Config = {
         },
         // Performance-optimized animations with hardware acceleration
         "gpu-slide-in": {
-          from: { 
+          from: {
             opacity: "0",
             transform: "translate3d(0, 20px, 0)",
           },
-          to: { 
+          to: {
             opacity: "1",
             transform: "translate3d(0, 0, 0)",
           },

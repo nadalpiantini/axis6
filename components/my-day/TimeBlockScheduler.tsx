@@ -3,9 +3,9 @@
 import React from 'react'
 import { format, parse, addMinutes } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
-  Clock, 
+import {
+  X,
+  Clock,
   Calendar,
   Save,
   Loader2,
@@ -18,6 +18,7 @@ import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
 import { useCreateTimeBlock, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface TimeBlockSchedulerProps {
   isOpen: boolean
   onClose: () => void
@@ -50,13 +51,13 @@ export function TimeBlockScheduler({
   const [duration, setDuration] = useState(editingBlock?.duration_minutes || 30)
   const [notes, setNotes] = useState(editingBlock?.notes || '')
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
-  
+
   const createTimeBlock = useCreateTimeBlock()
   const updateTimeBlock = useUpdateTimeBlock()
-  
+
   // Fetch activities for selected category
   const { data: activities = [] } = useAxisActivities(userId, selectedCategoryId)
-  
+
   // Update activity name when selection changes
   useEffect(() => {
     if (selectedActivityId) {
@@ -66,26 +67,26 @@ export function TimeBlockScheduler({
       }
     }
   }, [selectedActivityId, activities])
-  
+
   // Calculate end time based on start time and duration
   const calculateEndTime = () => {
     const start = parse(startTime, 'HH:mm', new Date())
     const end = addMinutes(start, duration)
     return format(end, 'HH:mm')
   }
-  
+
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
-  
+
   const [error, setError] = useState<string | null>(null)
-  
+
   const handleSave = async () => {
     setError(null)
-    
+
     if (!activityName.trim()) {
       setError('Please enter an activity name')
       return
     }
-    
+
     const timeBlockData = {
       user_id: userId,
       date: format(selectedDate, 'yyyy-MM-dd'),
@@ -97,7 +98,7 @@ export function TimeBlockScheduler({
       notes: notes.trim(),
       status: 'planned' as const
     }
-    
+
     try {
       if (editingBlock) {
         await updateTimeBlock.mutateAsync({
@@ -108,15 +109,18 @@ export function TimeBlockScheduler({
         await createTimeBlock.mutateAsync(timeBlockData)
       }
       onClose()
-    } catch (error: any) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving time block:', error);
-      setError(error?.message || 'Failed to save time block. Please try again.')
+            } catch (error: any) {
+          handleError(error, {
+      operation: 'plan_my_day', component: 'TimeBlockScheduler',
+
+            userMessage: 'Failed to plan your day. Please try again.'
+
+          })
+          // Error logged via handleError
+          setError(error?.message || 'Failed to save time block. Please try again.')
     }
   }
-  
+
   const durationOptions = [
     { value: 15, label: '15 min' },
     { value: 30, label: '30 min' },
@@ -183,7 +187,7 @@ export function TimeBlockScheduler({
                     <span className="text-sm text-red-400">{error}</span>
                   </motion.div>
                 )}
-                
+
                 {/* Category Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -197,7 +201,7 @@ export function TimeBlockScheduler({
                       <div className="flex items-center gap-2">
                         {selectedCategoryData && (
                           <>
-                            <div 
+                            <div
                               className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: selectedCategoryData.color }}
                             />
@@ -212,7 +216,7 @@ export function TimeBlockScheduler({
                       </div>
                       <ChevronDown className="w-4 h-4 text-gray-400" />
                     </button>
-                    
+
                     {showCategoryDropdown && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-10">
                         {categories.map(category => (
@@ -226,7 +230,7 @@ export function TimeBlockScheduler({
                             }}
                             className="w-full px-4 py-3 flex items-center gap-2 hover:bg-white/10 transition-colors text-left"
                           >
-                            <div 
+                            <div
                               className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: category.color }}
                             />
@@ -271,7 +275,7 @@ export function TimeBlockScheduler({
                       No activities configured for this axis
                     </p>
                   )}
-                  
+
                   {(!selectedActivityId || activities.length === 0) && (
                     <input
                       type="text"
@@ -299,7 +303,7 @@ export function TimeBlockScheduler({
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">
                       Duration

@@ -19,7 +19,7 @@ const originalCreateElement = document.createElement;
 
 document.createElement = function(tagName: string, options?: ElementCreationOptions) {
   const element = originalCreateElement.call(this, tagName, options);
-  
+
   if (tagName === 'div' && element.getAttribute('aria-live')) {
     const originalTextContent = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent');
     Object.defineProperty(element, 'textContent', {
@@ -30,7 +30,7 @@ document.createElement = function(tagName: string, options?: ElementCreationOpti
       },
     });
   }
-  
+
   return element;
 };
 
@@ -94,7 +94,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('passes axe accessibility audit', async () => {
       await act(async () => {
         const { container } = render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={false}
           />
@@ -108,7 +108,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides proper semantic structure', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -129,7 +129,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('meets color contrast requirements (4.5:1 minimum)', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -139,7 +139,7 @@ describe('HexagonClock Accessibility Tests', () => {
         // This test would ideally use a color contrast checking library
         // For now, we verify that text elements have proper styling
         const textElements = screen.getAllByRole('button');
-        
+
         textElements.forEach(element => {
           const styles = window.getComputedStyle(element);
           // Should have defined text color and background
@@ -152,7 +152,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides alternative text for visual elements', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -161,10 +161,10 @@ describe('HexagonClock Accessibility Tests', () => {
       await waitFor(() => {
         // SVG elements should have proper accessibility attributes
         const svgElements = document.querySelectorAll('svg');
-        
+
         svgElements.forEach(svg => {
           // Should have either aria-label or be marked as decorative
-          const hasAccessibleName = svg.hasAttribute('aria-label') || 
+          const hasAccessibleName = svg.hasAttribute('aria-label') ||
                                    svg.hasAttribute('aria-labelledby') ||
                                    svg.getAttribute('aria-hidden') === 'true';
           expect(hasAccessibleName).toBe(true);
@@ -179,7 +179,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={jest.fn()}
           />
@@ -188,7 +188,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(async () => {
         const buttons = screen.getAllByRole('button');
-        
+
         // Should be able to tab through all buttons
         for (const button of buttons) {
           await user.tab();
@@ -203,7 +203,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={mockCategoryClick}
           />
@@ -212,15 +212,15 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Tab to the button
         await user.tab();
         expect(physicalButton).toHaveFocus();
-        
+
         // Enter key should activate
         await user.keyboard('{Enter}');
         expect(mockCategoryClick).toHaveBeenCalledTimes(1);
-        
+
         // Space key should also activate
         await user.keyboard(' ');
         expect(mockCategoryClick).toHaveBeenCalledTimes(2);
@@ -232,7 +232,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -240,10 +240,10 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(async () => {
         const firstButton = screen.getAllByRole('button')[0];
-        
+
         await user.tab();
         expect(firstButton).toHaveFocus();
-        
+
         // Focus should be visually indicated
         const styles = window.getComputedStyle(firstButton);
         expect(styles.outline || styles.boxShadow).toBeTruthy();
@@ -255,7 +255,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -264,11 +264,11 @@ describe('HexagonClock Accessibility Tests', () => {
       await waitFor(async () => {
         const buttons = screen.getAllByRole('button');
         const firstButton = buttons[0];
-        
+
         // Tab to first button
         await user.tab();
         expect(firstButton).toHaveFocus();
-        
+
         // Arrow keys could navigate between buttons (if implemented)
         await user.keyboard('{ArrowRight}');
         // This would depend on implementation - test would need to be adjusted
@@ -282,7 +282,7 @@ describe('HexagonClock Accessibility Tests', () => {
       await act(async () => {
         render(
           <div role="dialog" aria-modal="true">
-            <HexagonClock 
+            <HexagonClock
               data={mockCompletionData}
               onCategoryClick={jest.fn()}
             />
@@ -294,11 +294,11 @@ describe('HexagonClock Accessibility Tests', () => {
         const buttons = screen.getAllByRole('button');
         const firstButton = buttons[0];
         const lastButton = buttons[buttons.length - 1];
-        
+
         // Focus should cycle within the component
         await user.tab();
         expect(firstButton).toHaveFocus();
-        
+
         // Navigate to last button
         for (let i = 1; i < buttons.length; i++) {
           await user.tab();
@@ -312,7 +312,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('announces completion percentages correctly', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -320,11 +320,11 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         buttons.forEach(button => {
           const title = button.getAttribute('title');
           expect(title).toBeTruthy();
-          
+
           // Title should include meaningful information
           expect(title).toMatch(/Physical|Mental|Emotional|Social|Spiritual|Material/i);
         });
@@ -334,7 +334,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides context for time distribution mode', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             distribution={mockTimeDistribution}
           />
         );
@@ -342,11 +342,11 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         buttons.forEach(button => {
           const title = button.getAttribute('title');
           expect(title).toBeTruthy();
-          
+
           // Should provide time context
           expect(title || button.textContent).toMatch(/hour|minute|time/i);
         });
@@ -358,7 +358,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             onCategoryClick={mockCategoryClick}
           />
@@ -368,7 +368,7 @@ describe('HexagonClock Accessibility Tests', () => {
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         fireEvent.click(physicalButton);
-        
+
         // Should announce the action (would need aria-live implementation)
         // For now, verify the click handler was called
         expect(mockCategoryClick).toHaveBeenCalled();
@@ -378,7 +378,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('describes visual hexagon structure for screen readers', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -388,7 +388,7 @@ describe('HexagonClock Accessibility Tests', () => {
         // Check for descriptive text or labels
         const centerDisplay = screen.getByText('Balance Ritual');
         expect(centerDisplay).toBeInTheDocument();
-        
+
         const percentageDisplay = screen.getByText('68%');
         expect(percentageDisplay).toBeInTheDocument();
       });
@@ -411,7 +411,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={true} // Animation requested but should be reduced
           />
@@ -421,12 +421,12 @@ describe('HexagonClock Accessibility Tests', () => {
       await waitFor(() => {
         // Elements should appear immediately without animation delays
         const buttons = screen.getAllByRole('button');
-        
+
         buttons.forEach(button => {
           // Should not have animation-delay or long transitions
           const styles = window.getComputedStyle(button.parentElement || button);
           const animationDuration = parseFloat(styles.animationDuration || '0');
-          
+
           // Animations should be very short or disabled for reduced motion
           expect(animationDuration).toBeLessThan(0.3); // Max 300ms
         });
@@ -436,7 +436,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides static alternative when animations are disabled', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             animate={false}
           />
@@ -447,11 +447,11 @@ describe('HexagonClock Accessibility Tests', () => {
         // All content should be immediately visible
         const buttons = screen.getAllByRole('button');
         const centerDisplay = screen.getByText('Balance Ritual');
-        
+
         buttons.forEach(button => {
           expect(button.parentElement).toHaveStyle({ opacity: '1' });
         });
-        
+
         expect(centerDisplay.parentElement).toHaveStyle({ opacity: '1' });
       });
     });
@@ -461,7 +461,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('meets minimum touch target size (44x44px)', async () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', { value: 375 });
-      
+
       Element.prototype.getBoundingClientRect = jest.fn(() => ({
         x: 0,
         y: 0,
@@ -476,7 +476,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -485,11 +485,11 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         buttons.forEach(button => {
           const rect = button.getBoundingClientRect();
           expect(Math.min(rect.width, rect.height)).toBeGreaterThanOrEqual(44);
-          
+
           // CSS properties should also ensure minimum size
           expect(button.style.minHeight).toBe('44px');
           expect(button.style.minWidth).toBe('44px');
@@ -500,7 +500,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides adequate spacing between touch targets', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
             mobileOptimized={true}
           />
@@ -509,7 +509,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         // Check that buttons have proper flex container setup for spacing
         buttons.forEach(button => {
           const parentElement = button.parentElement;
@@ -537,7 +537,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -545,7 +545,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
-        
+
         // Elements should remain visible and functional in high contrast mode
         buttons.forEach(button => {
           expect(button).toBeVisible();
@@ -562,7 +562,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -571,7 +571,7 @@ describe('HexagonClock Accessibility Tests', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Component should handle RTL layout
         // This would depend on implementation specifics
       });
@@ -583,7 +583,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides proper lang attributes when content changes', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -593,7 +593,7 @@ describe('HexagonClock Accessibility Tests', () => {
         // Check that text content has proper language context
         const centerText = screen.getByText('Balance Ritual');
         expect(centerText).toBeInTheDocument();
-        
+
         // Should inherit or specify language
         const langAttr = centerText.closest('[lang]');
         expect(langAttr || document.documentElement).toHaveAttribute('lang');
@@ -609,7 +609,7 @@ describe('HexagonClock Accessibility Tests', () => {
       await act(async () => {
         // Pass invalid data to trigger error handling
         render(
-          <HexagonClock 
+          <HexagonClock
             data={null as any}
             distribution={undefined}
           />
@@ -630,7 +630,7 @@ describe('HexagonClock Accessibility Tests', () => {
     it('provides proper loading state announcements', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={mockCompletionData}
           />
         );
@@ -648,7 +648,7 @@ describe('HexagonClock Accessibility Tests', () => {
   describe('Focus Management', () => {
     it('maintains focus when content updates', async () => {
       const { rerender } = render(
-        <HexagonClock 
+        <HexagonClock
           data={mockCompletionData}
           onCategoryClick={jest.fn()}
         />
@@ -661,7 +661,7 @@ describe('HexagonClock Accessibility Tests', () => {
 
         // Update data
         rerender(
-          <HexagonClock 
+          <HexagonClock
             data={{ ...mockCompletionData, physical: 90 }}
             onCategoryClick={jest.fn()}
           />

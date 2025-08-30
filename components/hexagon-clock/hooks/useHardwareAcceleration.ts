@@ -32,78 +32,78 @@ export function useKeyframeAnimations(): Record<string, string> {
     // Pulsing animation for active time blocks (60fps)
     pulse: `
       @keyframes hexagon-pulse {
-        0%, 100% { 
+        0%, 100% {
           transform: translateZ(0) scale(1);
           opacity: 0.8;
         }
-        50% { 
+        50% {
           transform: translateZ(0) scale(1.05);
           opacity: 1;
         }
       }
     `,
-    
+
     // Breathing animation for resonance dots (60fps)
     breathe: `
       @keyframes hexagon-breathe {
-        0%, 100% { 
+        0%, 100% {
           transform: translateZ(0) scale(0.8);
           opacity: 0.4;
         }
-        50% { 
+        50% {
           transform: translateZ(0) scale(1.2);
           opacity: 0.8;
         }
       }
     `,
-    
+
     // Rotation for current time indicator (60fps)
     rotate: `
       @keyframes hexagon-rotate {
-        from { 
+        from {
           transform: translateZ(0) rotate(0deg);
         }
-        to { 
+        to {
           transform: translateZ(0) rotate(360deg);
         }
       }
     `,
-    
+
     // Draw-in animation for paths (smooth)
     drawIn: `
       @keyframes hexagon-draw-in {
-        from { 
+        from {
           stroke-dashoffset: 1000;
           opacity: 0;
         }
-        to { 
+        to {
           stroke-dashoffset: 0;
           opacity: 1;
         }
       }
     `,
-    
+
     // Scale-in for data points
     scaleIn: `
       @keyframes hexagon-scale-in {
-        from { 
+        from {
           transform: translateZ(0) scale(0);
           opacity: 0;
         }
-        to { 
+        to {
           transform: translateZ(0) scale(1);
           opacity: 1;
         }
       }
     `,
-    
+
     // Glow effect for completed states
     glow: `
       @keyframes hexagon-glow {
-        0%, 100% { 
+        0%, 100% {
           filter: drop-shadow(0 0 5px currentColor);
         }
-        50% { 
+        50% {
           filter: drop-shadow(0 0 15px currentColor);
         }
       }
@@ -118,31 +118,31 @@ export function useAnimationClasses(): Record<string, string> {
   return useMemo(() => ({
     // Base hardware acceleration
     base: 'transform-gpu will-change-transform backface-visibility-hidden',
-    
+
     // Active time block (pulsing)
     active: 'transform-gpu will-change-transform animate-pulse',
-    
+
     // Completed time block (glow)
     completed: 'transform-gpu will-change-transform',
-    
+
     // Planned time block (subtle pulse)
     planned: 'transform-gpu will-change-transform',
-    
+
     // Empty time block (static)
     empty: 'transform-gpu',
-    
+
     // Overflowing time block (warning pulse)
     overflowing: 'transform-gpu will-change-transform animate-bounce',
-    
+
     // Resonance dots (breathing)
     resonance: 'transform-gpu will-change-transform',
-    
+
     // Current time indicator (rotation)
     currentTime: 'transform-gpu will-change-transform',
-    
+
     // Labels (hover effects)
     label: 'transform-gpu will-change-transform transition-transform duration-300',
-    
+
     // Center display (breathing)
     center: 'transform-gpu will-change-transform'
   }), []);
@@ -161,49 +161,49 @@ export function usePerformanceCSS(): Record<string, React.CSSProperties> {
       backfaceVisibility: 'hidden',
       perspective: '1000px'
     },
-    
+
     // SVG elements
     svg: {
       transform: 'translateZ(0)',
       shapeRendering: 'geometricPrecision',
       textRendering: 'geometricPrecision'
     },
-    
+
     // Animated paths
     animatedPath: {
       transform: 'translateZ(0)',
       willChange: 'transform, opacity',
       transformOrigin: 'center center'
     },
-    
+
     // Pulsing elements
     pulse: {
       transform: 'translateZ(0)',
       willChange: 'transform, opacity',
       animation: 'hexagon-pulse 2s ease-in-out infinite'
     },
-    
+
     // Breathing elements (resonance)
     breathe: {
       transform: 'translateZ(0)',
       willChange: 'transform, opacity',
       animation: 'hexagon-breathe 3s ease-in-out infinite'
     },
-    
+
     // Rotating elements (current time)
     rotate: {
       transform: 'translateZ(0)',
       willChange: 'transform',
       transformOrigin: 'center center'
     },
-    
+
     // Glowing elements (completed)
     glow: {
       transform: 'translateZ(0)',
       willChange: 'filter',
       animation: 'hexagon-glow 2s ease-in-out infinite'
     },
-    
+
     // Labels with hover
     label: {
       transform: 'translateZ(0)',
@@ -211,7 +211,7 @@ export function usePerformanceCSS(): Record<string, React.CSSProperties> {
       transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       transformOrigin: 'center center'
     },
-    
+
     // Modal centering (CRITICAL FIX)
     modalContainer: {
       position: 'fixed' as const,
@@ -241,14 +241,14 @@ export function useTouchOptimization(): Record<string, React.CSSProperties> {
       WebkitTapHighlightColor: 'transparent',
       touchAction: 'manipulation'
     },
-    
+
     // Smooth scrolling container
     scrollContainer: {
       WebkitOverflowScrolling: 'touch',
       overflowX: 'hidden',
       overflowY: 'auto'
     },
-    
+
     // Interactive SVG elements
     interactiveSVG: {
       cursor: 'pointer',
@@ -256,7 +256,7 @@ export function useTouchOptimization(): Record<string, React.CSSProperties> {
       WebkitTapHighlightColor: 'transparent',
       touchAction: 'manipulation'
     },
-    
+
     // Draggable elements for planning mode
     draggable: {
       cursor: 'grab',
@@ -265,7 +265,7 @@ export function useTouchOptimization(): Record<string, React.CSSProperties> {
       transform: 'translateZ(0)',
       willChange: 'transform'
     },
-    
+
     // Active drag state
     dragging: {
       cursor: 'grabbing',
@@ -288,13 +288,13 @@ export function useResponsiveAnimations(windowWidth: number): {
   return useMemo(() => {
     // Disable intensive animations on small screens for better performance
     const enableAnimations = windowWidth >= 375;
-    
+
     // Scale animation duration based on screen size
     const animationDuration = windowWidth < 640 ? '0.2s' : '0.3s';
-    
+
     // Reduce animation intensity on mobile
     const animationIntensity = windowWidth < 640 ? 0.7 : 1.0;
-    
+
     return {
       enableAnimations,
       animationDuration,

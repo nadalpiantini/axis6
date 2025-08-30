@@ -67,7 +67,7 @@ export class MessageSearchService {
     stats: SearchStats
   }> {
     const startTime = Date.now()
-    
+
     if (!query.trim() || query.length < 2) {
       return {
         results: [],
@@ -96,10 +96,10 @@ export class MessageSearchService {
       }
 
       const searchTime = Date.now() - startTime
-      
+
       // Track search in history
       this.addToSearchHistory(query, results?.length || 0)
-      
+
       const stats: SearchStats = {
         total_results: results?.length || 0,
         search_time_ms: searchTime,
@@ -183,13 +183,13 @@ export class MessageSearchService {
 
     // Remove duplicate queries
     this.searchHistory = this.searchHistory.filter(entry => entry.query !== query)
-    
+
     // Add new search
     this.searchHistory.unshift(searchEntry)
-    
+
     // Keep only last 20 searches
     this.searchHistory = this.searchHistory.slice(0, 20)
-    
+
     // Persist to localStorage
     try {
       localStorage.setItem('axis6_search_history', JSON.stringify(this.searchHistory))

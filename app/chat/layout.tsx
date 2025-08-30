@@ -15,7 +15,7 @@ export default function ChatLayout({
 }) {
   return (
     <RealtimeErrorBoundary>
-      <Suspense 
+      <Suspense
         fallback={
           <div className="flex items-center justify-center min-h-screen bg-gray-950">
             <div className="text-center">

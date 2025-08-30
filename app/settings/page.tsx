@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
+import {
   User,
   Bell,
   Shield,
@@ -64,7 +64,7 @@ export default function SettingsPage() {
   const { data: user } = useUser()
 
   return (
-    <div 
+    <div
       style={{
         paddingTop: 'env(safe-area-inset-top, 0px)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
@@ -79,7 +79,7 @@ export default function SettingsPage() {
             <h1 className="text-2xl font-bold mb-2">Settings</h1>
             <p className="text-gray-400 text-sm">Manage your AXIS6 experience</p>
           </div>
-          
+
           <div className="grid grid-cols-1 gap-4">
             {OVERVIEW_CARDS.map((card) => {
               const Icon = card.icon

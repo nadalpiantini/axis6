@@ -2,13 +2,13 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Brain, 
-  Sparkles, 
-  Clock, 
-  Target, 
-  Heart, 
-  Users, 
+import {
+  Brain,
+  Sparkles,
+  Clock,
+  Target,
+  Heart,
+  Users,
   TrendingUp,
   CheckCircle2,
   ArrowRight,
@@ -29,7 +29,7 @@ import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
 import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface OnboardingStep {
   id: string
   title: string
@@ -120,9 +120,9 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
     setState(prev => {
       const newSteps = [...prev.steps]
       newSteps[prev.currentStep] = { ...newSteps[prev.currentStep], isComplete: true }
-      
+
       const newUserData = data ? { ...prev.userData, ...data } : prev.userData
-      
+
       return {
         ...prev,
         steps: newSteps,
@@ -133,10 +133,10 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
 
   const generateAIInsights = async () => {
     setState(prev => ({ ...prev, isGeneratingInsights: true }))
-    
+
     try {
       const insights: string[] = []
-      
+
       if (state.userData.temperament) {
         insights.push(
           `Based on your ${state.userData.temperament.primary_temperament} temperament, you thrive with ${
@@ -147,7 +147,7 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           }.`
         )
       }
-      
+
       if (state.userData.preferences) {
         const pref = state.userData.preferences
         if (pref.energyLevel === 'high') {
@@ -157,20 +157,21 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           insights.push("Morning person detected! We'll prioritize early-day reminders and activities.")
         }
       }
-      
+
       insights.push("Your AI coach will learn from every interaction to provide increasingly personalized guidance.")
-      
+
       setState(prev => ({
         ...prev,
         insights,
         isGeneratingInsights: false
       }))
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to generate AI insights:', error);
-      setState(prev => ({ ...prev, isGeneratingInsights: false }))
+      handleError(error, {
+      operation: 'ai_operation',
+      component: 'AIEnhancedOnboarding',
+      userMessage: 'AI operation failed. Please try again.'
+    })
+    setState(prev => ({ ...prev, isGeneratingInsights: false }))
     }
   }
 
@@ -289,7 +290,7 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
         </div>
 
         {state.currentStep === state.steps.length - 1 ? (
-          <Button 
+          <Button
             onClick={onComplete}
             disabled={!state.steps[state.currentStep]?.isComplete}
           >
@@ -327,7 +328,7 @@ function WelcomeStep({ onComplete, onNext }: any) {
           Welcome to AI-Powered Wellness
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          AXIS6 uses advanced AI to understand your personality, behavior patterns, and preferences 
+          AXIS6 uses advanced AI to understand your personality, behavior patterns, and preferences
           to create a truly personalized wellness experience. Let's discover what makes you unique!
         </p>
       </div>
@@ -403,9 +404,9 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       answerText: option.text,
       selectedTemperament: option.temperament
     }]
-    
+
     setResponses(newResponses)
-    
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     } else {
@@ -415,29 +416,30 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
 
   const analyzePersonality = async (allResponses: any[]) => {
     setIsAnalyzing(true)
-    
+
     try {
       // Simple analysis for demo - in production, use AI
       const temperamentCounts: Record<string, number> = {}
       allResponses.forEach(r => {
         temperamentCounts[r.selectedTemperament] = (temperamentCounts[r.selectedTemperament] || 0) + 1
       })
-      
+
       const sorted = Object.entries(temperamentCounts).sort((a, b) => b[1] - a[1])
       const temperament = {
         primary_temperament: sorted[0]?.[0] || 'balanced',
         secondary_temperament: sorted[1]?.[0] || 'balanced',
         responses: allResponses
       }
-      
+
       onComplete({ temperament })
       generateInsights()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Personality analysis failed:', error);
-      onComplete({ temperament: { primary_temperament: 'balanced' } })
+      handleError(error, {
+      operation: 'ai_operation',
+      component: 'AIEnhancedOnboarding',
+      userMessage: 'AI operation failed. Please try again.'
+    })
+    onComplete({ temperament: { primary_temperament: 'balanced' } })
     } finally {
       setIsAnalyzing(false)
     }
@@ -490,7 +492,7 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
         <Progress value={((currentQuestion + 1) / questions.length) * 100} className="mb-6" />
         <h3 className="text-xl font-semibold mb-6">{question.text}</h3>
       </div>
-      
+
       <div className="grid gap-4">
         {question.options.map((option, index) => (
           <motion.div
@@ -628,14 +630,14 @@ function GoalsStep({ onComplete, userData }: any) {
 
   const generatePersonalizedGoals = () => {
     setIsGeneratingGoals(true)
-    
+
     // Simulate AI goal generation based on temperament and preferences
     setTimeout(() => {
       const temperament = userData.temperament?.primary_temperament || 'balanced'
       const energyLevel = userData.preferences?.energyLevel || 'medium'
-      
+
       let goals = []
-      
+
       if (temperament === 'sanguine') {
         goals = [
           { id: '1', title: 'Connect socially 3x/week', description: 'Engage with friends during wellness activities', difficulty: 'easy', category: 'Social' },
@@ -664,15 +666,15 @@ function GoalsStep({ onComplete, userData }: any) {
   }
 
   const toggleGoal = (goalId: string) => {
-    setSelectedGoals(prev => 
-      prev.includes(goalId) 
+    setSelectedGoals(prev =>
+      prev.includes(goalId)
         ? prev.filter(id => id !== goalId)
         : [...prev, goalId]
     )
   }
 
   const handleComplete = () => {
-    onComplete({ 
+    onComplete({
       goals: suggestedGoals.filter(g => selectedGoals.includes(g.id))
     })
   }
@@ -686,7 +688,7 @@ function GoalsStep({ onComplete, userData }: any) {
         <div>
           <h3 className="text-xl font-semibold mb-2">Generating Your Personal Goals...</h3>
           <p className="text-gray-600">
-            AI is creating goals based on your {userData.temperament?.primary_temperament} temperament 
+            AI is creating goals based on your {userData.temperament?.primary_temperament} temperament
             and {userData.preferences?.energyLevel} energy preferences
           </p>
         </div>
@@ -723,7 +725,7 @@ function GoalsStep({ onComplete, userData }: any) {
                   <Badge variant="outline" className="text-xs">
                     {goal.category}
                   </Badge>
-                  <Badge 
+                  <Badge
                     variant={goal.difficulty === 'easy' ? 'secondary' : goal.difficulty === 'medium' ? 'default' : 'destructive'}
                     className="text-xs"
                   >
@@ -767,7 +769,7 @@ function RecommendationsStep({ onComplete, userData }: any) {
   const generateRecommendations = () => {
     setTimeout(() => {
       const temperament = userData.temperament?.primary_temperament || 'balanced'
-      
+
       const recs = [
         {
           title: 'Morning Energizer',
@@ -791,7 +793,7 @@ function RecommendationsStep({ onComplete, userData }: any) {
           reason: 'Aligned with your social preferences'
         }
       ]
-      
+
       setRecommendations(recs)
       setIsLoading(false)
       setTimeout(() => onComplete({ recommendations: recs }), 1000)

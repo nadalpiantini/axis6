@@ -12,7 +12,7 @@ export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
     const { searchParams } = new URL(_request.url)
-    
+
     const query = searchParams.get('q')?.trim()
     const roomId = searchParams.get('room_id')
     const senderId = searchParams.get('sender_id')

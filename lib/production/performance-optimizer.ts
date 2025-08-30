@@ -24,7 +24,7 @@ class PerformanceOptimizer {
   private cache: Map<string, { data: any; timestamp: number; access: number }> = new Map()
   private config: PerformanceConfig
   private observer: IntersectionObserver | null = null
-  
+
   constructor(config: Partial<PerformanceConfig> = {}) {
     this.config = {
       enableServiceWorker: true,
@@ -37,35 +37,35 @@ class PerformanceOptimizer {
       },
       ...config
     }
-    
+
     this.initialize()
   }
-  
+
   private async initialize() {
     if (typeof window === 'undefined') return
-    
+
     // Initialize service worker for caching
     if (this.config.enableServiceWorker) {
       this.registerServiceWorker()
     }
-    
+
     // Setup intersection observer for lazy loading
     if (this.config.enableIntersectionObserver) {
       this.setupIntersectionObserver()
     }
-    
+
     // Prefetch critical resources
     if (this.config.enablePrefetch) {
       this.prefetchCriticalResources()
     }
-    
+
     // Optimize images
     this.optimizeImages()
-    
+
     // Setup performance monitoring
     this.setupPerformanceMonitoring()
   }
-  
+
   /**
    * Register service worker for advanced caching
    */
@@ -77,7 +77,7 @@ class PerformanceOptimizer {
         }
     }
   }
-  
+
   /**
    * Setup intersection observer for performance optimization
    */
@@ -96,7 +96,7 @@ class PerformanceOptimizer {
       }
     )
   }
-  
+
   /**
    * Handle element coming into view
    */
@@ -108,13 +108,13 @@ class PerformanceOptimizer {
       img.removeAttribute('data-src')
       this.observer?.unobserve(element)
     }
-    
+
     // Prefetch route data
     if (element.dataset.prefetch) {
       this.prefetchRoute(element.dataset.prefetch)
     }
   }
-  
+
   /**
    * Prefetch critical resources
    */
@@ -125,14 +125,14 @@ class PerformanceOptimizer {
       '/api/checkins/recent',
       '/api/streaks'
     ]
-    
+
     // Prefetch routes after initial load
     setTimeout(() => {
       criticalRoutes.forEach(route => this.prefetchRoute(route))
       criticalAssets.forEach(asset => this.prefetchData(asset))
     }, 2000)
   }
-  
+
   /**
    * Prefetch route data
    */
@@ -151,7 +151,7 @@ class PerformanceOptimizer {
       // Ignore prefetch errors
     }
   }
-  
+
   /**
    * Prefetch API data
    */
@@ -166,7 +166,7 @@ class PerformanceOptimizer {
       // Ignore prefetch errors
     }
   }
-  
+
   /**
    * Optimize images with lazy loading and format optimization
    */
@@ -180,7 +180,7 @@ class PerformanceOptimizer {
       })
     }
   }
-  
+
   /**
    * Setup performance monitoring
    */
@@ -195,16 +195,16 @@ class PerformanceOptimizer {
             }
           })
         })
-        
+
         observer.observe({ entryTypes: ['longtask'] })
       } catch (error) {
         }
     }
-    
+
     // Monitor memory usage
     this.monitorMemoryUsage()
   }
-  
+
   /**
    * Monitor memory usage
    */
@@ -217,7 +217,7 @@ class PerformanceOptimizer {
           total: Math.round(memory.totalJSHeapSize / 1048576), // MB
           limit: Math.round(memory.jsHeapSizeLimit / 1048576) // MB
         }
-        
+
         // Alert if memory usage is high
         if (memoryUsage.used > memoryUsage.limit * 0.8) {
           this.reportPerformanceIssue('high_memory_usage', memoryUsage.used)
@@ -226,69 +226,69 @@ class PerformanceOptimizer {
       }, 30000) // Check every 30 seconds
     }
   }
-  
+
   /**
    * Cache management
    */
   cacheGet(key: string, type: keyof PerformanceConfig['cacheConfig'] = 'api') {
     const entry = this.cache.get(key)
     if (!entry) return null
-    
+
     const config = this.config.cacheConfig[type]
     const isExpired = Date.now() - entry.timestamp > config.ttl
-    
+
     if (isExpired) {
       this.cache.delete(key)
       return null
     }
-    
+
     // Update access count for LRU/LFU
     entry.access++
     return entry.data
   }
-  
+
   cacheSet(key: string, data: any, type: keyof PerformanceConfig['cacheConfig'] = 'api') {
     const config = this.config.cacheConfig[type]
-    
+
     // Cleanup if cache is full
     if (this.cache.size >= config.maxSize) {
       this.evictCache(config.strategy)
     }
-    
+
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
       access: 1
     })
   }
-  
+
   private evictCache(strategy: CacheConfig['strategy']) {
     const entries = Array.from(this.cache.entries())
-    
+
     let toDelete: string
-    
+
     switch (strategy) {
       case 'LRU': // Least Recently Used
         toDelete = entries.reduce((oldest, [key, entry]) =>
           entry.timestamp < this.cache.get(oldest)!.timestamp ? key : oldest
         , entries[0][0])
         break
-        
+
       case 'LFU': // Least Frequently Used
         toDelete = entries.reduce((least, [key, entry]) =>
           entry.access < this.cache.get(least)!.access ? key : least
         , entries[0][0])
         break
-        
+
       case 'FIFO': // First In, First Out
       default:
         toDelete = entries[0][0]
         break
     }
-    
+
     this.cache.delete(toDelete)
   }
-  
+
   private cleanupCache() {
     // Remove expired entries
     const now = Date.now()
@@ -298,7 +298,7 @@ class PerformanceOptimizer {
       }
     }
   }
-  
+
   /**
    * Report performance issues
    */
@@ -320,7 +320,7 @@ class PerformanceOptimizer {
       })
     }
   }
-  
+
   /**
    * Preload critical resources for specific pages
    */
@@ -340,11 +340,11 @@ class PerformanceOptimizer {
         '/api/user/preferences'
       ]
     }
-    
+
     const resources = preloadMap[page] || []
     resources.forEach(resource => this.prefetchData(resource))
   }
-  
+
   /**
    * Optimize critical rendering path
    */
@@ -354,37 +354,37 @@ class PerformanceOptimizer {
     if (criticalCSS) {
       this.inlineCSS(criticalCSS)
     }
-    
+
     // Defer non-critical resources
     this.deferNonCriticalResources()
   }
-  
+
   private extractCriticalCSS(): string | null {
     // Extract above-the-fold CSS
     const criticalElements = document.querySelectorAll('header, nav, .hero, .above-fold')
     // Implementation would extract CSS for these elements
     return null // Placeholder
   }
-  
+
   private inlineCSS(css: string) {
     const style = document.createElement('style')
     style.textContent = css
     document.head.appendChild(style)
   }
-  
+
   private deferNonCriticalResources() {
     // Defer non-critical CSS
     document.querySelectorAll('link[rel="stylesheet"]:not([data-critical])').forEach(link => {
       link.setAttribute('media', 'print')
       link.setAttribute('onload', "this.media='all'")
     })
-    
+
     // Defer non-critical scripts
     document.querySelectorAll('script[src]:not([data-critical])').forEach(script => {
       script.setAttribute('defer', '')
     })
   }
-  
+
   /**
    * Get performance metrics
    */
@@ -396,12 +396,12 @@ class PerformanceOptimizer {
       webVitals: this.getWebVitals()
     }
   }
-  
+
   private calculateCacheHitRate(): number {
     // Implementation for cache hit rate calculation
     return 0.85 // Placeholder
   }
-  
+
   private getMemoryUsage() {
     if ('memory' in performance) {
       const memory = (performance as any).memory
@@ -413,7 +413,7 @@ class PerformanceOptimizer {
     }
     return null
   }
-  
+
   private getWebVitals() {
     // Return cached Web Vitals metrics
     return {
@@ -454,15 +454,15 @@ export const performanceUtils = {
       const start = performance.now()
       const result = fn(...args)
       const end = performance.now()
-      
+
       if (end - start > 100) { // Log slow operations
         performanceOptimizer['reportPerformanceIssue']('slow_function', end - start)
       }
-      
+
       return result
     }
   },
-  
+
   // Debounce function calls
   debounce: <T extends any[]>(
     fn: (...args: T) => void,
@@ -474,7 +474,7 @@ export const performanceUtils = {
       timeoutId = setTimeout(() => fn(...args), delay)
     }
   },
-  
+
   // Throttle function calls
   throttle: <T extends any[]>(
     fn: (...args: T) => void,

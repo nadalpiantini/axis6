@@ -11,10 +11,10 @@ export async function PUT(
   try {
     const supabase = await createClient()
     const { roomId, userId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Update participant auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -43,7 +43,7 @@ export async function PUT(
       if (!hasAdminPrivileges || isSelfUpdate) {
         return NextResponse.json({ error: 'Insufficient permissions to change roles' }, { status: 403 })
       }
-      
+
       if (!['admin', 'moderator', 'member'].includes(role)) {
         return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
       }
@@ -93,7 +93,7 @@ export async function PUT(
     }
 
     return NextResponse.json({ participant })
-    
+
   } catch (error) {
     logger.error('Update participant API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -108,10 +108,10 @@ export async function DELETE(
   try {
     const supabase = await createClient()
     const { roomId, userId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Remove participant auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -128,7 +128,7 @@ export async function DELETE(
         .eq('user_id', user.id)
         .single()
 
-      if (currentParticipationError || !currentUserParticipation || 
+      if (currentParticipationError || !currentUserParticipation ||
           !['admin', 'moderator'].includes(currentUserParticipation.role)) {
         return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
       }
@@ -155,8 +155,8 @@ export async function DELETE(
         .eq('role', 'admin')
 
       if (adminCountError || (count && count <= 1)) {
-        return NextResponse.json({ 
-          error: 'Cannot remove the last admin from the room' 
+        return NextResponse.json({
+          error: 'Cannot remove the last admin from the room'
         }, { status: 400 })
       }
     }
@@ -174,7 +174,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Participant removed successfully' })
-    
+
   } catch (error) {
     logger.error('Remove participant API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -66,7 +66,7 @@ const e2eTestTemplate = (feature) => `import { test, expect } from '@playwright/
 
 test.describe('${feature}', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:6789');
+    await page.goto('http://localhost:3000');
   });
 
   test('user can complete ${feature} flow', async ({ page }) => {

@@ -45,18 +45,18 @@ interface HealthResponse extends SystemHealth {
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   const start = Date.now()
-  
+
   try {
     // Get query parameters
     const { searchParams } = new URL(_request.url)
     const detailed = searchParams.get('detailed') === 'true'
     const service = searchParams.get('service')
-    
+
     // Quick health check for specific service
     if (service) {
       return await handleServiceCheck(service)
     }
-    
+
     // Quick health check for load balancers
     if (!detailed) {
       const quickHealth = await healthCheck.runHealthCheck()
@@ -77,7 +77,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
         }
       )
     }
-    
+
     // Comprehensive health check
     const [
       systemHealth,
@@ -88,7 +88,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       Promise.resolve(circuitBreaker.getStatus()),
       Promise.resolve(performanceOptimizer.getPerformanceMetrics())
     ])
-    
+
     // System information
     const systemInfo = {
       nodeVersion: process.version,
@@ -97,31 +97,31 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       memory: process.memoryUsage(),
       cpuUsage: process.cpuUsage()
     }
-    
-    const health = systemHealth.status === 'fulfilled' 
-      ? systemHealth.value 
+
+    const health = systemHealth.status === 'fulfilled'
+      ? systemHealth.value
       : {
           overall: 'unhealthy' as const,
           checks: [],
           uptime: 0,
           version: '2.0.0'
         }
-    
+
     const response: HealthResponse = {
       ...health,
-      circuitBreakerStatus: circuitBreakerStatus.status === 'fulfilled' 
-        ? circuitBreakerStatus.value 
+      circuitBreakerStatus: circuitBreakerStatus.status === 'fulfilled'
+        ? circuitBreakerStatus.value
         : {},
-      performanceMetrics: performanceMetrics.status === 'fulfilled' 
-        ? performanceMetrics.value 
+      performanceMetrics: performanceMetrics.status === 'fulfilled'
+        ? performanceMetrics.value
         : {},
       systemInfo,
       timestamp: new Date().toISOString()
     }
-    
+
     // Determine HTTP status based on overall health
     const httpStatus = getHealthStatus(response.overall)
-    
+
     return NextResponse.json(response, {
       status: httpStatus,
       headers: {
@@ -130,10 +130,10 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
         'X-Response-Time': `${Date.now() - start}ms`
       }
     })
-    
+
   } catch (error) {
     logger.error('Health check error:', error)
-    
+
     return NextResponse.json(
       {
         status: 'unhealthy',
@@ -157,10 +157,10 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
  */
 async function handleServiceCheck(service: string): Promise<NextResponse> {
   const start = Date.now()
-  
+
   try {
     let result
-    
+
     switch (service.toLowerCase()) {
       case 'database':
         result = await healthCheck['checkDatabase']()
@@ -183,7 +183,7 @@ async function handleServiceCheck(service: string): Promise<NextResponse> {
           { status: 400 }
         )
     }
-    
+
     return NextResponse.json(
       {
         ...result,
@@ -198,7 +198,7 @@ async function handleServiceCheck(service: string): Promise<NextResponse> {
         }
       }
     )
-    
+
   } catch (error) {
     return NextResponse.json(
       {
@@ -220,44 +220,44 @@ export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
     const body = await _request.json()
     const { action, service } = body
-    
+
     switch (action) {
       case 'reset_circuit_breaker':
         if (service) {
           circuitBreaker.reset(service)
-          return NextResponse.json({ 
-            message: `Circuit breaker reset for ${service}` 
+          return NextResponse.json({
+            message: `Circuit breaker reset for ${service}`
           })
         }
         return NextResponse.json(
           { error: 'Service name required for reset' },
           { status: 400 }
         )
-        
+
       case 'force_circuit_open':
         if (service) {
           const duration = body.duration || 300000 // 5 minutes default
           circuitBreaker.forceOpen(service, duration)
-          return NextResponse.json({ 
-            message: `Circuit breaker forced open for ${service}` 
+          return NextResponse.json({
+            message: `Circuit breaker forced open for ${service}`
           })
         }
         return NextResponse.json(
           { error: 'Service name required to force open' },
           { status: 400 }
         )
-        
+
       default:
         return NextResponse.json(
           { error: `Unknown action: ${action}` },
           { status: 400 }
         )
     }
-    
+
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: error instanceof Error ? error.message : 'Invalid request body' 
+      {
+        error: error instanceof Error ? error.message : 'Invalid request body'
       },
       { status: 400 }
     )

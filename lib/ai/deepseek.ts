@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 // Environment variables validation
 const envSchema = z.object({
   DEEPSEEK_API_KEY: z.string().optional(),
@@ -13,7 +14,7 @@ const getConfig = () => {
   try {
     const apiKey = process.env['DEEPSEEK_API_KEY']
     const aiEnabled = apiKey ? (process.env['AI_FEATURES_ENABLED'] || 'true') : 'false'
-    
+
     return envSchema.parse({
       DEEPSEEK_API_KEY: apiKey,
       DEEPSEEK_API_URL: process.env['DEEPSEEK_API_URL'] || 'https://api.deepseek.com/v1',
@@ -66,7 +67,7 @@ export class DeepSeekClient {
     this.apiUrl = config.DEEPSEEK_API_URL
     this.isEnabled = config.AI_FEATURES_ENABLED && !!config.DEEPSEEK_API_KEY
     this.cacheTTL = config.AI_CACHE_TTL * 1000 // Convert to milliseconds
-    
+
     if (!this.apiKey && process.env.NODE_ENV !== 'production') {
       }
   }
@@ -143,10 +144,19 @@ export class DeepSeekClient {
 
       return data
     } catch (error) {
-      // TODO: Replace with proper error handling
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'deepseek',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI deepseek operation failed:', error);
     // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('DeepSeek API call failed:', error);
+    // console.error('AI deepseek operation failed:', error);
       throw error
     }
   }
@@ -160,14 +170,14 @@ export class DeepSeekClient {
     }
   ): Promise<string> {
     const messages: ChatMessage[] = []
-    
+
     if (systemPrompt) {
       messages.push({
         role: 'system',
         content: systemPrompt
       })
     }
-    
+
     messages.push({
       role: 'user',
       content: prompt
@@ -183,7 +193,7 @@ export class DeepSeekClient {
     systemPrompt?: string
   ): Promise<T> {
     const structuredSystemPrompt = `${systemPrompt || ''}
-    
+
 You must respond with valid JSON that matches this schema:
 ${JSON.stringify(schema._def, null, 2)}
 
@@ -205,10 +215,19 @@ Important: Return ONLY the JSON object, no additional text or formatting.`
       const parsed = JSON.parse(cleanedResponse)
       return schema.parse(parsed)
     } catch (error) {
-      // TODO: Replace with proper error handling
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'deepseek',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI deepseek operation failed:', error);
     // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to parse structured output:', error);
+    // console.error('AI deepseek operation failed:', error);
       throw new Error('Failed to generate valid structured output')
     }
   }
@@ -235,7 +254,7 @@ Important: Return ONLY the JSON object, no additional text or formatting.`
     }
   }> {
     const systemPrompt = `You are an expert psychologist specializing in the four temperaments (Sanguine, Choleric, Melancholic, Phlegmatic) personality assessment system.
-    
+
 Analyze the user's questionnaire responses and provide a comprehensive personality profile.
 Consider cultural context for ${language === 'es' ? 'Spanish-speaking' : 'English-speaking'} users.
 Be insightful, empathetic, and provide actionable recommendations.`

@@ -11,10 +11,10 @@ export async function GET(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat messages auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -82,23 +82,23 @@ export async function GET(
     }
 
     const { data: messages, error } = await query
-    
+
     if (error) {
       logger.error('Error fetching chat messages:', error)
       return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
     }
 
     // Determine next cursor for pagination
-    const nextCursor = messages && messages.length === limit 
-      ? messages[messages.length - 1]?.created_at 
+    const nextCursor = messages && messages.length === limit
+      ? messages[messages.length - 1]?.created_at
       : null
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       messages: messages?.reverse() || [], // Reverse to show oldest first
       nextCursor,
       hasMore: !!nextCursor
     })
-    
+
   } catch (error) {
     logger.error('Chat messages API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -113,10 +113,10 @@ export async function POST(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Send message auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -135,24 +135,24 @@ export async function POST(
     }
 
     // Parse request body
-    const { 
-      content, 
-      messageType = 'text', 
-      replyToId, 
-      metadata = {} 
+    const {
+      content,
+      messageType = 'text',
+      replyToId,
+      metadata = {}
     } = await _request.json()
 
     // Validate required fields
     if (!content?.trim()) {
-      return NextResponse.json({ 
-        error: 'Message content cannot be empty' 
+      return NextResponse.json({
+        error: 'Message content cannot be empty'
       }, { status: 400 })
     }
 
     // Validate message type
     if (!['text', 'image', 'file', 'system', 'achievement'].includes(messageType)) {
-      return NextResponse.json({ 
-        error: 'Invalid message type' 
+      return NextResponse.json({
+        error: 'Invalid message type'
       }, { status: 400 })
     }
 
@@ -166,8 +166,8 @@ export async function POST(
         .single()
 
       if (replyError || !replyMessage) {
-        return NextResponse.json({ 
-          error: 'Reply message not found' 
+        return NextResponse.json({
+          error: 'Reply message not found'
         }, { status: 400 })
       }
     }
@@ -218,7 +218,7 @@ export async function POST(
     }
 
     return NextResponse.json({ message }, { status: 201 })
-    
+
   } catch (error) {
     logger.error('Send message API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

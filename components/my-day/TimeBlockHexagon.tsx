@@ -3,11 +3,11 @@
 /**
  * @deprecated This component has been replaced by the unified HexagonClock component.
  * Please use HexagonClock from '@/components/hexagon-clock' instead.
- * 
+ *
  * Migration guide:
  * Old: import { TimeBlockHexagon } from '@/components/my-day/TimeBlockHexagon'
  * New: import { HexagonClock } from '@/components/hexagon-clock'
- * 
+ *
  * Add props: showClockMarkers={true}, showCurrentTime={true}
  * Performance improved by 60%. Revolutionary clock-based UX.
  * Scheduled for removal: Next major version
@@ -34,18 +34,18 @@ interface TimeBlockHexagonProps {
   activeTimer?: any
 }
 
-export function TimeBlockHexagon({ 
-  distribution, 
-  categories, 
+export function TimeBlockHexagon({
+  distribution,
+  categories,
   onCategoryClick,
-  activeTimer 
+  activeTimer
 }: TimeBlockHexagonProps) {
-  
+
   // Calculate total minutes for the day
   const totalMinutes = distribution.reduce((sum, cat) => sum + cat.actual_minutes, 0)
   const totalHours = Math.floor(totalMinutes / 60)
   const remainingMinutes = totalMinutes % 60
-  
+
   // Create hexagon paths for each category
   const createHexagonPath = (index: number, _total: number, percentage: number) => {
     const angle = (360 / 6) * index - 90 // Start from top
@@ -55,24 +55,24 @@ export function TimeBlockHexagon({
     const minRadius = 80  // Minimum size for usable segments (proportionally increased)
     const maxRadius = 160 // Maximum radius (proportionally increased)
     const radius = Math.max(minRadius, (percentage / 100) * maxRadius)
-    
+
     // Convert angles to radians
     const startRad = (angle * Math.PI) / 180
     const endRad = (nextAngle * Math.PI) / 180
-    
+
     // Calculate points
     const x1 = centerX + Math.cos(startRad) * radius
     const y1 = centerY + Math.sin(startRad) * radius
     const x2 = centerX + Math.cos(endRad) * radius
     const y2 = centerY + Math.sin(endRad) * radius
-    
+
     return `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`
   }
-  
+
   // Calculate total planned + actual minutes for better planning visualization
   const totalPlannedMinutes = distribution.reduce((sum, cat) => sum + (cat.planned_minutes || 0), 0)
   const totalCombinedMinutes = Math.max(totalMinutes + totalPlannedMinutes, 1)
-  
+
   // Map categories to hexagon segments
   const hexagonSegments = categories.map((category, index) => {
     const dist = distribution.find(d => d.category_id === category.id)
@@ -81,7 +81,7 @@ export function TimeBlockHexagon({
     const combinedMinutes = actualMinutes + plannedMinutes
     const percentage = (combinedMinutes / totalCombinedMinutes) * 100
     const isActive = activeTimer?.category_id === category.id
-    
+
     // Determine visual state for distinctive styling
     const hasPlanned = plannedMinutes > 0
     const hasActual = actualMinutes > 0
@@ -100,7 +100,7 @@ export function TimeBlockHexagon({
       isActive,
       // Visual states for distinctive styling
       hasPlanned,
-      hasActual, 
+      hasActual,
       isEmpty,
       isCompleted,
       isInProgress,
@@ -110,10 +110,10 @@ export function TimeBlockHexagon({
 
   return (
     <div className="relative flex items-center justify-center">
-      <svg 
-        width="400" 
-        height="400" 
-        viewBox="0 0 400 400" 
+      <svg
+        width="400"
+        height="400"
+        viewBox="0 0 400 400"
         className="transform rotate-0"
       >
         {/* Background hexagon */}
@@ -126,14 +126,14 @@ export function TimeBlockHexagon({
           animate={{ pathLength: 1 }}
           transition={{ duration: 1 }}
         />
-        
+
         {/* Grid lines from center */}
         {[0, 1, 2, 3, 4, 5].map(i => {
           const angle = (360 / 6) * i - 90
           const rad = (angle * Math.PI) / 180
           const x = 200 + Math.cos(rad) * 160
           const y = 200 + Math.sin(rad) * 160
-          
+
           return (
             <motion.line
               key={i}
@@ -149,7 +149,7 @@ export function TimeBlockHexagon({
             />
           )
         })}
-        
+
         {/* Category segments */}
         {hexagonSegments.map((segment, index) => {
           // Determine styling based on state
@@ -197,9 +197,9 @@ export function TimeBlockHexagon({
               }
             }
           }
-          
+
           const styles = getSegmentStyles()
-          
+
           return (
             <motion.g key={segment.id}>
               <motion.path
@@ -210,11 +210,11 @@ export function TimeBlockHexagon({
                 strokeWidth={styles.strokeWidth}
                 strokeDasharray={styles.strokeDasharray}
                 initial={{ scale: 0 }}
-                animate={{ 
+                animate={{
                   scale: segment.isInProgress ? [1, 1.05, 1] : 1,
                   fillOpacity: segment.isInProgress ? [styles.fillOpacity * 0.7, styles.fillOpacity, styles.fillOpacity * 0.8] : styles.fillOpacity
                 }}
-                transition={{ 
+                transition={{
                   duration: segment.isInProgress ? 2 : 0.5,
                   delay: index * 0.1,
                   repeat: segment.isInProgress ? Infinity : 0
@@ -223,7 +223,7 @@ export function TimeBlockHexagon({
                 onClick={() => onCategoryClick?.(segment)}
                 className="cursor-pointer"
               />
-              
+
               {/* Category icon - Always visible */}
               <g
                 transform={`translate(${
@@ -242,7 +242,7 @@ export function TimeBlockHexagon({
                   </div>
                 </foreignObject>
               </g>
-              
+
               {/* Category label - Always visible */}
               <text
                 x={200 + Math.cos(((360 / 6) * index - 30) * Math.PI / 180) * 140}
@@ -257,7 +257,7 @@ export function TimeBlockHexagon({
             </motion.g>
           )
         })}
-        
+
         {/* Center circle with total time */}
         <motion.circle
           cx="200"
@@ -270,7 +270,7 @@ export function TimeBlockHexagon({
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, delay: 0.8 }}
         />
-        
+
         {/* Center text */}
         <motion.text
           x="200"
@@ -283,7 +283,7 @@ export function TimeBlockHexagon({
         >
           {totalHours}h {remainingMinutes}m
         </motion.text>
-        
+
         <motion.text
           x="200"
           y="220"
@@ -296,7 +296,7 @@ export function TimeBlockHexagon({
           Total Time
         </motion.text>
       </svg>
-      
+
       {/* Legend */}
       <div className="absolute -bottom-8 left-0 right-0">
         <div className="flex flex-wrap justify-center gap-2">
@@ -308,7 +308,7 @@ export function TimeBlockHexagon({
               transition={{ delay: segment.index * 0.1 }}
               className="flex items-center gap-1 px-2 py-1 bg-white/5 rounded-lg"
             >
-              <div 
+              <div
                 className="w-2 h-2 rounded-full"
                 style={{ backgroundColor: segment.color }}
               />
@@ -322,7 +322,7 @@ export function TimeBlockHexagon({
           ))}
         </div>
       </div>
-      
+
       {/* Add time button hint */}
       {totalMinutes === 0 && (
         <motion.div

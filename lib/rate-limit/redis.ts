@@ -76,7 +76,7 @@ class RedisRateLimiter {
       }
     } catch (error) {
       logger.error(`Rate limit check failed for ${identifier}`, error as Error)
-      
+
       // Fail open - allow request if rate limiting fails
       return {
         allowed: true,
@@ -95,10 +95,10 @@ class RedisRateLimiter {
     const pipe = this.redis!.pipeline()
     pipe.incr(key)
     pipe.expire(key, Math.ceil(config.windowMs / 1000))
-    
+
     const results = await pipe.exec()
     const count = results[0] as number
-    
+
     const resetTime = now + config.windowMs
     const remaining = Math.max(0, config.maxRequests - count)
     const allowed = count <= config.maxRequests
@@ -119,10 +119,10 @@ class RedisRateLimiter {
   ) {
     // Clean up expired entries
     this.cleanupMemoryStore(now)
-    
+
     const existing = this.fallbackStore.get(key)
     const resetTime = now + config.windowMs
-    
+
     if (!existing || now > existing.resetTime) {
       // New window
       this.fallbackStore.set(key, { count: 1, resetTime })
@@ -133,11 +133,11 @@ class RedisRateLimiter {
         resetTime
       }
     }
-    
+
     // Increment counter
     existing.count++
     const allowed = existing.count <= config.maxRequests
-    
+
     return {
       allowed,
       limit: config.maxRequests,
@@ -150,7 +150,7 @@ class RedisRateLimiter {
   private cleanupMemoryStore(now: number) {
     // Clean up expired entries every 100 calls
     if (Math.random() > 0.01) return
-    
+
     for (const [key, entry] of this.fallbackStore.entries()) {
       if (now > entry.resetTime) {
         this.fallbackStore.delete(key)
@@ -167,7 +167,7 @@ class RedisRateLimiter {
     type: 'ip' | 'user' | 'combined' = 'ip'
   ): string {
     const ip = this.getIP(request)
-    
+
     switch (type) {
       case 'user':
         return userId || ip
@@ -189,7 +189,7 @@ class RedisRateLimiter {
       'forwarded-for',
       'forwarded'
     ]
-    
+
     for (const header of headers) {
       const value = request.headers.get(header)
       if (value) {
@@ -200,7 +200,7 @@ class RedisRateLimiter {
         }
       }
     }
-    
+
     return '127.0.0.1' // fallback
   }
 
@@ -215,7 +215,7 @@ class RedisRateLimiter {
    */
   async reset(identifier: string, keyPrefix?: string): Promise<void> {
     const key = `${keyPrefix || 'ratelimit'}:${identifier}`
-    
+
     if (this.redis) {
       await this.redis.del(key)
     } else {
@@ -241,10 +241,10 @@ export async function applyRateLimit(
   config: RateLimitConfig
 ): Promise<Response | null> {
   const result = await rateLimiter.checkLimit(identifier, config)
-  
+
   if (!result.allowed) {
     logger.warn(`Rate limit exceeded for ${identifier}: ${result.limit} requests`)
-    
+
     return new Response('Too Many Requests', {
       status: 429,
       headers: {
@@ -256,7 +256,7 @@ export async function applyRateLimit(
       }
     })
   }
-  
+
   // Add rate limit headers to allowed requests
   return new Response(null, {
     headers: {

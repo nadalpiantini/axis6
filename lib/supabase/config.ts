@@ -1,6 +1,6 @@
 /**
  * Supabase Configuration with Connection Pooling
- * 
+ *
  * This module provides optimized Supabase client configuration
  * with connection pooling and performance settings.
  */
@@ -14,24 +14,24 @@ export const supabaseConfig = {
   auth: {
     // Persist session in cookies for SSR
     persistSession: true,
-    
+
     // Auto refresh token before expiry
     autoRefreshToken: true,
-    
+
     // Detect session from URL (for OAuth)
     detectSessionInUrl: true,
-    
+
     // Session storage
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    
+
     // Flow type
     flowType: 'pkce' as const,
   },
-  
+
   db: {
     // Use connection pooling for better performance
     schema: 'public',
-    
+
     // Realtime configuration
     realtime: {
       // Enable multiplexing for better connection management
@@ -40,18 +40,18 @@ export const supabaseConfig = {
       },
     },
   },
-  
+
   global: {
     // Headers to include with every request
     headers: {
       'x-app-version': process.env['NEXT_PUBLIC_APP_VERSION'] || '1.0.0',
     },
-    
+
     // Fetch configuration
     fetch: {
       // Add timeout to prevent hanging requests
       timeout: 30000, // 30 seconds
-      
+
       // Retry configuration
       retries: 3,
       retryDelay: (attemptIndex: number) => 2 ** attemptIndex * 1000,
@@ -66,36 +66,36 @@ export const supabaseConfig = {
 export const poolConfig = {
   // Maximum number of clients in the pool
   max: 20,
-  
+
   // Minimum number of clients in the pool
   min: 2,
-  
+
   // Number of milliseconds a client must sit idle before being removed
   idleTimeoutMillis: 30000,
-  
+
   // Number of milliseconds to wait before timing out when connecting
   connectionTimeoutMillis: 2000,
-  
+
   // Maximum number of uses for a single client
   maxUses: 7500,
-  
+
   // Application name for pg_stat_activity
   application_name: 'axis6-app',
-  
+
   // Statement timeout (prevents long-running queries)
   statement_timeout: '30s',
-  
+
   // Query timeout
   query_timeout: 30000,
-  
+
   // Connection string parameters
   connectionString: {
     // Use connection pooling mode
     sslmode: 'require',
-    
+
     // Prepare statements for better performance
     prepare: true,
-    
+
     // Use binary format for better performance
     binary: true,
   },
@@ -107,10 +107,10 @@ export const poolConfig = {
 export const dbRateLimits = {
   // Maximum queries per second per user
   queriesPerSecond: 100,
-  
+
   // Maximum concurrent queries per user
   maxConcurrent: 10,
-  
+
   // Burst allowance
   burst: 20,
 }
@@ -123,20 +123,20 @@ export const cacheConfig = {
   ttl: {
     // User profile data
     profile: 300, // 5 minutes
-    
+
     // Categories (rarely change)
     categories: 3600, // 1 hour
-    
+
     // Check-ins for today
     todayCheckins: 60, // 1 minute
-    
+
     // Streak data
     streaks: 120, // 2 minutes
-    
+
     // Daily stats
     dailyStats: 180, // 3 minutes
   },
-  
+
   // Cache key prefixes
   keys: {
     profile: 'cache:profile:',
@@ -153,13 +153,13 @@ export const cacheConfig = {
 export const queryHints = {
   // Use prepared statements for frequently used queries
   usePreparedStatements: true,
-  
+
   // Batch size for bulk operations
   batchSize: 100,
-  
+
   // Enable query plan caching
   planCacheEnabled: true,
-  
+
   // Connection pooling mode
   poolingMode: 'transaction' as const,
 }
@@ -170,10 +170,10 @@ export const queryHints = {
 export const monitoringConfig = {
   // Log slow queries (in milliseconds)
   slowQueryThreshold: 1000,
-  
+
   // Track query metrics
   enableMetrics: true,
-  
+
   // Sample rate for query logging (0-1)
   querySampleRate: env.isProduction ? 0.1 : 1,
 }

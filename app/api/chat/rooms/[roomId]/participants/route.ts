@@ -11,10 +11,10 @@ export async function GET(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Get participants auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -51,7 +51,7 @@ export async function GET(
     }
 
     return NextResponse.json({ participants: participants || [] })
-    
+
   } catch (error) {
     logger.error('Get participants API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -66,10 +66,10 @@ export async function POST(
   try {
     const supabase = await createClient()
     const { roomId } = await params
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Add participant auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -92,15 +92,15 @@ export async function POST(
 
     // Validate user ID
     if (!userId) {
-      return NextResponse.json({ 
-        error: 'User ID is required' 
+      return NextResponse.json({
+        error: 'User ID is required'
       }, { status: 400 })
     }
 
     // Validate role
     if (!['admin', 'moderator', 'member'].includes(role)) {
-      return NextResponse.json({ 
-        error: 'Invalid role' 
+      return NextResponse.json({
+        error: 'Invalid role'
       }, { status: 400 })
     }
 
@@ -163,7 +163,7 @@ export async function POST(
     }
 
     return NextResponse.json({ participant }, { status: 201 })
-    
+
   } catch (error) {
     logger.error('Add participant API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

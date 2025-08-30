@@ -183,13 +183,13 @@ describe('usePrecomputedSVG Hook', () => {
 
     it('maintains consistent proportions across sizes', () => {
       const sizes = [200, 300, 400];
-      const results = sizes.map(size => 
+      const results = sizes.map(size =>
         renderHook(() => usePrecomputedSVG(size)).result.current
       );
 
       // Radius should scale proportionally
       const ratios = results.map(result => result.radius / (result.center.x * 2));
-      
+
       // All ratios should be approximately equal
       ratios.forEach(ratio => {
         expect(ratio).toBeCloseTo(ratios[0], 2);
@@ -280,10 +280,10 @@ describe('usePrecomputedSVG Hook', () => {
       const { result } = renderHook(() => usePrecomputedSVG(300));
 
       const positions = result.current.clockPositions;
-      
+
       // Y increases downward in SVG
       expect(positions[0].y).toBeLessThan(positions[6].y); // 12 o'clock vs 6 o'clock
-      
+
       // X increases rightward
       expect(positions[9].x).toBeLessThan(positions[3].x); // 9 o'clock vs 3 o'clock
     });
@@ -295,12 +295,12 @@ describe('usePrecomputedSVG Hook', () => {
       const center = result.current.center;
 
       // All positions should be equidistant from center
-      const distances = positions.map(pos => 
+      const distances = positions.map(pos =>
         Math.sqrt(Math.pow(pos.x - center.x, 2) + Math.pow(pos.y - center.y, 2))
       );
 
       const averageDistance = distances.reduce((a, b) => a + b, 0) / distances.length;
-      
+
       distances.forEach(distance => {
         expect(distance).toBeCloseTo(averageDistance, 1);
       });
@@ -324,7 +324,7 @@ describe('usePrecomputedSVG Hook', () => {
       // Should have clock positions for markers
       expect(result.current).toHaveProperty('clockPositions');
       expect(result.current.clockPositions).toHaveLength(12);
-      
+
       result.current.clockPositions.forEach(pos => {
         expect(pos).toHaveProperty('x');
         expect(pos).toHaveProperty('y');
@@ -338,7 +338,7 @@ describe('usePrecomputedSVG Hook', () => {
       // Physical at 12 o'clock should align with category expectations
       const physicalPosition = result.current.clockPositions[0]; // 12 o'clock
       expect(physicalPosition.angle).toBe(0);
-      
+
       // Social at 6 o'clock
       const socialPosition = result.current.clockPositions[6]; // 6 o'clock
       expect(socialPosition.angle).toBe(180);

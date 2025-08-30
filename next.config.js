@@ -73,12 +73,12 @@ const nextConfig = {
   
   // Enable type checking during build for production safety
   typescript: {
-    ignoreBuildErrors: true, // Temporarily disabled for deployment - TODO: fix unused parameter errors
+    ignoreBuildErrors: false, // Now enabled with proper error handling in place
   },
   
   // Enable ESLint during build for code quality
   eslint: {
-    ignoreDuringBuilds: true, // Temporarily disabled for deployment - TODO: fix linting issues
+    ignoreDuringBuilds: false, // Now enabled with error handling fixes
     dirs: ['app', 'lib', 'components', 'hooks'], // Specify directories to lint
   },
 
@@ -277,7 +277,7 @@ const nextConfig = {
 
   // Environment variables
   env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789',
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   },
 }
 

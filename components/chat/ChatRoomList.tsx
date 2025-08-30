@@ -199,7 +199,7 @@ export function ChatRoomList({
                               <span className="text-xs text-neutral-500">
                                 {room.participants.length} member{room.participants.length !== 1 ? 's' : ''}
                               </span>
-                              
+
                               {/* Unread indicator (placeholder) */}
                               <div className="w-2 h-2 bg-purple-500 rounded-full opacity-0" />
                             </div>

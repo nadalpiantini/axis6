@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 /**
  * SUB-AGENTE 2: Dashboard & Hexagon Interactions Comprehensive Audit
- * 
+ *
  * Specializes in:
  * - Dashboard page (/dashboard) complete testing
  * - Hexagon visualization interactions
@@ -10,7 +10,7 @@ import { test, expect, Page } from '@playwright/test';
  * - Category cards and buttons functionality
  * - Progress tracking and visual updates
  * - Real-time UI state changes
- * 
+ *
  * Execution: PLAYWRIGHT_BASE_URL=https://axis6.app npx playwright test tests/e2e/audit-dashboard-hexagon.spec.ts --reporter=line
  */
 
@@ -42,12 +42,12 @@ class DashboardHexagonAuditor {
   private bugs: BugReport[] = [];
   private networkLogs: string[] = [];
   private consoleErrors: string[] = [];
-  
+
   constructor(page: Page) {
     this.page = page;
     this.setupMonitoring();
   }
-  
+
   private setupMonitoring() {
     // Monitor network requests
     this.page.on('request', request => {
@@ -56,7 +56,7 @@ class DashboardHexagonAuditor {
         this.networkLogs.push(`${request.method()} ${url}`);
       }
     });
-    
+
     // Monitor network responses for errors
     this.page.on('response', response => {
       const url = response.url();
@@ -64,34 +64,34 @@ class DashboardHexagonAuditor {
         this.networkLogs.push(`❌ ${response.status()} ${response.url()}`);
       }
     });
-    
+
     // Monitor JavaScript errors
     this.page.on('pageerror', error => {
       this.consoleErrors.push(`Page Error: ${error.message}`);
     });
-    
+
     this.page.on('console', msg => {
       if (msg.type() === 'error') {
         this.consoleErrors.push(`Console Error: ${msg.text()}`);
       }
     });
   }
-  
+
   async login() {
     console.log('🔐 Logging in for dashboard testing...');
     await this.page.goto(`${BASE_URL}/auth/login`);
     await this.page.waitForLoadState('networkidle');
-    
+
     const emailInput = this.page.locator('input[type="email"], input[name="email"]').first();
     const passwordInput = this.page.locator('input[type="password"], input[name="password"]').first();
     const loginButton = this.page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first();
-    
+
     if (await emailInput.count() > 0 && await passwordInput.count() > 0 && await loginButton.count() > 0) {
       await emailInput.fill(REAL_USER_CREDENTIALS.email);
       await passwordInput.fill(REAL_USER_CREDENTIALS.password);
       await loginButton.click();
       await this.page.waitForTimeout(5000);
-      
+
       const currentUrl = this.page.url();
       if (currentUrl.includes('/auth/login')) {
         throw new Error('Login failed - still on login page');
@@ -100,28 +100,28 @@ class DashboardHexagonAuditor {
       throw new Error('Cannot find login form elements');
     }
   }
-  
+
   async waitForDashboardLoad() {
     console.log('🔄 Waiting for dashboard to fully load...');
-    
+
     try {
       // Wait for page load state
       await this.page.waitForLoadState('networkidle', { timeout: 10000 });
-      
+
       // Wait for critical dashboard elements
-      await this.page.waitForSelector('[data-testid="dashboard-container"], .dashboard-container, main', 
+      await this.page.waitForSelector('[data-testid="dashboard-container"], .dashboard-container, main',
         { timeout: 8000 });
-      
+
       // Wait for hexagon visualization or category elements
       await this.page.waitForFunction(() => {
         const hexagon = document.querySelector('[data-testid*="hexagon"], .hexagon-container, svg');
         const categories = document.querySelectorAll('[data-category], [class*="axis-"], [data-testid*="category"]');
         return (hexagon && hexagon.getBoundingClientRect().height > 0) || categories.length >= 3;
       }, { timeout: 8000 });
-      
+
       // Wait for React to finish initial renders
       await this.page.waitForTimeout(1000);
-      
+
       // Ensure no loading spinners are present
       await this.page.waitForFunction(() => {
         const spinners = document.querySelectorAll('[data-testid*="loading"], .loading, .spinner');
@@ -129,9 +129,9 @@ class DashboardHexagonAuditor {
       }, { timeout: 5000 }).catch(() => {
         console.log('⚠️ Loading spinners might still be present');
       });
-      
+
       console.log('✅ Dashboard load complete');
-      
+
     } catch (error) {
       console.warn('⚠️ Dashboard load wait failed:', error);
       // Continue anyway - don't block tests
@@ -141,16 +141,16 @@ class DashboardHexagonAuditor {
   async reportBug(page: string, element: string, issue: string, severity: BugReport['severity'] = 'medium', category?: string) {
     const bugId = this.bugs.length + 1;
     const screenshot = `dashboard-hexagon-bug-${bugId}-${page.replace('/', '_')}.png`;
-    
+
     try {
-      await this.page.screenshot({ 
+      await this.page.screenshot({
         path: `test-results/${screenshot}`,
-        fullPage: true 
+        fullPage: true
       });
     } catch (e) {
       console.log(`⚠️ Could not capture screenshot: ${e}`);
     }
-    
+
     this.bugs.push({
       agent: 'dashboard-hexagon',
       page,
@@ -163,18 +163,18 @@ class DashboardHexagonAuditor {
       timestamp: new Date().toISOString(),
       category
     });
-    
+
     const categoryText = category ? ` [${category}]` : '';
     console.log(`🐛 [SUB-AGENT 2] BUG FOUND [${severity.toUpperCase()}]${categoryText} on ${page}: ${issue}`);
-    
+
     // Clear logs for next test
     this.networkLogs = [];
     this.consoleErrors = [];
   }
-  
+
   async testCategoryInteraction(category: string) {
     console.log(`🎯 Testing ${category} category interactions...`);
-    
+
     // Enhanced selectors with priority order
     const categorySelectors = [
       `[data-category="${category.toLowerCase()}"]`,
@@ -185,10 +185,10 @@ class DashboardHexagonAuditor {
       `.axis-${category.toLowerCase()}`,
       `[class*="${category.toLowerCase()}"]`
     ];
-    
+
     let categoryElement = null;
     let usedSelector = '';
-    
+
     // Enhanced element finding with retry logic
     const maxAttempts = 3;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -196,7 +196,7 @@ class DashboardHexagonAuditor {
         try {
           const element = this.page.locator(selector);
           await element.waitFor({ state: 'attached', timeout: 2000 });
-          
+
           if (await element.count() > 0) {
             categoryElement = element.first();
             usedSelector = selector;
@@ -208,9 +208,9 @@ class DashboardHexagonAuditor {
           continue;
         }
       }
-      
+
       if (categoryElement) break;
-      
+
       if (attempt < maxAttempts) {
         console.log(`⏳ Retry ${attempt}/${maxAttempts} for finding ${category} category...`);
         await this.page.waitForTimeout(1000);
@@ -218,38 +218,38 @@ class DashboardHexagonAuditor {
         await this.waitForDashboardLoad();
       }
     }
-    
+
     if (!categoryElement) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `${category} category element not found with any selector after ${maxAttempts} attempts`, 'high', category);
       return false;
     }
-    
+
     // Enhanced visibility and interactivity checks with retries
     try {
       await categoryElement.waitFor({ state: 'visible', timeout: 5000 });
       await categoryElement.waitFor({ state: 'attached', timeout: 3000 });
     } catch (error) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `${category} category element not ready: ${error}`, 'medium', category);
       return false;
     }
-    
+
     const isVisible = await categoryElement.isVisible();
     const isEnabled = await categoryElement.isEnabled();
-    
+
     if (!isVisible) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `${category} category element not visible`, 'medium', category);
       return false;
     }
-    
+
     if (!isEnabled) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `${category} category element not enabled`, 'medium', category);
       return false;
     }
-    
+
     // Enhanced state capture - get multiple attributes for better change detection
     const getElementState = async () => {
       const classes = await categoryElement.getAttribute('class') || '';
@@ -257,96 +257,96 @@ class DashboardHexagonAuditor {
       const ariaPressed = await categoryElement.getAttribute('aria-pressed') || '';
       const dataCompleted = await categoryElement.getAttribute('data-completed') || '';
       const style = await categoryElement.getAttribute('style') || '';
-      
+
       return { classes, dataChecked, ariaPressed, dataCompleted, style };
     };
-    
+
     const initialState = await getElementState();
     const initialNetworkCount = this.networkLogs.length;
-    
+
     console.log(`📊 Initial state for ${category}:`, initialState);
-    
+
     // Enhanced click with error handling and loading state detection
     try {
       // Wait for any pending network requests to complete
       await this.page.waitForLoadState('networkidle', { timeout: 3000 });
-      
+
       // Ensure element is still attached and clickable
       await categoryElement.waitFor({ state: 'visible' });
-      
+
       // Click with force to avoid interception issues
       await categoryElement.click({ force: true });
       console.log(`🖱️  Clicked ${category} category`);
-      
+
       // Wait for optimistic update to take effect
       await this.page.waitForTimeout(500);
-      
+
       // Wait for network request to be triggered and complete
-      await this.page.waitForResponse(response => 
-        response.url().includes('/api/checkins') && 
+      await this.page.waitForResponse(response =>
+        response.url().includes('/api/checkins') &&
         response.request().method() === 'POST',
         { timeout: 8000 }
       ).catch(() => {
         console.log(`⚠️ No API response detected for ${category} - may be cached or optimistic`);
       });
-      
+
       // Additional wait for UI to settle after network response
       await this.page.waitForTimeout(1500);
-      
+
     } catch (error) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `Failed to interact with ${category} category: ${error}`, 'high', category);
       return false;
     }
-    
+
     // Enhanced state change detection with multiple checks
     const finalState = await getElementState();
     console.log(`📊 Final state for ${category}:`, finalState);
-    
-    const stateChanged = Object.keys(initialState).some(key => 
+
+    const stateChanged = Object.keys(initialState).some(key =>
       initialState[key] !== finalState[key]
     );
-    
+
     if (!stateChanged) {
       // Double-check with DOM element inspection
       const elementHtml = await categoryElement.innerHTML();
       console.log(`🔍 ${category} element HTML after click:`, elementHtml.substring(0, 200) + '...');
-      
-      await this.reportBug('/dashboard', `${category} Category`, 
+
+      await this.reportBug('/dashboard', `${category} Category`,
         `${category} category visual state did not change after interaction. Initial: ${JSON.stringify(initialState)}, Final: ${JSON.stringify(finalState)}`, 'medium', category);
     } else {
       console.log(`✅ ${category} category state changed successfully`);
     }
-    
+
     // Enhanced network activity check
     const finalNetworkCount = this.networkLogs.length;
     const apiCallsMade = finalNetworkCount - initialNetworkCount;
-    
+
     if (apiCallsMade === 0) {
       // Check for specific API endpoints that should have been called
       const recentLogs = this.networkLogs.slice(-5);
       const hasCheckinsCall = recentLogs.some(log => log.includes('/api/checkins'));
-      
+
       if (!hasCheckinsCall) {
-        await this.reportBug('/dashboard', `${category} Category`, 
+        await this.reportBug('/dashboard', `${category} Category`,
           `${category} category interaction did not trigger expected API calls. Recent activity: ${recentLogs.join(', ')}`, 'medium', category);
       }
     } else {
       console.log(`✅ ${category} category interaction triggered ${apiCallsMade} API calls`);
     }
-    
+
     // Check for console errors
     if (this.consoleErrors.length > 0) {
-      await this.reportBug('/dashboard', `${category} Category`, 
+      await this.reportBug('/dashboard', `${category} Category`,
         `JavaScript errors during ${category} interaction: ${this.consoleErrors.join(', ')}`, 'high', category);
     }
-    
+
     return true;
   }
-  
+
   async testHexagonVisualization() {
     console.log('⬡ Testing Hexagon Visualization...');
-    
+
     // Look for hexagon SVG elements
     const hexagonSelectors = [
       'svg',
@@ -356,28 +356,28 @@ class DashboardHexagonAuditor {
       'svg polygon',
       'svg circle'
     ];
-    
+
     let hexagonFound = false;
-    
+
     for (const selector of hexagonSelectors) {
       const elements = this.page.locator(selector);
       const count = await elements.count();
-      
+
       if (count > 0) {
         hexagonFound = true;
         console.log(`✅ Found ${count} hexagon elements with selector: ${selector}`);
-        
+
         // Test clicking on hexagon elements
         for (let i = 0; i < Math.min(count, 10); i++) { // Limit to 10 elements
           const element = elements.nth(i);
-          
+
           if (await element.isVisible()) {
             try {
               await element.click();
               await this.page.waitForTimeout(1000);
-              
+
               if (this.consoleErrors.length > 0) {
-                await this.reportBug('/dashboard', 'Hexagon Element', 
+                await this.reportBug('/dashboard', 'Hexagon Element',
                   `JavaScript error clicking hexagon element: ${this.consoleErrors.join(', ')}`, 'medium');
               }
             } catch (error) {
@@ -388,18 +388,18 @@ class DashboardHexagonAuditor {
         }
       }
     }
-    
+
     if (!hexagonFound) {
-      await this.reportBug('/dashboard', 'Hexagon Visualization', 
+      await this.reportBug('/dashboard', 'Hexagon Visualization',
         'No hexagon visualization elements found on dashboard', 'high');
     }
-    
+
     return hexagonFound;
   }
-  
+
   async testProgressIndicators() {
     console.log('📊 Testing Progress Indicators...');
-    
+
     // Look for progress indicators
     const progressSelectors = [
       'text=/\\d+\\/6.*completed?/',
@@ -409,35 +409,35 @@ class DashboardHexagonAuditor {
       '[data-testid*="progress"]',
       '[data-testid*="completion"]'
     ];
-    
+
     let progressFound = false;
-    
+
     for (const selector of progressSelectors) {
       const elements = this.page.locator(selector);
       const count = await elements.count();
-      
+
       if (count > 0) {
         progressFound = true;
         const progressText = await elements.first().textContent();
         console.log(`✅ Found progress indicator: "${progressText}"`);
-        
+
         // Test if progress indicator is visible and contains valid data
         const isVisible = await elements.first().isVisible();
         if (!isVisible) {
-          await this.reportBug('/dashboard', 'Progress Indicator', 
+          await this.reportBug('/dashboard', 'Progress Indicator',
             'Progress indicator exists but is not visible', 'medium');
         }
       }
     }
-    
+
     if (!progressFound) {
-      await this.reportBug('/dashboard', 'Progress Indicators', 
+      await this.reportBug('/dashboard', 'Progress Indicators',
         'No progress indicators found on dashboard', 'medium');
     }
-    
+
     return progressFound;
   }
-  
+
   getBugReport() {
     return {
       agent: 'dashboard-hexagon',
@@ -455,61 +455,61 @@ class DashboardHexagonAuditor {
 
 test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
   let auditor: DashboardHexagonAuditor;
-  
+
   test.setTimeout(180000); // 3 minutes timeout
-  
+
   test.beforeEach(async ({ page }) => {
     auditor = new DashboardHexagonAuditor(page);
     await auditor.login();
   });
-  
+
   test('Dashboard Page Load and Structure Audit', async ({ page }) => {
     console.log('🏠 [SUB-AGENT 2] Starting Dashboard Structure Audit...');
-    
+
     // Navigate to dashboard
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState('networkidle');
-    
+
     // Verify we're on the dashboard
     const currentUrl = page.url();
     if (!currentUrl.includes('/dashboard')) {
-      await auditor.reportBug('/dashboard', 'Page Access', 
+      await auditor.reportBug('/dashboard', 'Page Access',
         `Failed to access dashboard, redirected to: ${currentUrl}`, 'critical');
     }
-    
+
     // Check for basic dashboard structure
     const dashboardElements = [
       { selector: 'main, [data-testid="dashboard"]', name: 'Main Dashboard Container' },
       { selector: 'h1, h2, [data-testid="dashboard-title"]', name: 'Dashboard Title' },
       { selector: 'svg, [data-testid*="hexagon"], [data-testid*="chart"]', name: 'Visualization' }
     ];
-    
+
     for (const element of dashboardElements) {
       const found = await page.locator(element.selector).count() > 0;
       if (!found) {
-        await auditor.reportBug('/dashboard', element.name, 
+        await auditor.reportBug('/dashboard', element.name,
           `${element.name} not found`, 'medium');
       } else {
         console.log(`✅ Found ${element.name}`);
       }
     }
-    
+
     console.log('✅ Dashboard Structure Audit Complete');
   });
-  
+
   test('Complete Hexagon Visualization Audit', async ({ page }) => {
     console.log('⬡ [SUB-AGENT 2] Starting Complete Hexagon Audit...');
-    
+
     await page.goto(`${BASE_URL}/dashboard`);
     await auditor.waitForDashboardLoad(); // Enhanced waiting
-    
+
     // Test hexagon visualization
     const hexagonFound = await auditor.testHexagonVisualization();
-    
+
     if (hexagonFound) {
       // Test hexagon responsiveness
       const hexagonSvg = page.locator('svg').first();
-      
+
       if (await hexagonSvg.count() > 0) {
         // Test hover effects if applicable
         try {
@@ -519,36 +519,36 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
         } catch (error) {
           console.log(`ℹ️ Hexagon hover not available: ${error}`);
         }
-        
+
         // Test different viewport sizes
         await page.setViewportSize({ width: 800, height: 600 });
         await page.waitForTimeout(1000);
-        
+
         const isVisible = await hexagonSvg.isVisible();
         if (!isVisible) {
-          await auditor.reportBug('/dashboard', 'Hexagon Responsiveness', 
+          await auditor.reportBug('/dashboard', 'Hexagon Responsiveness',
             'Hexagon not visible on smaller viewport', 'medium');
         }
-        
+
         // Reset viewport
         await page.setViewportSize({ width: 1920, height: 1080 });
       }
     }
-    
+
     console.log('✅ Complete Hexagon Audit Complete');
   });
-  
+
   test('All 6 Categories Check-in Comprehensive Test', async ({ page }) => {
     console.log('📋 [SUB-AGENT 2] Starting All Categories Check-in Test...');
-    
+
     await page.goto(`${BASE_URL}/dashboard`);
     await auditor.waitForDashboardLoad(); // Enhanced waiting
-    
+
     let successfulCategories = 0;
-    
+
     for (const category of AXIS6_CATEGORIES) {
       console.log(`🎯 Testing category: ${category} (${successfulCategories + 1}/${AXIS6_CATEGORIES.length})`);
-      
+
       const success = await auditor.testCategoryInteraction(category);
       if (success) {
         successfulCategories++;
@@ -556,10 +556,10 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
       } else {
         console.log(`❌ ${category} test failed`);
       }
-      
+
       // Enhanced wait between category tests with stability check
       await page.waitForTimeout(3000);
-      
+
       // Verify page is still stable before next test
       try {
         await page.waitForLoadState('networkidle', { timeout: 3000 });
@@ -567,79 +567,79 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
         console.log(`⚠️ Page still loading after ${category} test`);
       }
     }
-    
+
     console.log(`📊 Successfully tested ${successfulCategories}/${AXIS6_CATEGORIES.length} categories`);
-    
+
     if (successfulCategories < AXIS6_CATEGORIES.length) {
-      await auditor.reportBug('/dashboard', 'Category Coverage', 
+      await auditor.reportBug('/dashboard', 'Category Coverage',
         `Only ${successfulCategories}/${AXIS6_CATEGORIES.length} categories could be tested`, 'high');
     }
-    
+
     console.log('✅ All Categories Check-in Test Complete');
   });
-  
+
   test('Progress Tracking and Visual Updates Audit', async ({ page }) => {
     console.log('📈 [SUB-AGENT 2] Starting Progress Tracking Audit...');
-    
+
     await page.goto(`${BASE_URL}/dashboard`);
     await auditor.waitForDashboardLoad(); // Enhanced waiting
-    
+
     // Test progress indicators before interactions
     await auditor.testProgressIndicators();
-    
+
     // Take initial screenshot
-    await page.screenshot({ 
+    await page.screenshot({
       path: 'test-results/dashboard-initial-state.png',
-      fullPage: true 
+      fullPage: true
     });
-    
+
     // Perform several category check-ins and monitor visual changes
     const categoriesToTest = AXIS6_CATEGORIES.slice(0, 3); // Test first 3 categories
-    
+
     for (const category of categoriesToTest) {
       console.log(`🔄 Testing visual updates for ${category}...`);
-      
+
       // Get initial visual state
       const hexagon = page.locator('svg').first();
       let initialHexagonState = '';
-      
+
       if (await hexagon.count() > 0) {
         initialHexagonState = await hexagon.innerHTML();
       }
-      
+
       // Perform category interaction
       await auditor.testCategoryInteraction(category);
-      
+
       // Wait for visual updates
       await page.waitForTimeout(3000);
-      
+
       // Check for visual changes
       if (await hexagon.count() > 0) {
         const newHexagonState = await hexagon.innerHTML();
-        
+
         if (initialHexagonState === newHexagonState) {
-          await auditor.reportBug('/dashboard', 'Visual Updates', 
+          await auditor.reportBug('/dashboard', 'Visual Updates',
             `Hexagon did not update visually after ${category} interaction`, 'medium', category);
         } else {
           console.log(`✅ Hexagon updated visually for ${category}`);
         }
       }
-      
+
       // Take screenshot after interaction
-      await page.screenshot({ 
+      await page.screenshot({
         path: `test-results/dashboard-after-${category.toLowerCase()}.png`,
-        fullPage: true 
+        fullPage: true
       });
     }
-    
+
     console.log('✅ Progress Tracking Audit Complete');
   });
-  
+
   test('Dashboard API Integration Audit', async ({ page }) => {
     console.log('🔗 [SUB-AGENT 2] Starting Dashboard API Integration Audit...');
-    
+
     const apiCalls: { url: string; method: string; status: number; }[] = [];
-    
+
     // Monitor all API calls
     page.on('response', response => {
       const url = response.url();
@@ -651,42 +651,42 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
         });
       }
     });
-    
+
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
-    
+
     // Perform interactions to trigger API calls
     for (const category of AXIS6_CATEGORIES.slice(0, 2)) { // Test 2 categories
       await auditor.testCategoryInteraction(category);
       await page.waitForTimeout(2000);
     }
-    
+
     // Analyze API calls
     console.log(`📊 Dashboard API Analysis (Total calls: ${apiCalls.length})`);
-    
+
     const errorCalls = apiCalls.filter(call => call.status >= 400);
     const successCalls = apiCalls.filter(call => call.status >= 200 && call.status < 300);
-    
+
     console.log(`✅ Successful API calls: ${successCalls.length}`);
     console.log(`❌ Failed API calls: ${errorCalls.length}`);
-    
+
     if (errorCalls.length > 0) {
       errorCalls.forEach(call => {
         console.log(`🚨 API Error: ${call.method} ${call.url} - Status: ${call.status}`);
       });
-      
-      await auditor.reportBug('/dashboard', 'API Integration', 
+
+      await auditor.reportBug('/dashboard', 'API Integration',
         `${errorCalls.length} API calls failed during dashboard interactions`, 'high');
     }
-    
+
     // Check for expected API endpoints
     const expectedEndpoints = ['checkins', 'dashboard', 'categories', 'streaks'];
     const calledEndpoints = apiCalls.map(call => {
       const url = new URL(call.url);
       return url.pathname;
     });
-    
+
     for (const expectedEndpoint of expectedEndpoints) {
       const endpointCalled = calledEndpoints.some(path => path.includes(expectedEndpoint));
       if (!endpointCalled) {
@@ -695,24 +695,24 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
         console.log(`✅ API endpoint '${expectedEndpoint}' was called`);
       }
     }
-    
+
     console.log('✅ Dashboard API Integration Audit Complete');
   });
-  
+
   test('Dashboard Accessibility and Keyboard Navigation', async ({ page }) => {
     console.log('♿ [SUB-AGENT 2] Starting Dashboard Accessibility Audit...');
-    
+
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState('networkidle');
-    
+
     // Test keyboard navigation
     let focusableElements = 0;
-    
+
     // Tab through elements
     for (let i = 0; i < 20; i++) {
       await page.keyboard.press('Tab');
       await page.waitForTimeout(300);
-      
+
       const focusedElement = await page.evaluate(() => {
         const active = document.activeElement;
         return {
@@ -722,35 +722,35 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
           className: active?.className
         };
       });
-      
+
       if (focusedElement.tagName && ['BUTTON', 'A', 'INPUT', 'SELECT'].includes(focusedElement.tagName)) {
         focusableElements++;
         console.log(`✅ Focusable element ${i + 1}: ${focusedElement.tagName} (${focusedElement.ariaLabel || focusedElement.className})`);
       }
     }
-    
+
     if (focusableElements === 0) {
-      await auditor.reportBug('/dashboard', 'Accessibility', 
+      await auditor.reportBug('/dashboard', 'Accessibility',
         'No keyboard-focusable elements found on dashboard', 'high');
     } else {
       console.log(`✅ Found ${focusableElements} keyboard-focusable elements`);
     }
-    
+
     // Test ARIA attributes
     const ariaElements = await page.locator('[aria-label], [aria-describedby], [role]').count();
     console.log(`✅ Found ${ariaElements} elements with ARIA attributes`);
-    
+
     if (ariaElements === 0) {
-      await auditor.reportBug('/dashboard', 'Accessibility', 
+      await auditor.reportBug('/dashboard', 'Accessibility',
         'No ARIA attributes found for screen reader support', 'medium');
     }
-    
+
     console.log('✅ Dashboard Accessibility Audit Complete');
   });
-  
+
   test.afterAll(async () => {
     const report = auditor.getBugReport();
-    
+
     console.log('\n🎯 [SUB-AGENT 2] DASHBOARD & HEXAGON AUDIT COMPLETE!');
     console.log('=====================================');
     console.log(`📊 Total Issues Found: ${report.totalBugs}`);
@@ -760,11 +760,11 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
     console.log(`🟢 Low: ${report.low}`);
     console.log(`🎯 Categories Tested: ${report.categoriesTestedCount}/6`);
     console.log('=====================================');
-    
+
     // Output JSON report for orchestrator
     console.log('\n📄 JSON REPORT FOR ORCHESTRATOR:');
     console.log(JSON.stringify(report, null, 2));
-    
+
     if (report.bugs.length > 0) {
       console.log('\n🐛 DETAILED BUG REPORT:');
       report.bugs.forEach((bug, index) => {
@@ -780,7 +780,7 @@ test.describe('SUB-AGENT 2: Dashboard & Hexagon Interactions Audit', () => {
     } else {
       console.log('\n🎉 NO BUGS FOUND IN DASHBOARD & HEXAGON!');
     }
-    
+
     console.log('\n✅ Sub-Agent 2 reporting complete to orchestrator');
   });
 });

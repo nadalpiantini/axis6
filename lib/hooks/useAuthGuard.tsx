@@ -7,13 +7,13 @@ import { useUser } from '@/lib/react-query/hooks'
 
 /**
  * Custom hook for protecting routes with authentication
- * 
+ *
  * This hook handles client-side authentication checking and redirection
  * in a React-compliant way (using useEffect to avoid state updates during render).
- * 
+ *
  * Note: The middleware already handles server-side authentication redirects,
  * so this hook primarily provides UX improvements and client-side validation.
- * 
+ *
  * @param redirectTo - The path to redirect unauthenticated users (default: '/auth/login')
  * @returns Object with user, isLoading, and isAuthenticated status
  */
@@ -37,7 +37,7 @@ export function useAuthGuard(redirectTo: string = '/auth/login') {
 
 /**
  * Higher-order component for protecting entire pages
- * 
+ *
  * Usage:
  * export default withAuthGuard(MyProtectedPage)
  */

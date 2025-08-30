@@ -31,7 +31,7 @@ export default function AchievementsPage() {
   const { data: user, isLoading: userLoading } = useUser()
   const { data: streaks = [] } = useStreaks(user?.id || '')
   const { data: checkins = [] } = useTodayCheckins(user?.id || '')
-  
+
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -39,14 +39,14 @@ export default function AchievementsPage() {
     if (!user || userLoading) return
 
     const generateAchievements = () => {
-      const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0 
+      const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0
         ? Math.max(...streaks.map(s => s?.current_streak || 0))
         : 0
-        
+
       const longestStreak = streaks && Array.isArray(streaks) && streaks.length > 0
         ? Math.max(...streaks.map(s => s?.longest_streak || 0))
         : 0
-        
+
       const totalCheckins = checkins && Array.isArray(checkins) ? checkins.length : 0
 
       const achievementsList: Achievement[] = [
@@ -215,7 +215,7 @@ export default function AchievementsPage() {
             </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-3">
-            <div 
+            <div
               data-testid="progress-bar"
               className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
               style={{ width: `${completionRate}%` }}
@@ -252,7 +252,7 @@ export default function AchievementsPage() {
                     <p data-testid="achievement-description" className="text-sm text-gray-300 mb-3">{achievement.description}</p>
                     <div data-testid="achievement-progress" className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-700 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-green-500 h-2 rounded-full"
                           style={{ width: '100%' }}
                         />
@@ -292,7 +292,7 @@ export default function AchievementsPage() {
                     <p data-testid="achievement-description" className="text-sm text-gray-500 mb-3">{achievement.description}</p>
                     <div data-testid="achievement-progress" className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-700 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-gray-500 h-2 rounded-full"
                           style={{ width: `${(achievement.progress / achievement.maxProgress) * 100}%` }}
                         />

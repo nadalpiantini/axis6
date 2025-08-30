@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -58,9 +58,9 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Smart notifications fetch error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch notifications',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
@@ -76,7 +76,7 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -87,7 +87,7 @@ export async function POST(_request: NextRequest) {
     }
 
     const body = await _request.json()
-    const { 
+    const {
       lookAheadHours = 24,
       force_regenerate: _force_regenerate = false,
       context = null
@@ -119,7 +119,7 @@ export async function POST(_request: NextRequest) {
       feature_name: 'smart_notifications',
       response_time_ms: responseTime,
       was_successful: notifications.length > 0,
-      confidence_score: notifications.length > 0 
+      confidence_score: notifications.length > 0
         ? notifications.reduce((sum, n) => sum + n.personalization_score, 0) / notifications.length
         : null
     })
@@ -131,7 +131,7 @@ export async function POST(_request: NextRequest) {
         meta: {
           generation_time_ms: responseTime,
           notifications_generated: notifications.length,
-          average_personalization_score: notifications.length > 0 
+          average_personalization_score: notifications.length > 0
             ? notifications.reduce((sum, n) => sum + n.personalization_score, 0) / notifications.length
             : 0,
           lookAheadHours
@@ -140,9 +140,9 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Smart notifications generation error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate notifications',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
@@ -158,7 +158,7 @@ export async function POST(_request: NextRequest) {
 export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -169,7 +169,7 @@ export async function PATCH(_request: NextRequest) {
     }
 
     const body = await _request.json()
-    const { 
+    const {
       notification_id,
       action, // 'mark_read', 'mark_delivered', 'dismiss'
       feedback = null
@@ -235,9 +235,9 @@ export async function PATCH(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Notification update error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to update notification',
         details: error instanceof Error ? error.message : 'Unknown error'
       },

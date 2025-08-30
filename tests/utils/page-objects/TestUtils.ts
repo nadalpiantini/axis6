@@ -21,7 +21,7 @@ export class TestUtils {
    * Generate a secure test password
    */
   static generateTestPassword(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123453000!@#$%';
     let password = '';
     for (let i = 0; i < 12; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -35,7 +35,7 @@ export class TestUtils {
   async waitForPageReady() {
     await this.page.waitForLoadState('networkidle');
     await this.page.waitForLoadState('domcontentloaded');
-    
+
     // Wait for any potential loading indicators to disappear
     const loadingIndicators = [
       '[data-testid="loading"]',
@@ -72,7 +72,7 @@ export class TestUtils {
       localStorage.clear();
       sessionStorage.clear();
     });
-    
+
     await this.page.context().clearCookies();
   }
 
@@ -101,7 +101,7 @@ export class TestUtils {
 
     await this.page.route('**/auth/v1/**', route => {
       const url = route.request().url();
-      
+
       if (url.includes('/token')) {
         route.fulfill({
           status: 200,
@@ -129,7 +129,7 @@ export class TestUtils {
    */
   async checkForConsoleErrors(): Promise<string[]> {
     const errors: string[] = [];
-    
+
     this.page.on('console', msg => {
       if (msg.type() === 'error') {
         errors.push(msg.text());
@@ -151,8 +151,8 @@ export class TestUtils {
     await this.page.waitForResponse(
       response => {
         const url = response.url();
-        return typeof urlPattern === 'string' ? 
-          url.includes(urlPattern) : 
+        return typeof urlPattern === 'string' ?
+          url.includes(urlPattern) :
           urlPattern.test(url);
       },
       { timeout }
@@ -197,7 +197,7 @@ export class TestUtils {
       const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const placeholder = await input.getAttribute('placeholder');
-      
+
       if (id) {
         const label = await this.page.locator(`label[for="${id}"]`).count();
         if (label === 0 && !ariaLabel && !placeholder) {
@@ -231,23 +231,23 @@ export class TestUtils {
    * Create a new authenticated context for parallel testing
    */
   static async createAuthenticatedContext(
-    browser: Browser, 
-    userEmail?: string, 
+    browser: Browser,
+    userEmail?: string,
     userPassword?: string
   ): Promise<BrowserContext> {
     const context = await browser.newContext();
     const page = await context.newPage();
-    
+
     // Navigate to login and authenticate
     await page.goto('/auth/login');
-    
+
     if (userEmail && userPassword) {
       await page.fill('input[type="email"]', userEmail);
       await page.fill('input[type="password"]', userPassword);
       await page.click('button[type="submit"]');
       await page.waitForURL(/\/dashboard/);
     }
-    
+
     await page.close();
     return context;
   }
@@ -263,7 +263,7 @@ export class TestUtils {
 
     // Clear browser storage
     await this.clearBrowserStorage();
-    
+
     // Additional cleanup could be added here
     // e.g., API calls to clean up test users, data, etc.
   }

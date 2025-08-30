@@ -81,7 +81,7 @@ describe('Dashboard', () => {
 
   it('should render dashboard with user data', async () => {
     renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/dashboard/i)).toBeInTheDocument()
     })
@@ -89,7 +89,7 @@ describe('Dashboard', () => {
 
   it('should display hexagon chart', async () => {
     renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       const hexagon = screen.getByTestId('hexagon-chart')
       expect(hexagon).toBeInTheDocument()
@@ -98,7 +98,7 @@ describe('Dashboard', () => {
 
   it('should show daily checkins', async () => {
     renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/great workout/i)).toBeInTheDocument()
       expect(screen.getByText(/productive day/i)).toBeInTheDocument()
@@ -107,7 +107,7 @@ describe('Dashboard', () => {
 
   it('should display streak information', async () => {
     renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/5.*streak/i)).toBeInTheDocument()
       expect(screen.getByText(/3.*streak/i)).toBeInTheDocument()
@@ -116,7 +116,7 @@ describe('Dashboard', () => {
 
   it('should handle loading state', () => {
     renderWithProviders(<Dashboard />)
-    
+
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
   })
 
@@ -125,11 +125,11 @@ describe('Dashboard', () => {
       ...createClient(),
       rpc: jest.fn().mockRejectedValue(new Error('Failed to load data'))
     }
-    
+
     ;(createClient as jest.Mock).mockReturnValue(errorClient)
-    
+
     renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/error loading dashboard/i)).toBeInTheDocument()
     })
@@ -137,15 +137,15 @@ describe('Dashboard', () => {
 
   it('should refresh data on pull-to-refresh', async () => {
     const { rerender } = renderWithProviders(<Dashboard />)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/dashboard/i)).toBeInTheDocument()
     })
-    
+
     // Simulate pull-to-refresh
     const refreshButton = screen.getByRole('button', { name: /refresh/i })
     refreshButton.click()
-    
+
     await waitFor(() => {
       expect(createClient().rpc).toHaveBeenCalledTimes(2)
     })

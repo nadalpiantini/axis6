@@ -27,7 +27,7 @@ const feedQuerySchema = z.object({
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -50,25 +50,25 @@ export async function POST(_request: NextRequest) {
 
     if (error) {
       logger.error('Error recording micro win:', error)
-      
+
       // Check if it's outside morning window
       if (error.message?.includes('morning window')) {
-        return NextResponse.json({ 
+        return NextResponse.json({
           error: 'Morning ritual window is 4:45-5:30 AM',
           details: 'You can still record a regular micro win'
         }, { status: 400 })
       }
-      
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         error: 'Failed to record micro win',
-        details: error.message 
+        details: error.message
       }, { status: 500 })
     }
 
     // Get the result from RPC function
     const result = data?.[0]
     if (!result?.success) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: result?.message || 'Failed to record micro win'
       }, { status: 400 })
     }
@@ -82,14 +82,14 @@ export async function POST(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid request data',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Micro win creation error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to record micro win'
     }, { status: 500 })
@@ -100,7 +100,7 @@ export async function POST(_request: NextRequest) {
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -115,7 +115,7 @@ export async function GET(_request: NextRequest) {
       limit: parseInt(searchParams.get('limit') || '20'),
       offset: parseInt(searchParams.get('offset') || '0')
     }
-    
+
     const validatedQuery = feedQuerySchema.parse(queryParams)
 
     // Call RPC function to get feed
@@ -129,9 +129,9 @@ export async function GET(_request: NextRequest) {
 
     if (feedError) {
       logger.error('Error fetching micro wins feed:', feedError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to fetch feed',
-        details: feedError.message 
+        details: feedError.message
       }, { status: 500 })
     }
 
@@ -162,14 +162,14 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid query parameters',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Micro wins feed error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to fetch feed'
     }, { status: 500 })
@@ -180,7 +180,7 @@ export async function GET(_request: NextRequest) {
 export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -214,16 +214,16 @@ export async function PATCH(_request: NextRequest) {
 
     if (reactionError) {
       logger.error('Error adding reaction:', reactionError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to add reaction',
-        details: reactionError.message 
+        details: reactionError.message
       }, { status: 500 })
     }
 
     // Update resonance count
     const { error: updateError } = await supabase
       .from('axis6_micro_wins')
-      .update({ 
+      .update({
         resonance_count: supabase.raw('resonance_count + 1')
       })
       .eq('id', winId)
@@ -239,7 +239,7 @@ export async function PATCH(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Reaction error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to add reaction'
     }, { status: 500 })

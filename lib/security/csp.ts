@@ -66,7 +66,7 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
     'connect-src': [
       "'self'",
       // API routes
-      `${process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:6789'}/api/`,
+      `${process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3000'}/api/`,
       // Supabase
       "https://nvpnhqhjttgwfwvkgmpk.supabase.co",
       "https://*.supabase.co",
@@ -94,9 +94,9 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
   // Convert to CSP string
   return Object.entries(directives)
     .filter(([, values]) => values.length > 0)
-    .map(([directive, values]) => 
-      values.length === 1 && values[0] === '' 
-        ? directive 
+    .map(([directive, values]) =>
+      values.length === 1 && values[0] === ''
+        ? directive
         : `${directive} ${values.join(' ')}`
     )
     .join('; ')
@@ -107,16 +107,16 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
  */
 export function setCSPHeaders(response: Response, nonce?: string, isDevelopment = false): Response {
   const csp = buildCSP(nonce, isDevelopment)
-  
+
   // Set CSP header
   response.headers.set('Content-Security-Policy', csp)
-  
+
   // Set additional security headers
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  
+
   // HSTS in production only
   if (!isDevelopment) {
     response.headers.set(
@@ -124,7 +124,7 @@ export function setCSPHeaders(response: Response, nonce?: string, isDevelopment 
       'max-age=31536000; includeSubDomains; preload'
     )
   }
-  
+
   return response
 }
 
@@ -138,7 +138,7 @@ export function getInlineScriptHashes(): string[] {
     // Vercel analytics
     'window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};',
   ]
-  
+
   return commonScripts.map(generateHash)
 }
 
@@ -156,7 +156,7 @@ export interface CSPViolationReport {
 
 export function logCSPViolation(report: CSPViolationReport): void {
   const { logger } = require('@/lib/logger')
-  
+
   logger.warn('CSP Violation detected', {
     directive: report['violated-directive'],
     blockedUri: report['blocked-uri'],
@@ -164,7 +164,7 @@ export function logCSPViolation(report: CSPViolationReport): void {
     sourceFile: report['source-file'],
     lineNumber: report['line-number'],
   })
-  
+
   // In production, send to monitoring service
   if (process.env['NODE_ENV'] === 'production') {
     // Send to error tracking service

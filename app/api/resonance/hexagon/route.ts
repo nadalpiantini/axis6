@@ -14,28 +14,26 @@ export async function GET(_request: NextRequest) {
 
     // Create Supabase client
     const supabase = await createClient()
-    
+
     // Get authenticated user with enhanced error handling
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.warn('Authentication failed in hexagon resonance API:', {
         error: authError?.message || 'No user found',
         timestamp: new Date().toISOString()
       })
-      
-      return NextResponse.json({ 
-        error: 'Unauthorized' 
+
+      return NextResponse.json({
+        error: 'Unauthorized'
       }, { status: 401 })
     }
-    
+
     logger.info('Hexagon resonance API - User authenticated successfully:', {
       userId: user.id,
       userEmail: user.email || 'no-email',
       timestamp: new Date().toISOString()
     })
-
-
 
     // Call RPC function to get hexagon resonance data with enhanced error handling
     logger.info('Calling get_hexagon_resonance RPC function:', {
@@ -43,7 +41,7 @@ export async function GET(_request: NextRequest) {
       targetDate,
       timestamp: new Date().toISOString()
     })
-    
+
     const { data: resonanceData, error: resonanceError } = await supabase
       .rpc('get_hexagon_resonance', {
         p_user_id: user.id,
@@ -60,7 +58,7 @@ export async function GET(_request: NextRequest) {
         targetDate,
         timestamp: new Date().toISOString()
       })
-      
+
       // Check if it's a function not found error
       if (resonanceError.code === '42883') {
         logger.error('get_hexagon_resonance function does not exist in database')
@@ -68,12 +66,12 @@ export async function GET(_request: NextRequest) {
           error: 'Resonance feature not available - function missing'
         }, { status: 501 })
       }
-      
+
       return NextResponse.json({
         error: 'Failed to fetch resonance data'
       }, { status: 500 })
     }
-    
+
     logger.info('Successfully fetched hexagon resonance data:', {
       userId: user.id,
       recordCount: resonanceData?.length || 0,
@@ -98,7 +96,7 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Hexagon resonance API error:', error)
-    
+
     return NextResponse.json({
       error: 'Internal server error'
     }, { status: 500 })

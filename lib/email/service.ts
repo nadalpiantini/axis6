@@ -8,7 +8,6 @@ import { PasswordResetEmail } from './templates/password-reset'
 import { WeeklyStatsEmail } from './templates/weekly-stats'
 import { WelcomeEmail } from './templates/welcome'
 
-
 // Initialize Resend only if API key is available
 const resend = process.env['RESEND_API_KEY'] ? new Resend(process.env['RESEND_API_KEY']) : null
 
@@ -60,7 +59,7 @@ export interface NotificationEmailData {
 
 class EmailService {
   private fromEmail = process.env['RESEND_FROM_EMAIL'] || 'noreply@axis6.app'
-  
+
   async sendWelcome(data: WelcomeEmailData) {
     if (!process.env['RESEND_API_KEY']) {
       logger.info(`Email service in development mode: welcome to ${data.email}`)
@@ -79,12 +78,12 @@ class EmailService {
         ]
       })
 
-      logger.info('Welcome email sent successfully', { 
-        emailId: result.data?.id, 
+      logger.info('Welcome email sent successfully', {
+        emailId: result.data?.id,
         to: data.email,
-        name: data.name 
+        name: data.name
       })
-      
+
       reportEvent('email_sent', {
         type: 'welcome',
         emailId: result.data?.id,
@@ -98,7 +97,7 @@ class EmailService {
         to: data.email,
         name: data.name
       })
-      
+
       reportError(error, 'high', {
         component: 'EmailService',
         action: 'send_welcome',
@@ -124,9 +123,9 @@ class EmailService {
         from: `AXIS6 Security <${this.fromEmail}>`,
         to: data.email,
         subject: 'Restablece tu contraseña de AXIS6',
-        react: PasswordResetEmail({ 
-          name: data.name, 
-          resetUrl: data.resetUrl 
+        react: PasswordResetEmail({
+          name: data.name,
+          resetUrl: data.resetUrl
         }),
         tags: [
           { name: 'category', value: 'security' },
@@ -173,17 +172,17 @@ class EmailService {
 
   async sendNotification(data: NotificationEmailData) {
     if (!process.env['RESEND_API_KEY']) {
-      logger.info('Email service in development mode', { 
-        type: 'notification', 
+      logger.info('Email service in development mode', {
+        type: 'notification',
         notificationType: data.type,
-        to: data.email 
+        to: data.email
       })
       return { success: true, id: 'dev-mode' }
     }
 
     try {
       const subject = getNotificationSubject(data.type, data.title)
-      
+
       const result = await resend!.emails.send({
         from: `AXIS6 <${this.fromEmail}>`,
         to: data.email,
@@ -204,13 +203,13 @@ class EmailService {
         ]
       })
 
-      logger.info('Notification email sent successfully', { 
-        emailId: result.data?.id, 
+      logger.info('Notification email sent successfully', {
+        emailId: result.data?.id,
         to: data.email,
         notificationType: data.type,
         title: data.title
       })
-      
+
       reportEvent('email_sent', {
         type: 'notification',
         notificationType: data.type,
@@ -226,7 +225,7 @@ class EmailService {
         notificationType: data.type,
         title: data.title
       })
-      
+
       reportError(error, 'high', {
         component: 'EmailService',
         action: 'send_notification',
@@ -259,15 +258,15 @@ class EmailService {
               <h1 style="color: #1e293b; margin: 0; font-size: 28px;">AXIS6</h1>
               <p style="color: #64748b; margin: 5px 0 0 0;">Seis ejes. Un solo tú.</p>
             </div>
-            
+
             <div style="background: #f8fafc; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
               <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 20px;">🎉 Email Configuration Successful!</h2>
               <p style="color: #334155; margin: 0; line-height: 1.6;">
-                This is a test email to verify that your AXIS6 email configuration is working correctly. 
+                This is a test email to verify that your AXIS6 email configuration is working correctly.
                 If you received this email, your Resend integration is properly set up!
               </p>
             </div>
-            
+
             <div style="text-align: center; padding: 20px 0; border-top: 1px solid #e2e8f0;">
               <p style="color: #64748b; margin: 0; font-size: 14px;">
                 Sent from AXIS6 - Your wellness tracking companion

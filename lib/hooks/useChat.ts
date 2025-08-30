@@ -3,18 +3,19 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 
 import { chatRealtimeManager } from '../supabase/chat-realtime'
 import { createClient } from '../supabase/client'
-import { 
-  ChatRoom, 
-  ChatMessage, 
-  ChatParticipant, 
+import {
+  ChatRoom,
+  ChatMessage,
+  ChatParticipant,
   ChatRoomWithParticipants,
   ChatMessageWithSender,
   RealtimeMessagePayload,
-  RealtimeParticipantPayload 
+  RealtimeParticipantPayload
 } from '../supabase/types'
 
 import { useSupabaseClient } from './useSupabaseClient'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 const MESSAGE_PAGE_SIZE = 50
 
 /**
@@ -42,7 +43,17 @@ export function useChatRooms(userId?: string) {
           .eq('user_id', userId)
 
         if (participantError) {
-          console.error('Failed to fetch user participations:', participantError)
+          handleError(error, {
+
+            operation: 'unknown_operation',
+
+            component: 'useChat',
+
+            userMessage: 'Something went wrong. Please try again.'
+
+          })
+    // // TODO: Replace with proper error handling
+    // console.error('Failed to fetch user participations:', participantError);
           throw participantError
         }
 
@@ -61,7 +72,17 @@ export function useChatRooms(userId?: string) {
           .order('updated_at', { ascending: false })
 
         if (error) {
-          console.error('Failed to fetch chat rooms:', error)
+          handleError(error, {
+
+            operation: 'unknown_operation',
+
+            component: 'useChat',
+
+            userMessage: 'Something went wrong. Please try again.'
+
+          })
+    // // TODO: Replace with proper error handling
+    // console.error('Failed to fetch chat rooms:', error);
           throw error
         }
 
@@ -141,7 +162,17 @@ export function useChatRooms(userId?: string) {
 
         return roomsWithData
       } catch (error) {
-        console.error('Failed to fetch chat rooms:', error)
+        handleError(error, {
+
+          operation: 'unknown_operation',
+
+          component: 'useChat',
+
+          userMessage: 'Something went wrong. Please try again.'
+
+        })
+    // // TODO: Replace with proper error handling
+    // console.error('Failed to fetch chat rooms:', error);
         throw error
       }
     },
@@ -175,9 +206,12 @@ export function useChatRoom(roomId: string, userId?: string) {
           setIsConnected(true)
         }
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to join room:', error);
+        handleError(error, {
+      operation: 'general_operation', component: 'useChat',
+
+          userMessage: 'Operation failed. Please try again.'
+
+        })
       }
     }
 
@@ -196,12 +230,12 @@ export function useChatRoom(roomId: string, userId?: string) {
 
     const unsubscribeMessage = chatRealtimeManager.onMessage(roomId, (payload) => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages', roomId] })
-      
+
       if (payload.eventType === 'INSERT' && payload.new) {
         // Optimistically update the messages cache
         queryClient.setQueryData(['chatMessages', roomId], (old: any) => {
           if (!old?.pages) return old
-          
+
           const newPages = [...old.pages]
           if (newPages[0]?.data) {
             newPages[0] = {
@@ -209,7 +243,7 @@ export function useChatRoom(roomId: string, userId?: string) {
               data: [payload.new, ...newPages[0].data]
             }
           }
-          
+
           return { ...old, pages: newPages }
         })
       }
@@ -217,7 +251,7 @@ export function useChatRoom(roomId: string, userId?: string) {
 
     const unsubscribeTyping = chatRealtimeManager.onTyping(roomId, setTypingUsers)
     const unsubscribePresence = chatRealtimeManager.onPresence(roomId, setOnlineUsers)
-    
+
     const unsubscribeParticipants = chatRealtimeManager.onParticipantChange(roomId, (payload) => {
       queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
     })
@@ -249,7 +283,7 @@ export function useChatMessages(roomId: string) {
     initialPageParam: null,
     queryFn: async ({ pageParam }): Promise<{ data: ChatMessageWithSender[], nextCursor: string | null }> => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       let query = supabase
         .from('axis6_chat_messages')
         .select('*')
@@ -318,8 +352,8 @@ export function useChatMessages(roomId: string) {
           reply_to: replyToMessage
         })
       }
-      const nextCursor = messages.length === MESSAGE_PAGE_SIZE 
-        ? messages[messages.length - 1]?.created_at 
+      const nextCursor = messages.length === MESSAGE_PAGE_SIZE
+        ? messages[messages.length - 1]?.created_at
         : null
 
       return { data: messages.reverse(), nextCursor }
@@ -338,22 +372,22 @@ export function useSendMessage(roomId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ 
-      content, 
-      messageType = 'text', 
+    mutationFn: async ({
+      content,
+      messageType = 'text',
       replyToId,
-      metadata 
-    }: { 
+      metadata
+    }: {
       content: string
       messageType?: ChatMessage['message_type']
       replyToId?: string
-      metadata?: any 
+      metadata?: any
     }) => {
       const success = await chatRealtimeManager.sendMessage(roomId, content, messageType, {
         ...metadata,
         reply_to_id: replyToId
       })
-      
+
       if (!success) {
         throw new Error('Failed to send message')
       }
@@ -362,9 +396,12 @@ export function useSendMessage(roomId: string) {
       // Messages will be updated via realtime subscription
     },
     onError: (error) => {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to send message:', error);
+      handleError(error, {
+      operation: 'general_operation', component: 'useChat',
+
+        userMessage: 'Operation failed. Please try again.'
+
+      })
       // Could add toast notification here
     }
   })
@@ -405,12 +442,12 @@ export function useCreateChatRoom() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ 
-      name, 
-      description, 
-      type, 
-      categoryId, 
-      maxParticipants 
+    mutationFn: async ({
+      name,
+      description,
+      type,
+      categoryId,
+      maxParticipants
     }: {
       name: string
       description?: string
@@ -419,7 +456,7 @@ export function useCreateChatRoom() {
       maxParticipants?: number
     }) => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
@@ -467,7 +504,7 @@ export function useJoinChatRoom() {
   const joinRoom = useMutation({
     mutationFn: async (roomId: string) => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
@@ -489,7 +526,7 @@ export function useJoinChatRoom() {
   const leaveRoom = useMutation({
     mutationFn: async (roomId: string) => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 

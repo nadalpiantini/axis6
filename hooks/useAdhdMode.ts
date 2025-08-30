@@ -54,13 +54,13 @@ export function useAdhdMode(): AdhdModeConfig {
 // Utility function to combine classes with ADHD mode awareness
 export function useAdhdClasses(baseClasses: string, adhdOverride?: string): string {
   const { enabled, className } = useAdhdMode()
-  
+
   return useMemo(() => {
     if (!enabled) return baseClasses
-    
+
     // If ADHD override provided, use it
     if (adhdOverride) return `${baseClasses} ${className} ${adhdOverride}`
-    
+
     // Otherwise apply default ADHD-friendly modifications
     const adhdClasses = baseClasses
       .replace(/grid-cols-\d+/, 'grid-cols-1') // Force single column
@@ -68,14 +68,14 @@ export function useAdhdClasses(baseClasses: string, adhdOverride?: string): stri
       .replace(/p-\d+/, 'p-6') // Increase padding
       .replace(/gap-\d+/, 'gap-6') // Increase gaps
       .replace(/min-h-\[\d+px\]/, 'min-h-[64px]') // Larger touch targets
-      
+
     return `${adhdClasses} ${className}`
   }, [baseClasses, adhdOverride, enabled, className])
 }
 
 // Hook for conditional rendering based on ADHD mode
 export function useAdhdConditional<T>(
-  standardValue: T, 
+  standardValue: T,
   adhdValue: T
 ): T {
   const { enabled } = useAdhdMode()
@@ -86,19 +86,19 @@ export function useAdhdConditional<T>(
 export function useAdhdAnimations() {
   const { enabled } = useAdhdMode()
   const { showAnimations } = usePreferencesStore()
-  
+
   return useMemo(() => ({
     // Disable complex animations in ADHD mode
     enableAnimations: enabled ? false : showAnimations,
-    
+
     // Simplified animation durations
     duration: enabled ? 0.1 : 0.3,
-    
+
     // Reduced spring stiffness for smoother, less jarring motion
-    springConfig: enabled 
-      ? { type: "tween", duration: 0.2 } 
+    springConfig: enabled
+      ? { type: "tween", duration: 0.2 }
       : { type: "spring", stiffness: 300, damping: 30 },
-      
+
     // Gentle hover effects instead of scale transforms
     hoverAnimation: enabled
       ? { opacity: 0.8 }
@@ -109,20 +109,20 @@ export function useAdhdAnimations() {
 // Hook to get ADHD-friendly content strategy
 export function useAdhdContent() {
   const { enabled } = useAdhdMode()
-  
+
   return useMemo(() => ({
     // Hide complex metrics in ADHD mode
     showDetailedMetrics: !enabled,
-    
+
     // Simplified messaging
     messageStyle: enabled ? 'minimal' : 'descriptive',
-    
+
     // Limit displayed items
     itemLimit: enabled ? 3 : 6,
-    
+
     // Single action focus
     singleActionMode: enabled,
-    
+
     // Simplified tooltips
     tooltipStyle: enabled ? 'simple' : 'detailed'
   }), [enabled])

@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { logger } from '@/lib/logger'
-import { createClient } from '@/lib/supabase/server'
 
 // GET /api/analytics - Get user's analytics data
 export async function GET(_request: NextRequest) {
   try {
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -18,7 +18,7 @@ export async function GET(_request: NextRequest) {
     const { searchParams } = new URL(_request.url)
     const period = searchParams.get('period') || '30' // days
     const categoryId = searchParams.get('categoryId')
-    
+
     const daysBack = parseInt(period)
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - daysBack)
@@ -97,10 +97,10 @@ export async function GET(_request: NextRequest) {
     const totalDays = daysBack
     const daysWithData = dailyStats.length
     const totalCheckins = checkins.length
-    const averageCompletionRate = dailyStats.length > 0 
-      ? dailyStats.reduce((sum, day) => sum + day.completion_rate, 0) / dailyStats.length 
+    const averageCompletionRate = dailyStats.length > 0
+      ? dailyStats.reduce((sum, day) => sum + day.completion_rate, 0) / dailyStats.length
       : 0
-    
+
     // Category-specific analytics
     const categoryStats: Record<string, any> = {}
     checkins.forEach(checkin => {
@@ -189,10 +189,10 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -258,7 +258,7 @@ export async function POST(_request: NextRequest) {
         c.mood || '',
         c.notes || ''
       ]) || []
-      
+
       const csvContent = [csvHeaders, ...csvRows]
         .map(row => row.map(cell => `"${cell}"`).join(','))
         .join('\n')

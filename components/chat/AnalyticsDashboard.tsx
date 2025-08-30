@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { chatAnalyticsService, ChatAnalytics } from '@/lib/services/chat-analytics'
 import { cn } from '@/lib/utils'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface AnalyticsDashboardProps {
   className?: string
   onClose?: () => void
@@ -52,9 +52,12 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
     } catch (err) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Export failed:', err);
+      handleError(error, {
+      operation: 'chat_operation', component: 'AnalyticsDashboard',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
     }
   }
 
@@ -105,7 +108,7 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
           <TrendingUp className="h-6 w-6 text-purple-400" />
           <h1 className="text-xl font-semibold text-white">Chat Analytics</h1>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -214,7 +217,7 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="date" tickFormatter={formatDateLabel} stroke="#9CA3AF" fontSize={12} />
                     <YAxis stroke="#9CA3AF" fontSize={12} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '6px' }}
                       labelStyle={{ color: '#F3F4F6' }}
                     />
@@ -262,7 +265,7 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="hour" tickFormatter={formatHourLabel} stroke="#9CA3AF" fontSize={12} />
                     <YAxis stroke="#9CA3AF" fontSize={12} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '6px' }}
                       labelFormatter={(label) => `${formatHourLabel(label as number)}`}
                     />
@@ -289,10 +292,10 @@ export function AnalyticsDashboard({ className, onClose }: AnalyticsDashboardPro
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-24 bg-neutral-700 rounded-full h-2">
-                        <div 
+                        <div
                           className="h-2 bg-purple-500 rounded-full"
-                          style={{ 
-                            width: `${(room.count / Math.max(...analytics.activity.messages_by_room.map(r => r.count))) * 100}%` 
+                          style={{
+                            width: `${(room.count / Math.max(...analytics.activity.messages_by_room.map(r => r.count))) * 100}%`
                           }}
                         />
                       </div>

@@ -27,12 +27,12 @@ interface WeeklyStatsEmailProps {
   }
 }
 
-export const WeeklyStatsEmail = ({ 
+export const WeeklyStatsEmail = ({
   name = 'Usuario',
   stats
 }: WeeklyStatsEmailProps) => {
   const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
-  
+
   const getEncouragementMessage = (completionRate: number) => {
     if (completionRate >= 90) return "¡Increíble! Estás en fuego 🔥"
     if (completionRate >= 70) return "¡Excelente progreso! Sigue así 💪"
@@ -47,7 +47,7 @@ export const WeeklyStatsEmail = ({
     if (rate >= 40) return 'bg-yellow-500'
     return 'bg-gray-400'
   }
-  
+
   return (
     <Html>
       <Head />
@@ -81,7 +81,7 @@ export const WeeklyStatsEmail = ({
               <Heading className="text-xl font-semibold text-slate-900 mb-6 text-center">
                 Tu semana en números
               </Heading>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600 mb-2">
@@ -91,7 +91,7 @@ export const WeeklyStatsEmail = ({
                     Check-ins totales
                   </Text>
                 </div>
-                
+
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">
                     {Math.round(stats.completionRate)}%
@@ -123,12 +123,12 @@ export const WeeklyStatsEmail = ({
                 <Heading className="text-xl font-semibold text-slate-900 mb-4">
                   🔥 Rachas activas
                 </Heading>
-                
+
                 <div className="space-y-3">
                   {stats.currentStreaks.map((streak, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center">
-                        <div 
+                        <div
                           className="w-4 h-4 rounded-full mr-3"
                           style={{ backgroundColor: streak.color }}
                         ></div>
@@ -173,7 +173,7 @@ export const WeeklyStatsEmail = ({
               <Heading className="text-xl font-semibold text-slate-900 mb-4">
                 💡 Para la próxima semana
               </Heading>
-              
+
               <div className="space-y-3 text-slate-700 text-sm">
                 {stats.completionRate >= 80 ? (
                   <>

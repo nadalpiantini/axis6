@@ -40,7 +40,7 @@ describe('Email Service', () => {
   describe('configuration validation', () => {
     it('should detect when email is not configured', () => {
       expect(isEmailConfigured()).toBe(false)
-      
+
       const config = getEmailConfig()
       expect(config.configured).toBe(false)
       expect(config.apiKey).toBe(false)
@@ -51,7 +51,7 @@ describe('Email Service', () => {
       process.env['RESEND_FROM_EMAIL'] = 'test@axis6.app'
 
       expect(isEmailConfigured()).toBe(true)
-      
+
       const config = getEmailConfig()
       expect(config.configured).toBe(true)
       expect(config.apiKey).toBe(true)
@@ -72,7 +72,7 @@ describe('Email Service', () => {
 
     it('should handle welcome email in development mode', async () => {
       const { logger } = require('@/lib/utils/logger')
-      
+
       const result = await emailService.sendWelcome({
         name: 'Test User',
         email: 'test@example.com'

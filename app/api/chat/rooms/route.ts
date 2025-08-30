@@ -7,10 +7,10 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat rooms auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type') // Filter by room type
     const categoryId = searchParams.get('categoryId') // Filter by category
-    
+
     // First get room IDs where user is a participant to avoid complex inner joins
     const { data: participantRooms, error: participantError } = await supabase
       .from('axis6_chat_participants')
@@ -87,14 +87,14 @@ export async function GET(request: NextRequest) {
     }
 
     const { data: rooms, error } = await query
-    
+
     if (error) {
       logger.error('Error fetching chat rooms:', error)
       return NextResponse.json({ error: 'Failed to fetch chat rooms' }, { status: 500 })
     }
 
     return NextResponse.json({ rooms: rooms || [] })
-    
+
   } catch (error) {
     logger.error('Chat rooms API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -105,21 +105,21 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       logger.error('Chat room creation auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Parse request body
-    const { 
-      name, 
-      description, 
-      type, 
-      categoryId, 
+    const {
+      name,
+      description,
+      type,
+      categoryId,
       maxParticipants,
       isPrivate = false,
       inviteUserIds = []
@@ -127,15 +127,15 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!name || !type) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: name and type' 
+      return NextResponse.json({
+        error: 'Missing required fields: name and type'
       }, { status: 400 })
     }
 
     // Validate type
     if (!['direct', 'category', 'group', 'support'].includes(type)) {
-      return NextResponse.json({ 
-        error: 'Invalid room type' 
+      return NextResponse.json({
+        error: 'Invalid room type'
       }, { status: 400 })
     }
 
@@ -156,8 +156,8 @@ export async function POST(request: NextRequest) {
 
     if (roomError) {
       logger.error('Error creating chat room:', roomError)
-      return NextResponse.json({ 
-        error: 'Failed to create chat room' 
+      return NextResponse.json({
+        error: 'Failed to create chat room'
       }, { status: 500 })
     }
 
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ room }, { status: 201 })
-    
+
   } catch (error) {
     logger.error('Chat room creation API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

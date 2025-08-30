@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -14,23 +13,23 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       const supabase = createClient()
-      
+
       // Get the code from the URL
       const urlParams = new URLSearchParams(window.location.search)
       const code = urlParams.get('code')
-      
+
       if (code) {
         try {
           // Exchange the code for a session
           const { error } = await supabase.auth.exchangeCodeForSession(code)
-          
+
           if (error) {
             logger.error('Error exchanging code for session:', error)
             setError('Failed to confirm email. Please try logging in.')
             setTimeout(() => router.push('/auth/login'), 3000)
             return
           }
-          
+
           // Successfully confirmed email, redirect to dashboard
           router.push('/dashboard')
         } catch (err) {
@@ -43,7 +42,7 @@ export default function AuthCallbackPage() {
         router.push('/auth/login')
       }
     }
-    
+
     handleCallback()
   }, [router])
 

@@ -24,7 +24,7 @@ export async function POST(_request: NextRequest) {
     // Authenticate user
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -81,7 +81,7 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Activity recommendation API error:', error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

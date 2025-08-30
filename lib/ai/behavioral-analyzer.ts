@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 
 import { deepseekClient } from './deepseek'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 export interface BehaviorPattern {
   pattern_type: 'checkin_timing' | 'completion_rate' | 'category_preference' | 'streak_behavior' | 'mood_correlation'
   confidence_score: number
@@ -64,25 +65,34 @@ export class BehavioralAnalyzer {
 
       // Gather user data for analysis
       const userData = await this.gatherUserData(userId)
-      
+
       // Perform pattern analysis
       const patterns = await this.identifyPatterns(userData)
-      
+
       // Generate behavioral profile
       const profile = await this.generateBehaviorProfile(userId, userData, patterns)
-      
+
       // Cache the results
       this.analysisCache.set(userId, profile)
-      
+
       // Store in database
       await this.storeBehaviorProfile(profile)
-      
+
       return profile
     } catch (error) {
-      // TODO: Replace with proper error handling
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'behavioral-analyzer',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI behavioral analyzer operation failed:', error);
     // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Behavioral analysis failed:', error);
+    // console.error('AI behavioral analyzer operation failed:', error);
       return this.getDefaultProfile(userId)
     }
   }
@@ -96,10 +106,10 @@ export class BehavioralAnalyzer {
   ): Promise<PersonalizedInsight[]> {
     try {
       const behaviorProfile = profile || await this.analyzeBehavior(userId)
-      
+
       // Get recent activity data
       const recentData = await this.getRecentActivityData(userId)
-      
+
       // Check if AI features are enabled
       if (!deepseekClient.isAIEnabled()) {
         return this.generateBasicInsights(behaviorProfile, recentData)
@@ -107,16 +117,25 @@ export class BehavioralAnalyzer {
 
       // Generate AI-powered insights
       const aiInsights = await this.generateAIInsights(behaviorProfile, recentData)
-      
+
       // Store insights in database
       await this.storeInsights(userId, aiInsights)
-      
+
       return aiInsights
     } catch (error) {
-      // TODO: Replace with proper error handling
+            handleError(error, {
+
+              operation: 'ai_operation',
+
+              component: 'behavioral-analyzer',
+
+              userMessage: 'AI operation failed. Please try again.'
+
+            })
+            // TODO: Replace with proper error handling
+    // console.error('AI behavioral analyzer operation failed:', error);
     // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Insight generation failed:', error);
+    // console.error('AI behavioral analyzer operation failed:', error);
       return this.generateBasicInsights(profile || await this.getDefaultProfile(userId))
     }
   }
@@ -133,7 +152,7 @@ export class BehavioralAnalyzer {
     }>
   }> {
     const profile = await this.analyzeBehavior(userId)
-    
+
     const bestTimes = profile.active_hours
       .filter(ah => ah.frequency > 0.3)
       .map(ah => ({
@@ -146,7 +165,7 @@ export class BehavioralAnalyzer {
 
     // Generate personalized reminder messages
     const reminders = await this.generatePersonalizedReminders(profile, bestTimes)
-    
+
     return { best_times: bestTimes, personalized_reminders: reminders }
   }
 
@@ -166,16 +185,16 @@ export class BehavioralAnalyzer {
   }>> {
     const profile = await this.analyzeBehavior(userId)
     const historicalData = await this.getHistoricalPerformance(userId, timeframe)
-    
+
     // Analyze performance patterns
     const goals = profile.preferred_categories.map(cat => {
       const historical = historicalData.find(h => h.category_id === cat.category_id)
       const avgCompletion = historical?.completion_rate || 0.3
-      
+
       // Calculate suggested target based on historical performance and personality
       let target = Math.round(avgCompletion * (timeframe === 'weekly' ? 7 : 30))
       let difficulty: 'easy' | 'medium' | 'challenging' = 'medium'
-      
+
       // Adjust based on behavioral traits
       if (profile.behavioral_traits.goal_orientation === 'process') {
         target = Math.max(1, Math.round(target * 0.8)) // Lower but consistent
@@ -184,7 +203,7 @@ export class BehavioralAnalyzer {
         target = Math.round(target * 1.3) // Higher challenge
         difficulty = 'challenging'
       }
-      
+
       return {
         category_id: cat.category_id,
         goal_type: 'frequency' as const,
@@ -194,7 +213,7 @@ export class BehavioralAnalyzer {
         success_probability: this.calculateSuccessProbability(profile, target, historical)
       }
     })
-    
+
     return goals.sort((a, b) => b.success_probability - a.success_probability)
   }
 
@@ -203,7 +222,7 @@ export class BehavioralAnalyzer {
    */
   private async gatherUserData(userId: string) {
     const thirtyDaysAgo = subDays(new Date(), 30)
-    
+
     const [checkins, streaks, temperament, dailyStats] = await Promise.all([
       // Recent check-ins with timestamps
       this.supabase
@@ -212,20 +231,20 @@ export class BehavioralAnalyzer {
         .eq('user_id', userId)
         .gte('completed_at', format(thirtyDaysAgo, 'yyyy-MM-dd'))
         .order('completed_at', { ascending: false }),
-      
+
       // Current streaks
       this.supabase
         .from('axis6_streaks')
         .select('*')
         .eq('user_id', userId),
-      
+
       // Temperament profile
       this.supabase
         .from('axis6_temperament_profiles')
         .select('*')
         .eq('user_id', userId)
         .single(),
-      
+
       // Daily statistics
       this.supabase
         .from('axis6_daily_stats')
@@ -290,12 +309,12 @@ export class BehavioralAnalyzer {
   private analyzeTimingPatterns(checkins: any[]): BehaviorPattern {
     const hourCounts: Record<number, number> = {}
     const dayOfWeekCounts: Record<number, number> = {}
-    
+
     checkins.forEach(checkin => {
       const date = parseISO(checkin.created_at || checkin.completed_at)
       const hour = date.getHours()
       const dayOfWeek = date.getDay()
-      
+
       hourCounts[hour] = (hourCounts[hour] || 0) + 1
       dayOfWeekCounts[dayOfWeek] = (dayOfWeekCounts[dayOfWeek] || 0) + 1
     })
@@ -340,7 +359,7 @@ export class BehavioralAnalyzer {
     const completionRates = dailyStats.map(stat => stat.completion_rate || 0)
     const avgCompletion = completionRates.reduce((sum, rate) => sum + rate, 0) / completionRates.length
     const consistency = 1 - (Math.sqrt(completionRates.reduce((sum, rate) => sum + Math.pow(rate - avgCompletion, 2), 0) / completionRates.length) / avgCompletion)
-    
+
     const trends = this.analyzeTrends(completionRates)
     const confidence = Math.min(0.95, dailyStats.length / 14)
 
@@ -364,7 +383,7 @@ export class BehavioralAnalyzer {
    */
   private analyzeCategoryPreferences(checkins: any[]): BehaviorPattern {
     const categoryCount: Record<number, number> = {}
-    
+
     checkins.forEach(checkin => {
       categoryCount[checkin.category_id] = (categoryCount[checkin.category_id] || 0) + 1
     })
@@ -391,7 +410,7 @@ export class BehavioralAnalyzer {
         `Preference distribution: ${preferences.length > 1 ? (preferences[0].percentage > 0.4 ? 'focused' : 'balanced') : 'single-focus'}`
       ],
       recommendations: [
-        preferences[0].percentage > 0.5 
+        preferences[0].percentage > 0.5
           ? 'Consider expanding to other life areas for better balance'
           : 'Great balance across multiple life dimensions',
         'Build on your strongest area while maintaining variety',
@@ -444,7 +463,7 @@ export class BehavioralAnalyzer {
 
     const avgMood = moodData.reduce((sum, data) => sum + data.mood, 0) / moodData.length
     const moodByHour: Record<number, number[]> = {}
-    
+
     moodData.forEach(data => {
       if (!moodByHour[data.hour]) moodByHour[data.hour] = []
       moodByHour[data.hour].push(data.mood)
@@ -489,16 +508,16 @@ export class BehavioralAnalyzer {
     patterns: BehaviorPattern[]
   ): Promise<UserBehaviorProfile> {
     const { checkins, streaks, temperament } = userData
-    
+
     // Calculate active hours
     const activeHours = this.calculateActiveHours(checkins)
-    
+
     // Calculate preferred categories
     const preferredCategories = this.calculatePreferredCategories(checkins)
-    
+
     // Analyze completion patterns
     const completionPatterns = this.analyzeCompletionPatternDetails(userData)
-    
+
     // Determine behavioral traits
     const behavioralTraits = await this.determineBehavioralTraits(patterns, temperament)
 
@@ -557,7 +576,7 @@ export class BehavioralAnalyzer {
    */
   private analyzeCompletionPatternDetails(userData: any) {
     const { checkins, dailyStats } = userData
-    
+
     // Analyze by day of week
     const dayOfWeekCounts: Record<number, number> = {}
     checkins.forEach((checkin: any) => {
@@ -581,7 +600,7 @@ export class BehavioralAnalyzer {
     const completionRates = dailyStats.map((stat: any) => stat.completion_rate || 0)
     const avgCompletion = completionRates.reduce((sum: number, rate: number) => sum + rate, 0) / completionRates.length
     const streakPotential = avgCompletion * 0.8 + (completionRates.filter((rate: number) => rate > 0.8).length / completionRates.length) * 0.2
-    
+
     return {
       best_days: bestDays,
       peak_hours: peakHours,
@@ -605,7 +624,7 @@ export class BehavioralAnalyzer {
     // Adjust based on temperament if available
     if (temperament) {
       const primary = temperament.primary_temperament
-      
+
       switch (primary) {
         case 'sanguine':
           traits.social_tendency = 'independent'
@@ -644,7 +663,7 @@ export class BehavioralAnalyzer {
     recentData: any
   ): Promise<PersonalizedInsight[]> {
     const prompt = this.buildInsightsPrompt(profile, recentData)
-    
+
     try {
       const response = await deepseekClient.generateCompletion(
         prompt,
@@ -654,11 +673,12 @@ export class BehavioralAnalyzer {
 
       return this.parseInsightsResponse(response)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('AI insights generation failed:', error);
-      return this.generateBasicInsights(profile, recentData)
+      handleError(error, {
+      operation: 'ai_operation',
+      component: 'behavioral-analyzer',
+      userMessage: 'AI operation failed. Please try again.'
+    })
+    return this.generateBasicInsights(profile, recentData)
     }
   }
 
@@ -674,7 +694,7 @@ export class BehavioralAnalyzer {
     - Preferred categories: ${profile.preferred_categories.slice(0, 3).map(cat => `Category ${cat.category_id} (${Math.round(cat.preference_score * 100)}%)`).join(', ')}
     - Completion patterns: ${JSON.stringify(profile.completion_patterns)}
     - Behavioral traits: ${JSON.stringify(profile.behavioral_traits)}
-    
+
     **Recent Activity:**
     - Recent check-ins: ${recentData?.recentCheckins?.length || 0}
     - Recent completion rate: ${recentData?.recentCompletionRate || 'N/A'}
@@ -706,18 +726,18 @@ export class BehavioralAnalyzer {
   private parseInsightsResponse(response: string): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = []
     const sections = response.split(/\d+\.\s\*\*/)
-    
+
     sections.slice(1).forEach((section, index) => {
       const lines = section.split('\n').filter(line => line.trim())
       if (lines.length < 2) return
 
       const titleMatch = lines[0].match(/([^*]+)/)
       const title = titleMatch ? titleMatch[1].replace(':', '').trim() : `Insight ${index + 1}`
-      
+
       const content = lines[1]?.trim() || ''
       const actionLine = lines.find(line => line.includes('Action:'))
       const priorityLine = lines.find(line => line.includes('Priority:'))
-      
+
       const action = actionLine ? actionLine.replace(/.*Action:\s*/, '').trim() : ''
       const priority = priorityLine ? priorityLine.replace(/.*Priority:\s*/, '').toLowerCase() as 'low' | 'medium' | 'high' : 'medium'
 
@@ -745,10 +765,10 @@ export class BehavioralAnalyzer {
     const insights: PersonalizedInsight[] = []
 
     // Peak time insight
-    const peakHour = profile.active_hours.reduce((max, ah) => 
+    const peakHour = profile.active_hours.reduce((max, ah) =>
       ah.frequency > max.frequency ? ah : max, profile.active_hours[0]
     )
-    
+
     if (peakHour) {
       insights.push({
         id: `basic-timing-${Date.now()}`,
@@ -807,7 +827,7 @@ export class BehavioralAnalyzer {
 
     for (const time of bestTimes.slice(0, 3)) {
       let message = ''
-      
+
       // Personalize based on behavioral traits
       switch (profile.behavioral_traits.motivation_type) {
         case 'intrinsic':
@@ -844,15 +864,15 @@ export class BehavioralAnalyzer {
 
   private analyzeTrends(data: number[]): { direction: 'improving' | 'declining' | 'stable'; slope: number } {
     if (data.length < 2) return { direction: 'stable', slope: 0 }
-    
+
     const n = data.length
     const sumX = n * (n - 1) / 2
     const sumY = data.reduce((sum, val) => sum + val, 0)
     const sumXY = data.reduce((sum, val, i) => sum + i * val, 0)
     const sumX2 = n * (n - 1) * (2 * n - 1) / 6
-    
+
     const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
-    
+
     return {
       direction: slope > 0.05 ? 'improving' : slope < -0.05 ? 'declining' : 'stable',
       slope
@@ -861,7 +881,7 @@ export class BehavioralAnalyzer {
 
   private generateCompletionRecommendations(avgCompletion: number, consistency: number, trends: any): string[] {
     const recommendations = []
-    
+
     if (avgCompletion < 0.5) {
       recommendations.push('Start with 1-2 easy wins daily to build momentum')
       recommendations.push('Focus on your strongest time of day')
@@ -869,19 +889,19 @@ export class BehavioralAnalyzer {
       recommendations.push('Great consistency! Consider adding challenging goals')
       recommendations.push('Share your success strategy with the community')
     }
-    
+
     if (consistency < 0.6) {
       recommendations.push('Reduce variability by creating standard routines')
       recommendations.push('Use habit stacking to link new behaviors to existing ones')
     }
-    
+
     if (trends.direction === 'declining') {
       recommendations.push('Identify what changed recently and adjust accordingly')
       recommendations.push('Consider simplifying your approach temporarily')
     } else if (trends.direction === 'improving') {
       recommendations.push('Maintain current momentum - you\'re on the right track!')
     }
-    
+
     return recommendations
   }
 
@@ -902,7 +922,7 @@ export class BehavioralAnalyzer {
   private generateGoalReasoning(profile: UserBehaviorProfile, category: any, historical: any): string {
     const performance = historical?.completion_rate || 0.3
     const trait = profile.behavioral_traits.goal_orientation
-    
+
     if (trait === 'process') {
       return `Based on your process-focused approach and ${Math.round(performance * 100)}% historical performance`
     } else if (trait === 'outcome') {
@@ -916,20 +936,20 @@ export class BehavioralAnalyzer {
     const baseRate = historical?.completion_rate || 0.3
     const consistency = profile.completion_patterns.consistency_score
     const preference = profile.preferred_categories.find(cat => cat.category_id === historical?.category_id)?.preference_score || 0.2
-    
+
     return Math.min(0.95, baseRate * 0.5 + consistency * 0.3 + preference * 0.2)
   }
 
   private async getRecentActivityData(userId: string) {
     const sevenDaysAgo = subDays(new Date(), 7)
-    
+
     const [recentCheckins, recentStats] = await Promise.all([
       this.supabase
         .from('axis6_checkins')
         .select('*')
         .eq('user_id', userId)
         .gte('completed_at', format(sevenDaysAgo, 'yyyy-MM-dd')),
-      
+
       this.supabase
         .from('axis6_daily_stats')
         .select('*')
@@ -943,8 +963,8 @@ export class BehavioralAnalyzer {
 
     return {
       recentCheckins: checkins,
-      recentCompletionRate: stats.length > 0 
-        ? stats.reduce((sum: number, stat: any) => sum + (stat.completion_rate || 0), 0) / stats.length 
+      recentCompletionRate: stats.length > 0
+        ? stats.reduce((sum: number, stat: any) => sum + (stat.completion_rate || 0), 0) / stats.length
         : null,
       activeStreaks
     }
@@ -953,19 +973,19 @@ export class BehavioralAnalyzer {
   private async getHistoricalPerformance(userId: string, timeframe: 'weekly' | 'monthly') {
     const daysBack = timeframe === 'weekly' ? 21 : 90 // 3 weeks or 3 months of data
     const startDate = subDays(new Date(), daysBack)
-    
+
     const { data } = await this.supabase
       .from('axis6_checkins')
       .select('category_id, completed_at')
       .eq('user_id', userId)
       .gte('completed_at', format(startDate, 'yyyy-MM-dd'))
-    
+
     if (!data || data.length === 0) return []
-    
+
     // Group by category and calculate completion rates
     const categoryStats: Record<number, { count: number; total_days: number }> = {}
     const totalDays = Math.ceil((new Date().getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-    
+
     data.forEach((checkin: any) => {
       const catId = checkin.category_id
       if (!categoryStats[catId]) {
@@ -973,7 +993,7 @@ export class BehavioralAnalyzer {
       }
       categoryStats[catId].count += 1
     })
-    
+
     return Object.entries(categoryStats).map(([catId, stats]) => ({
       category_id: parseInt(catId),
       completion_rate: stats.count / stats.total_days
@@ -1003,9 +1023,7 @@ export class BehavioralAnalyzer {
         })
     } catch (error) {
       // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to store behavior profile:', error);
+      // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
 
@@ -1029,9 +1047,7 @@ export class BehavioralAnalyzer {
         .insert(insightRows)
     } catch (error) {
       // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to store insights:', error);
+      // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
 

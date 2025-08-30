@@ -1,11 +1,11 @@
 import { test as base, expect } from '@playwright/test';
-import { 
-  LandingPage, 
-  LoginPage, 
-  RegisterPage, 
-  DashboardPage, 
+import {
+  LandingPage,
+  LoginPage,
+  RegisterPage,
+  DashboardPage,
   ProfilePage,
-  TestUtils 
+  TestUtils
 } from '../utils/page-objects';
 
 // Test user data
@@ -24,7 +24,7 @@ export const TEST_USERS = {
 
 // Environment-specific configuration
 export const TEST_CONFIG = {
-  baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:6789',
+  baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
   isProduction: process.env.NODE_ENV === 'production',
   testTimeout: 30000,
   slowTestTimeout: 60000
@@ -82,14 +82,14 @@ export const test = base.extend<TestFixtures>({
   authenticatedPage: async ({ page, testUser }, use) => {
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
-    
+
     // Login the user
     await loginPage.loginUser(testUser.email, testUser.password);
-    
+
     // Navigate to dashboard and verify it's loaded
     await dashboardPage.goto('/dashboard');
     await dashboardPage.verifyDashboardLoaded();
-    
+
     await use(dashboardPage);
   },
 

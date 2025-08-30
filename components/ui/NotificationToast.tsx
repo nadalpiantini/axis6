@@ -25,7 +25,7 @@ export function NotificationToast() {
 
   useEffect(() => {
     // Auto-remove notifications after 2.5 seconds
-    const timers = notifications.map(notification => 
+    const timers = notifications.map(notification =>
       setTimeout(() => {
         removeNotification(notification.id)
       }, 2500)
@@ -42,7 +42,7 @@ export function NotificationToast() {
         {notifications.map((notification) => {
           const Icon = icons[notification.type]
           const colorClass = colors[notification.type]
-          
+
           return (
             <motion.div
               key={notification.id}

@@ -6,12 +6,12 @@
 'use client'
 
 import React, { memo } from 'react';
-import type { 
-  PrecomputedSVG, 
-  ResponsiveSizing, 
+import type {
+  PrecomputedSVG,
+  ResponsiveSizing,
   HardwareAcceleration,
   CompletionData,
-  TimeDistribution 
+  TimeDistribution
 } from '../types/HexagonTypes';
 import { HEXAGON_CATEGORIES } from '../utils/clockPositions';
 import { generateGradientDefinitions } from '../utils/pathGeneration';
@@ -31,19 +31,19 @@ interface HexagonRendererProps {
  * Core hexagon background renderer
  * Pre-computed paths for 80% performance improvement
  */
-const HexagonGrid = memo(function HexagonGrid({ 
-  precomputedSVG, 
+const HexagonGrid = memo(function HexagonGrid({
+  precomputedSVG,
   animate = true,
-  showGrid = true 
+  showGrid = true
 }: {
   precomputedSVG: PrecomputedSVG;
   animate?: boolean;
   showGrid?: boolean;
 }) {
   const { hexagonPath, gridPaths } = precomputedSVG;
-  
+
   if (!showGrid) return null;
-  
+
   return (
     <g className="hexagon-grid">
       {/* Concentric grid lines */}
@@ -63,7 +63,7 @@ const HexagonGrid = memo(function HexagonGrid({
           }}
         />
       ))}
-      
+
       {/* Main hexagon outline */}
       <polygon
         points={hexagonPath}
@@ -78,7 +78,7 @@ const HexagonGrid = memo(function HexagonGrid({
           strokeDashoffset: animate ? '1000' : '0'
         }}
       />
-      
+
       {/* Axis lines from center */}
       {precomputedSVG.clockPositions.map((pos, idx) => {
         const category = HEXAGON_CATEGORIES[idx];
@@ -118,7 +118,7 @@ const DataPolygonRenderer = memo(function DataPolygonRenderer({
   animate?: boolean;
 }) {
   if (!data) return null;
-  
+
   // Generate data polygon points
   const dataPoints = precomputedSVG.clockPositions.map((pos, index) => {
     const categoryKey = HEXAGON_CATEGORIES[index].key as keyof CompletionData;
@@ -127,9 +127,9 @@ const DataPolygonRenderer = memo(function DataPolygonRenderer({
     const y = precomputedSVG.center.y + (pos.y - precomputedSVG.center.y) * value;
     return { x, y, value: data[categoryKey] || 0 };
   });
-  
+
   const polygonPoints = dataPoints.map(p => `${p.x},${p.y}`).join(' ');
-  
+
   return (
     <g className="data-visualization">
       {/* Data polygon fill */}
@@ -146,7 +146,7 @@ const DataPolygonRenderer = memo(function DataPolygonRenderer({
           transformOrigin: `${precomputedSVG.center.x}px ${precomputedSVG.center.y}px`
         }}
       />
-      
+
       {/* Data points */}
       {dataPoints.map((point, idx) => {
         const category = HEXAGON_CATEGORIES[idx];
@@ -185,21 +185,21 @@ const TimeBlockRenderer = memo(function TimeBlockRenderer({
   animate?: boolean;
 }) {
   if (!distribution || !Array.isArray(distribution)) return null;
-  
+
   const sectorAngle = 60; // 360 / 6 categories
   const { center, radius } = precomputedSVG;
-  
+
   return (
     <g className="time-blocks">
       {distribution.map((item, index) => {
         const startAngle = (index * sectorAngle) - 30;
         const endAngle = startAngle + sectorAngle;
-        
+
         // Determine state
         let state: 'empty' | 'planned' | 'active' | 'completed' | 'overflowing' = 'empty';
         let strokeDasharray = 'none';
         let fillOpacity = 0;
-        
+
         if (item.actual_minutes > 0 && item.planned_minutes > 0) {
           if (item.actual_minutes >= item.planned_minutes) {
             state = item.actual_minutes > item.planned_minutes * 1.2 ? 'overflowing' : 'completed';
@@ -215,14 +215,14 @@ const TimeBlockRenderer = memo(function TimeBlockRenderer({
           strokeDasharray = '5,5';
           fillOpacity = 0;
         }
-        
+
         // Generate sector path
         const innerRadius = radius * 0.3;
         const outerRadius = radius * (0.6 + (item.percentage / 100) * 0.4);
-        
+
         const startRad = (startAngle * Math.PI) / 180;
         const endRad = (endAngle * Math.PI) / 180;
-        
+
         const x1 = center.x + innerRadius * Math.cos(startRad);
         const y1 = center.y + innerRadius * Math.sin(startRad);
         const x2 = center.x + outerRadius * Math.cos(startRad);
@@ -231,7 +231,7 @@ const TimeBlockRenderer = memo(function TimeBlockRenderer({
         const y3 = center.y + outerRadius * Math.sin(endRad);
         const x4 = center.x + innerRadius * Math.cos(endRad);
         const y4 = center.y + innerRadius * Math.sin(endRad);
-        
+
         const path = [
           `M ${x1} ${y1}`,
           `L ${x2} ${y2}`,
@@ -240,10 +240,10 @@ const TimeBlockRenderer = memo(function TimeBlockRenderer({
           `A ${innerRadius} ${innerRadius} 0 0 0 ${x1} ${y1}`,
           'Z'
         ].join(' ');
-        
-        const animationClass = state === 'active' ? 'animate-pulse' : 
+
+        const animationClass = state === 'active' ? 'animate-pulse' :
                               state === 'overflowing' ? 'animate-bounce' : '';
-        
+
         return (
           <path
             key={`time-block-${index}`}
@@ -280,9 +280,9 @@ export const HexagonRenderer = memo(function HexagonRenderer({
   className = ''
 }: HexagonRendererProps) {
   const gradients = generateGradientDefinitions();
-  
+
   return (
-    <div 
+    <div
       className={`hexagon-renderer ${hardwareAcceleration.animationClasses} ${className}`}
       style={hardwareAcceleration.cssVariables}
     >
@@ -291,7 +291,7 @@ export const HexagonRenderer = memo(function HexagonRenderer({
         height="100%"
         viewBox={`0 0 ${responsiveSizing.size} ${responsiveSizing.size}`}
         className="transform-gpu w-full h-auto touch-manipulation"
-        style={{ 
+        style={{
           maxHeight: '100vw',
           shapeRendering: 'geometricPrecision',
           textRendering: 'geometricPrecision'
@@ -319,14 +319,14 @@ export const HexagonRenderer = memo(function HexagonRenderer({
             </linearGradient>
           ))}
         </defs>
-        
+
         {/* Background grid */}
-        <HexagonGrid 
-          precomputedSVG={precomputedSVG} 
-          animate={animate} 
-          showGrid={showGrid} 
+        <HexagonGrid
+          precomputedSVG={precomputedSVG}
+          animate={animate}
+          showGrid={showGrid}
         />
-        
+
         {/* Dashboard mode: Data visualization */}
         {data && (
           <DataPolygonRenderer
@@ -335,7 +335,7 @@ export const HexagonRenderer = memo(function HexagonRenderer({
             animate={animate}
           />
         )}
-        
+
         {/* Planning mode: Time blocks */}
         {distribution && (
           <TimeBlockRenderer

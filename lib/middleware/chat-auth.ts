@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { logger } from '@/lib/logger'
 import { chatSecurity } from '@/lib/security/chat-validation'
-import { createClient } from '@/lib/supabase/server'
 
 /**
  * Authentication and authorization middleware for chat API routes
@@ -25,6 +24,7 @@ export interface ChatAuthContext {
  */
 export async function authenticateUser(request: NextRequest): Promise<AuthenticatedUser | null> {
   try {
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
 
@@ -92,7 +92,7 @@ export function withChatAuth<T extends any[]>(
   return async (request: NextRequest, ...args: T) => {
     // Extract route parameters if available
     const params = args[0] as { params?: { roomId?: string; messageId?: string; userId?: string } }
-    
+
     // Authenticate user
     const user = await authenticateUser(request)
     if (!user) {
@@ -116,7 +116,7 @@ export function withChatAuth<T extends any[]>(
     } catch (error) {
       logger.error('Chat API handler error:', error)
       return NextResponse.json(
-        { error: 'Internal server error' }, 
+        { error: 'Internal server error' },
         { status: 500 }
       )
     }
@@ -141,6 +141,7 @@ export async function validateMessagePermission(
   if (operation === 'read') {
     // For read operations, we need to check if user has access to the room containing the message
     try {
+      const { createClient } = await import('@/lib/supabase/server')
       const supabase = await createClient()
       const { data: message, error } = await supabase
         .from('axis6_chat_messages')
@@ -172,9 +173,10 @@ export async function validateChatRateLimit(
   resourceId?: string
 ): Promise<{ allowed: boolean; retryAfter?: number }> {
   try {
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const now = new Date()
-    
+
     // Define rate limits per operation
     const rateLimits = {
       send_message: { count: 30, windowMs: 60 * 1000 }, // 30 messages per minute
@@ -214,7 +216,7 @@ export async function validateChatRateLimit(
 
     if (query) {
       const { count, error } = await query
-      
+
       if (error) {
         logger.warn(`Rate limit check failed for ${operation}:`, error)
         return { allowed: true } // Allow on error to avoid blocking legitimate users
@@ -301,9 +303,9 @@ export function withChatPermission<T extends any[]>(
       if (!rateLimit.allowed) {
         return NextResponse.json(
           { error: 'Rate limit exceeded' },
-          { 
+          {
             status: 429,
-            headers: rateLimit.retryAfter 
+            headers: rateLimit.retryAfter
               ? { 'Retry-After': rateLimit.retryAfter.toString() }
               : undefined
           }

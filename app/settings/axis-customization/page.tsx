@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
+import {
   Target,
   Settings,
   Zap,
@@ -13,7 +13,10 @@ import {
   RotateCcw,
   Save,
   Palette,
-  BarChart3
+  BarChart3,
+  Loader2,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -21,6 +24,7 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { AxisActivitiesModal } from '@/components/settings/AxisActivitiesModal'
 import { AxisIcon } from '@/components/icons'
 import { useCategories, useUser } from '@/lib/react-query/hooks'
+import { useAxisCustomization, useUpdateAxisCustomization } from '@/lib/react-query/hooks/useSettings'
 import { usePreferencesStore, useUIStore } from '@/lib/stores/useAppStore'
 
 interface AxisCustomization {
@@ -34,24 +38,44 @@ interface AxisCustomization {
   priority: number
 }
 
+interface NotificationState {
+  show: boolean
+  type: 'success' | 'error'
+  message: string
+}
+
 export default function AxisCustomizationPage() {
   const { data: user } = useUser()
   const { data: categories } = useCategories()
+  const { data: axisSettings, isLoading: loadingSettings } = useAxisCustomization()
+  const updateAxisCustomization = useUpdateAxisCustomization()
   const { showResonance, toggleResonance } = usePreferencesStore()
-  
+
   // Modal states
   const [isActivitiesModalOpen, setIsActivitiesModalOpen] = useState(false)
   const [selectedAxis, setSelectedAxis] = useState<string>('')
-  
+
   // Local state for customization
-  const [axisSettings, setAxisSettings] = useState<Record<string, AxisCustomization>>({})
+  const [axisSettingsLocal, setAxisSettingsLocal] = useState<Record<string, AxisCustomization>>({})
   const [hexagonSize, setHexagonSize] = useState<'small' | 'medium' | 'large'>('medium')
   const [showCommunityPulse, setShowCommunityPulse] = useState(true)
   const [defaultView, setDefaultView] = useState<'hexagon' | 'list' | 'grid'>('hexagon')
+  const [hasChanges, setHasChanges] = useState(false)
+  const [notification, setNotification] = useState<NotificationState>({
+    show: false,
+    type: 'success',
+    message: ''
+  })
 
-  // Initialize axis settings from categories
+  // Initialize settings from categories and API data
   useEffect(() => {
-    if (categories?.length) {
+    if (categories?.length && axisSettings) {
+      setAxisSettingsLocal(axisSettings.axis_customizations || {})
+      setHexagonSize(axisSettings.hexagon_size || 'medium')
+      setShowCommunityPulse(axisSettings.show_community_pulse ?? true)
+      setDefaultView(axisSettings.default_view || 'hexagon')
+    } else if (categories?.length && !loadingSettings) {
+      // Initialize with category defaults if no saved settings
       const settings: Record<string, AxisCustomization> = {}
       categories.forEach((cat, index) => {
         settings[cat.slug] = {
@@ -60,14 +84,21 @@ export default function AxisCustomizationPage() {
           slug: cat.slug,
           color: cat.color,
           icon: cat.icon,
-          dailyGoal: 1, // Default to 1 check-in per day
-          showInQuickActions: index < 3, // Show first 3 in quick actions
+          dailyGoal: 1,
+          showInQuickActions: index < 3,
           priority: index + 1
         }
       })
-      setAxisSettings(settings)
+      setAxisSettingsLocal(settings)
     }
-  }, [categories])
+  }, [categories, axisSettings, loadingSettings])
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ show: true, type, message })
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, show: false }))
+    }, 4000)
+  }
 
   const handleOpenActivitiesModal = (axisSlug: string) => {
     setSelectedAxis(axisSlug)
@@ -75,15 +106,30 @@ export default function AxisCustomizationPage() {
   }
 
   const handleUpdateAxisSetting = (axisSlug: string, updates: Partial<AxisCustomization>) => {
-    setAxisSettings(prev => ({
+    setAxisSettingsLocal(prev => ({
       ...prev,
       [axisSlug]: { ...prev[axisSlug], ...updates }
     }))
+    setHasChanges(true)
   }
 
   const handleSaveSettings = async () => {
-    // TODO: Implement save to database
+    try {
+      await updateAxisCustomization.mutateAsync({
+        hexagon_size: hexagonSize,
+        show_community_pulse: showCommunityPulse,
+        show_resonance: showResonance,
+        default_view: defaultView,
+        axis_customizations: axisSettingsLocal
+      })
+      
+      setHasChanges(false)
+      showNotification('success', 'Settings saved successfully!')
+    } catch (error) {
+      console.error('Failed to save settings:', error)
+      showNotification('error', 'Failed to save settings. Please try again.')
     }
+  }
 
   const handleResetToDefaults = () => {
     if (categories?.length) {
@@ -100,15 +146,46 @@ export default function AxisCustomizationPage() {
           priority: index + 1
         }
       })
-      setAxisSettings(defaultSettings)
+      setAxisSettingsLocal(defaultSettings)
       setHexagonSize('medium')
       setShowCommunityPulse(true)
       setDefaultView('hexagon')
+      setHasChanges(true)
     }
   }
 
+  const handleHexagonSizeChange = (size: 'small' | 'medium' | 'large') => {
+    setHexagonSize(size)
+    setHasChanges(true)
+  }
+
+  const handleCommunityPulseChange = (enabled: boolean) => {
+    setShowCommunityPulse(enabled)
+    setHasChanges(true)
+  }
+
+  const handleDefaultViewChange = (view: 'hexagon' | 'list' | 'grid') => {
+    setDefaultView(view)
+    setHasChanges(true)
+  }
+
+  const handleResonanceToggle = () => {
+    toggleResonance()
+    setHasChanges(true)
+  }
+
+  if (loadingSettings) {
+    return (
+      <SettingsLayout currentSection="axis">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
+        </div>
+      </SettingsLayout>
+    )
+  }
+
   return (
-    <div 
+    <div
       style={{
         paddingTop: 'env(safe-area-inset-top, 0px)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
@@ -137,7 +214,7 @@ export default function AxisCustomizationPage() {
             </div>
 
             <div className="space-y-4">
-              {Object.values(axisSettings).map((axis) => (
+              {Object.values(axisSettingsLocal).map((axis) => (
                 <motion.div
                   key={axis.slug}
                   initial={{ opacity: 0, y: 20 }}
@@ -146,9 +223,9 @@ export default function AxisCustomizationPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div 
+                      <div
                         className="p-2 rounded-lg border"
-                        style={{ 
+                        style={{
                           backgroundColor: `${axis.color}20`,
                           borderColor: `${axis.color}40`
                         }}
@@ -160,7 +237,7 @@ export default function AxisCustomizationPage() {
                         <p className="text-xs text-gray-400">{axis.slug}</p>
                       </div>
                     </div>
-                    
+
                     <button
                       onClick={() => handleOpenActivitiesModal(axis.slug)}
                       className="min-h-[44px] px-3 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 rounded-lg transition-colors"
@@ -180,8 +257,8 @@ export default function AxisCustomizationPage() {
                         min="1"
                         max="10"
                         value={axis.dailyGoal}
-                        onChange={(e) => handleUpdateAxisSetting(axis.slug, { 
-                          dailyGoal: parseInt(e.target.value) || 1 
+                        onChange={(e) => handleUpdateAxisSetting(axis.slug, {
+                          dailyGoal: parseInt(e.target.value) || 1
                         })}
                         className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                       />
@@ -236,7 +313,7 @@ export default function AxisCustomizationPage() {
                   {(['small', 'medium', 'large'] as const).map((size) => (
                     <button
                       key={size}
-                      onClick={() => setHexagonSize(size)}
+                      onClick={() => handleHexagonSizeChange(size)}
                       className={`min-h-[44px] flex-1 py-2 px-4 rounded-lg transition-all capitalize ${
                         hexagonSize === size
                           ? 'bg-blue-500/20 border border-blue-500/40 text-blue-400'
@@ -256,7 +333,7 @@ export default function AxisCustomizationPage() {
                   <p className="text-sm text-gray-400">Show resonance dots from other users</p>
                 </div>
                 <button
-                  onClick={toggleResonance}
+                  onClick={handleResonanceToggle}
                   className={`min-h-[44px] min-w-[44px] p-3 rounded-lg transition-all ${
                     showResonance
                       ? 'bg-green-500/20 border border-green-500/40 text-green-400'
@@ -274,7 +351,7 @@ export default function AxisCustomizationPage() {
                   <p className="text-sm text-gray-400">Anonymous activity visualization</p>
                 </div>
                 <button
-                  onClick={() => setShowCommunityPulse(!showCommunityPulse)}
+                  onClick={() => handleCommunityPulseChange(!showCommunityPulse)}
                   className={`min-h-[44px] min-w-[44px] p-3 rounded-lg transition-all ${
                     showCommunityPulse
                       ? 'bg-purple-500/20 border border-purple-500/40 text-purple-400'
@@ -307,7 +384,7 @@ export default function AxisCustomizationPage() {
                 {(['hexagon', 'list', 'grid'] as const).map((view) => (
                   <button
                     key={view}
-                    onClick={() => setDefaultView(view)}
+                    onClick={() => handleDefaultViewChange(view)}
                     className={`min-h-[44px] py-3 px-4 rounded-lg transition-all capitalize ${
                       defaultView === view
                         ? 'bg-orange-500/20 border border-orange-500/40 text-orange-400'
@@ -325,15 +402,25 @@ export default function AxisCustomizationPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleSaveSettings}
-              className="min-h-[44px] flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+              disabled={!hasChanges || updateAxisCustomization.isPending}
+              className={`min-h-[44px] flex-1 flex items-center justify-center gap-2 font-medium py-3 px-6 rounded-lg transition-colors ${
+                hasChanges && !updateAxisCustomization.isPending
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              }`}
             >
-              <Save className="w-4 h-4" />
-              Save Changes
+              {updateAxisCustomization.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {updateAxisCustomization.isPending ? 'Saving...' : 'Save Changes'}
             </button>
-            
+
             <button
               onClick={handleResetToDefaults}
-              className="min-h-[44px] flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/20 text-gray-300 font-medium py-3 px-6 rounded-lg transition-colors"
+              disabled={updateAxisCustomization.isPending}
+              className="min-h-[44px] flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/20 text-gray-300 font-medium py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
             >
               <RotateCcw className="w-4 h-4" />
               Reset to Defaults
@@ -348,6 +435,31 @@ export default function AxisCustomizationPage() {
             onClose={() => setIsActivitiesModalOpen(false)}
             categorySlug={selectedAxis}
           />
+        )}
+
+        {/* Notification Toast */}
+        {notification.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: 50, x: '-50%' }}
+            className="fixed bottom-6 left-1/2 transform z-50"
+          >
+            <div className={`
+              flex items-center gap-3 px-6 py-3 rounded-lg backdrop-blur-md
+              ${notification.type === 'success'
+                ? 'bg-green-500/20 border border-green-500/50 text-green-400'
+                : 'bg-red-500/20 border border-red-500/50 text-red-400'
+              }
+            `}>
+              {notification.type === 'success' ? (
+                <CheckCircle className="w-5 h-5" />
+              ) : (
+                <AlertCircle className="w-5 h-5" />
+              )}
+              <span className="font-medium">{notification.message}</span>
+            </div>
+          </motion.div>
         )}
       </SettingsLayout>
     </div>

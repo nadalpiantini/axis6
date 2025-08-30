@@ -19,45 +19,45 @@ const rateLimitRoutes = {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  
+
   // Apply rate limiting to API routes
   if (pathname.startsWith('/api/')) {
     // Determine rate limit type based on route
     let limiterType: 'auth' | 'register' | 'passwordReset' | 'api' = 'api'
-    
+
     for (const [route, type] of Object.entries(rateLimitRoutes)) {
       if (pathname.startsWith(route)) {
         limiterType = type as any
         break
       }
     }
-    
+
     // Apply rate limiting
     const { response: rateLimitResponse, headers: rateLimitHeaders } = await withEnhancedRateLimit(
       request,
       limiterType
     )
-    
+
     if (rateLimitResponse) {
       return rateLimitResponse // Request was rate limited
     }
-    
+
     // Continue with rate limit headers
     const response = NextResponse.next()
-    
+
     // Add rate limit headers
     Object.entries(rateLimitHeaders).forEach(([key, value]) => {
       response.headers.set(key, value)
     })
-    
+
     // Add security headers
     response.headers.set('X-Content-Type-Options', 'nosniff')
     response.headers.set('X-Frame-Options', 'SAMEORIGIN')
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-    
+
     return response
   }
-  
+
   const response = NextResponse.next()
 
   // Enhanced security headers for non-API routes
@@ -67,12 +67,12 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
-  
+
   // Add HSTS header for production
   if (process.env.NODE_ENV === 'production') {
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
   }
-  
+
   // Skip auth check for public routes
   if (publicRoutes.includes(pathname) || pathname.startsWith('/api/auth')) {
     return response

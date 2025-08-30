@@ -2,13 +2,13 @@
 
 import { format } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Brain, 
-  Sparkles, 
-  TrendingUp, 
-  Bell, 
-  Target, 
-  Clock, 
+import {
+  Brain,
+  Sparkles,
+  TrendingUp,
+  Bell,
+  Target,
+  Clock,
   RefreshCw,
   Zap,
   Heart,
@@ -31,7 +31,7 @@ import { AIInsightsCard } from './AIInsightsCard'
 import { PersonalizedRecommendations } from './PersonalizedRecommendations'
 import { SmartNotificationPanel, NotificationSummary } from './SmartNotificationPanel'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface AIDashboardProps {
   className?: string
   defaultTab?: string
@@ -64,11 +64,12 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
     try {
       await refreshAIData()
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to refresh AI data:', error);
-    } finally {
+      handleError(error, {
+      operation: 'ai_operation', component: 'AIDashboard',
+
+        userMessage: 'AI operation failed. Please try again.'
+
+      })} finally {
       setIsRefreshing(false)
     }
   }
@@ -113,7 +114,7 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             Your personalized wellness intelligence system
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           {behaviorProfile && (
             <div className="text-right text-sm text-gray-500">
@@ -121,7 +122,7 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
               <div>Confidence: {Math.round((optimalTimeScore || 0) * 100)}%</div>
             </div>
           )}
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -135,7 +136,7 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             )}
             Refresh
           </Button>
-          
+
           <Button
             variant="default"
             size="sm"
@@ -291,7 +292,7 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Goal Orientation</h4>
                 <div className="flex items-center gap-2">
@@ -301,7 +302,7 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Peak Hours</h4>
                 <div className="flex items-center gap-2">
@@ -311,7 +312,7 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Consistency</h4>
                 <div className="flex items-center gap-2">
@@ -349,7 +350,7 @@ function OverviewTab({
         <div className="lg:col-span-2">
           <AIInsightsCard maxInsights={3} />
         </div>
-        
+
         {/* Quick Actions */}
         <Card>
           <CardHeader>
@@ -378,7 +379,7 @@ function OverviewTab({
               <Bell className="w-4 h-4 mr-3" />
               Setup Smart Reminders
             </Button>
-            
+
             <div className="pt-4 border-t">
               <h4 className="text-sm font-medium text-gray-700 mb-2">Next Optimal Time</h4>
               {optimalTimes && optimalTimes.length > 0 ? (

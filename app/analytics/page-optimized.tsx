@@ -1,9 +1,9 @@
 'use client'
 
-import { 
-  TrendingUp, 
-  Calendar, 
-  Target, 
+import {
+  TrendingUp,
+  Calendar,
+  Target,
   Award,
   Download,
   BarChart3,
@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 
-import { 
+import {
   CompletionRateChart,
   CategoryPerformanceChart,
   DailyActivityChart,
@@ -23,7 +23,7 @@ import {
   WeeklyProgressChart
 } from '@/components/charts/ChartComponents'
 import { StandardHeader } from '@/components/layout/StandardHeader'
-import { 
+import {
   useCompletionChartData,
   useMoodChartData,
   useDailyActivityData,
@@ -81,12 +81,12 @@ interface AnalyticsData {
 }
 
 // Chart Loading Skeleton
-function ChartSection({ 
-  title, 
-  icon: Icon, 
-  children, 
-  loading = false 
-}: { 
+function ChartSection({
+  title,
+  icon: Icon,
+  children,
+  loading = false
+}: {
   title: string
   icon: any
   children: React.ReactNode
@@ -122,14 +122,14 @@ export default function OptimizedAnalyticsPage() {
     useCachedChartData('completion_data', analytics?.dailyStats || [], 300000), // 5min cache
     period === '7' ? 7 : 30
   )
-  
+
   const categoryData = useCachedChartData('category_data', analytics?.categoryStats || {}, 300000)
-  
+
   const moodData = useMoodChartData(
     useCachedChartData('mood_data', analytics?.moodTrend || [], 300000),
     period === '7' ? 7 : 14
   )
-  
+
   const activityData = useDailyActivityData(
     useCachedChartData('activity_data', analytics?.dailyStats || [], 300000),
     7
@@ -140,25 +140,26 @@ export default function OptimizedAnalyticsPage() {
     try {
       setLoading(true)
       setError(null)
-      
+
       const start = performance.now()
       const params = new URLSearchParams({ period })
       const response = await fetch(`/api/analytics?${params}`)
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch analytics')
       }
-      
+
       const data = await response.json()
       setAnalytics(data.analytics)
-      
+
       const loadTime = performance.now() - start
       if (loadTime > 1000) {
-        }
-      
+        console.log(`Analytics load time: ${loadTime}ms - consider optimizing`)
+      }
+
       // Preload chart assets
       performanceOptimizer.preloadForPage('/analytics')
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load analytics')
     } finally {
@@ -174,9 +175,9 @@ export default function OptimizedAnalyticsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ format, includeAllData: true })
       })
-      
+
       if (!response.ok) throw new Error('Export failed')
-      
+
       if (format === 'csv') {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -268,7 +269,7 @@ export default function OptimizedAnalyticsPage() {
         showBackButton={true}
         backUrl="/dashboard"
       />
-      
+
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         {/* Controls */}
         <div data-testid="analytics-controls" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
@@ -276,7 +277,7 @@ export default function OptimizedAnalyticsPage() {
             <TrendingUp className="w-6 h-6 text-purple-400" />
             <h2 data-testid="analytics-title" className="text-lg font-semibold">Your Analytics</h2>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
             <select
               data-testid="period-filter"
@@ -289,7 +290,7 @@ export default function OptimizedAnalyticsPage() {
               <option value="90">Last 90 days</option>
               <option value="365">Last year</option>
             </select>
-            
+
             <div className="flex items-center gap-2">
               <button
                 data-testid="export-csv"
@@ -325,7 +326,7 @@ export default function OptimizedAnalyticsPage() {
               {Math.round(analytics.overview.totalCheckins / Math.max(analytics.overview.totalDays, 1) * 10) / 10} per day avg
             </p>
           </div>
-          
+
           <div data-testid="active-days-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
@@ -336,7 +337,7 @@ export default function OptimizedAnalyticsPage() {
               {analytics.overview.dataCompleteness}% of {analytics.overview.period}
             </p>
           </div>
-          
+
           <div data-testid="completion-rate-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
@@ -347,7 +348,7 @@ export default function OptimizedAnalyticsPage() {
             </p>
             <p className="text-xs sm:text-sm text-gray-400">Average daily completion</p>
           </div>
-          
+
           <div data-testid="current-streak-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
@@ -405,8 +406,8 @@ export default function OptimizedAnalyticsPage() {
               {Object.entries(analytics.categoryStats).map(([category, stats]) => (
                 <div key={category} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
+                    <div
+                      className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: stats.color }}
                     />
                     <span className="font-medium">{category}</span>
@@ -431,8 +432,8 @@ export default function OptimizedAnalyticsPage() {
               {analytics.streakAnalysis.currentStreaks.map((streak, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
+                    <div
+                      className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: streak.color }}
                     />
                     <span className="font-medium">{streak.category}</span>

@@ -18,7 +18,7 @@ interface CheckInInput {
 async function fetchTodayCheckins(userId: string): Promise<CheckIn[]> {
   const supabase = createClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   const { data, error } = await supabase
     .from('axis6_checkins')
     .select('*')
@@ -32,7 +32,7 @@ async function fetchTodayCheckins(userId: string): Promise<CheckIn[]> {
 
 async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: string) {
   const supabase = createClient()
-  
+
   if (completed) {
     // Add check-in with proper timestamp
     const insertData = {
@@ -40,13 +40,13 @@ async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: st
       category_id: categoryId,
       completed_at: new Date().toISOString()  // FIXED: Use full timestamp
     }
-    
+
     const { data, error } = await supabase
       .from('axis6_checkins')
       .insert(insertData)
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   } else {
@@ -59,7 +59,7 @@ async function toggleCheckIn({ categoryId, completed }: CheckInInput, userId: st
       .eq('category_id', categoryId)
       .gte('completed_at', `${today}T00:00:00.000Z`)  // FIXED: Added timezone info
       .lte('completed_at', `${today}T23:59:59.999Z`)  // FIXED: Added timezone info
-    
+
     if (error) throw error
     return null
   }
@@ -76,7 +76,7 @@ export function useTodayCheckins(userId: string | undefined) {
 
 export function useToggleCheckIn(userId: string | undefined) {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (input: CheckInInput) => {
       if (!userId) {
@@ -87,10 +87,10 @@ export function useToggleCheckIn(userId: string | undefined) {
     onMutate: async ({ categoryId, completed }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['checkins', 'today', userId] })
-      
+
       // Snapshot previous value
       const previousCheckins = queryClient.getQueryData<CheckIn[]>(['checkins', 'today', userId])
-      
+
       // Optimistically update
       queryClient.setQueryData<CheckIn[]>(
         ['checkins', 'today', userId],
@@ -111,7 +111,7 @@ export function useToggleCheckIn(userId: string | undefined) {
           }
         }
       )
-      
+
       // Return context for rollback
       return { previousCheckins }
     },
@@ -128,11 +128,11 @@ export function useToggleCheckIn(userId: string | undefined) {
       queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
       queryClient.invalidateQueries({ queryKey: ['categories'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard-data', userId] })
-      
+
       // Also invalidate any parent level queries that might cache axis data
       queryClient.invalidateQueries({ queryKey: ['user-stats', userId] })
       queryClient.invalidateQueries({ queryKey: ['daily-summary', userId] })
-      
+
       // Force a small delay then refetch to ensure network roundtrip completes
       setTimeout(() => {
         queryClient.refetchQueries({ queryKey: ['checkins', 'today', userId] })
@@ -144,37 +144,37 @@ export function useToggleCheckIn(userId: string | undefined) {
 // New hook for batch operations
 export function useBatchCheckIn(userId: string | undefined) {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (updates: CheckInInput[]) => {
       if (!userId) throw new Error('User ID required')
-      
+
       // Process all updates in parallel
       const results = await Promise.allSettled(
         updates.map(input => toggleCheckIn(input, userId))
       )
-      
+
       // Check for any failures
       const failures = results.filter(r => r.status === 'rejected')
       if (failures.length > 0) {
         throw new Error(`${failures.length} operations failed`)
       }
-      
+
       return results
     },
     onMutate: async (updates) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['checkins', 'today', userId] })
-      
+
       // Snapshot previous value
       const previousCheckins = queryClient.getQueryData<CheckIn[]>(['checkins', 'today', userId])
-      
+
       // Apply all optimistic updates
       queryClient.setQueryData<CheckIn[]>(
         ['checkins', 'today', userId],
         (old = []) => {
           let newCheckins = [...old]
-          
+
           updates.forEach(({ categoryId, completed }) => {
             if (completed) {
               // Remove any existing and add new
@@ -191,11 +191,11 @@ export function useBatchCheckIn(userId: string | undefined) {
               newCheckins = newCheckins.filter(c => c.category_id !== categoryId)
             }
           })
-          
+
           return newCheckins
         }
       )
-      
+
       return { previousCheckins }
     },
     onError: (_err, _variables, context) => {

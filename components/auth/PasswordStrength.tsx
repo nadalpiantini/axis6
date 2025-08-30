@@ -94,9 +94,9 @@ export function PasswordStrength({ password, showRequirements = true }: Password
             {strengthLabel}
           </span>
         </div>
-        
+
         <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div 
+          <div
             className={`h-full transition-all duration-300 ${strengthColor}`}
             style={{ width: `${strengthPercentage}%` }}
           />
@@ -108,7 +108,7 @@ export function PasswordStrength({ password, showRequirements = true }: Password
           {requirements.map((req, index) => {
             const isMet = req.test(password)
             return (
-              <div 
+              <div
                 key={index}
                 className={`flex items-center gap-2 text-xs transition-all duration-200 ${
                   isMet ? 'text-green-400' : 'text-gray-500'

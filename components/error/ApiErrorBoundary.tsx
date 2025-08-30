@@ -32,7 +32,7 @@ export function ApiErrorBoundary({ children, fallback, endpoint }: ApiErrorBound
         window.removeEventListener('offline', handleOffline)
       }
     }
-    
+
     return undefined // Explicit return for when window is not available
   }, [])
 
@@ -45,16 +45,16 @@ export function ApiErrorBoundary({ children, fallback, endpoint }: ApiErrorBound
 
       return () => clearTimeout(timer)
     }
-    
+
     return undefined // Explicit return for when condition is not met
   }, [hasError, isOnline, retryCount])
 
   const handleApiError = (error: Error) => {
     setHasError(true)
     setLastError(error)
-    
+
     logger.error(`API error in ${endpoint || 'unknown endpoint'}`, error)
-    
+
     reportError(error, 'high', {
       component: 'ApiErrorBoundary',
       action: 'api_failure',
@@ -95,8 +95,8 @@ export function ApiErrorBoundary({ children, fallback, endpoint }: ApiErrorBound
               {isOnline ? 'Error de conexión' : 'Sin conexión'}
             </h3>
             <p className="text-gray-400 text-sm mb-3">
-              {isOnline 
-                ? `No pudimos conectar con ${endpoint || 'el servidor'}` 
+              {isOnline
+                ? `No pudimos conectar con ${endpoint || 'el servidor'}`
                 : 'Revisa tu conexión a internet'}
             </p>
             {retryCount > 0 && (
@@ -116,7 +116,7 @@ export function ApiErrorBoundary({ children, fallback, endpoint }: ApiErrorBound
                 Reintentar
               </button>
             )}
-            
+
             {!isOnline && (
               <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
                 <Wifi className="w-4 h-4" />

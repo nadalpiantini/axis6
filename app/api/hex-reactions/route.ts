@@ -14,7 +14,7 @@ const createReactionSchema = z.object({
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -34,7 +34,7 @@ export async function POST(_request: NextRequest) {
       .single()
 
     if (postError || !post) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Post not found',
         details: 'Post does not exist or is not accessible'
       }, { status: 404 })
@@ -42,7 +42,7 @@ export async function POST(_request: NextRequest) {
 
     // Check privacy permissions (simplified for now - public posts only)
     if (post.privacy !== 'public' && post.user_id !== user.id) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Access denied',
         details: 'You cannot react to this post'
       }, { status: 403 })
@@ -63,17 +63,17 @@ export async function POST(_request: NextRequest) {
 
     if (reactionError) {
       logger.error('Error creating hex reaction:', reactionError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to add reaction',
-        details: reactionError.message 
+        details: reactionError.message
       }, { status: 500 })
     }
 
     // Update glow score on the post
     const { error: updateError } = await supabase
       .from('axis6_micro_posts')
-      .update({ 
-        glow_score: (post.glow_score || 0) + 1 
+      .update({
+        glow_score: (post.glow_score || 0) + 1
       })
       .eq('id', validatedData.postId)
 
@@ -95,14 +95,14 @@ export async function POST(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid request data',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Hex reaction creation error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to add reaction'
     }, { status: 500 })
@@ -113,7 +113,7 @@ export async function POST(_request: NextRequest) {
 export async function DELETE(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -126,7 +126,7 @@ export async function DELETE(_request: NextRequest) {
     const axisType = searchParams.get('axisType')
 
     if (!postId || !axisType) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Missing parameters',
         details: 'postId and axisType are required'
       }, { status: 400 })
@@ -135,7 +135,7 @@ export async function DELETE(_request: NextRequest) {
     // Validate axis type
     const validAxisTypes = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']
     if (!validAxisTypes.includes(axisType)) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid axis type',
         details: `Axis type must be one of: ${validAxisTypes.join(', ')}`
       }, { status: 400 })
@@ -154,9 +154,9 @@ export async function DELETE(_request: NextRequest) {
 
     if (deleteError) {
       logger.error('Error removing hex reaction:', deleteError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to remove reaction',
-        details: deleteError.message 
+        details: deleteError.message
       }, { status: 500 })
     }
 
@@ -164,7 +164,7 @@ export async function DELETE(_request: NextRequest) {
     if (deletedReaction && deletedReaction.length > 0) {
       const { error: updateError } = await supabase
         .from('axis6_micro_posts')
-        .update({ 
+        .update({
           glow_score: Math.max(0, (await supabase
             .from('axis6_micro_posts')
             .select('glow_score')
@@ -186,7 +186,7 @@ export async function DELETE(_request: NextRequest) {
 
   } catch (error) {
     logger.error('Hex reaction deletion error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to remove reaction'
     }, { status: 500 })

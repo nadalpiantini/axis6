@@ -24,14 +24,14 @@ export function NotificationSettings({
     prompt: false,
     supported: false
   })
-  
+
   const [preferences, setPreferences] = useState({
     enabled: true,
     soundEnabled: true,
     mentionsOnly: false,
     mutedRooms: [] as string[]
   })
-  
+
   const [isRequestingPermission, setIsRequestingPermission] = useState(false)
   const [isTestingNotification, setIsTestingNotification] = useState(false)
 
@@ -43,11 +43,11 @@ export function NotificationSettings({
 
   const handleRequestPermission = async () => {
     setIsRequestingPermission(true)
-    
+
     try {
       const result = await notificationService.requestPermission()
       setPermission(result)
-      
+
       if (result.granted) {
         // Enable notifications by default when permission is granted
         const newPrefs = { ...preferences, enabled: true }
@@ -67,7 +67,7 @@ export function NotificationSettings({
 
   const handleTestNotification = async () => {
     setIsTestingNotification(true)
-    
+
     try {
       const success = await notificationService.testNotification()
       if (!success) {
@@ -85,7 +85,7 @@ export function NotificationSettings({
         </Badge>
       )
     }
-    
+
     if (permission.granted) {
       return (
         <Badge variant="default" className="text-xs bg-green-600">
@@ -93,7 +93,7 @@ export function NotificationSettings({
         </Badge>
       )
     }
-    
+
     return (
       <Badge variant="secondary" className="text-xs">
         Not Set
@@ -109,7 +109,7 @@ export function NotificationSettings({
         color: 'text-neutral-400'
       }
     }
-    
+
     if (permission.denied) {
       return {
         title: 'Notifications Blocked',
@@ -117,7 +117,7 @@ export function NotificationSettings({
         color: 'text-red-400'
       }
     }
-    
+
     if (permission.granted) {
       return {
         title: 'Notifications Enabled',
@@ -125,7 +125,7 @@ export function NotificationSettings({
         color: 'text-green-400'
       }
     }
-    
+
     return {
       title: 'Enable Notifications',
       message: 'Allow notifications to stay updated on new messages and mentions.',
@@ -169,7 +169,7 @@ export function NotificationSettings({
           </span>
           {getPermissionBadge()}
         </div>
-        
+
         <div className="p-3 bg-neutral-900 rounded-lg">
           <h4 className={cn("text-sm font-medium", permissionInfo.color)}>
             {permissionInfo.title}
@@ -247,7 +247,7 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-            
+
             <button
               onClick={() => handlePreferenceChange('enabled', !preferences.enabled)}
               className={cn(
@@ -281,7 +281,7 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-            
+
             <button
               onClick={() => handlePreferenceChange('soundEnabled', !preferences.soundEnabled)}
               className={cn(
@@ -314,7 +314,7 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-            
+
             <button
               onClick={() => handlePreferenceChange('mentionsOnly', !preferences.mentionsOnly)}
               className={cn(

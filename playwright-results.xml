@@ -1,758 +1,470 @@
-<testsuites id="" name="" tests="18" failures="18" skipped="0" errors="0" time="53.170944000000006">
-<testsuite name="dashboard.spec.ts" timestamp="2025-08-27T16:48:33.385Z" hostname="chromium" tests="18" failures="18" skipped="0" time="221.873" errors="0">
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should load dashboard correctly for authenticated user" classname="dashboard.spec.ts" time="13.002">
-<failure message="dashboard.spec.ts:6:9 should load dashboard correctly for authenticated user" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:6:9 › AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should load dashboard correctly for authenticated user 
+<testsuites id="" name="" tests="18" failures="9" skipped="0" errors="0" time="50.845323">
+<testsuite name="auth.spec.ts" timestamp="2025-08-30T01:22:52.678Z" hostname="chromium" tests="18" failures="9" skipped="0" time="200.408" errors="0">
+<testcase name="AXIS6 Authentication Flow › Landing Page › should load landing page correctly" classname="auth.spec.ts" time="16.438">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Landing Page › should navigate to login page" classname="auth.spec.ts" time="17.129">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Landing Page › should navigate to register page" classname="auth.spec.ts" time="16.748">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › User Registration › should register new user successfully" classname="auth.spec.ts" time="26.072">
+<failure message="auth.spec.ts:38:9 should register new user successfully" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:38:9 › AXIS6 Authentication Flow › User Registration › should register new user successfully 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /create.*account|sign up|register/i })
+        - locator resolved to <button disabled type="submit" data-testid="register-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        19 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
 
-       at ../utils/page-objects.ts:131
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+       at ../utils/page-objects.ts:223
+
+      221 |       await this.page.locator('input[type="password"]').nth(1).fill(password);
+      222 |     }
+    > 223 |     await this.registerButton.click();
+          |                               ^
+      224 |   }
+      225 |
+      226 |   async verifyRegisterForm() {
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:43:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--81c40-ctly-for-authenticated-user-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should display user data correctly" classname="dashboard.spec.ts" time="13.015">
-<failure message="dashboard.spec.ts:16:9 should display user data correctly" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:16:9 › AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should display user data correctly 
+<testcase name="AXIS6 Authentication Flow › User Registration › should show validation errors for invalid data" classname="auth.spec.ts" time="25.797">
+<failure message="auth.spec.ts:58:9 should show validation errors for invalid data" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:58:9 › AXIS6 Authentication Flow › User Registration › should show validation errors for invalid data 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /create.*account|sign up|register/i })
+        - locator resolved to <button disabled type="submit" data-testid="register-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        19 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
 
-       at ../utils/page-objects.ts:131
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+       at ../utils/page-objects.ts:223
+
+      221 |       await this.page.locator('input[type="password"]').nth(1).fill(password);
+      222 |     }
+    > 223 |     await this.registerButton.click();
+          |                               ^
+      224 |   }
+      225 |
+      226 |   async verifyRegisterForm() {
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:62:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--5d6e8-display-user-data-correctly-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should handle dashboard data loading states" classname="dashboard.spec.ts" time="12.977">
-<failure message="dashboard.spec.ts:31:9 should handle dashboard data loading states" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:31:9 › AXIS6 Dashboard Functionality › Dashboard Loading and Navigation › should handle dashboard data loading states 
+<testcase name="AXIS6 Authentication Flow › User Registration › should prevent registration with existing email" classname="auth.spec.ts" time="12.546">
+<failure message="auth.spec.ts:68:9 should prevent registration with existing email" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:68:9 › AXIS6 Authentication Flow › User Registration › should prevent registration with existing email 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /create.*account|sign up|register/i })
+        - locator resolved to <button disabled type="submit" data-testid="register-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        19 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
 
-       at ../utils/page-objects.ts:131
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+       at ../utils/page-objects.ts:223
+
+      221 |       await this.page.locator('input[type="password"]').nth(1).fill(password);
+      222 |     }
+    > 223 |     await this.registerButton.click();
+          |                               ^
+      224 |   }
+      225 |
+      226 |   async verifyRegisterForm() {
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:72:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--1a8fc-shboard-data-loading-states-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Hexagon Visualization › should display hexagon chart correctly" classname="dashboard.spec.ts" time="13.027">
-<failure message="dashboard.spec.ts:48:9 should display hexagon chart correctly" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:48:9 › AXIS6 Dashboard Functionality › Hexagon Visualization › should display hexagon chart correctly 
+<testcase name="AXIS6 Authentication Flow › User Login › should login existing user successfully" classname="auth.spec.ts" time="12.322">
+<failure message="auth.spec.ts:85:9 should login existing user successfully" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:85:9 › AXIS6 Authentication Flow › User Login › should login existing user successfully 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /create.*account|sign up|register/i })
+        - locator resolved to <button disabled type="submit" data-testid="register-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        19 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
 
-       at ../utils/page-objects.ts:131
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+       at ../utils/page-objects.ts:223
+
+      221 |       await this.page.locator('input[type="password"]').nth(1).fill(password);
+      222 |     }
+    > 223 |     await this.registerButton.click();
+          |                               ^
+      224 |   }
+      225 |
+      226 |   async verifyRegisterForm() {
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:88:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--61a1e-lay-hexagon-chart-correctly-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Hexagon Visualization › should show all 6 categories in hexagon" classname="dashboard.spec.ts" time="13.055">
-<failure message="dashboard.spec.ts:67:9 should show all 6 categories in hexagon" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:67:9 › AXIS6 Dashboard Functionality › Hexagon Visualization › should show all 6 categories in hexagon 
+<testcase name="AXIS6 Authentication Flow › User Login › should show error for invalid credentials" classname="auth.spec.ts" time="3.91">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › User Login › should show error for non-existent user" classname="auth.spec.ts" time="1.754">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › User Login › should handle empty form submission" classname="auth.spec.ts" time="1.532">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Password Reset Flow › should navigate to forgot password page" classname="auth.spec.ts" time="2.673">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Password Reset Flow › should handle password reset request" classname="auth.spec.ts" time="14.383">
+<failure message="auth.spec.ts:159:9 should handle password reset request" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:159:9 › AXIS6 Authentication Flow › Password Reset Flow › should handle password reset request 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /create.*account|sign up|register/i })
+        - locator resolved to <button disabled type="submit" data-testid="register-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        19 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
 
-       at ../utils/page-objects.ts:131
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+       at ../utils/page-objects.ts:223
+
+      221 |       await this.page.locator('input[type="password"]').nth(1).fill(password);
+      222 |     }
+    > 223 |     await this.registerButton.click();
+          |                               ^
+      224 |   }
+      225 |
+      226 |   async verifyRegisterForm() {
+        at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:162:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--ddd8f-all-6-categories-in-hexagon-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Hexagon Visualization › should be interactive and respond to clicks" classname="dashboard.spec.ts" time="12.24">
-<failure message="dashboard.spec.ts:86:9 should be interactive and respond to clicks" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:86:9 › AXIS6 Dashboard Functionality › Hexagon Visualization › should be interactive and respond to clicks 
+<testcase name="AXIS6 Authentication Flow › Navigation and Session Management › should redirect unauthenticated users to login" classname="auth.spec.ts" time="3.041">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Navigation and Session Management › should maintain session across page refreshes" classname="auth.spec.ts" time="15.923">
+<failure message="auth.spec.ts:196:9 should maintain session across page refreshes" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:196:9 › AXIS6 Authentication Flow › Navigation and Session Management › should maintain session across page refreshes 
 
     TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
     =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
+    waiting for navigation until "load"
+      navigated to "http://localhost:3000/auth/register"
     ============================================================
 
-       at ../utils/page-objects.ts:131
+       at ../utils/page-objects.ts:182
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
+      180 |
+      181 |     // Wait for registration to complete (might redirect to login or dashboard)
+    > 182 |     await this.page.waitForURL(/\/(dashboard|auth\/login)/, { timeout: 10000 });
           |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+      183 |   }
+      184 |
+      185 |   async verifyLoginForm() {
+        at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:199:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--d42d5-ctive-and-respond-to-clicks-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Daily Check-ins › should allow user to perform daily check-ins" classname="dashboard.spec.ts" time="12.237">
-<failure message="dashboard.spec.ts:106:9 should allow user to perform daily check-ins" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:106:9 › AXIS6 Dashboard Functionality › Daily Check-ins › should allow user to perform daily check-ins 
+<testcase name="AXIS6 Authentication Flow › Navigation and Session Management › should logout user successfully" classname="auth.spec.ts" time="14.335">
+<failure message="auth.spec.ts:213:9 should logout user successfully" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:213:9 › AXIS6 Authentication Flow › Navigation and Session Management › should logout user successfully 
 
     TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
     =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
+    waiting for navigation until "load"
+      navigated to "http://localhost:3000/auth/register"
     ============================================================
 
-       at ../utils/page-objects.ts:131
+       at ../utils/page-objects.ts:182
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
+      180 |
+      181 |     // Wait for registration to complete (might redirect to login or dashboard)
+    > 182 |     await this.page.waitForURL(/\/(dashboard|auth\/login)/, { timeout: 10000 });
           |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+      183 |   }
+      184 |
+      185 |   async verifyLoginForm() {
+        at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:216:7
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--79e76--to-perform-daily-check-ins-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Daily Check-ins › should show check-in status for each category" classname="dashboard.spec.ts" time="12.225">
-<failure message="dashboard.spec.ts:132:9 should show check-in status for each category" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:132:9 › AXIS6 Dashboard Functionality › Daily Check-ins › should show check-in status for each category 
+<testcase name="AXIS6 Authentication Flow › Form Validation and UX › should show real-time validation feedback" classname="auth.spec.ts" time="2.184">
+</testcase>
+<testcase name="AXIS6 Authentication Flow › Form Validation and UX › should handle form accessibility" classname="auth.spec.ts" time="1.906">
+<failure message="auth.spec.ts:249:9 should handle form accessibility" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:249:9 › AXIS6 Authentication Flow › Form Validation and UX › should handle form accessibility 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    TypeError: testUtils.checkAccessibility is not a function
 
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+      251 |
+      252 |       // Check accessibility
+    > 253 |       const a11yIssues = await testUtils.checkAccessibility(loginPage.page);
+          |                                          ^
+      254 |
+      255 |       // Should have proper labels
+      256 |       const emailLabel = await loginPage.emailInput.getAttribute('aria-label') ||
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:253:42
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--eea71-in-status-for-each-category-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="AXIS6 Dashboard Functionality › Daily Check-ins › should prevent duplicate check-ins for same day" classname="dashboard.spec.ts" time="12.209">
-<failure message="dashboard.spec.ts:152:9 should prevent duplicate check-ins for same day" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:152:9 › AXIS6 Dashboard Functionality › Daily Check-ins › should prevent duplicate check-ins for same day 
+<testcase name="AXIS6 Authentication Flow › Form Validation and UX › should support keyboard navigation" classname="auth.spec.ts" time="11.715">
+<failure message="auth.spec.ts:265:9 should support keyboard navigation" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:265:9 › AXIS6 Authentication Flow › Form Validation and UX › should support keyboard navigation 
 
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
+    Error: expect(locator).toBeFocused() failed
 
-       at ../utils/page-objects.ts:131
+    Locator:  getByRole('button', { name: /sign in|login|welcome back/i })
+    Expected: focused
+    Received: inactive
+    Timeout:  10000ms
 
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
+    Call log:
+      - Expect "toBeFocused" with timeout 10000ms
+      - waiting for getByRole('button', { name: /sign in|login|welcome back/i })
+        14 × locator resolved to <button type="submit" data-testid="login-submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2">…</button>
+           - unexpected value "inactive"
+
+
+      274 |
+      275 |       await loginPage.page.keyboard.press('Tab');
+    > 276 |       await expect(loginPage.loginButton).toBeFocused();
+          |                                           ^
+      277 |     });
+      278 |   });
+      279 | });
+        at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:276:43
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/test-failed-1.png
+    ../../test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/video.webm
+    ../../test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/error-context.md
+    Error Context: ../../test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/video.webm]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--69cc1-cate-check-ins-for-same-day-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Streak Tracking › should display streak information" classname="dashboard.spec.ts" time="12.187">
-<failure message="dashboard.spec.ts:174:9 should display streak information" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:174:9 › AXIS6 Dashboard Functionality › Streak Tracking › should display streak information 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--46abd--display-streak-information-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Streak Tracking › should update streaks after check-ins" classname="dashboard.spec.ts" time="12.132">
-<failure message="dashboard.spec.ts:194:9 should update streaks after check-ins" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:194:9 › AXIS6 Dashboard Functionality › Streak Tracking › should update streaks after check-ins 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--42635-ate-streaks-after-check-ins-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Responsiveness › should adapt to mobile viewport" classname="dashboard.spec.ts" time="12.119">
-<failure message="dashboard.spec.ts:227:9 should adapt to mobile viewport" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:227:9 › AXIS6 Dashboard Functionality › Dashboard Responsiveness › should adapt to mobile viewport 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--32d73-ld-adapt-to-mobile-viewport-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Responsiveness › should work on tablet viewport" classname="dashboard.spec.ts" time="12.127">
-<failure message="dashboard.spec.ts:243:9 should work on tablet viewport" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:243:9 › AXIS6 Dashboard Functionality › Dashboard Responsiveness › should work on tablet viewport 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--23456-uld-work-on-tablet-viewport-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Dashboard Responsiveness › should handle different screen orientations" classname="dashboard.spec.ts" time="12.17">
-<failure message="dashboard.spec.ts:259:9 should handle different screen orientations" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:259:9 › AXIS6 Dashboard Functionality › Dashboard Responsiveness › should handle different screen orientations 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--04695-fferent-screen-orientations-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Error Handling › should handle API errors gracefully" classname="dashboard.spec.ts" time="12.153">
-<failure message="dashboard.spec.ts:273:9 should handle API errors gracefully" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:273:9 › AXIS6 Dashboard Functionality › Error Handling › should handle API errors gracefully 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--a5582-andle-API-errors-gracefully-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Error Handling › should handle slow network conditions" classname="dashboard.spec.ts" time="11.669">
-<failure message="dashboard.spec.ts:298:9 should handle slow network conditions" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:298:9 › AXIS6 Dashboard Functionality › Error Handling › should handle slow network conditions 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--0aa87-dle-slow-network-conditions-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Data Persistence › should persist check-in data across sessions" classname="dashboard.spec.ts" time="11.665">
-<failure message="dashboard.spec.ts:324:9 should persist check-in data across sessions" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:324:9 › AXIS6 Dashboard Functionality › Data Persistence › should persist check-in data across sessions 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--48eaf-eck-in-data-across-sessions-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="AXIS6 Dashboard Functionality › Data Persistence › should maintain UI state during page refresh" classname="dashboard.spec.ts" time="11.664">
-<failure message="dashboard.spec.ts:357:9 should maintain UI state during page refresh" type="FAILURE">
-<![CDATA[  [chromium] › dashboard.spec.ts:357:9 › AXIS6 Dashboard Functionality › Data Persistence › should maintain UI state during page refresh 
-
-    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation to "/dashboard" until "load"
-    ============================================================
-
-       at ../utils/page-objects.ts:131
-
-      129 |     await this.login(email, password);
-      130 |     // Wait for redirect after successful login
-    > 131 |     await this.page.waitForURL('/dashboard', { timeout: 10000 });
-          |                     ^
-      132 |   }
-      133 |   
-      134 |   async registerUser(email: string, password: string, name?: string) {
-        at LoginPage.loginUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:131:21)
-        at Object.authenticatedPage (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/fixtures/auth-fixtures.ts:87:5)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../../test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/video.webm]]
-
-[[ATTACHMENT|test-results/dashboard-AXIS6-Dashboard--197a6-I-state-during-page-refresh-chromium/error-context.md]]
+[[ATTACHMENT|test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>

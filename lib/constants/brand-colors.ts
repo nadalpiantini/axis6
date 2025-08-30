@@ -8,14 +8,14 @@ export const BRAND_COLORS = {
     shadow: 'shadow-[#A6C26F]/30'
   },
   mental: {
-    primary: '#365D63', // Azul Petróleo  
+    primary: '#365D63', // Azul Petróleo
     rgb: '54, 93, 99',
     gradient: 'from-[#365D63] to-[#2A4A4F]',
     shadow: 'shadow-[#365D63]/30'
   },
   emotional: {
     primary: '#D36C50', // Coral Profundo
-    rgb: '211, 108, 80', 
+    rgb: '211, 108, 80',
     gradient: 'from-[#D36C50] to-[#B8563D]',
     shadow: 'shadow-[#D36C50]/30'
   },
@@ -37,7 +37,7 @@ export const BRAND_COLORS = {
     gradient: 'from-[#C85729] to-[#A64623]',
     shadow: 'shadow-[#C85729]/30'
   },
-  
+
   // Neutral Colors
   neutral: {
     ivory: '#F2E9DC', // Marfil
@@ -64,7 +64,7 @@ export const AXIS_COLORS: Record<string, AxisColorScheme> = {
   social: BRAND_COLORS.social,
   spiritual: BRAND_COLORS.spiritual,
   material: BRAND_COLORS.material,
-  
+
   // Spanish aliases
   físico: BRAND_COLORS.physical,
   emocional: BRAND_COLORS.emotional,

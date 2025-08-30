@@ -43,7 +43,7 @@ describe('Backward Compatibility Tests', () => {
     it('accepts all legacy HexagonChartWithResonance props', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -53,7 +53,7 @@ describe('Backward Compatibility Tests', () => {
         // Should render in dashboard mode
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
         expect(screen.getByText('68%')).toBeInTheDocument(); // Average completion
-        
+
         // Should show resonance features
         const buttons = screen.getAllByRole('button');
         expect(buttons.length).toBe(6); // 6 category buttons
@@ -62,10 +62,10 @@ describe('Backward Compatibility Tests', () => {
 
     it('maintains exact same interaction behavior as legacy component', async () => {
       const mockToggleAxis = jest.fn();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
             onToggleAxis={mockToggleAxis}
           />
@@ -75,7 +75,7 @@ describe('Backward Compatibility Tests', () => {
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         fireEvent.click(physicalButton);
-        
+
         // Should call onToggleAxis with the same signature
         expect(mockToggleAxis).toHaveBeenCalledWith(
           expect.any(String) // Legacy component passed string ID
@@ -86,7 +86,7 @@ describe('Backward Compatibility Tests', () => {
     it('renders same visual output as legacy HexagonChartWithResonance', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -96,7 +96,7 @@ describe('Backward Compatibility Tests', () => {
         // Same center display
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
         expect(screen.getByText('68%')).toBeInTheDocument();
-        
+
         // Same category labels
         expect(screen.getByRole('button', { name: /Physical/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Mental/i })).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe('Backward Compatibility Tests', () => {
         expect(screen.getByRole('button', { name: /Social/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Spiritual/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Material/i })).toBeInTheDocument();
-        
+
         // Same percentage displays
         expect(screen.getByText('80%')).toBeInTheDocument(); // Physical
         expect(screen.getByText('60%')).toBeInTheDocument(); // Mental
@@ -118,7 +118,7 @@ describe('Backward Compatibility Tests', () => {
     it('handles legacy axes prop format correctly', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={legacyHexagonChartProps.data}
             axes={legacyHexagonChartProps.axes}
             showResonance={true}
@@ -137,7 +137,7 @@ describe('Backward Compatibility Tests', () => {
     it('preserves legacy animation behavior', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
             animate={true}
           />
@@ -154,7 +154,7 @@ describe('Backward Compatibility Tests', () => {
 
     it('handles legacy isToggling state correctly', async () => {
       const { rerender } = render(
-        <HexagonClock 
+        <HexagonClock
           {...legacyHexagonChartProps}
           isToggling={false}
         />
@@ -166,7 +166,7 @@ describe('Backward Compatibility Tests', () => {
 
       // Update to toggling state
       rerender(
-        <HexagonClock 
+        <HexagonClock
           {...legacyHexagonChartProps}
           isToggling={true}
         />
@@ -180,11 +180,11 @@ describe('Backward Compatibility Tests', () => {
 
     it('maintains legacy size prop behavior', async () => {
       const sizes = [300, 350, 400];
-      
+
       sizes.forEach(async (size) => {
         await act(async () => {
           render(
-            <HexagonClock 
+            <HexagonClock
               {...legacyHexagonChartProps}
               size={size}
             />
@@ -194,7 +194,7 @@ describe('Backward Compatibility Tests', () => {
         await waitFor(() => {
           const container = document.querySelector('.hexagon-clock-container');
           expect(container).toBeInTheDocument();
-          
+
           // Size should influence the component dimensions
           const styles = window.getComputedStyle(container!);
           expect(parseInt(styles.maxWidth || '0')).toBeGreaterThan(0);
@@ -244,7 +244,7 @@ describe('Backward Compatibility Tests', () => {
     it('accepts all legacy TimeBlockHexagon props', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyTimeBlockProps}
           />
         );
@@ -260,7 +260,7 @@ describe('Backward Compatibility Tests', () => {
     it('displays time distribution exactly like legacy component', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyTimeBlockProps}
           />
         );
@@ -271,7 +271,7 @@ describe('Backward Compatibility Tests', () => {
         expect(screen.getByText('2h 0m')).toBeInTheDocument(); // Physical: 120 minutes
         expect(screen.getByText('3h 0m')).toBeInTheDocument(); // Mental: 180 minutes
         expect(screen.getByText('1h 0m')).toBeInTheDocument(); // Emotional: 60 minutes
-        
+
         // Same total calculation
         expect(screen.getByText('Total Time')).toBeInTheDocument();
         expect(screen.getByText('6h 0m')).toBeInTheDocument();
@@ -280,10 +280,10 @@ describe('Backward Compatibility Tests', () => {
 
     it('handles legacy category click behavior identically', async () => {
       const mockCategoryClick = jest.fn();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyTimeBlockProps}
             onCategoryClick={mockCategoryClick}
           />
@@ -293,7 +293,7 @@ describe('Backward Compatibility Tests', () => {
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         await userEvent.click(physicalButton);
-        
+
         // Should call with same signature as legacy
         expect(mockCategoryClick).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -307,7 +307,7 @@ describe('Backward Compatibility Tests', () => {
     it('handles legacy categories prop format', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             distribution={legacyTimeBlockProps.distribution}
             categories={legacyTimeBlockProps.categories}
           />
@@ -325,7 +325,7 @@ describe('Backward Compatibility Tests', () => {
     it('displays active timer state like legacy component', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyTimeBlockProps}
           />
         );
@@ -334,7 +334,7 @@ describe('Backward Compatibility Tests', () => {
       await waitFor(() => {
         // Should show timer information (implementation specific)
         expect(screen.getByText('Total Time')).toBeInTheDocument();
-        
+
         // Active timer should be indicated somehow (visual or behavioral)
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         expect(physicalButton).toBeInTheDocument();
@@ -343,10 +343,10 @@ describe('Backward Compatibility Tests', () => {
 
     it('handles time block drag interactions like legacy', async () => {
       const mockTimeBlockDrag = jest.fn();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyTimeBlockProps}
             onTimeBlockDrag={mockTimeBlockDrag}
           />
@@ -355,12 +355,12 @@ describe('Backward Compatibility Tests', () => {
 
       await waitFor(() => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Simulate drag operation
         fireEvent.mouseDown(physicalButton);
         fireEvent.mouseMove(physicalButton, { clientX: 100, clientY: 50 });
         fireEvent.mouseUp(physicalButton);
-        
+
         // Should handle drag interaction (callback would be called in real implementation)
         expect(physicalButton).toBeInTheDocument();
       });
@@ -371,19 +371,19 @@ describe('Backward Compatibility Tests', () => {
     it('handles mixed props from both legacy components gracefully', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             // Dashboard mode props
             data={legacyHexagonChartProps.data}
             showResonance={true}
             onToggleAxis={jest.fn()}
             isToggling={false}
             axes={legacyHexagonChartProps.axes}
-            
+
             // Time planning mode props (should be ignored when data is present)
             distribution={legacyTimeBlockProps.distribution}
             categories={legacyTimeBlockProps.categories}
             activeTimer={legacyTimeBlockProps.activeTimer}
-            
+
             // Common props
             size={350}
             animate={true}
@@ -396,7 +396,7 @@ describe('Backward Compatibility Tests', () => {
         // Should prioritize dashboard mode when both data and distribution are present
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
         expect(screen.getByText('68%')).toBeInTheDocument();
-        
+
         // Should not show time planning mode
         expect(screen.queryByText('Total Time')).not.toBeInTheDocument();
       });
@@ -405,7 +405,7 @@ describe('Backward Compatibility Tests', () => {
     it('gracefully handles missing or undefined legacy props', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={legacyHexagonChartProps.data}
             axes={undefined}
             categories={undefined}
@@ -420,7 +420,7 @@ describe('Backward Compatibility Tests', () => {
         // Should still render correctly with undefined props
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
         expect(screen.getByText('68%')).toBeInTheDocument();
-        
+
         // Should show categories despite undefined axes prop
         expect(screen.getByRole('button', { name: /Physical/i })).toBeInTheDocument();
       });
@@ -458,10 +458,10 @@ describe('Backward Compatibility Tests', () => {
 
     it('provides same ref forwarding as legacy components', async () => {
       const ref = React.createRef<HTMLDivElement>();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             ref={ref as any}
             data={legacyHexagonChartProps.data}
           />
@@ -482,10 +482,10 @@ describe('Backward Compatibility Tests', () => {
   describe('Performance Parity', () => {
     it('renders as fast as legacy components', async () => {
       const startTime = performance.now();
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -504,10 +504,10 @@ describe('Backward Compatibility Tests', () => {
 
     it('maintains same memory footprint as legacy components', async () => {
       const initialMemory = (performance as any).memory?.usedJSHeapSize || 0;
-      
+
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -538,7 +538,7 @@ describe('Backward Compatibility Tests', () => {
 
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             data={malformedData}
           />
         );
@@ -547,7 +547,7 @@ describe('Backward Compatibility Tests', () => {
       await waitFor(() => {
         // Should handle gracefully without crashing
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
-        
+
         // Should show some center value (might be NaN but shouldn't crash)
         const centerValue = screen.getByText(/%/);
         expect(centerValue).toBeInTheDocument();
@@ -557,7 +557,7 @@ describe('Backward Compatibility Tests', () => {
     it('handles missing required props gracefully like legacy', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             // No data or distribution provided
           />
         );
@@ -574,7 +574,7 @@ describe('Backward Compatibility Tests', () => {
     it('maintains same CSS classes as legacy components for styling', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -584,7 +584,7 @@ describe('Backward Compatibility Tests', () => {
         // Should have main container class
         const container = document.querySelector('.hexagon-clock-container');
         expect(container).toBeInTheDocument();
-        
+
         // Should maintain classes for external CSS targeting
         expect(container).toHaveClass('ritual-card');
       });
@@ -593,7 +593,7 @@ describe('Backward Compatibility Tests', () => {
     it('preserves legacy CSS custom properties', async () => {
       await act(async () => {
         render(
-          <HexagonClock 
+          <HexagonClock
             {...legacyHexagonChartProps}
           />
         );
@@ -602,7 +602,7 @@ describe('Backward Compatibility Tests', () => {
       await waitFor(() => {
         const container = document.querySelector('.hexagon-clock-container');
         const styles = window.getComputedStyle(container!);
-        
+
         // Should maintain CSS custom properties for theming
         expect(styles.getPropertyValue('--transform-gpu')).toBeTruthy();
       });
@@ -623,7 +623,7 @@ describe('Backward Compatibility Tests', () => {
       await act(async () => {
         render(
           <DashboardWrapper>
-            <HexagonClock 
+            <HexagonClock
               {...legacyHexagonChartProps}
             />
           </DashboardWrapper>
@@ -649,7 +649,7 @@ describe('Backward Compatibility Tests', () => {
       await act(async () => {
         render(
           <MyDayWrapper>
-            <HexagonClock 
+            <HexagonClock
               {...legacyTimeBlockProps}
             />
           </MyDayWrapper>

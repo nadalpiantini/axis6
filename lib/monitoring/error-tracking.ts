@@ -12,7 +12,7 @@ import { logger } from '@/lib/utils/logger'
 export type ErrorSeverity = 'low' | 'normal' | 'high' | 'critical'
 
 // Error categories for better organization
-export type ErrorCategory = 
+export type ErrorCategory =
   | 'authentication'
   | 'database'
   | 'network'
@@ -59,42 +59,42 @@ export function initializeErrorTracking(): void {
 export function categorizeError(error: Error): ErrorCategory {
   const message = error.message.toLowerCase()
   const stack = error.stack?.toLowerCase() || ''
-  
+
   // Authentication errors
   if (message.includes('auth') || message.includes('unauthorized') || message.includes('login')) {
     return 'authentication'
   }
-  
+
   // Database errors
   if (message.includes('database') || message.includes('supabase') || message.includes('sql')) {
     return 'database'
   }
-  
+
   // Network errors
   if (message.includes('network') || message.includes('fetch') || message.includes('cors')) {
     return 'network'
   }
-  
+
   // Validation errors
   if (message.includes('validation') || message.includes('invalid') || message.includes('required')) {
     return 'validation'
   }
-  
+
   // UI errors
   if (message.includes('render') || message.includes('component') || stack.includes('react')) {
     return 'ui'
   }
-  
+
   // Performance errors
   if (message.includes('timeout') || message.includes('memory') || message.includes('performance')) {
     return 'performance'
   }
-  
+
   // Security errors
   if (message.includes('csp') || message.includes('security') || message.includes('xss')) {
     return 'security'
   }
-  
+
   return 'unknown'
 }
 
@@ -107,7 +107,7 @@ export function generateFingerprint(error: Error, component?: string): ErrorFing
     .replace(/\d+/g, 'X') // Replace numbers with X
     .replace(/['"][^'"]*['"]/g, '"string"') // Replace strings
     .replace(/https?:\/\/[^\s]+/g, 'URL') // Replace URLs
-  
+
   return {
     message: cleanMessage,
     component,
@@ -126,10 +126,10 @@ export function reportError(
 ): void {
   const errorCategory = categorizeError(error)
   const fingerprint = generateFingerprint(error, context?.component)
-  
+
   // Log locally first
   logger.error(`[${errorCategory.toUpperCase()}] ${error.message}`, error)
-  
+
   // Report to Sentry with enhanced context
   Sentry.withScope((scope) => {
     // Map our severity to Sentry severity levels
@@ -139,19 +139,19 @@ export function reportError(
       'high': 'error',
       'critical': 'fatal',
     }[severity] as 'info' | 'warning' | 'error' | 'fatal'
-    
+
     // Set severity
     scope.setLevel(sentryLevel)
-    
+
     // Set error category as tag
     scope.setTag('error.category', errorCategory)
     scope.setTag('error.fingerprint', `${fingerprint.category}:${fingerprint.message}`)
-    
+
     // Add user context if available
     if (context?.userId) {
       scope.setUser({ id: context.userId })
     }
-    
+
     // Add additional context
     if (context) {
       scope.setContext('errorContext', {
@@ -163,14 +163,14 @@ export function reportError(
         metadata: context.metadata,
       })
     }
-    
+
     // Add fingerprint for grouping
     scope.setFingerprint([
       fingerprint.category,
       fingerprint.message,
       fingerprint.component || 'unknown',
     ])
-    
+
     // Capture the exception
     Sentry.captureException(error)
   })
@@ -194,7 +194,7 @@ export function reportPerformanceIssue(
       context,
     },
   })
-  
+
   logger.warn(`Performance issue: ${metric} = ${value}`, context)
 }
 
@@ -212,7 +212,7 @@ export function reportEvent(
     level,
     data,
   })
-  
+
   logger.info(`Event: ${event}`, data)
 }
 
@@ -249,7 +249,7 @@ export function useErrorTracking(component: string) {
       timestamp: new Date().toISOString(),
     })
   }
-  
+
   return { reportComponentError }
 }
 

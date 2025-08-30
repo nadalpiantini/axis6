@@ -14,8 +14,8 @@ interface MicroWinsHeroProps {
   onMorningRitual?: () => void
 }
 
-export function MicroWinsHero({ 
-  currentStreak = 0, 
+export function MicroWinsHero({
+  currentStreak = 0,
   longestStreak = 0,
   todayCompleted = false,
   onMorningRitual
@@ -30,18 +30,18 @@ export function MicroWinsHero({
       const hours = now.getHours()
       const minutes = now.getMinutes()
       const totalMinutes = hours * 60 + minutes
-      
+
       // Morning window: 4:45 AM - 5:30 AM
       const startMinutes = 4 * 60 + 45 // 4:45 AM
       const endMinutes = 5 * 60 + 30   // 5:30 AM
-      
+
       setIsMorningWindow(totalMinutes >= startMinutes && totalMinutes <= endMinutes)
       setCurrentTime(now)
     }
 
     checkMorningWindow()
     const interval = setInterval(checkMorningWindow, 60000) // Check every minute
-    
+
     return () => clearInterval(interval)
   }, [])
 
@@ -98,7 +98,7 @@ export function MicroWinsHero({
                 Share Micro Win
               </Button>
             )}
-            
+
             {!isMorningWindow && (
               <p className="text-sm text-navy-400 mt-2">
                 Morning ritual window: 4:45 - 5:30 AM
@@ -117,7 +117,7 @@ export function MicroWinsHero({
                 <p className="text-xl font-bold text-white">{currentStreak} days</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-navy-700/50">
                 <Trophy className="w-5 h-5 text-yellow-400" />

@@ -15,31 +15,30 @@ export function initSentry() {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment,
-    
+
     // Performance Monitoring
     tracesSampleRate: environment === 'production' ? 0.1 : 1.0, // 10% in production
-    
+
     // Session Replay
     replaysSessionSampleRate: 0.01, // 1% of sessions
     replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
-    
+
     // Release tracking
     release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-    
-    // Integrations
+
+    // Integrations - using the new structure
     integrations: [
-      // Browser tracing
-      new Sentry.BrowserTracing({
-        routingInstrumentation: Sentry.nextRouterInstrumentation,
+      // Browser tracing - using the new API
+      Sentry.browserTracingIntegration({
         tracePropagationTargets: [
           'localhost',
           'axis6.app',
           /^https:\/\/.*\.supabase\.co/
         ]
       }),
-      
-      // Replay integration for session recording
-      new Sentry.Replay({
+
+      // Replay integration for session recording - using the new API
+      Sentry.replayIntegration({
         maskAllText: true,
         maskAllInputs: true,
         blockAllMedia: false
@@ -117,9 +116,8 @@ export function logError(
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
-    // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('🔴 Error:', errorMessage, context?.extra);
+    console.group('🔴 Sentry Error Log')
+    console.groupEnd()
   }
 
   // Send to Sentry
@@ -152,8 +150,9 @@ export function logPerformance(
     })
   }
 
-  // Send performance data to Sentry
-  const transaction = Sentry.getCurrentHub().getScope()?.getTransaction()
+  // Send performance data to Sentry using the new API
+  const currentScope = Sentry.getCurrentScope()
+  const transaction = currentScope.getTransaction()
   if (transaction) {
     const span = transaction.startChild({
       op: 'custom',
@@ -209,7 +208,7 @@ export function logMessage(
   context?: Record<string, any>
 ) {
   if (process.env.NODE_ENV === 'development') {
-    }]`, message, context)
+    console.log(`📝 Sentry Message [${level}]:`, message, context)
   }
 
   Sentry.captureMessage(message, {
@@ -239,14 +238,14 @@ export async function withMonitoring<T>(
 ): Promise<T> {
   const startTime = performance.now()
   const transaction = startTransaction(operation, 'task')
-  
+
   try {
     addBreadcrumb(`Starting ${operation}`, 'operation', options?.metadata)
     const result = await fn()
-    
+
     const duration = performance.now() - startTime
     logPerformance(operation, duration, options?.metadata)
-    
+
     if (options?.warnThreshold && duration > options.warnThreshold) {
       logMessage(
         `Operation "${operation}" took ${duration}ms (threshold: ${options.warnThreshold}ms)`,
@@ -254,12 +253,12 @@ export async function withMonitoring<T>(
         options?.metadata
       )
     }
-    
+
     transaction.setStatus('ok')
     return result
   } catch (error) {
     const duration = performance.now() - startTime
-    
+
     logError(error as Error, {
       tags: { operation },
       extra: {
@@ -267,7 +266,7 @@ export async function withMonitoring<T>(
         ...options?.metadata
       }
     })
-    
+
     transaction.setStatus('internal_error')
     throw error
   } finally {
@@ -304,7 +303,7 @@ export function handleAPIError(
   }
 ) {
   const errorObj = error instanceof Error ? error : new Error(String(error))
-  
+
   logError(errorObj, {
     level: 'error',
     tags: {

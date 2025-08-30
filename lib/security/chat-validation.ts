@@ -112,7 +112,7 @@ export class ChatSecurityValidator {
   async validateRoomCreation(userId: string, roomType: ChatRoom['type']): Promise<boolean> {
     // Basic validation - all authenticated users can create rooms
     // This can be extended with rate limiting, user restrictions, etc.
-    
+
     if (!userId) {
       return false
     }
@@ -175,7 +175,7 @@ export class ChatSecurityValidator {
     try {
       // Check message count in last minute
       const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString()
-      
+
       const { count, error } = await (await this.supabase)
         .from('axis6_chat_messages')
         .select('*', { count: 'exact', head: true })
@@ -206,7 +206,7 @@ export class ChatSecurityValidator {
 
     // Basic emoji validation - allow common emoji characters
     const emojiRegex = /^[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]$/u
-    
+
     return emojiRegex.test(emoji) && emoji.length <= 10
   }
 

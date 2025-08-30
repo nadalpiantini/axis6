@@ -256,7 +256,7 @@ async function main() {
   
   const environments = [
     { name: 'Production', url: 'https://axis6.app' },
-    { name: 'Development', url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789' }
+    { name: 'Development', url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }
   ]
   
   for (const env of environments) {

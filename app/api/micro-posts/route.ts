@@ -23,7 +23,7 @@ const feedQuerySchema = z.object({
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -42,7 +42,7 @@ export async function POST(_request: NextRequest) {
       .single()
 
     if (categoryError || !category) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid category',
         details: 'Category not found'
       }, { status: 400 })
@@ -71,9 +71,9 @@ export async function POST(_request: NextRequest) {
 
     if (postError) {
       logger.error('Error creating micro post:', postError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to create post',
-        details: postError.message 
+        details: postError.message
       }, { status: 500 })
     }
 
@@ -96,14 +96,14 @@ export async function POST(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid request data',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Micro post creation error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to create post'
     }, { status: 500 })
@@ -114,7 +114,7 @@ export async function POST(_request: NextRequest) {
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Parse query parameters
     const { searchParams } = new URL(_request.url)
     const queryParams = {
@@ -123,7 +123,7 @@ export async function GET(_request: NextRequest) {
       offset: parseInt(searchParams.get('offset') || '0'),
       privacy: (searchParams.get('privacy') || 'public') as 'public' | 'followers' | 'all'
     }
-    
+
     const validatedQuery = feedQuerySchema.parse(queryParams)
 
     // Build query
@@ -166,9 +166,9 @@ export async function GET(_request: NextRequest) {
 
     if (postsError) {
       logger.error('Error fetching micro posts:', postsError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to fetch posts',
-        details: postsError.message 
+        details: postsError.message
       }, { status: 500 })
     }
 
@@ -204,14 +204,14 @@ export async function GET(_request: NextRequest) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Invalid query parameters',
         details: error.errors
       }, { status: 400 })
     }
 
     logger.error('Micro posts feed error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       message: 'Failed to fetch posts feed'
     }, { status: 500 })

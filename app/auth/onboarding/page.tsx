@@ -58,7 +58,7 @@ export default function OnboardingPage() {
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-white mb-2">{content.errorTitle}</h2>
           <p className="text-gray-400 mb-6">{categoriesError.message}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
           >
@@ -81,21 +81,21 @@ export default function OnboardingPage() {
           <div className="flex justify-center mb-6">
             <LogoFull size="lg" priority />
           </div>
-          
+
           <h1 className="text-4xl font-bold text-white mb-2">
             {content.title}
           </h1>
           <p className="text-gray-400 mb-6">
             {content.subtitle}
           </p>
-          
+
           {/* Progress Indicator */}
           <div className="flex items-center justify-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-white">{selectedCount}</span>
               <span className="text-gray-400">/ 6 {content.selected}</span>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
               <motion.div
@@ -105,7 +105,7 @@ export default function OnboardingPage() {
                 transition={{ duration: 0.3, ease: "easeOut" }}
               />
             </div>
-            
+
             {remainingCount > 0 && (
               <span className="text-sm text-yellow-400">
                 {content.remaining}
@@ -154,7 +154,7 @@ export default function OnboardingPage() {
             onClick={completeOnboarding}
             disabled={!canComplete || loading}
             className={`
-              px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 
+              px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2
               transition-all duration-300 min-w-[200px]
               ${canComplete && !loading
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg hover:shadow-purple-500/50 hover:scale-105'

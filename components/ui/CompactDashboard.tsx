@@ -129,7 +129,7 @@ export default function CompactDashboard({
               <div className="flex flex-col lg:flex-row items-center gap-6">
                 {/* Mini Hexagon */}
                 <div className="flex-shrink-0">
-                  <MiniHexagon 
+                  <MiniHexagon
                     data={getHexagonData() as any}
                     size={200}
                     onCategoryClick={handleCategoryClick}
@@ -144,7 +144,7 @@ export default function CompactDashboard({
                     {categories.map(category => {
                       const isCompleted = completedToday.has(category.id)
                       const isSelected = selectedCategory === category.id
-                      
+
                       return (
                         <motion.button
                           key={category.id}
@@ -153,23 +153,23 @@ export default function CompactDashboard({
                           onClick={() => handleCategoryClick(category.id)}
                           className={`
                             relative p-3 rounded-xl transition-all duration-300
-                            ${isCompleted 
-                              ? 'bg-white/10 border-2' 
+                            ${isCompleted
+                              ? 'bg-white/10 border-2'
                               : 'bg-white/5 border border-white/10 hover:bg-white/8'
                             }
                             ${isSelected ? 'ring-2 ring-white/30' : ''}
                           `}
                           style={{
                             borderColor: isCompleted ? category.color : undefined,
-                            background: isCompleted 
+                            background: isCompleted
                               ? `linear-gradient(135deg, ${category.color}15, transparent)`
                               : undefined
                           }}
                         >
                           <div className="flex items-center gap-2">
-                            <div 
+                            <div
                               className="w-8 h-8 rounded-lg flex items-center justify-center"
-                              style={{ 
+                              style={{
                                 backgroundColor: `${category.color}20`,
                                 color: category.color
                               }}
@@ -246,7 +246,7 @@ export default function CompactDashboard({
                 "Camina 15 minutos", "Medita 5 minutos", "Escribe 3 gratitudes",
                 "Llama a un amigo", "Reflexiona", "Organiza tu espacio"
               ]
-              
+
               return (
                 <motion.div
                   key={category.id}
@@ -261,9 +261,9 @@ export default function CompactDashboard({
                   `}
                 >
                   <div className="flex items-start gap-3">
-                    <div 
+                    <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ 
+                      style={{
                         backgroundColor: `${category.color}20`,
                         color: category.color
                       }}
@@ -282,8 +282,8 @@ export default function CompactDashboard({
                           5 min
                         </span>
                         {isCompleted && (
-                          <span className="text-xs px-2 py-1 rounded-full" 
-                            style={{ 
+                          <span className="text-xs px-2 py-1 rounded-full"
+                            style={{
                               backgroundColor: `${category.color}20`,
                               color: category.color
                             }}
@@ -372,12 +372,12 @@ export default function CompactDashboard({
                 {categories.map(category => {
                   const isCompleted = completedToday.has(category.id)
                   const categoryStreak = streaks?.find(s => s.category_id === category.id)?.current_streak || 0
-                  
+
                   return (
                     <div key={category.id} className="flex items-center gap-3">
-                      <div 
+                      <div
                         className="w-6 h-6 rounded-full flex items-center justify-center"
-                        style={{ 
+                        style={{
                           backgroundColor: `${category.color}20`,
                           color: category.color
                         }}

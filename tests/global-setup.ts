@@ -6,16 +6,16 @@ import { chromium, FullConfig } from '@playwright/test';
  */
 async function globalSetup(config: FullConfig) {
   console.log('🚀 Starting AXIS6 Playwright Test Suite');
-  
+
   // Validate environment variables
-  const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:6789';
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
   console.log(`📍 Testing against: ${baseURL}`);
-  
+
   // Optional: Create test user account if needed for production testing
   if (process.env.NODE_ENV === 'production') {
     console.log('⚠️  Running tests against production environment');
   }
-  
+
   // Optional: Warm up the server
   try {
     const browser = await chromium.launch();

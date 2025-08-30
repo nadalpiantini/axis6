@@ -1,13 +1,13 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Sparkles, 
-  Target, 
-  Clock, 
-  Users, 
-  Zap, 
-  Heart, 
+import {
+  Sparkles,
+  Target,
+  Clock,
+  Users,
+  Zap,
+  Heart,
   RefreshCw,
   ChevronRight,
   Star,
@@ -25,7 +25,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAIRecommendations } from '@/lib/hooks/useAIPersonalization'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
 
-
 interface PersonalizedRecommendationsProps {
   className?: string
   categoryId?: number
@@ -39,8 +38,8 @@ interface ActivityFilters {
   current_mood?: number
 }
 
-export function PersonalizedRecommendations({ 
-  className, 
+export function PersonalizedRecommendations({
+  className,
   categoryId,
   showGoals = true
 }: PersonalizedRecommendationsProps) {
@@ -79,7 +78,7 @@ export function PersonalizedRecommendations({
 
   const loadActivityRecommendations = (catId: string) => {
     if (!catId) return
-    
+
     getActivityRecommendations({
       category_id: catId,
       ...filters
@@ -98,7 +97,7 @@ export function PersonalizedRecommendations({
   const handleFilterChange = (key: keyof ActivityFilters, value: any) => {
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
-    
+
     if (selectedCategory) {
       getActivityRecommendations({
         category_id: selectedCategory,
@@ -161,11 +160,11 @@ export function PersonalizedRecommendations({
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     <div className="flex items-center gap-2">
-                      <div 
+                      <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: category.color }}
                       />
-                      {typeof category.name === 'object' 
+                      {typeof category.name === 'object'
                         ? (category.name as any).en || category.slug
                         : category.name
                       }
@@ -174,7 +173,7 @@ export function PersonalizedRecommendations({
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -182,7 +181,7 @@ export function PersonalizedRecommendations({
             >
               Filters {showFilters ? '▼' : '▶'}
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -209,8 +208,8 @@ export function PersonalizedRecommendations({
               >
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Energy Level</label>
-                  <Select 
-                    value={filters.energy_level || ''} 
+                  <Select
+                    value={filters.energy_level || ''}
                     onValueChange={(value) => handleFilterChange('energy_level', value || undefined)}
                   >
                     <SelectTrigger className="w-full">
@@ -224,11 +223,11 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Social Setting</label>
-                  <Select 
-                    value={filters.social_preference || ''} 
+                  <Select
+                    value={filters.social_preference || ''}
                     onValueChange={(value) => handleFilterChange('social_preference', value || undefined)}
                   >
                     <SelectTrigger className="w-full">
@@ -242,11 +241,11 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Time Available</label>
-                  <Select 
-                    value={filters.time_available || ''} 
+                  <Select
+                    value={filters.time_available || ''}
                     onValueChange={(value) => handleFilterChange('time_available', value || undefined)}
                   >
                     <SelectTrigger className="w-full">
@@ -260,11 +259,11 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Current Mood (1-5)</label>
-                  <Select 
-                    value={filters.current_mood?.toString() || ''} 
+                  <Select
+                    value={filters.current_mood?.toString() || ''}
                     onValueChange={(value) => handleFilterChange('current_mood', value ? parseInt(value) : undefined)}
                   >
                     <SelectTrigger className="w-full">
@@ -298,9 +297,9 @@ export function PersonalizedRecommendations({
           ) : activityError ? (
             <div className="text-center py-8 text-red-600">
               <p className="text-sm">Failed to load recommendations</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="mt-2"
                 onClick={() => selectedCategory && loadActivityRecommendations(selectedCategory)}
               >
@@ -330,13 +329,13 @@ export function PersonalizedRecommendations({
                         </h4>
                         <p className="text-sm text-gray-600 mb-2">{activity.description}</p>
                       </div>
-                      <Badge 
+                      <Badge
                         className={`${getDifficultyColor(activity.difficulty)} border-0`}
                       >
                         {getDifficultyLabel(activity.difficulty)}
                       </Badge>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-gray-500" />
@@ -355,13 +354,13 @@ export function PersonalizedRecommendations({
                         <span>{Math.round(activity.temperament_fit_score * 100)}% fit</span>
                       </div>
                     </div>
-                    
+
                     <div className="mb-4">
                       <p className="text-sm text-purple-700 bg-purple-50 p-3 rounded">
                         💡 {activity.personalization_reason}
                       </p>
                     </div>
-                    
+
                     {activity.benefits && activity.benefits.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {activity.benefits.map((benefit: string, benefitIndex: number) => (
@@ -371,12 +370,12 @@ export function PersonalizedRecommendations({
                         ))}
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">Match Score:</span>
-                        <Progress 
-                          value={activity.temperament_fit_score * 100} 
+                        <Progress
+                          value={activity.temperament_fit_score * 100}
                           className="w-20 h-2"
                         />
                         <span className="text-xs text-gray-600">
@@ -390,11 +389,11 @@ export function PersonalizedRecommendations({
                   </motion.div>
                 ))}
               </AnimatePresence>
-              
+
               {activityData.data.meta && (
                 <div className="text-center text-xs text-gray-500 pt-4 border-t">
-                  Generated in {activityData.data.meta.generation_time_ms}ms • 
-                  Avg fit: {Math.round(activityData.data.meta.average_fit_score * 100)}% • 
+                  Generated in {activityData.data.meta.generation_time_ms}ms •
+                  Avg fit: {Math.round(activityData.data.meta.average_fit_score * 100)}% •
                   Based on {activityData.data.meta.temperament_used} temperament
                 </div>
               )}
@@ -403,9 +402,9 @@ export function PersonalizedRecommendations({
             <div className="text-center py-8 text-gray-500">
               <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="text-sm">No recommendations available</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="mt-2"
                 onClick={() => loadActivityRecommendations(selectedCategory)}
               >
@@ -480,7 +479,7 @@ export function PersonalizedRecommendations({
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant={
-                          goal.difficulty === 'easy' ? 'secondary' : 
+                          goal.difficulty === 'easy' ? 'secondary' :
                           goal.difficulty === 'medium' ? 'default' : 'destructive'
                         }>
                           {goal.difficulty}
@@ -490,7 +489,7 @@ export function PersonalizedRecommendations({
                         </Badge>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">Success Probability:</span>

@@ -1,156 +1,124 @@
 # 🚨 AXIS6 Emergency Fix Summary
 
-## **Problem Identified**
-Multiple 400, 404, and 500 errors were occurring in production:
+## Issues Fixed
 
-1. **400 Errors on `axis6_checkins`**: `"there is no unique or exclusion constraint matching the ON CONFLICT specification"`
-2. **500 Errors on `/api/time-blocks`**: Missing `axis6_time_blocks` table
-3. **400 Errors on `axis6_profiles`**: Constraint issues with profile updates
-4. **404 Errors on `/api/chat/*`**: Missing chat system tables (`axis6_chat_rooms`, `axis6_chat_participants`, etc.)
+### 1. ✅ Sentry Import Errors
+**Problem**: The `@sentry/nextjs` v10.5.0 package has changed its export structure, causing import errors for:
+- `BrowserTracing`
+- `nextRouterInstrumentation`
+- `Replay`
+- `getCurrentHub`
+- `startTransaction`
 
-## **Root Causes**
+**Solution**: Updated all Sentry configuration files to use the new API:
+- `lib/monitoring/sentry-config.ts` - Updated to use `Sentry.browserTracingIntegration()` and `Sentry.replayIntegration()`
+- `sentry.client.config.ts` - Enabled integrations with new API
+- `sentry.server.config.ts` - Updated server integrations
+- `sentry.edge.config.ts` - Updated edge runtime integrations
 
-### 1. Database Schema Issues
-- **Missing unique constraints** on `axis6_checkins` table for ON CONFLICT operations
-- **Missing `axis6_time_blocks`** table entirely
-- **Missing chat system tables** - complete chat functionality missing
-- **Incorrect data types** - code expected TIMESTAMPTZ but database had DATE
-- **Missing RLS policies** for proper security
+### 2. ✅ Database 404 Errors
+**Problem**: Missing `get_dashboard_data_optimized` function causing 404 errors
 
-### 2. Code Issues
-- **API routes using DATE strings** instead of TIMESTAMPTZ for `completed_at` field
-- **Missing database functions** that API routes depend on
-- **Import path issues** in chat components
+**Solution**: Created comprehensive database deployment script:
+- `scripts/EMERGENCY_FIX_ALL_ISSUES.sql` - Complete database fix
+- `scripts/deploy-dashboard-optimization.sql` - Dashboard optimization functions
+- `scripts/deploy-emergency-fix.sh` - Deployment instructions
 
-## **Fixes Applied**
+### 3. ✅ Database 400 Errors
+**Problem**: Table structure mismatches causing 400 errors for:
+- `axis6_profiles` queries
+- `axis6_streaks` queries
 
-### 1. Database Schema Fixes
+**Solution**: Fixed table structures with correct column mappings and data types
 
-#### ✅ Fixed `axis6_checkins` table (`scripts/EMERGENCY_FIX_400_500_ERRORS.sql`):
-- Added proper unique constraint: `UNIQUE (user_id, category_id, DATE(completed_at))`
-- Changed `completed_at` column to TIMESTAMPTZ
-- Added performance indexes
-- Fixed RLS policies
+## Files Modified
 
-#### ✅ Created missing `axis6_time_blocks` table:
-- Complete table structure with all required columns
-- Proper indexes for performance
-- RLS policies for security
-- Generated columns for duration calculation
+### Sentry Configuration Files
+- ✅ `lib/monitoring/sentry-config.ts` - Updated imports and API usage
+- ✅ `sentry.client.config.ts` - Enabled browser integrations
+- ✅ `sentry.server.config.ts` - Updated server integrations  
+- ✅ `sentry.edge.config.ts` - Updated edge integrations
 
-#### ✅ Fixed `axis6_profiles` table:
-- Ensured proper structure with UUID primary key
-- Added RLS policies
+### Database Scripts
+- ✅ `scripts/EMERGENCY_FIX_ALL_ISSUES.sql` - Complete emergency fix
+- ✅ `scripts/deploy-dashboard-optimization.sql` - Dashboard functions
+- ✅ `scripts/deploy-emergency-fix.sh` - Deployment script
 
-#### ✅ Created complete chat system (`scripts/EMERGENCY_FIX_CHAT_SYSTEM.sql`):
-- `axis6_chat_rooms` - Chat room management
-- `axis6_chat_participants` - Room membership and roles
-- `axis6_chat_messages` - Message storage with threading
-- `axis6_chat_reactions` - Emoji reactions
-- `axis6_chat_attachments` - File uploads
-- `axis6_chat_mentions` - User mentions
-- `axis6_chat_search_analytics` - Search tracking
-- Complete RLS policies and indexes
-- Database functions for analytics and search
+## Deployment Instructions
 
-#### ✅ Created missing functions:
-- `get_my_day_data()` function for time blocks API
-- `get_chat_analytics()`, `get_room_analytics()`, `get_user_analytics()` for chat
-- `search_messages()` for chat search functionality
-- `update_updated_at_column()` trigger function
-
-#### ✅ Added realtime subscriptions:
-- All tables added to `supabase_realtime` publication
-
-### 2. Code Fixes
-
-#### ✅ Fixed timestamp handling (`app/api/checkins/route.ts`):
-- Changed from DATE strings to proper TIMESTAMPTZ
-- Updated query logic to use date ranges instead of exact date matches
-- Fixed insert operations to use full timestamps
-
-#### ✅ Fixed import paths (`app/chat/new/page.tsx`, `app/chat/page.tsx`):
-- Fixed `@/components/ui/button` → `@/components/ui/Button`
-
-## **Files Modified**
-
-### Database Scripts:
-- `scripts/EMERGENCY_FIX_400_500_ERRORS.sql` - Core database fix
-- `scripts/EMERGENCY_FIX_CHAT_SYSTEM.sql` - Complete chat system
-
-### Code Files:
-- `app/api/checkins/route.ts` - Fixed timestamp handling in API routes
-- `app/chat/new/page.tsx` - Fixed Button import
-- `app/chat/page.tsx` - Fixed Button import
-
-### Deployment:
-- `scripts/deploy-emergency-fix.sh` - Automated deployment script
-
-## **Deployment Instructions**
-
-### Step 1: Apply Database Fixes
-1. **Go to Supabase Dashboard**: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql/new
-2. **Execute the core fix**: Copy and paste the contents of `scripts/EMERGENCY_FIX_400_500_ERRORS.sql`
-3. **Click "Run"** to execute
-4. **Execute the chat fix**: Copy and paste the contents of `scripts/EMERGENCY_FIX_CHAT_SYSTEM.sql`
-5. **Click "Run"** to execute
-
-### Step 2: Deploy Code Changes
+### Step 1: Deploy Database Fixes
 ```bash
-# Run the automated deployment script
+# Run the deployment script
 ./scripts/deploy-emergency-fix.sh
 ```
 
-Or manually:
+**Manual Steps:**
+1. Go to: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql
+2. Click 'New Query'
+3. Copy contents of `scripts/EMERGENCY_FIX_ALL_ISSUES.sql`
+4. Paste and click 'Run'
+
+### Step 2: Restart Development Server
 ```bash
-# Deploy to production
-vercel --prod
+npm run dev
 ```
 
-## **Verification**
+### Step 3: Test Application
+- Login should work without errors
+- Dashboard should load without 404/400 errors
+- Sentry should work without import errors
 
-After deployment, verify the fixes by:
+## What the Emergency Fix Does
 
-- [ ] **Check-in functionality** - No more 400 errors
-- [ ] **Time blocks API** - Returns 200 instead of 500
-- [ ] **Profile updates** - No constraint errors
-- [ ] **Chat functionality** - No more 404 errors on `/api/chat/*`
-- [ ] **Chat room creation** - Working properly
-- [ ] **Chat messaging** - Real-time messaging working
-- [ ] **Browser console** - Clean of 400/404/500 errors
+### Database Changes
+1. **Recreates all tables** with correct structure
+2. **Deploys missing functions**:
+   - `get_dashboard_data_optimized()`
+   - `get_weekly_stats()`
+   - `get_recent_activity()`
+3. **Creates performance indexes** for faster queries
+4. **Sets up RLS policies** for security
+5. **Enables realtime** for live updates
 
-## **Impact Assessment**
+### Code Changes
+1. **Fixes Sentry imports** to use v10.5.0 API
+2. **Enables integrations** that were commented out
+3. **Updates error handling** for better debugging
 
-### ✅ **Positive Impact:**
-- All 400/404/500 errors resolved
-- Complete chat system functionality restored
-- Improved database performance with proper indexes
-- Better data integrity with proper constraints
-- Enhanced security with RLS policies
-- Real-time chat capabilities enabled
+## Verification
 
-### ⚠️ **No Breaking Changes:**
-- All existing functionality preserved
-- Backward compatible with existing data
-- No user-facing changes
+After deployment, you can verify the fix worked by:
 
-## **Monitoring**
+1. **Check Sentry errors** - Should be no more import errors
+2. **Check browser console** - Should be no more 404/400 errors
+3. **Test login flow** - Should work smoothly
+4. **Test dashboard** - Should load without errors
 
-After deployment, monitor:
-- Error rates in browser console
-- API response times
-- Database query performance
-- User check-in success rates
-- Chat functionality usage
+## Expected Results
 
-## **Next Steps**
+- ✅ No more Sentry import errors
+- ✅ No more 404 errors for `get_dashboard_data_optimized`
+- ✅ No more 400 errors for table queries
+- ✅ Dashboard loads successfully
+- ✅ All functionality works as expected
 
-1. **Immediate**: Deploy fixes and verify resolution
-2. **Short-term**: Add comprehensive error monitoring
-3. **Long-term**: Implement automated database schema validation
+## Rollback Plan
+
+If issues occur, you can:
+1. Check the verification queries at the end of the SQL script
+2. Review the database logs in Supabase Dashboard
+3. Check the application logs for any remaining errors
+
+## Support
+
+If you encounter any issues:
+1. Check the browser console for errors
+2. Check the Supabase logs
+3. Review the verification queries in the SQL script
+4. Restart the development server
 
 ---
 
-**Status**: ✅ **READY FOR DEPLOYMENT**
-**Priority**: 🚨 **CRITICAL**
-**Risk Level**: 🟢 **LOW** (Safe, non-breaking changes)
+**Status**: ✅ All fixes implemented and ready for deployment
+**Priority**: 🚨 Emergency - Fixes critical production issues
+**Impact**: High - Resolves all current error conditions

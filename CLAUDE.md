@@ -13,11 +13,11 @@ npm install
 cp .env.local.example .env.local
 # Edit .env.local with your Supabase keys
 
-# Run development server (IMPORTANT: runs on port 6789, not 3000)
+# Run development server (uses Next.js default port 3000)
 npm run dev
 
 # Open browser
-http://localhost:6789
+http://localhost:3000
 ```
 
 ## Project Overview
@@ -40,7 +40,7 @@ AXIS6 is a gamified wellness tracker that helps users maintain balance across 6 
 ## Development Commands
 ```bash
 # Core Development
-npm run dev          # Start development server on http://localhost:6789
+npm run dev          # Start development server on http://localhost:3000
 npm run build        # Production build
 npm run start        # Start production server
 npm run lint         # Run ESLint
@@ -76,7 +76,7 @@ npm run test:e2e:mobile       # Mobile responsive tests
 npm run test:e2e:debug        # Debug mode with browser UI
 
 # Run specific E2E test
-PLAYWRIGHT_BASE_URL=http://localhost:6789 npx playwright test tests/e2e/specific.spec.ts --headed
+PLAYWRIGHT_BASE_URL=http://localhost:3000 npx playwright test tests/e2e/specific.spec.ts --headed
 npx playwright test tests/e2e/auth.spec.ts --project=chromium  # Run on specific browser
 
 # Setup & Configuration
@@ -106,7 +106,7 @@ npm run optimize:check     # Run optimization checks (console removal + type che
 ```
 
 ## IMPORTANT Development Notes
-- **Port Configuration**: ALWAYS use http://localhost:6789 for development - The project is configured to run on port 6789, NOT the default 3000
+- **Port Configuration**: Uses the Next.js default port 3000 for development - http://localhost:3000
 - **Type Safety**: TypeScript build errors are temporarily ignored (next.config.js) - TODO: fix chat route types
 - **Linting**: ESLint during build is temporarily ignored - TODO: fix linting issues
 - **PWA**: Currently disabled for Next.js 15 compatibility (withPWA is exported but commented)
@@ -246,7 +246,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:6789  # or https://axis6.app in production
+NEXT_PUBLIC_APP_URL=http://localhost:3000  # or https://axis6.app in production
 NODE_ENV=development
 
 # Infrastructure (Production)
@@ -506,7 +506,7 @@ Multi-tier rate limiting across the stack:
 ## Working With This Codebase
 
 ### Key Development Principles
-1. **Port 6789**: Always use localhost:6789, never localhost:3000
+1. **Port 3000**: Always use localhost:3000 (Next.js default)
 2. **Database Columns**: Verify column names - `axis6_profiles` uses `id`, others use `user_id`
 3. **Mobile-First**: All new components must be mobile-responsive with touch targets ≥44px
 4. **Modal Centering**: Use flexbox centering, never transform-based positioning

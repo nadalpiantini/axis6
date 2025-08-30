@@ -31,7 +31,7 @@ export interface TimeDistribution {
 }
 
 // Time block states for planning mode
-export type TimeBlockState = 
+export type TimeBlockState =
   | 'empty'          // Dashed outline at clock position
   | 'planned'        // Solid fill with transparency
   | 'active'         // Pulsing animation with progress
@@ -110,7 +110,16 @@ export interface HexagonClockProps {
   // Auto-detect mode based on props
   data?: CompletionData;           // Dashboard mode
   distribution?: TimeDistribution[]; // Planning mode
-  
+  timeBlocks?: Array<{             // Revolutionary time blocks on clock
+    id: string;
+    startTime: string;
+    duration: number;
+    category: string;
+    status: 'empty' | 'planned' | 'active' | 'completed' | 'overflowing';
+    title?: string;
+    progress?: number;
+  }>;
+
   // Display configuration
   size?: number | 'auto';
   showResonance?: boolean;
@@ -118,17 +127,18 @@ export interface HexagonClockProps {
   showCurrentTime?: boolean;
   showCategoryPositions?: boolean;    // Revolutionary clock positioning
   showCircadianRhythm?: boolean;      // Show circadian peak times
+  showTimeBlocks?: boolean;           // Show time blocks on clock
   clockBasedPositioning?: boolean;    // Enable revolutionary positioning mode
-  
+
   // Interaction callbacks
   onToggleAxis?: (id: string | number) => void;
   onCategoryClick?: (category: any) => void;
   onTimeBlockDrag?: (block: TimeBlock, newHour: number) => void;
-  
+
   // Performance options
   mobileOptimized?: boolean;
   hardwareAccelerated?: boolean;
-  
+
   // Backward compatibility
   animate?: boolean;
   isToggling?: boolean;

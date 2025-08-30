@@ -17,7 +17,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 50], [0.95, 1])
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
@@ -25,7 +25,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-  
+
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Buenos días'
@@ -45,7 +45,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
 
   return (
     <>
-      <motion.header 
+      <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         style={{ opacity: headerOpacity }}
@@ -174,7 +174,7 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
           </div>
         </div>
       </motion.header>
-      
+
       {/* Spacer for fixed header */}
       <div className="h-14 md:h-14" />
     </>

@@ -19,7 +19,7 @@ export function GlobalErrorBoundary({ children }: GlobalErrorBoundaryProps) {
 
   const handleGlobalError = (error: Error, errorInfo: any) => {
     logger.error('Global error boundary triggered', error)
-    
+
     reportError(error, 'critical', {
       component: 'GlobalErrorBoundary',
       action: 'global_error',
@@ -28,9 +28,9 @@ export function GlobalErrorBoundary({ children }: GlobalErrorBoundaryProps) {
       metadata: {
         ...errorInfo,
         timestamp: new Date().toISOString(),
-        sessionStorage: typeof window !== 'undefined' ? 
+        sessionStorage: typeof window !== 'undefined' ?
           JSON.stringify(Object.keys(window.sessionStorage || {})) : undefined,
-        localStorage: typeof window !== 'undefined' ? 
+        localStorage: typeof window !== 'undefined' ?
           JSON.stringify(Object.keys(window.localStorage || {})) : undefined,
       },
     })

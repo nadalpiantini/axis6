@@ -19,7 +19,7 @@ function DevToolsWrapper() {
   if (process.env['NODE_ENV'] !== 'development') {
     return null
   }
-  
+
   return <ReactQueryDevtools initialIsOpen={false} />
 }
 
@@ -29,7 +29,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 30 * 1000, // 30 seconds - more aggressive for real-time feel
+            staleTime: 30 * 1000, // 30 seconds - optimized for dashboard
             gcTime: 10 * 60 * 1000, // 10 minutes - longer cache retention
             retry: (failureCount, error: any) => {
               // Don't retry on 4xx errors (client errors)
@@ -37,17 +37,15 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
               // Retry up to 2 times for other errors
               return failureCount < 2
             },
-            refetchOnWindowFocus: true, // Enable for better UX
+            // Optimize for preventing duplicate requests
+            refetchOnWindowFocus: false, // Disable to prevent duplicates on tab switch
             refetchOnReconnect: true, // Refetch when coming back online
-            refetchOnMount: true, // Always refetch on component mount
-            // Background refetch interval for critical data
-            refetchInterval: (query) => {
-              // Only auto-refetch dashboard queries
-              if (query.queryKey[0] === 'checkins' || query.queryKey[0] === 'streaks') {
-                return 60 * 1000 // 1 minute for dashboard data
-              }
-              return false // No auto-refetch for other queries
-            },
+            refetchOnMount: false, // Use cached data if available and fresh
+            // Disable automatic background refetching
+            refetchInterval: false,
+            refetchIntervalInBackground: false,
+            // Enable request deduplication
+            networkMode: 'online',
           },
           mutations: {
             retry: (failureCount, error: any) => {
@@ -57,11 +55,11 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
             },
             // Global error handling for mutations
             onError: (error: any, variables, context) => {
-              // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Mutation failed:', error);
-              // You can add global error notifications here
+              // Log errors in development
+              if (process.env.NODE_ENV === 'development') {
+                // TODO: Replace with proper error handling
+    // console.error('Mutation failed:', error, { variables, context });
+              }
             },
           },
         },

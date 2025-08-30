@@ -9,14 +9,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
 import { ChatAttachment } from '@/lib/supabase/chat-storage'
 import { cn } from '@/lib/utils'
+import { handleError, handleFileError } from '@/lib/error/standardErrorHandler'
 
 import { FileUpload, FileAttachment } from './FileUpload'
 import { MentionInput } from './MentionInput'
 
-
 interface ChatComposerProps {
   onSendMessage: (
-    content: string, 
+    content: string,
     messageType?: 'text' | 'image' | 'file' | 'achievement',
     attachments?: ChatAttachment[]
   ) => void
@@ -113,7 +113,7 @@ export function ChatComposer({
   const handleSend = async () => {
     const trimmedMessage = message.trim()
     const hasContent = trimmedMessage || attachments.length > 0
-    
+
     if (!hasContent || isLoading) return
 
     // Process mentions if room ID is available
@@ -122,20 +122,24 @@ export function ChatComposer({
       try {
         const mentionResult = await mentionsService.resolveMentions(trimmedMessage, roomId)
         processedMessage = mentionResult.text
-        
+
         // Store resolved mentions for notifications
         const mentionedUserIds = mentionsService.extractMentionedUserIds(mentionResult.mentions)
         // These can be passed to the parent component for notification handling
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to process mentions:', error);
+        handleError(error, {
+      operation: 'process_mentions', component: 'ChatComposer',
+          level: 'warning',
+          userMessage: 'Mentions may not work properly',
+          showToast: false, // Don't interrupt chat flow
+          context: { messageLength: trimmedMessage.length }
+        })
       }
     }
 
     const messageType = attachments.length > 0 ? 'file' : 'text'
     onSendMessage(processedMessage || '', messageType, attachments)
-    
+
     setMessage('')
     setAttachments([])
     setMentions([])
@@ -206,14 +210,16 @@ export function ChatComposer({
                 <X className="h-3 w-3" />
               </Button>
             </div>
-            
+
             <FileUpload
               messageId={messageId}
               onFileUploaded={handleFileUploaded}
               onError={(error) => {
-                // TODO: Replace with proper error handling
-                // // TODO: Replace with proper error handling
-    // console.error('File upload error:', error);
+                handleFileError(error, {
+                  operationType: 'upload',
+                  component: 'ChatComposer',
+                  userMessage: 'File upload failed. Please try a smaller file.'
+                })
               }}
             />
           </motion.div>

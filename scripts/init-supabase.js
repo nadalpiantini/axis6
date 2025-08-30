@@ -165,12 +165,12 @@ async function initSupabase() {
   log('1. Go to Supabase Dashboard:', 'yellow');
   log(`   https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/auth/settings`, 'cyan');
   log('\n2. Verify these settings:', 'yellow');
-  log('   - Site URL: http://localhost:6789', 'cyan');
-  log('   - Redirect URLs include: http://localhost:6789/**', 'cyan');
+  log('   - Site URL: http://localhost:3000', 'cyan');
+  log('   - Redirect URLs include: http://localhost:3000/**', 'cyan');
   log('   - Email confirmations: OFF (for development)', 'cyan');
   log('\n3. Start development:', 'yellow');
   log('   npm run dev', 'cyan');
-  log('   Visit: http://localhost:6789', 'cyan');
+  log('   Visit: http://localhost:3000', 'cyan');
   
   log('\n🚀 Happy coding with AXIS6!\n', 'green');
 }

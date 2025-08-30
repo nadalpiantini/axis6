@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface CSRFState {
   token: string | null
   isLoading: boolean
@@ -23,30 +24,30 @@ export function useCSRF() {
    */
   const fetchToken = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
-    
+
     try {
       const response = await fetch('/api/csrf', {
         method: 'GET',
         credentials: 'include' // Important for cookies
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch CSRF token')
       }
-      
+
       const data = await response.json()
-      
+
       setState({
         token: data.token,
         isLoading: false,
         error: null
       })
-      
+
       // Store token in sessionStorage for easy access
       if (typeof window !== 'undefined' && data.token) {
         sessionStorage.setItem('csrf-token', data.token)
       }
-      
+
       return data.token
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
@@ -70,7 +71,7 @@ export function useCSRF() {
         return storedToken
       }
     }
-    
+
     // If no stored token, fetch a new one
     return fetchToken()
   }, [fetchToken])
@@ -83,7 +84,7 @@ export function useCSRF() {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('csrf-token')
     }
-    
+
     // Fetch new token
     return fetchToken()
   }, [fetchToken])
@@ -93,11 +94,11 @@ export function useCSRF() {
    */
   const getHeaders = useCallback(async (additionalHeaders: HeadersInit = {}): Promise<HeadersInit> => {
     const token = await getToken()
-    
+
     if (!token) {
       throw new Error('No CSRF token available')
     }
-    
+
     return {
       ...additionalHeaders,
       'x-csrf-token': token
@@ -115,9 +116,9 @@ export function useCSRF() {
     if (!options.method || options.method.toUpperCase() === 'GET') {
       return fetch(url, options)
     }
-    
+
     const headers = await getHeaders(options.headers || {})
-    
+
     return fetch(url, {
       ...options,
       headers,
@@ -142,9 +143,9 @@ export function useCSRF() {
 
 /**
  * Example usage in a component:
- * 
+ *
  * const { secureFetch, refreshToken } = useCSRF()
- * 
+ *
  * const handleSubmit = async (data) => {
  *   try {
  *     const response = await secureFetch('/api/protected-endpoint', {
@@ -152,17 +153,17 @@ export function useCSRF() {
  *       headers: { 'Content-Type': 'application/json' },
  *       body: JSON.stringify(data)
  *     })
- *     
+ *
  *     if (response.status === 403) {
  *       // CSRF token might be expired, refresh and retry
  *       await refreshToken()
  *       // Retry the request...
  *     }
  *   } catch (error) {
- *     // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Request failed:', error);
+ *     handleError(error, {
+      operation: 'general_operation', component: 'useCSRF',
+       userMessage: 'Operation failed. Please try again.'
+     })
  *   }
  * }
  */

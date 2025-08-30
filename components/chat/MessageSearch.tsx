@@ -11,7 +11,7 @@ import { useDebounce } from '@/lib/hooks/useDebounce'
 import { messageSearchService, SearchResult, SearchOptions, SearchStats } from '@/lib/services/message-search'
 import { cn } from '@/lib/utils'
 
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface MessageSearchProps {
   className?: string
   onClose?: () => void
@@ -31,10 +31,10 @@ export function MessageSearch({
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState<SearchOptions>({})
   const [selectedIndex, setSelectedIndex] = useState(-1)
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
-  
+
   const debouncedQuery = useDebounce(query, 300)
 
   // Load search history on mount
@@ -77,9 +77,12 @@ export function MessageSearch({
       setStats(searchStats)
       setSelectedIndex(-1)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Search failed:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'MessageSearch',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       setResults([])
       setStats(null)
     } finally {
@@ -92,9 +95,12 @@ export function MessageSearch({
       const suggestions = await messageSearchService.getSearchSuggestions(partial)
       setSuggestions(suggestions)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to get suggestions:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'MessageSearch',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       setSuggestions([])
     }
   }
@@ -174,7 +180,7 @@ export function MessageSearch({
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-neutral-700">
         <Search className="h-5 w-5 text-purple-400 flex-shrink-0" />
-        
+
         <div className="relative flex-1">
           <input
             ref={searchInputRef}
@@ -188,7 +194,7 @@ export function MessageSearch({
               "text-lg outline-none"
             )}
           />
-          
+
           {query && (
             <button
               onClick={clearSearch}
@@ -263,7 +269,7 @@ export function MessageSearch({
                   Clear Filters
                 </Button>
               </div>
-              
+
               {Object.keys(filters).length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {filters.date_from && (
@@ -355,7 +361,7 @@ export function MessageSearch({
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-white text-sm">
@@ -371,15 +377,15 @@ export function MessageSearch({
                           {(result.match_rank * 100).toFixed(0)}% match
                         </Badge>
                       </div>
-                      
-                      <div 
+
+                      <div
                         className="text-sm text-neutral-300 line-clamp-2"
-                        dangerouslySetInnerHTML={{ 
-                          __html: messageSearchService.highlightSearchTerms(result.content, query) 
+                        dangerouslySetInnerHTML={{
+                          __html: messageSearchService.highlightSearchTerms(result.content, query)
                         }}
                       />
                     </div>
-                    
+
                     <div className="flex-shrink-0">
                       <MessageSquare className="h-4 w-4 text-neutral-500" />
                     </div>
@@ -410,7 +416,7 @@ export function MessageSearch({
                     </div>
                   </button>
                 ))}
-                
+
                 {getSearchHistory().length === 0 && (
                   <p className="text-neutral-500 text-sm py-4 text-center">
                     No recent searches

@@ -1,10 +1,10 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Check, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Check,
   Brain,
   Heart,
   Users,
@@ -17,6 +17,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { LogoIcon } from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface Question {
   id: string
   question_text: {
@@ -56,7 +57,7 @@ interface TemperamentQuestionnaireProps {
 
 const temperamentColors = {
   sanguine: '#FF6B6B',    // Warm red/pink - energetic, social
-  choleric: '#4ECDC4',    // Teal - ambitious, leadership  
+  choleric: '#4ECDC4',    // Teal - ambitious, leadership
   melancholic: '#45B7D1', // Blue - analytical, thoughtful
   phlegmatic: '#96CEB4'   // Green - peaceful, reliable
 }
@@ -76,11 +77,11 @@ const questionTypeIcons = {
   goal_setting: Zap
 }
 
-export function TemperamentQuestionnaire({ 
-  userId, 
-  onComplete, 
-  onClose, 
-  language = 'en' 
+export function TemperamentQuestionnaire({
+  userId,
+  onComplete,
+  onClose,
+  language = 'en'
 }: TemperamentQuestionnaireProps) {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -105,10 +106,13 @@ export function TemperamentQuestionnaire({
 
         setQuestions(questionsData || [])
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching questions:', error);
+        handleError(error, {
+      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
+
+          userMessage: 'Psychology assessment failed. Please try again.'
+
+        })
+            // Error logged via handleError
       } finally {
         setLoading(false)
       }
@@ -142,10 +146,13 @@ export function TemperamentQuestionnaire({
           session_id: sessionId
         })
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving response:', error);
+      handleError(error, {
+      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
+
+        userMessage: 'Psychology assessment failed. Please try again.'
+
+      })
+            // Error logged via handleError
     }
   }, [currentQuestion, userId, sessionId, supabase])
 
@@ -198,10 +205,13 @@ export function TemperamentQuestionnaire({
 
       onComplete(result)
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error submitting questionnaire:', error);
+      handleError(error, {
+      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
+
+        userMessage: 'Psychology assessment failed. Please try again.'
+
+      })
+            // Error logged via handleError
     } finally {
       setSubmitting(false)
     }
@@ -278,7 +288,7 @@ export function TemperamentQuestionnaire({
   const getMotivationStyle = (temperament: string) => {
     const styles = {
       sanguine: 'encouraging',
-      choleric: 'challenging', 
+      choleric: 'challenging',
       melancholic: 'analytical',
       phlegmatic: 'supportive'
     }
@@ -336,7 +346,7 @@ export function TemperamentQuestionnaire({
               ×
             </button>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mb-2">
             <div className="flex justify-between text-xs text-gray-400 mb-2">
@@ -385,7 +395,7 @@ export function TemperamentQuestionnaire({
                   const isSelected = responses[currentQuestion.id] === index
                   const temperamentColor = temperamentColors[option.temperament]
                   const TemperamentIcon = temperamentIcons[option.temperament]
-                  
+
                   return (
                     <motion.button
                       key={index}
@@ -400,12 +410,12 @@ export function TemperamentQuestionnaire({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div 
+                          <div
                             className={`p-1.5 rounded-lg ${isSelected ? 'opacity-100' : 'opacity-60'}`}
                             style={{ backgroundColor: `${temperamentColor}20` }}
                           >
-                            <TemperamentIcon 
-                              className="w-4 h-4" 
+                            <TemperamentIcon
+                              className="w-4 h-4"
                               style={{ color: temperamentColor }}
                             />
                           </div>

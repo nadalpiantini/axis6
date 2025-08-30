@@ -206,7 +206,7 @@ export const SpiritualIcon = ({ size = 24, color = 'currentColor', className = '
   if (animated) {
     return (
       <motion.div
-        animate={{ 
+        animate={{
           opacity: [0.7, 1, 0.7],
           scale: [0.95, 1, 0.95]
         }}
@@ -267,11 +267,11 @@ export const CustomAxisIcons = {
 // Helper function to get icon by axis name
 export function getAxisIcon(axis: string, custom: boolean = false) {
   const normalizedAxis = axis.toLowerCase().replace(/[_\s]/g, '')
-  
+
   if (custom && CustomAxisIcons[normalizedAxis as keyof typeof CustomAxisIcons]) {
     return CustomAxisIcons[normalizedAxis as keyof typeof CustomAxisIcons]
   }
-  
+
   return AXIS_ICONS[normalizedAxis] || Target
 }
 
@@ -283,12 +283,12 @@ interface AxisIconWrapperProps extends IconProps {
 
 export function AxisIcon({ axis, custom = false, animated, ...props }: AxisIconWrapperProps) {
   const IconComponent = getAxisIcon(axis, custom)
-  
+
   if (custom) {
     // Pass animated to custom icons
     return <IconComponent animated={animated} {...props} />
   }
-  
+
   // For Lucide icons - only pass supported props (exclude animated)
   const LucideIcon = IconComponent as LucideIcon
   return <LucideIcon size={props.size} color={props.color} className={props.className} />

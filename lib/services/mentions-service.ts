@@ -34,7 +34,7 @@ export class MentionsService {
 
       const cacheKey = `${roomId}-${query.toLowerCase()}`
       const cached = this.mentionCache.get(cacheKey)
-      
+
       // Return cached results if still valid
       if (cached) {
         return cached
@@ -114,22 +114,22 @@ export class MentionsService {
 
       // Get unique usernames
       const usernames = [...new Set(mentionMatches.map(m => m.username))]
-      
+
       // Search for users
-      const userPromises = usernames.map(username => 
+      const userPromises = usernames.map(username =>
         this.searchUsers(username, roomId)
       )
-      
+
       const userResults = await Promise.all(userPromises)
       const userMap = new Map<string, MentionUser>()
 
       // Build user lookup map
       userResults.forEach((users, index) => {
         const username = usernames[index]
-        const bestMatch = users.find(user => 
+        const bestMatch = users.find(user =>
           user.name.toLowerCase() === username.toLowerCase()
         ) || users[0]
-        
+
         if (bestMatch) {
           userMap.set(username.toLowerCase(), bestMatch)
         }
@@ -164,14 +164,14 @@ export class MentionsService {
       if (mention.user) {
         const mentionText = `@${mention.username}`
         const mentionHTML = `<span class="mention" data-user-id="${mention.user.id}" data-username="${mention.user.name}">@${mention.user.name}</span>`
-        
+
         const start = mention.start + offset
         const end = mention.end + offset
-        
-        formattedText = formattedText.slice(0, start) + 
-                       mentionHTML + 
+
+        formattedText = formattedText.slice(0, start) +
+                       mentionHTML +
                        formattedText.slice(end)
-        
+
         offset += mentionHTML.length - mentionText.length
       }
     })
@@ -193,7 +193,7 @@ export class MentionsService {
    */
   async notifyMentionedUsers(
     messageId: string,
-    roomId: string, 
+    roomId: string,
     senderId: string,
     mentionedUserIds: string[]
   ): Promise<void> {

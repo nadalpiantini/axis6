@@ -57,20 +57,20 @@ export function ChatParticipants({
   const sortedParticipants = [...participants].sort((a, b) => {
     const aOnline = onlineUsers.includes(a.user_id)
     const bOnline = onlineUsers.includes(b.user_id)
-    
+
     // Online users first
     if (aOnline && !bOnline) return -1
     if (!aOnline && bOnline) return 1
-    
+
     // Then by role (admin > moderator > member)
     const roleOrder = { admin: 0, moderator: 1, member: 2 }
     const aRoleOrder = roleOrder[a.role as keyof typeof roleOrder] ?? 2
     const bRoleOrder = roleOrder[b.role as keyof typeof roleOrder] ?? 2
-    
+
     if (aRoleOrder !== bRoleOrder) {
       return aRoleOrder - bRoleOrder
     }
-    
+
     // Finally by name
     return a.profile.name.localeCompare(b.profile.name)
   })
@@ -108,7 +108,7 @@ export function ChatParticipants({
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-sm font-bold text-white">
                     {participant.profile.name.charAt(0).toUpperCase()}
                   </div>
-                  
+
                   {/* Online Status */}
                   <div className={cn(
                     "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-900",
@@ -128,7 +128,7 @@ export function ChatParticipants({
                         <span className="text-xs text-neutral-500 ml-1">(you)</span>
                       )}
                     </p>
-                    
+
                     {/* Role Icon */}
                     {participant.role !== 'member' && (
                       <div className="flex-shrink-0">

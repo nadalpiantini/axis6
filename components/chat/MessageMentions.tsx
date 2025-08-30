@@ -30,7 +30,7 @@ export function MessageMentions({
 
   // Sort mentions by position to process them in order
   const sortedMentions = [...mentions].sort((a, b) => a.start - b.start)
-  
+
   const parts: React.ReactNode[] = []
   let lastIndex = 0
 

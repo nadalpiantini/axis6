@@ -65,7 +65,7 @@ export class NotificationService {
    */
   getPermissionStatus(): NotificationPermissionResult {
     this.updatePermissionStatus()
-    
+
     return {
       granted: this.permission === 'granted',
       denied: this.permission === 'denied',
@@ -85,7 +85,7 @@ export class NotificationService {
     try {
       const permission = await Notification.requestPermission()
       this.permission = permission
-      
+
       logger.info('Notification permission result:', permission)
       return this.getPermissionStatus()
     } catch (error) {
@@ -99,7 +99,7 @@ export class NotificationService {
    */
   async showNotification(options: NotificationOptions): Promise<boolean> {
     const status = this.getPermissionStatus()
-    
+
     if (!status.supported) {
       logger.warn('Notifications not supported in this browser')
       return false
@@ -114,7 +114,7 @@ export class NotificationService {
       // Use service worker if available, otherwise fallback to direct notification
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.ready
-        
+
         if (registration.showNotification) {
           await registration.showNotification(options.title, {
             body: options.body,
@@ -128,7 +128,7 @@ export class NotificationService {
             silent: options.silent || false,
             vibrate: options.vibrate
           })
-          
+
           return true
         }
       }
@@ -151,7 +151,7 @@ export class NotificationService {
         if (existing) {
           existing.close()
         }
-        
+
         this.activeNotifications.set(options.tag, notification)
       }
 
@@ -402,14 +402,14 @@ export class NotificationService {
    */
   shouldNotify(roomId: string, type: 'message' | 'mention' | 'typing' = 'message'): boolean {
     const prefs = this.getNotificationPreferences()
-    
+
     if (!prefs.enabled) return false
     if (prefs.mutedRooms.includes(roomId)) return false
     if (prefs.mentionsOnly && type === 'message') return false
-    
+
     // Don't show typing notifications if document is visible
     if (type === 'typing' && !document.hidden) return false
-    
+
     return this.getPermissionStatus().granted
   }
 

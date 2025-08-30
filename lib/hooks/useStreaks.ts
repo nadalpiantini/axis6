@@ -25,7 +25,7 @@ export function useStreaks(userId: string | undefined) {
     const fetchStreaks = async () => {
       await loadStreaks()
     }
-    
+
     fetchStreaks()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
@@ -56,7 +56,7 @@ export function useStreaks(userId: string | undefined) {
 
       const formattedStreaks: StreakData[] = categories.map(cat => {
         const streak = streakMap.get(cat.id)
-        const name = typeof cat.name === 'object' 
+        const name = typeof cat.name === 'object'
           ? ((cat.name as Record<string, string>)['es'] || (cat.name as Record<string, string>)['en'] || cat.slug)
           : cat.name
 

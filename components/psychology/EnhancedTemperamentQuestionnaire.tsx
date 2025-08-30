@@ -1,10 +1,10 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Check, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Check,
   Brain,
   Heart,
   Users,
@@ -19,6 +19,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { LogoIcon } from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 interface Question {
   id: string
   question_text: {
@@ -82,12 +83,10 @@ const questionTypeIcons = {
   goal_setting: Zap
 }
 
-
-
-export function EnhancedTemperamentQuestionnaire({ 
-  userId, 
-  onComplete, 
-  onClose, 
+export function EnhancedTemperamentQuestionnaire({
+  userId,
+  onComplete,
+  onClose,
   language = 'en',
   useAI = true
 }: EnhancedTemperamentQuestionnaireProps) {
@@ -117,12 +116,15 @@ export function EnhancedTemperamentQuestionnaire({
         if (error) throw error
 
         setQuestions(questionsData || [])
-      } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error fetching questions:', error);
-      } finally {
+                } catch (error) {
+            handleError(error, {
+      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
+
+              userMessage: 'Psychology assessment failed. Please try again.'
+
+            })
+            // Error logged via handleError
+          } finally {
         setLoading(false)
       }
     }
@@ -155,7 +157,7 @@ export function EnhancedTemperamentQuestionnaire({
 
       if (response.ok) {
         const { data } = await response.json()
-        
+
         // Add the AI-generated question to the queue
         const newQuestion: Question = {
           id: `ai-${Date.now()}`,
@@ -170,17 +172,20 @@ export function EnhancedTemperamentQuestionnaire({
         }
 
         setQuestions(prev => [...prev, newQuestion])
-        
+
         // Show AI insight
         setAiInsight('I\'ve added a follow-up question to better understand your personality.')
         setShowAIInsight(true)
         setTimeout(() => setShowAIInsight(false), 3000)
       }
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to generate follow-up question:', error);
+      handleError(error, {
+      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
+
+        userMessage: 'Psychology assessment failed. Please try again.'
+
+      })
+            // Error logged via handleError
     }
   }, [useAI, currentQuestionIndex, responses, questions, language])
 
@@ -191,9 +196,9 @@ export function EnhancedTemperamentQuestionnaire({
     if (!currentQuestion) return
 
     const selectedOption = currentQuestion.options[optionIndex]
-    
+
     if (!selectedOption) return
-    
+
     // Store response locally with more details
     setResponses(prev => ({
       ...prev,
@@ -216,10 +221,13 @@ export function EnhancedTemperamentQuestionnaire({
           session_id: sessionId
         })
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error saving response:', error);
+      handleError(error, {
+      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
+
+        userMessage: 'Psychology assessment failed. Please try again.'
+
+      })
+            // Error logged via handleError
     }
 
     // Generate follow-up question if using AI
@@ -243,7 +251,7 @@ export function EnhancedTemperamentQuestionnaire({
   const submitQuestionnaire = useCallback(async () => {
     setSubmitting(true)
     setAiAnalyzing(useAI)
-    
+
     try {
       if (useAI) {
         // Use AI-enhanced analysis
@@ -269,7 +277,7 @@ export function EnhancedTemperamentQuestionnaire({
 
         if (analysisResponse.ok) {
           const { data: aiResult } = await analysisResponse.json()
-          
+
           // Convert to expected format
           const result: TemperamentResult = {
             primary_temperament: aiResult.primary_temperament,
@@ -296,18 +304,21 @@ export function EnhancedTemperamentQuestionnaire({
         onComplete(result)
       }
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error submitting questionnaire:', error);
-      
+      handleError(error, {
+      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
+
+        userMessage: 'Psychology assessment failed. Please try again.'
+
+      })
+            // Error logged via handleError
+
       // Fallback to basic calculation if AI fails
       const { data: result } = await supabase
         .rpc('calculate_temperament_from_responses', {
           p_user_id: userId,
           p_session_id: sessionId
         })
-      
+
       if (result) onComplete(result)
     } finally {
       setSubmitting(false)
@@ -325,8 +336,8 @@ export function EnhancedTemperamentQuestionnaire({
               {useAI ? 'Preparing AI-Enhanced Assessment' : 'Loading Assessment'}
             </h3>
             <p className="text-gray-400">
-              {useAI 
-                ? 'Initializing personalized psychological profiling...' 
+              {useAI
+                ? 'Initializing personalized psychological profiling...'
                 : 'Preparing your questionnaire...'}
             </p>
           </div>
@@ -364,7 +375,7 @@ export function EnhancedTemperamentQuestionnaire({
                   {useAI ? 'AI-Enhanced Assessment' : 'Personality Assessment'}
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-400">
-                  {useAI 
+                  {useAI
                     ? 'Adaptive questions powered by AI'
                     : 'Discover your temperament for personalized wellness'}
                 </p>
@@ -377,7 +388,7 @@ export function EnhancedTemperamentQuestionnaire({
               ×
             </button>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mb-2">
             <div className="flex justify-between text-xs text-gray-400 mb-2">
@@ -452,7 +463,7 @@ export function EnhancedTemperamentQuestionnaire({
                   const isSelected = responses[currentQuestion.id]?.index === index
                   const temperamentColor = temperamentColors[option.temperament]
                   const TemperamentIcon = temperamentIcons[option.temperament]
-                  
+
                   return (
                     <motion.button
                       key={index}
@@ -467,13 +478,13 @@ export function EnhancedTemperamentQuestionnaire({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div 
+                          <div
                             className={`p-1.5 rounded-lg ${isSelected ? 'opacity-100' : 'opacity-60'}`}
                             style={{ backgroundColor: `${temperamentColor}20` }}
                           >
                             {TemperamentIcon ? (
-                              <TemperamentIcon 
-                                className="w-4 h-4" 
+                              <TemperamentIcon
+                                className="w-4 h-4"
                                 style={{ color: temperamentColor }}
                               />
                             ) : (

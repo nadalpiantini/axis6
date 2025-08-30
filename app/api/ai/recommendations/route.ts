@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -72,8 +72,8 @@ export async function GET(_request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(5)
 
-    const categoryName = typeof category.name === 'object' 
-      ? (category.name as any).en || category.slug 
+    const categoryName = typeof category.name === 'object'
+      ? (category.name as any).en || category.slug
       : category.name
 
     // Build recommendation input
@@ -95,7 +95,7 @@ export async function GET(_request: NextRequest) {
 
     // Generate recommendations
     const activities = await activityRecommender.recommendActivities(recommendationInput)
-    
+
     const responseTime = Date.now() - startTime
 
     // Track usage
@@ -104,7 +104,7 @@ export async function GET(_request: NextRequest) {
       feature_name: 'activity_recommendation',
       response_time_ms: responseTime,
       was_successful: activities.length > 0,
-      confidence_score: activities.length > 0 
+      confidence_score: activities.length > 0
         ? activities.reduce((sum, a) => sum + a.temperament_fit_score, 0) / activities.length
         : null
     })
@@ -121,7 +121,7 @@ export async function GET(_request: NextRequest) {
         meta: {
           generation_time_ms: responseTime,
           activities_count: activities.length,
-          average_fit_score: activities.length > 0 
+          average_fit_score: activities.length > 0
             ? activities.reduce((sum, a) => sum + a.temperament_fit_score, 0) / activities.length
             : 0,
           temperament_used: temperament?.primary_temperament || 'balanced'
@@ -130,9 +130,9 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Activity recommendations API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate activity recommendations',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
@@ -148,7 +148,7 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -172,7 +172,7 @@ export async function POST(_request: NextRequest) {
 
     // Generate personalized goals
     const goals = await behavioralAnalyzer.suggestPersonalizedGoals(user.id, timeframe)
-    
+
     const responseTime = Date.now() - startTime
 
     // Store goals in database
@@ -209,7 +209,7 @@ export async function POST(_request: NextRequest) {
       feature_name: 'personalized_goals',
       response_time_ms: responseTime,
       was_successful: goals.length > 0,
-      confidence_score: goals.length > 0 
+      confidence_score: goals.length > 0
         ? goals.reduce((sum, g) => sum + g.success_probability, 0) / goals.length
         : null
     })
@@ -222,7 +222,7 @@ export async function POST(_request: NextRequest) {
           generation_time_ms: responseTime,
           goals_count: goals.length,
           timeframe,
-          average_success_probability: goals.length > 0 
+          average_success_probability: goals.length > 0
             ? goals.reduce((sum, g) => sum + g.success_probability, 0) / goals.length
             : 0
         }
@@ -230,9 +230,9 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Goal recommendations API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate goal recommendations',
         details: error instanceof Error ? error.message : 'Unknown error'
       },

@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -29,7 +29,7 @@ export async function GET(_request: NextRequest) {
 
     // Perform behavioral analysis
     const profile = await behavioralAnalyzer.analyzeBehavior(user.id)
-    
+
     const responseTime = Date.now() - startTime
 
     // Track usage
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
       feature_name: 'behavioral_analysis',
       response_time_ms: responseTime,
       was_successful: true,
-      confidence_score: profile.patterns.length > 0 
+      confidence_score: profile.patterns.length > 0
         ? profile.patterns.reduce((sum, p) => sum + p.confidence_score, 0) / profile.patterns.length
         : null
     })
@@ -50,7 +50,7 @@ export async function GET(_request: NextRequest) {
         meta: {
           analysis_time_ms: responseTime,
           patterns_found: profile.patterns.length,
-          confidence_level: profile.patterns.length > 0 
+          confidence_level: profile.patterns.length > 0
             ? profile.patterns.reduce((sum, p) => sum + p.confidence_score, 0) / profile.patterns.length
             : 0
         }
@@ -58,9 +58,9 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Behavior analysis API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to analyze behavior',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
@@ -76,7 +76,7 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -96,9 +96,9 @@ export async function POST(_request: NextRequest) {
     if (include_profile) {
       profile = await behavioralAnalyzer.analyzeBehavior(user.id)
     }
-    
+
     const insights = await behavioralAnalyzer.generatePersonalizedInsights(user.id, profile || undefined)
-    
+
     const responseTime = Date.now() - startTime
 
     // Track usage
@@ -107,7 +107,7 @@ export async function POST(_request: NextRequest) {
       feature_name: 'personalized_insights',
       response_time_ms: responseTime,
       was_successful: insights.length > 0,
-      confidence_score: insights.length > 0 
+      confidence_score: insights.length > 0
         ? insights.reduce((sum, i) => sum + i.personalization_score, 0) / insights.length
         : null
     })
@@ -120,7 +120,7 @@ export async function POST(_request: NextRequest) {
         meta: {
           generation_time_ms: responseTime,
           insights_count: insights.length,
-          average_personalization_score: insights.length > 0 
+          average_personalization_score: insights.length > 0
             ? insights.reduce((sum, i) => sum + i.personalization_score, 0) / insights.length
             : 0
         }
@@ -128,9 +128,9 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Insights generation API error:', error)
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate insights',
         details: error instanceof Error ? error.message : 'Unknown error'
       },

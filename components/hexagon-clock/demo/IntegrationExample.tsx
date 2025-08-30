@@ -97,10 +97,9 @@ export function DashboardExample() {
             setSelectedAxis(String(id));
           }}
           onCategoryClick={(category) => {
-            console.log('Category clicked:', category);
-          }}
+            }}
         />
-        
+
         {selectedAxis && (
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
@@ -114,7 +113,7 @@ export function DashboardExample() {
 }
 
 /**
- * Planning Integration Example  
+ * Planning Integration Example
  * Replaces: TimeBlockHexagon
  */
 export function PlanningExample() {
@@ -148,19 +147,19 @@ export function PlanningExample() {
           onTimeBlockDrag={handleTimeBlockDrag}
           onCategoryClick={handleCategoryClick}
         />
-        
+
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Time Summary</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {distribution.map(item => (
               <div key={item.category_id} className="bg-gray-50 p-3 rounded-lg">
-                <div 
-                  className="w-3 h-3 rounded-full mb-2" 
+                <div
+                  className="w-3 h-3 rounded-full mb-2"
                   style={{ backgroundColor: item.category_color }}
                 />
                 <p className="font-medium text-sm">{item.category_name}</p>
                 <p className="text-xs text-gray-600">
-                  {Math.floor(item.actual_minutes / 60)}h {item.actual_minutes % 60}m 
+                  {Math.floor(item.actual_minutes / 60)}h {item.actual_minutes % 60}m
                   {item.planned_minutes > 0 && (
                     <span className="ml-1">
                       ({Math.round(item.percentage)}%)
@@ -201,9 +200,9 @@ export function UnifiedExample() {
           showCurrentTime={true}
           animate={true}
           size={420}
-          onToggleAxis={(id) => console.log('Toggled:', id)}
-          onTimeBlockDrag={(block, hour) => console.log('Dragged:', block, hour)}
-          onCategoryClick={(category) => console.log('Clicked:', category)}
+          onToggleAxis={(id) => }
+          onTimeBlockDrag={(block, hour) => }
+          onCategoryClick={(category) => }
         />
       </div>
     </div>
@@ -220,7 +219,7 @@ export function PerformanceExample() {
   const measurePerformance = () => {
     setIsRendering(true);
     const startTime = performance.now();
-    
+
     // Simulate component re-render
     setTimeout(() => {
       const endTime = performance.now();
@@ -249,7 +248,7 @@ export function PerformanceExample() {
           >
             {isRendering ? 'Measuring...' : 'Measure Render Time'}
           </button>
-          
+
           {renderTime && (
             <div className="mt-4 p-4 bg-green-50 rounded-lg">
               <p className="text-green-800">
@@ -298,7 +297,7 @@ export function MobileExample() {
           <div className="h-8 bg-gray-100 flex items-center justify-center">
             <div className="text-xs text-gray-600">9:41 AM</div>
           </div>
-          
+
           {/* Component in mobile container */}
           <div className="p-4">
             <HexagonClock
@@ -309,7 +308,7 @@ export function MobileExample() {
               size="auto"
             />
           </div>
-          
+
           {/* Simulated home indicator */}
           <div className="h-8 flex items-center justify-center">
             <div className="w-32 h-1 bg-gray-400 rounded-full"></div>
@@ -346,7 +345,7 @@ export default function HexagonClockDemo() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Revolutionary 12-hour clock-based hexagon visualization system.
-            Unified replacement for HexagonChartWithResonance and TimeBlockHexagon 
+            Unified replacement for HexagonChartWithResonance and TimeBlockHexagon
             with <strong>60% performance improvement</strong> and perfect mobile centering.
           </p>
         </div>

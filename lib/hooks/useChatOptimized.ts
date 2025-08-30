@@ -3,18 +3,19 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 import { chatRealtimeManager } from '../supabase/chat-realtime'
 import { createClient } from '../supabase/client'
-import { 
-  ChatRoom, 
-  ChatMessage, 
-  ChatParticipant, 
+import {
+  ChatRoom,
+  ChatMessage,
+  ChatParticipant,
   ChatRoomWithParticipants,
   ChatMessageWithSender,
   RealtimeMessagePayload,
-  RealtimeParticipantPayload 
+  RealtimeParticipantPayload
 } from '../supabase/types'
 
 import { useSupabaseClient } from './useSupabaseClient'
 
+import { handleError } from '@/lib/error/standardErrorHandler'
 const MESSAGE_PAGE_SIZE = 50
 const CACHE_TIME = 5 * 60 * 1000 // 5 minutes
 const STALE_TIME = 2 * 60 * 1000 // 2 minutes
@@ -37,17 +38,23 @@ export function useChatRoomsOptimized(userId?: string) {
           .rpc('get_chat_rooms_optimized', { p_user_id: userId })
 
         if (error) {
-          // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to fetch chat rooms:', error);
+          handleError(error, {
+      operation: 'general_operation', component: 'useChatOptimized',
+
+            userMessage: 'Operation failed. Please try again.'
+
+          })
           throw error
         }
 
         return data || []
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to fetch chat rooms:', error);
+        handleError(error, {
+      operation: 'general_operation', component: 'useChatOptimized',
+
+          userMessage: 'Operation failed. Please try again.'
+
+        })
         throw error
       }
     },
@@ -72,7 +79,7 @@ export function useChatMessagesOptimized(roomId: string) {
     initialPageParam: null,
     queryFn: async ({ pageParam }): Promise<{ data: ChatMessageWithSender[], nextCursor: string | null }> => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       // Use optimized RPC function
       const { data, error } = await supabase
         .rpc('get_chat_messages_optimized', {
@@ -84,8 +91,8 @@ export function useChatMessagesOptimized(roomId: string) {
       if (error) throw error
 
       const messages = data || []
-      const nextCursor = messages.length === MESSAGE_PAGE_SIZE 
-        ? messages[messages.length - 1]?.created_at 
+      const nextCursor = messages.length === MESSAGE_PAGE_SIZE
+        ? messages[messages.length - 1]?.created_at
         : null
 
       return { data: messages, nextCursor }
@@ -107,7 +114,7 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
   const [isConnected, setIsConnected] = useState(false)
   const [typingUsers, setTypingUsers] = useState<string[]>([])
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
-  
+
   // Debounce typing updates to reduce re-renders
   const debouncedTypingUsers = useMemo(() => typingUsers, [
     Math.floor(typingUsers.length / 2) // Only update when significant change
@@ -125,9 +132,12 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
         await chatRealtimeManager.joinRoom(roomId, userId)
         if (isMounted) setIsConnected(true)
       } catch (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to join room:', error);
+        handleError(error, {
+      operation: 'general_operation', component: 'useChatOptimized',
+
+          userMessage: 'Operation failed. Please try again.'
+
+        })
         // Retry connection after delay
         if (isMounted) {
           reconnectTimeout = setTimeout(connectToRoom, 5000)
@@ -156,7 +166,7 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
       if (messageBuffer.length > 0) {
         queryClient.setQueryData(['chatMessages', roomId], (old: any) => {
           if (!old?.pages) return old
-          
+
           const newPages = [...old.pages]
           if (newPages[0]?.data) {
             newPages[0] = {
@@ -164,7 +174,7 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
               data: [...messageBuffer.map(p => p.new), ...newPages[0].data]
             }
           }
-          
+
           messageBuffer.length = 0
           return { ...old, pages: newPages }
         })
@@ -201,7 +211,7 @@ export function useChatRoomOptimized(roomId: string, userId?: string) {
     isConnected,
     typingUsers: debouncedTypingUsers,
     onlineUsers,
-    sendTyping: useCallback((isTyping: boolean) => 
+    sendTyping: useCallback((isTyping: boolean) =>
       chatRealtimeManager.sendTyping(roomId, isTyping), [roomId])
   }
 }
@@ -214,19 +224,19 @@ export function useSendMessageOptimized(roomId: string) {
   const { client: supabase } = useSupabaseClient()
 
   return useMutation({
-    mutationFn: async ({ 
-      content, 
-      messageType = 'text', 
+    mutationFn: async ({
+      content,
+      messageType = 'text',
       replyToId,
-      metadata 
-    }: { 
+      metadata
+    }: {
       content: string
       messageType?: ChatMessage['message_type']
       replyToId?: string
-      metadata?: any 
+      metadata?: any
     }) => {
       if (!supabase) throw new Error('Supabase client not available')
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
@@ -265,7 +275,7 @@ export function useSendMessageOptimized(roomId: string) {
         ...metadata,
         reply_to_id: replyToId
       })
-      
+
       if (!success) {
         // Rollback optimistic update
         queryClient.setQueryData(['chatMessages', roomId], (old: any) => {
@@ -299,7 +309,7 @@ export function useMessageReactionOptimized(messageId: string) {
         // Update reaction count optimistically
         return old
       })
-      
+
       return chatRealtimeManager.addReaction(messageId, emoji)
     },
     onError: () => {
@@ -332,10 +342,10 @@ export function useTypingIndicatorOptimized(roomId: string, delay = 2000) {
 
   const startTyping = useCallback(() => {
     const now = Date.now()
-    
+
     // Don't send typing indicator too frequently
     if (now - lastTypingRef.current < 1000) return
-    
+
     if (!isTyping) {
       setIsTyping(true)
       chatRealtimeManager.sendTyping(roomId, true)
@@ -388,7 +398,7 @@ export function usePrefetchChat() {
 
   const prefetchRoom = useCallback(async (roomId: string) => {
     if (!supabase) return
-    
+
     await queryClient.prefetchInfiniteQuery({
       queryKey: ['chatMessages', roomId],
       queryFn: async () => {

@@ -2,10 +2,11 @@ import { RealtimeChannel, RealtimeChannelSendResponse } from '@supabase/supabase
 
 import { createClient } from './client'
 import { createAuthenticatedChannel, realtimeManager } from './realtime-manager'
-import { 
-  ChatMessage, 
-  ChatParticipant, 
-  RealtimeMessagePayload, 
+import { handleError } from '@/lib/error/standardErrorHandler'
+import {
+  ChatMessage,
+  ChatParticipant,
+  RealtimeMessagePayload,
   RealtimeParticipantPayload,
   ChatUIState
 } from './types'
@@ -24,13 +25,13 @@ class ChatRealtimeManager {
     onlineUsers: new Map(),
     lastActivity: new Map()
   }
-  
+
   private channels: Map<string, RealtimeChannel> = new Map()
   private messageCallbacks: Map<string, (payload: RealtimeMessagePayload) => void> = new Map()
   private typingCallbacks: Map<string, (typingUsers: string[]) => void> = new Map()
   private presenceCallbacks: Map<string, (onlineUsers: string[]) => void> = new Map()
   private participantCallbacks: Map<string, (payload: RealtimeParticipantPayload) => void> = new Map()
-  
+
   private supabase = createClient()
   private typingTimeout = 3000 // 3 seconds
   private heartbeatInterval = 30000 // 30 seconds
@@ -59,7 +60,7 @@ class ChatRealtimeManager {
 
       // Set up message subscription
       channel
-        .on('postgres_changes', 
+        .on('postgres_changes',
           { event: '*', schema: 'public', table: 'axis6_chat_messages', filter: `room_id=eq.${roomId}` },
           (payload) => {
             const messagePayload: RealtimeMessagePayload = {
@@ -90,13 +91,13 @@ class ChatRealtimeManager {
         .on('presence', { event: 'sync' }, () => {
           const state = channel.presenceState()
           const onlineUsers = new Set<string>()
-          
+
           for (const userId in state) {
             if (state[userId]?.length > 0) {
               onlineUsers.add(userId)
             }
           }
-          
+
           this.state.onlineUsers.set(roomId, onlineUsers)
           this.presenceCallbacks.get(roomId)?.(Array.from(onlineUsers))
         })
@@ -111,7 +112,7 @@ class ChatRealtimeManager {
       await subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           this.state.connectedRooms.add(roomId)
-          
+
           // Track presence
           channel.track({
             user_id: userId,
@@ -125,9 +126,12 @@ class ChatRealtimeManager {
       this.startHeartbeat(userId)
 
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error(`Failed to join chat room ${roomId}:`, error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       throw error
     }
   }
@@ -141,7 +145,7 @@ class ChatRealtimeManager {
 
     try {
       await this.supabase.removeChannel(channel)
-      
+
       this.channels.delete(roomId)
       this.state.connectedRooms.delete(roomId)
       this.state.typingUsers.delete(roomId)
@@ -152,9 +156,12 @@ class ChatRealtimeManager {
       this.participantCallbacks.delete(roomId)
 
       } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error(`Failed to leave chat room ${roomId}:`, error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
     }
   }
 
@@ -177,17 +184,23 @@ class ChatRealtimeManager {
         })
 
       if (error) {
-        // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to send message:', error);
+        handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+          userMessage: 'Chat operation failed. Please try again.'
+
+        })
         return false
       }
 
       return true
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Error sending message:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       return false
     }
   }
@@ -230,9 +243,12 @@ class ChatRealtimeManager {
 
       return !error
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to add reaction:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       return false
     }
   }
@@ -252,9 +268,12 @@ class ChatRealtimeManager {
 
       return !error
     } catch (error) {
-      // TODO: Replace with proper error handling
-    // // TODO: Replace with proper error handling
-    // console.error('Failed to remove reaction:', error);
+      handleError(error, {
+      operation: 'chat_operation', component: 'chat-realtime',
+
+        userMessage: 'Chat operation failed. Please try again.'
+
+      })
       return false
     }
   }
@@ -264,7 +283,7 @@ class ChatRealtimeManager {
    */
   onMessage(roomId: string, callback: (payload: RealtimeMessagePayload) => void): () => void {
     this.messageCallbacks.set(roomId, callback)
-    
+
     return () => {
       this.messageCallbacks.delete(roomId)
     }
@@ -275,7 +294,7 @@ class ChatRealtimeManager {
    */
   onTyping(roomId: string, callback: (typingUsers: string[]) => void): () => void {
     this.typingCallbacks.set(roomId, callback)
-    
+
     return () => {
       this.typingCallbacks.delete(roomId)
     }
@@ -286,7 +305,7 @@ class ChatRealtimeManager {
    */
   onPresence(roomId: string, callback: (onlineUsers: string[]) => void): () => void {
     this.presenceCallbacks.set(roomId, callback)
-    
+
     return () => {
       this.presenceCallbacks.delete(roomId)
     }
@@ -297,7 +316,7 @@ class ChatRealtimeManager {
    */
   onParticipantChange(roomId: string, callback: (payload: RealtimeParticipantPayload) => void): () => void {
     this.participantCallbacks.set(roomId, callback)
-    
+
     return () => {
       this.participantCallbacks.delete(roomId)
     }
@@ -311,7 +330,7 @@ class ChatRealtimeManager {
 
     if (isTyping) {
       typingUsers.add(userId)
-      
+
       // Set timeout to remove typing indicator
       setTimeout(() => {
         typingUsers.delete(userId)
@@ -334,7 +353,7 @@ class ChatRealtimeManager {
 
     this.heartbeatTimer = setInterval(() => {
       this.state.lastActivity.set(userId, new Date())
-      
+
       // Update presence in all connected rooms
       for (const roomId of this.state.connectedRooms) {
         const channel = this.channels.get(roomId)

@@ -71,7 +71,7 @@ export async function validateCSRF(request: NextRequest): Promise<NextResponse |
 
   // Get token from request
   const token = getTokenFromRequest(request)
-  
+
   if (!token) {
     return NextResponse.json(
       { error: 'CSRF token missing' },
@@ -115,7 +115,7 @@ export async function validateCSRF(request: NextRequest): Promise<NextResponse |
  */
 export function setCSRFCookie(response: NextResponse, token: string): void {
   const tokenHash = createTokenHash(token)
-  
+
   // Use __Host- prefix for additional security
   // This requires: Secure, Path=/, no Domain attribute
   response.cookies.set({
@@ -171,7 +171,7 @@ export function useCSRFToken(): { token: string | null; refreshToken: () => Prom
   // 1. Fetch token from an endpoint
   // 2. Store it in state
   // 3. Provide it for API calls
-  
+
   return {
     token: null,
     refreshToken: async () => {

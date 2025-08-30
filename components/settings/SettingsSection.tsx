@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
+import {
   ChevronDown,
   Info,
   Check,
@@ -50,7 +50,7 @@ export function SettingsSection({
   return (
     <div className={`glass rounded-2xl border border-white/10 ${className}`}>
       {/* Section Header */}
-      <div 
+      <div
         className={`p-6 ${collapsible ? 'cursor-pointer' : ''} ${!isExpanded && collapsible ? 'border-b-0' : ''}`}
         onClick={collapsible ? () => setIsExpanded(!isExpanded) : undefined}
       >
@@ -83,7 +83,7 @@ export function SettingsSection({
               {description && (
                 <p className="text-gray-400 text-sm mt-1">{description}</p>
               )}
-              
+
               {/* Help text */}
               <AnimatePresence>
                 {showHelp && helpText && (
@@ -218,7 +218,7 @@ export function SettingItem({
             <p className="text-sm text-gray-400 mt-1">{description}</p>
           )}
         </div>
-        
+
         <div className="w-64">
           {type === 'toggle' && (
             <button
@@ -248,8 +248,8 @@ export function SettingItem({
               className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:opacity-50"
             >
               {options.map((option) => (
-                <option 
-                  key={option.value} 
+                <option
+                  key={option.value}
                   value={option.value}
                   disabled={option.disabled}
                   className="bg-gray-800 text-white"

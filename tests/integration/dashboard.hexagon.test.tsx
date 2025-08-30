@@ -114,7 +114,7 @@ const MockDashboard = () => {
   return (
     <div className="dashboard-container">
       <h1>Your AXIS6 Dashboard</h1>
-      
+
       <div className="hexagon-section" role="main" aria-label="Daily Balance Tracker">
         <React.Suspense fallback={<div>Loading...</div>}>
           <HexagonClock
@@ -142,7 +142,7 @@ const MockDashboard = () => {
 describe('Dashboard HexagonClock Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset window size
     Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
     Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
@@ -157,7 +157,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(() => {
         expect(screen.getByText('Your AXIS6 Dashboard')).toBeInTheDocument();
         expect(screen.getByRole('main', { name: /Daily Balance Tracker/i })).toBeInTheDocument();
-        
+
         // HexagonClock should be rendered
         expect(screen.getByText('Balance Ritual')).toBeInTheDocument();
         expect(screen.getByText('68%')).toBeInTheDocument(); // Average completion
@@ -173,10 +173,10 @@ describe('Dashboard HexagonClock Integration', () => {
         // Check for category labels
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         const mentalButton = screen.getByRole('button', { name: /Mental/i });
-        
+
         expect(physicalButton).toBeInTheDocument();
         expect(mentalButton).toBeInTheDocument();
-        
+
         // Check for percentage displays
         expect(screen.getByText('80%')).toBeInTheDocument(); // Physical
         expect(screen.getByText('60%')).toBeInTheDocument(); // Mental
@@ -185,16 +185,16 @@ describe('Dashboard HexagonClock Integration', () => {
 
     it('handles category interactions correctly', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       await act(async () => {
         render(<MockDashboard />);
       });
 
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         await userEvent.click(physicalButton);
-        
+
         expect(consoleSpy).toHaveBeenCalledWith('Category clicked:', expect.objectContaining({
           key: 'physical',
         }));
@@ -213,7 +213,7 @@ describe('Dashboard HexagonClock Integration', () => {
         // For now, verify the data structure is correct
         const centerDisplay = screen.getByText('Balance Ritual');
         expect(centerDisplay).toBeInTheDocument();
-        
+
         const averageDisplay = screen.getByText('68%');
         expect(averageDisplay).toBeInTheDocument();
       });
@@ -223,7 +223,7 @@ describe('Dashboard HexagonClock Integration', () => {
   describe('Real-time Data Updates', () => {
     it('updates hexagon display when data changes', async () => {
       let rerender: any;
-      
+
       await act(async () => {
         const result = render(<MockDashboard />);
         rerender = result.rerender;
@@ -269,7 +269,7 @@ describe('Dashboard HexagonClock Integration', () => {
   describe('Performance in Dashboard Context', () => {
     it('renders efficiently within complex dashboard layout', async () => {
       const renderStart = performance.now();
-      
+
       await act(async () => {
         render(
           <div>
@@ -296,12 +296,12 @@ describe('Dashboard HexagonClock Integration', () => {
 
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
-        
+
         // Rapid interactions should remain smooth
         for (let i = 0; i < 10; i++) {
           await userEvent.click(physicalButton);
         }
-        
+
         expect(physicalButton).toBeInTheDocument();
       });
     });
@@ -320,7 +320,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(() => {
         const hexagonContainer = document.querySelector('.hexagon-clock-container');
         expect(hexagonContainer).toBeInTheDocument();
-        
+
         // Should adapt to mobile constraints
         const buttons = screen.getAllByRole('button');
         buttons.forEach(button => {
@@ -332,7 +332,7 @@ describe('Dashboard HexagonClock Integration', () => {
 
     it('integrates with mobile navigation patterns', async () => {
       Object.defineProperty(window, 'innerWidth', { value: 375 });
-      
+
       await act(async () => {
         render(
           <div className="mobile-dashboard">
@@ -370,7 +370,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(() => {
         // Should still render with fallback data or error state
         expect(screen.getByText('Your AXIS6 Dashboard')).toBeInTheDocument();
-        
+
         // Component should handle missing data gracefully
         const hexagonText = screen.queryByText('Balance Ritual') || screen.queryByText('AXIS6');
         expect(hexagonText).toBeInTheDocument();
@@ -403,7 +403,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(() => {
         const h1 = screen.getByRole('heading', { level: 1 });
         const h2 = screen.getByRole('heading', { level: 2 });
-        
+
         expect(h1).toHaveTextContent('Your AXIS6 Dashboard');
         expect(h2).toHaveTextContent('Your Progress');
       });
@@ -422,7 +422,7 @@ describe('Dashboard HexagonClock Integration', () => {
 
     it('supports keyboard navigation in dashboard context', async () => {
       const user = userEvent.setup();
-      
+
       await act(async () => {
         render(<MockDashboard />);
       });
@@ -430,7 +430,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(async () => {
         // Should be able to tab through interactive elements
         const buttons = screen.getAllByRole('button');
-        
+
         for (const button of buttons.slice(0, 3)) { // Test first few buttons
           await user.tab();
           expect(button).toHaveFocus();
@@ -490,7 +490,7 @@ describe('Dashboard HexagonClock Integration', () => {
       await waitFor(async () => {
         const physicalButton = screen.getByRole('button', { name: /Physical/i });
         await userEvent.click(physicalButton);
-        
+
         // Would verify analytics calls in real implementation
         expect(physicalButton).toBeInTheDocument();
       });

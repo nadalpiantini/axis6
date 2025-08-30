@@ -8,7 +8,7 @@
 
 const { chromium } = require('playwright')
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:6789'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 const TEST_EMAIL = `test-${Date.now()}@example.com`
 const TEST_PASSWORD = 'TestPassword123!'
 const TEST_NAME = 'Test User'
