@@ -1,0 +1,98 @@
+{
+  "name": "AXIS6 Design Tokens - LOCKED VERSION",
+  "version": "1.0.0",
+  "description": "Tokens inmutables para blindar la línea gráfica perfecta",
+  "reference_url": "axis6-ny3k5zpfc.vercel.app/dashboard",
+  "commit_base": "b8d8a72",
+  "created_date": "2025-09-03",
+  
+  "CRITICAL_WARNING": "🚨 NO MODIFICAR - Tokens blindados para proteger UI perfecta",
+  
+  "hexagon_specification": {
+    "IMMUTABLE": true,
+    "svg_viewbox": "0 0 400 400",
+    "center_point": [200, 200],
+    "hexagon_radius": 160,
+    "circle_radius": 30,
+    "icon_size": 28,
+    "component_name": "HexagonVisualization"
+  },
+  
+  "colors_locked": {
+    "NEVER_CHANGE": true,
+    "gradient_hexagon": {
+      "start": "#9B8AE6",
+      "end": "#FF8B7D",
+      "css_id": "gradient"
+    },
+    "axis_colors": {
+      "physical": "#65D39A",
+      "mental": "#9B8AE6", 
+      "emotional": "#FF8B7D",
+      "social": "#6AA6FF",
+      "spiritual": "#4ECDC4",
+      "material": "#FFD166"
+    },
+    "states": {
+      "completed_fill": "axis_color",
+      "completed_opacity": 0.8,
+      "incomplete_fill": "rgba(255,255,255,0.1)",
+      "incomplete_opacity": 1,
+      "stroke_completed": "rgba(255,255,255,0.3)",
+      "stroke_incomplete": "rgba(255,255,255,0.1)"
+    }
+  },
+  
+  "layout_locked": {
+    "IMMUTABLE": true,
+    "main_grid": "grid-cols-1 lg:grid-cols-3",
+    "hexagon_section": "lg:col-span-2", 
+    "stats_section": "space-y-4 sm:space-y-6",
+    "category_cards": "grid-cols-1 sm:grid-cols-2",
+    "gaps": "gap-4 sm:gap-6 lg:gap-8"
+  },
+  
+  "responsive_sizes": {
+    "LOCKED": true,
+    "mobile": "max-w-[280px]",
+    "tablet": "sm:max-w-[350px]", 
+    "desktop": "md:max-w-[400px]",
+    "classes": "w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]"
+  },
+  
+  "component_hierarchy": {
+    "PROTECTED": true,
+    "main": "DashboardPageV2",
+    "hexagon": "HexagonVisualization",
+    "header": "StandardHeader", 
+    "logo": "LogoFull",
+    "cards": "MemoizedCategoryCard",
+    "interactions": "ClickableSVG"
+  },
+  
+  "critical_files": [
+    "app/dashboard/page.tsx",
+    "components/ui/ClickableSVG.tsx",
+    "components/icons/index.tsx",
+    "components/layout/StandardHeader.tsx",
+    "components/ui/Logo.tsx"
+  ],
+  
+  "restoration_commands": [
+    "git checkout b8d8a72 -- app/dashboard/page.tsx",
+    "cp components/ui-locked/DashboardPageLocked.tsx app/dashboard/page.tsx",
+    "npm run dev"
+  ],
+  
+  "fingerprint": {
+    "hash": "HexagonVisualization-b8d8a72-purple-coral-6circles-locked",
+    "integrity_check": "svg[viewBox='0 0 400 400'] circle[r='30']",
+    "validation_selectors": [
+      "svg[viewBox='0 0 400 400']",
+      "circle[r='30']",
+      "#gradient", 
+      "[data-testid='hexagon-chart']",
+      ".lg\\:col-span-2"
+    ]
+  }
+}
