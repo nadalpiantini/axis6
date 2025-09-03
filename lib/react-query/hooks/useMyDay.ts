@@ -208,6 +208,10 @@ export function useActiveTimer(userId: string) {
       return response.json()
     },
     enabled: !!userId,
-    refetchInterval: 30000 // Refresh every 30 seconds
+    refetchInterval: (query) => {
+      // More frequent polling when timer is active for better sync
+      return query?.state?.data?.activeTimer ? 5000 : 30000 // 5 seconds if active, 30 seconds if not
+    },
+    refetchIntervalInBackground: true // Keep syncing even when tab is not focused
   })
 }
