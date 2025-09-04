@@ -2,24 +2,19 @@
  * Rate Limit Statistics API
  * Provides monitoring data for rate limiting system
  */
-
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { withEnhancedRateLimit, getRateLimitAnalytics } from '@/lib/middleware/enhanced-rate-limit'
 import { logger } from '@/lib/utils/logger'
-
 export async function GET(_request: NextRequest) {
   // Apply rate limiting to this endpoint
   const { response: rateLimitResponse, headers } = await withEnhancedRateLimit(
     _request,
     'api'
   )
-
   if (rateLimitResponse) {
     return rateLimitResponse
   }
-
   try {
     // Check if user is authenticated and has admin privileges
     const supabase = createServerClient(
@@ -36,9 +31,7 @@ export async function GET(_request: NextRequest) {
         }
       }
     )
-
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -50,14 +43,12 @@ export async function GET(_request: NextRequest) {
         }
       )
     }
-
     // Get user profile to check admin status
     const { data: _profile } = await supabase
       .from('axis6_profiles')
       .select('role')
       .eq('id', user.id)
       .single()
-
     // For now, allow all authenticated users to see basic stats
     // In production, you'd check for admin role
     // if (_profile?.role !== 'admin') {
@@ -66,10 +57,8 @@ export async function GET(_request: NextRequest) {
     //     { status: 403, headers }
     //   )
     // }
-
     // Get rate limiting analytics
     const analytics = await getRateLimitAnalytics()
-
     // Additional statistics
     const stats = {
       timestamp: new Date().toISOString(),
@@ -97,22 +86,18 @@ export async function GET(_request: NextRequest) {
         uptime: process.uptime(),
       }
     }
-
     logger.info('Rate limit stats requested', {
       userId: user.id,
       timestamp: stats.timestamp
     })
-
     return NextResponse.json(stats, {
       status: 200,
       headers: Object.fromEntries(
         Object.entries(headers).map(([k, v]) => [k, v])
       )
     })
-
   } catch (error) {
     logger.error('Failed to get rate limit stats', error as Error)
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -127,7 +112,6 @@ export async function GET(_request: NextRequest) {
     )
   }
 }
-
 // Only allow GET requests
 export async function POST() {
   return NextResponse.json(
@@ -135,14 +119,12 @@ export async function POST() {
     { status: 405 }
   )
 }
-
 export async function PUT() {
   return NextResponse.json(
     { error: 'Method not allowed' },
     { status: 405 }
   )
 }
-
 export async function DELETE() {
   return NextResponse.json(
     { error: 'Method not allowed' },

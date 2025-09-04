@@ -1,10 +1,8 @@
 import { createClient } from '@/lib/supabase/client'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect, useCallback } from 'react'
-
 import { UserBehaviorProfile, PersonalizedInsight } from '@/lib/ai/behavioral-analyzer'
 import { SmartNotification } from '@/lib/ai/smart-notifications'
-
 interface AIPersonalizationState {
   behaviorProfile: UserBehaviorProfile | null
   insights: PersonalizedInsight[]
@@ -14,7 +12,6 @@ interface AIPersonalizationState {
   isLoading: boolean
   error: string | null
 }
-
 interface AIRecommendations {
   activities: any[]
   goals: any[]
@@ -24,7 +21,6 @@ interface AIRecommendations {
     temperament_used: string
   }
 }
-
 export function useAIPersonalization() {
   const [state, setState] = useState<AIPersonalizationState>({
     behaviorProfile: null,
@@ -35,10 +31,8 @@ export function useAIPersonalization() {
     isLoading: false,
     error: null
   })
-
   const supabase = createClient()
   const queryClient = useQueryClient()
-
   // Fetch behavior analysis
   const {
     data: behaviorData,
@@ -58,7 +52,6 @@ export function useAIPersonalization() {
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
     refetchOnWindowFocus: false
   })
-
   // Fetch personalized insights
   const {
     data: insightsData,
@@ -82,7 +75,6 @@ export function useAIPersonalization() {
     gcTime: 6 * 60 * 60 * 1000, // 6 hours
     refetchOnWindowFocus: false
   })
-
   // Fetch smart notifications
   const {
     data: notificationsData,
@@ -102,7 +94,6 @@ export function useAIPersonalization() {
     gcTime: 30 * 60 * 1000, // 30 minutes
     refetchInterval: 15 * 60 * 1000 // Refetch every 15 minutes
   })
-
   // Fetch optimal times
   const {
     data: optimalTimesData,
@@ -122,7 +113,6 @@ export function useAIPersonalization() {
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
     refetchOnWindowFocus: false
   })
-
   // Generate notifications mutation
   const generateNotificationsMutation = useMutation({
     mutationFn: async (options: {
@@ -144,7 +134,6 @@ export function useAIPersonalization() {
       queryClient.invalidateQueries({ queryKey: ['ai', 'notifications'] })
     }
   })
-
   // Mark notification mutation
   const markNotificationMutation = useMutation({
     mutationFn: async (params: {
@@ -172,7 +161,6 @@ export function useAIPersonalization() {
       queryClient.invalidateQueries({ queryKey: ['ai', 'notifications'] })
     }
   })
-
   // Update state when data changes
   useEffect(() => {
     setState(prevState => ({
@@ -190,7 +178,6 @@ export function useAIPersonalization() {
     behaviorLoading, insightsLoading, notificationsLoading, optimalTimesLoading,
     behaviorError, insightsError, notificationsError, optimalTimesError
   ])
-
   // Generate new notifications
   const generateNotifications = useCallback((options?: {
     lookAheadHours?: number
@@ -199,7 +186,6 @@ export function useAIPersonalization() {
   }) => {
     return generateNotificationsMutation.mutate(options || {})
   }, [generateNotificationsMutation])
-
   // Mark notification as read/delivered/dismissed
   const markNotification = useCallback((
     notification_id: string,
@@ -212,7 +198,6 @@ export function useAIPersonalization() {
       feedback
     })
   }, [markNotificationMutation])
-
   // Refresh all AI data
   const refreshAIData = useCallback(async () => {
     await Promise.all([
@@ -222,40 +207,32 @@ export function useAIPersonalization() {
       refetchOptimalTimes()
     ])
   }, [refetchBehavior, refetchInsights, refetchNotifications, refetchOptimalTimes])
-
   // Get notifications by priority
   const getNotificationsByPriority = useCallback((priority: 'low' | 'medium' | 'high' | 'urgent') => {
     return state.notifications.filter(n => n.priority === priority)
   }, [state.notifications])
-
   // Get active insights
   const getActiveInsights = useCallback(() => {
     return state.insights.filter(i => !i.expires_at || new Date(i.expires_at) > new Date())
   }, [state.insights])
-
   // Get insights by type
   const getInsightsByType = useCallback((type: 'daily' | 'weekly' | 'milestone' | 'recommendation' | 'coaching') => {
     return state.insights.filter(i => i.type === type)
   }, [state.insights])
-
   return {
     // State
     ...state,
-
     // Loading states
     isGeneratingNotifications: generateNotificationsMutation.isPending,
     isMarkingNotification: markNotificationMutation.isPending,
-
     // Actions
     generateNotifications,
     markNotification,
     refreshAIData,
-
     // Utilities
     getNotificationsByPriority,
     getActiveInsights,
     getInsightsByType,
-
     // Computed values
     hasActiveNotifications: state.notifications.some(n => !n.delivered),
     hasHighPriorityNotifications: state.notifications.some(n => n.priority === 'high' || n.priority === 'urgent'),
@@ -267,10 +244,8 @@ export function useAIPersonalization() {
       : 0
   }
 }
-
 export function useAIRecommendations() {
   const queryClient = useQueryClient()
-
   // Get activity recommendations
   const getActivityRecommendations = useMutation({
     mutationFn: async (params: {
@@ -287,7 +262,6 @@ export function useAIRecommendations() {
         ...(params.time_available && { time_available: params.time_available }),
         ...(params.current_mood && { current_mood: params.current_mood.toString() })
       })
-
       const response = await fetch(`/api/ai/recommendations/activities?${searchParams}`)
       if (!response.ok) {
         throw new Error('Failed to get activity recommendations')
@@ -295,7 +269,6 @@ export function useAIRecommendations() {
       return response.json()
     }
   })
-
   // Get goal recommendations
   const getGoalRecommendations = useMutation({
     mutationFn: async (params: {
@@ -312,7 +285,6 @@ export function useAIRecommendations() {
       return response.json()
     }
   })
-
   // Generate adaptive reminders
   const generateAdaptiveReminders = useMutation({
     mutationFn: async (params: {
@@ -331,23 +303,19 @@ export function useAIRecommendations() {
       return response.json()
     }
   })
-
   return {
     // Mutations
     getActivityRecommendations: getActivityRecommendations.mutate,
     getGoalRecommendations: getGoalRecommendations.mutate,
     generateAdaptiveReminders: generateAdaptiveReminders.mutate,
-
     // Loading states
     isLoadingActivities: getActivityRecommendations.isPending,
     isLoadingGoals: getGoalRecommendations.isPending,
     isLoadingReminders: generateAdaptiveReminders.isPending,
-
     // Data
     activityData: getActivityRecommendations.data,
     goalData: getGoalRecommendations.data,
     reminderData: generateAdaptiveReminders.data,
-
     // Errors
     activityError: getActivityRecommendations.error,
     goalError: getGoalRecommendations.error,

@@ -13,7 +13,7 @@ npm install
 cp .env.local.example .env.local
 # Edit .env.local with your Supabase keys
 
-# Run development server (uses Next.js default port 3000)
+# Run development server (configured to always use port 3000)
 npm run dev
 
 # Open browser
@@ -106,7 +106,7 @@ npm run optimize:check     # Run optimization checks (console removal + type che
 ```
 
 ## IMPORTANT Development Notes
-- **Port Configuration**: Uses the Next.js default port 3000 for development - http://localhost:3000
+- **Port Configuration**: Configured to ALWAYS use port 3000 for development - http://localhost:3000 (see package.json "dev" script)
 - **Type Safety**: TypeScript build errors are temporarily ignored (next.config.js) - TODO: fix chat route types
 - **Linting**: ESLint during build is temporarily ignored - TODO: fix linting issues
 - **PWA**: Currently disabled for Next.js 15 compatibility (withPWA is exported but commented)

@@ -1,13 +1,10 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-
 import { LogoFull } from '@/components/ui/Logo'
-
 export const metadata: Metadata = {
   title: 'Terms and Conditions - AXIS6',
   description: 'Terms and conditions for using the AXIS6 wellness tracking platform',
 }
-
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -16,18 +13,15 @@ export default function TermsPage() {
         <div className="flex justify-center mb-6">
           <LogoFull size="xl" className="h-16" />
         </div>
-
         <Link
           href="/"
           className="inline-flex items-center text-purple-400 hover:text-purple-300 mb-8"
         >
           ← Back to Home
         </Link>
-
         <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
           Terms and Conditions
         </h1>
-
         <div className="space-y-6 text-gray-300 glass rounded-2xl p-8">
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">1. Acceptance of Terms</h2>
@@ -36,7 +30,6 @@ export default function TermsPage() {
               If you do not agree with any part of these terms, you may not use our service.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">2. Description of Service</h2>
             <p>
@@ -45,7 +38,6 @@ export default function TermsPage() {
               The service includes daily check-ins, progress tracking, and analytics features.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">3. User Accounts</h2>
             <p>
@@ -54,7 +46,6 @@ export default function TermsPage() {
               update such information to keep it current.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">4. Privacy and Data Protection</h2>
             <p>
@@ -64,7 +55,6 @@ export default function TermsPage() {
               without your consent.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">5. User Content and Conduct</h2>
             <p>
@@ -73,7 +63,6 @@ export default function TermsPage() {
               provide the service. You agree to use AXIS6 responsibly and not to misuse the platform.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">6. Intellectual Property</h2>
             <p>
@@ -82,7 +71,6 @@ export default function TermsPage() {
               our service without explicit permission.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">7. Disclaimer of Warranties</h2>
             <p>
@@ -91,7 +79,6 @@ export default function TermsPage() {
               for informational purposes only and should not replace professional medical advice.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">8. Limitation of Liability</h2>
             <p>
@@ -99,7 +86,6 @@ export default function TermsPage() {
               incidental, special, or consequential damages arising from your use of the service.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">9. Modifications to Terms</h2>
             <p>
@@ -108,7 +94,6 @@ export default function TermsPage() {
               changes constitutes acceptance of the modified terms.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">10. Termination</h2>
             <p>
@@ -117,7 +102,6 @@ export default function TermsPage() {
               reason at our discretion.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">11. Governing Law</h2>
             <p>
@@ -125,7 +109,6 @@ export default function TermsPage() {
               Any disputes arising from these terms shall be resolved through binding arbitration.
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-semibold mb-3 text-white">12. Contact Information</h2>
             <p>
@@ -136,7 +119,6 @@ export default function TermsPage() {
               Website: https://axis6.app
             </p>
           </section>
-
           <div className="mt-8 pt-8 border-t border-gray-600">
             <p className="text-sm text-gray-400">
               Last updated: December 2024
@@ -145,7 +127,6 @@ export default function TermsPage() {
             </p>
           </div>
         </div>
-
         <div className="mt-8 flex gap-4">
           <Link
             href="/auth/register"

@@ -1,16 +1,13 @@
 'use client'
-
 import { Mail, Lock, User, ChevronRight, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
 import { PasswordStrength } from '@/components/auth/PasswordStrength'
 import { LogoFull } from '@/components/ui/Logo'
 import { shouldBypassRateLimit } from '@/lib/test-config'
 import { logger } from '@/lib/utils/logger';
 import { validateEmail, validateName, validatePasswordMatch } from '@/lib/validation/auth'
-
 export default function RegisterPage() {
   const router = useRouter()
   const [name, setName] = useState('')
@@ -25,11 +22,9 @@ export default function RegisterPage() {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [newsletterSubscribe, setNewsletterSubscribe] = useState(false)
   const [rateLimitedUntil, setRateLimitedUntil] = useState<number | null>(null)
-
   // Real-time validation helpers
   const validateField = (field: string, value: string) => {
     const errors = { ...fieldErrors }
-
     switch (field) {
       case 'name':
         const nameValidation = validateName(value)
@@ -58,16 +53,13 @@ export default function RegisterPage() {
         }
         break
     }
-
     setFieldErrors(errors)
   }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
     setFieldErrors({})
-
     // Check if still rate limited (bypass in test mode)
     if (!shouldBypassRateLimit() && rateLimitedUntil && Date.now() < rateLimitedUntil) {
       const remainingSeconds = Math.ceil((rateLimitedUntil - Date.now()) / 1000)
@@ -75,43 +67,34 @@ export default function RegisterPage() {
       setLoading(false)
       return
     }
-
     // Validate all fields
     const errors: Record<string, string> = {}
-
     const nameValidation = validateName(name)
     if (!nameValidation.isValid) {
       errors['name'] = nameValidation.error!
     }
-
     const emailValidation = validateEmail(email)
     if (!emailValidation.isValid) {
       errors['email'] = emailValidation.error!
     }
-
     if (password.length < 8) {
       errors['password'] = 'Password must be at least 8 characters'
     }
-
     const passwordMatchValidation = validatePasswordMatch(password, confirmPassword)
     if (!passwordMatchValidation.isValid) {
       errors['confirmPassword'] = passwordMatchValidation.error!
     }
-
     if (!termsAccepted) {
       errors['terms'] = 'You must accept the terms and conditions'
     }
-
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
       setLoading(false)
       return
     }
-
     try {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -123,10 +106,8 @@ export default function RegisterPage() {
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       })
-
       if (error) {
         logger.error('Registration error:', error)
-
         // Handle email confirmation errors gracefully
         if (error.message.includes('Error sending confirmation email')) {
           // User was created but email failed - try to sign them in
@@ -134,26 +115,22 @@ export default function RegisterPage() {
             email,
             password
           })
-
           if (!signInError && signInData.user) {
             // Sign in successful after registration
             router.push('/auth/onboarding')
             return
           }
-
           // Show success message even if email failed
           setError('Account created successfully! You can now sign in.')
           setTimeout(() => router.push('/auth/login'), 2000)
           return
         }
-
         // Handle rate limiting specifically (bypass in test mode)
         if (!shouldBypassRateLimit() && error.message.toLowerCase().includes('rate limit')) {
           // Set rate limit for 60 seconds
           const cooldownTime = Date.now() + 60000
           setRateLimitedUntil(cooldownTime)
           setError('Too many registration attempts. Please wait 60 seconds before trying again.')
-
           // Clear rate limit after cooldown
           setTimeout(() => {
             setRateLimitedUntil(null)
@@ -165,7 +142,6 @@ export default function RegisterPage() {
         }
         return
       }
-
       if (data.user) {
         // Send welcome email (fire and forget)
         try {
@@ -185,7 +161,6 @@ export default function RegisterPage() {
           logger.warn('Failed to send welcome email:', emailError)
           // Don't block registration flow for email failures
         }
-
         // Check if we have a session (email confirmations disabled) or not (enabled)
         if (data.session) {
           // Direct login - email confirmations are disabled
@@ -203,7 +178,6 @@ export default function RegisterPage() {
       setLoading(false)
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -217,7 +191,6 @@ export default function RegisterPage() {
             </h1>
             <p className="text-gray-400">Begin your journey toward balance</p>
           </div>
-
           {error && (
             <div role="alert" className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
               <div className="flex items-start gap-3">
@@ -226,7 +199,6 @@ export default function RegisterPage() {
               </div>
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
@@ -262,7 +234,6 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -297,7 +268,6 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
@@ -347,7 +317,6 @@ export default function RegisterPage() {
                 </div>
               )}
             </div>
-
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirm Password
@@ -391,7 +360,6 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div className="space-y-3">
               <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
                 <input
@@ -424,7 +392,6 @@ export default function RegisterPage() {
                   {fieldErrors['terms']}
                 </p>
               )}
-
               <label className="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
                 <input
                   type="checkbox"
@@ -437,7 +404,6 @@ export default function RegisterPage() {
                 </span>
               </label>
             </div>
-
             <button
               type="submit"
               data-testid="register-submit"
@@ -448,7 +414,6 @@ export default function RegisterPage() {
               <ChevronRight className="w-5 h-5" />
             </button>
           </form>
-
           <div className="mt-6 text-center text-gray-400">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold">

@@ -1,16 +1,12 @@
 'use client'
-
 import Image from 'next/image'
-
 import { cn } from '@/lib/utils'
-
 interface LogoProps {
   variant?: 'full' | 'icon' | 'icon-alt'
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
   className?: string
   priority?: boolean
 }
-
 const sizeMap = {
   sm: { width: 32, height: 32 },
   md: { width: 48, height: 48 },
@@ -19,7 +15,6 @@ const sizeMap = {
   '2xl': { width: 128, height: 128 },
   '3xl': { width: 160, height: 160 },
 }
-
 const fullLogoSizes = {
   sm: { width: 80, height: 32 },
   md: { width: 120, height: 48 },
@@ -28,7 +23,6 @@ const fullLogoSizes = {
   '2xl': { width: 320, height: 128 },
   '3xl': { width: 400, height: 160 },
 }
-
 export function Logo({
   variant = 'full',
   size = 'md',
@@ -36,19 +30,16 @@ export function Logo({
   priority = false
 }: LogoProps) {
   const dimensions = variant === 'full' ? fullLogoSizes[size] : sizeMap[size]
-
   const logoSrc = {
     full: '/brand/logo/logo.png',
     icon: '/brand/logo/logo-icon.png',
     'icon-alt': '/brand/logo/logo-icon-alt.png',
   }
-
   const altText = {
     full: 'AXIS6 - Balance Across 6 Life Dimensions',
     icon: 'AXIS6 Logo',
     'icon-alt': 'AXIS6 Icon',
   }
-
   // Optimized sizes for responsive loading - avoiding 256px preload issue
   const getOptimizedSizes = () => {
     const baseWidth = dimensions.width
@@ -57,7 +48,6 @@ export function Logo({
     }
     return `(max-width: 640px) ${Math.min(baseWidth * 0.8, 64)}px, (max-width: 1024px) ${Math.min(baseWidth * 0.9, 96)}px, ${baseWidth}px`
   }
-
   return (
     <Image
       src={logoSrc[variant]}
@@ -82,19 +72,17 @@ export function Logo({
         maxWidth: '100%',
         maxHeight: '100%'
       }}
+      unoptimized={false}
     />
   )
 }
-
 // Convenient preset components
 export function LogoFull(props: Omit<LogoProps, 'variant'>) {
   return <Logo variant="full" {...props} />
 }
-
 export function LogoIcon(props: Omit<LogoProps, 'variant'>) {
   return <Logo variant="icon" {...props} />
 }
-
 export function LogoIconAlt(props: Omit<LogoProps, 'variant'>) {
   return <Logo variant="icon-alt" {...props} />
 }

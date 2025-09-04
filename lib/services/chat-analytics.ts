@@ -2,10 +2,8 @@
  * Chat Analytics Service
  * Provides comprehensive analytics for chat usage, engagement, and insights
  */
-
 import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/client'
-
 export interface ChatAnalytics {
   overview: {
     total_messages: number
@@ -43,7 +41,6 @@ export interface ChatAnalytics {
     search_success_rate: number
   }
 }
-
 export interface RoomAnalytics {
   room_id: string
   room_name: string
@@ -67,7 +64,6 @@ export interface RoomAnalytics {
     active_participants_30d: number
   }
 }
-
 export interface UserAnalytics {
   user_id: string
   user_name: string
@@ -93,20 +89,17 @@ export interface UserAnalytics {
     avg_response_time_minutes: number
   }
 }
-
 export class ChatAnalyticsService {
   private static instance: ChatAnalyticsService
   private supabase = createClient()
   private cache = new Map<string, { data: any; expires: number }>()
   private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-
   static getInstance(): ChatAnalyticsService {
     if (!ChatAnalyticsService.instance) {
       ChatAnalyticsService.instance = new ChatAnalyticsService()
     }
     return ChatAnalyticsService.instance
   }
-
   /**
    * Get comprehensive chat analytics for the user
    */
@@ -114,18 +107,14 @@ export class ChatAnalyticsService {
     const cacheKey = 'chat_analytics'
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
-
     try {
       const { data: analytics, error } = await this.supabase.rpc('get_chat_analytics')
-
       if (error) {
         logger.error('Chat analytics error:', error)
         throw new Error('Failed to get chat analytics')
       }
-
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatChatAnalytics(parsedAnalytics)
-
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -133,7 +122,6 @@ export class ChatAnalyticsService {
       throw error
     }
   }
-
   /**
    * Get analytics for a specific room
    */
@@ -141,20 +129,16 @@ export class ChatAnalyticsService {
     const cacheKey = `room_analytics_${roomId}`
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
-
     try {
       const { data: analytics, error } = await this.supabase.rpc('get_room_analytics', {
         p_room_id: roomId
       })
-
       if (error) {
         logger.error('Room analytics error:', error)
         throw new Error('Failed to get room analytics')
       }
-
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatRoomAnalytics(parsedAnalytics)
-
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -162,7 +146,6 @@ export class ChatAnalyticsService {
       throw error
     }
   }
-
   /**
    * Get analytics for current user
    */
@@ -170,18 +153,14 @@ export class ChatAnalyticsService {
     const cacheKey = 'user_analytics'
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
-
     try {
       const { data: analytics, error } = await this.supabase.rpc('get_user_analytics')
-
       if (error) {
         logger.error('User analytics error:', error)
         throw new Error('Failed to get user analytics')
       }
-
       const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
       const result = this.formatUserAnalytics(parsedAnalytics)
-
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
@@ -189,7 +168,6 @@ export class ChatAnalyticsService {
       throw error
     }
   }
-
   /**
    * Get real-time activity metrics
    */
@@ -201,12 +179,10 @@ export class ChatAnalyticsService {
   }> {
     try {
       const { data: metrics, error } = await this.supabase.rpc('get_realtime_metrics')
-
       if (error) {
         logger.error('Realtime metrics error:', error)
         throw new Error('Failed to get realtime metrics')
       }
-
       const parsedMetrics = typeof metrics === 'string' ? JSON.parse(metrics) : metrics
       return parsedMetrics || {
         active_users_now: 0,
@@ -219,21 +195,18 @@ export class ChatAnalyticsService {
       throw error
     }
   }
-
   /**
    * Export analytics data
    */
   async exportAnalytics(format: 'json' | 'csv' = 'json'): Promise<Blob> {
     try {
       const analytics = await this.getChatAnalytics()
-
       if (format === 'json') {
         return new Blob(
           [JSON.stringify(analytics, null, 2)],
           { type: 'application/json' }
         )
       }
-
       // Convert to CSV format
       const csvData = this.convertToCSV(analytics)
       return new Blob([csvData], { type: 'text/csv' })
@@ -242,14 +215,12 @@ export class ChatAnalyticsService {
       throw error
     }
   }
-
   /**
    * Clear analytics cache
    */
   clearCache(): void {
     this.cache.clear()
   }
-
   /**
    * Private helper methods
    */
@@ -261,14 +232,12 @@ export class ChatAnalyticsService {
     this.cache.delete(key)
     return null
   }
-
   private setCache(key: string, data: any): void {
     this.cache.set(key, {
       data,
       expires: Date.now() + this.CACHE_DURATION
     })
   }
-
   private formatChatAnalytics(raw: any): ChatAnalytics {
     return {
       overview: {
@@ -308,7 +277,6 @@ export class ChatAnalyticsService {
       }
     }
   }
-
   private formatRoomAnalytics(raw: any): RoomAnalytics {
     return {
       room_id: raw?.room_id || '',
@@ -334,7 +302,6 @@ export class ChatAnalyticsService {
       }
     }
   }
-
   private formatUserAnalytics(raw: any): UserAnalytics {
     return {
       user_id: raw?.user_id || '',
@@ -362,7 +329,6 @@ export class ChatAnalyticsService {
       }
     }
   }
-
   private convertToCSV(data: any): string {
     // Simplified CSV conversion for analytics data
     const headers = ['Metric', 'Value']
@@ -379,15 +345,12 @@ export class ChatAnalyticsService {
       ['Mentions Received', data.social.mentions_received],
       ['Total Searches', data.search.total_searches]
     ]
-
     const csvContent = [
       headers.join(','),
       ...rows.map(row => row.join(','))
     ].join('\n')
-
     return csvContent
   }
 }
-
 // Export singleton instance
 export const chatAnalyticsService = ChatAnalyticsService.getInstance()

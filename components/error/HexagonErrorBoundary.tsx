@@ -1,20 +1,15 @@
 'use client'
-
 import { logger } from '@/lib/utils/logger';
-
 import React from 'react'
-
 interface HexagonErrorBoundaryState {
   hasError: boolean
   error?: Error
   errorInfo?: React.ErrorInfo
 }
-
 interface HexagonErrorBoundaryProps {
   children: React.ReactNode
   fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>
 }
-
 // Default fallback component for hexagon visualization errors
 const DefaultHexagonFallback = ({ error, resetError }: { error?: Error; resetError: () => void }) => (
   <div className="w-full max-w-[260px] xs:max-w-[300px] sm:max-w-[350px] lg:max-w-[400px] mx-auto">
@@ -46,7 +41,6 @@ const DefaultHexagonFallback = ({ error, resetError }: { error?: Error; resetErr
     </div>
   </div>
 )
-
 export class HexagonErrorBoundary extends React.Component<
   HexagonErrorBoundaryProps,
   HexagonErrorBoundaryState
@@ -55,7 +49,6 @@ export class HexagonErrorBoundary extends React.Component<
     super(props)
     this.state = { hasError: false }
   }
-
   static getDerivedStateFromError(error: Error): HexagonErrorBoundaryState {
     // Update state so the next render will show the fallback UI
     return {
@@ -63,17 +56,14 @@ export class HexagonErrorBoundary extends React.Component<
       error,
     }
   }
-
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error details for monitoring
     logger.error('HexagonErrorBoundary caught an error:', error, errorInfo)
-
     this.setState({
       hasError: true,
       error,
       errorInfo,
     })
-
     // Report to error monitoring service in production
     if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
       // Check for React Error #310 specifically
@@ -83,7 +73,6 @@ export class HexagonErrorBoundary extends React.Component<
         error.stack?.includes('useMemo') ||
         error.stack?.includes('HexagonChartWithResonance')
       )
-
       if (isReactError310) {
         logger.error('🚨 React Error #310 detected in Hexagon component:', {
           error: error.message,
@@ -92,7 +81,6 @@ export class HexagonErrorBoundary extends React.Component<
           timestamp: new Date().toISOString()
         })
       }
-
       // Report to Sentry or other monitoring service
       if (window.Sentry) {
         window.Sentry.captureException(error, {
@@ -108,21 +96,17 @@ export class HexagonErrorBoundary extends React.Component<
       }
     }
   }
-
   resetError = () => {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined })
   }
-
   render() {
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback || DefaultHexagonFallback
       return <FallbackComponent error={this.state.error} resetError={this.resetError} />
     }
-
     return this.props.children
   }
 }
-
 // HOC for easy wrapping of hexagon components
 export function withHexagonErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
@@ -133,10 +117,7 @@ export function withHexagonErrorBoundary<P extends object>(
       <WrappedComponent {...props} />
     </HexagonErrorBoundary>
   )
-
   WithErrorBoundary.displayName = `withHexagonErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`
-
   return WithErrorBoundary
 }
-
 export default HexagonErrorBoundary

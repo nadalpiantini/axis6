@@ -1,39 +1,16 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  Brain,
-  Heart,
-  Users,
-  Target,
-  Zap,
-  Loader2
-} from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-
-import { LogoIcon } from '@/components/ui/Logo'
+import { Brain, ArrowLeft, X, Loader2 } from 'lucide-react'
+import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { logger } from '@/lib/logger'
+import { cn } from '@/lib/utils'
 
-import { handleError } from '@/lib/error/standardErrorHandler'
-interface Question {
-  id: string
-  question_text: {
-    en: string
-    es: string
-  }
-  question_type: 'work_style' | 'social' | 'decision_making' | 'stress_response' | 'goal_setting'
-  options: Array<{
-    text: {
-      en: string
-      es: string
-    }
-    temperament: 'sanguine' | 'choleric' | 'melancholic' | 'phlegmatic'
-    weight: number
-  }>
-  order_index: number
+interface QuestionnaireProps {
+  userId: string
+  onComplete: (result: TemperamentResult) => void
+  onClose: () => void
+  language?: 'en' | 'es'
 }
 
 interface TemperamentResult {
@@ -48,442 +25,355 @@ interface TemperamentResult {
   total_responses: number
 }
 
-interface TemperamentQuestionnaireProps {
-  userId: string
-  onComplete: (result: TemperamentResult) => void
-  onClose: () => void
-  language?: 'en' | 'es'
-}
-
-const temperamentColors = {
-  sanguine: '#FF6B6B',    // Warm red/pink - energetic, social
-  choleric: '#4ECDC4',    // Teal - ambitious, leadership
-  melancholic: '#45B7D1', // Blue - analytical, thoughtful
-  phlegmatic: '#96CEB4'   // Green - peaceful, reliable
-}
-
-const temperamentIcons = {
-  sanguine: Users,     // Social, people-focused
-  choleric: Target,    // Goal-oriented, ambitious
-  melancholic: Brain,  // Analytical, thoughtful
-  phlegmatic: Heart    // Peaceful, caring
-}
-
-const questionTypeIcons = {
-  work_style: Brain,
-  social: Users,
-  decision_making: Target,
-  stress_response: Heart,
-  goal_setting: Zap
-}
+const questions = [
+  {
+    id: 'q1',
+    text: 'At a party, you usually...',
+    options: {
+      sanguine: 'Mingle with everyone and make new friends',
+      choleric: 'Take charge of organizing activities',
+      melancholic: 'Have deep conversations with a few people',
+      phlegmatic: 'Observe and enjoy the atmosphere quietly'
+    }
+  },
+  {
+    id: 'q2',
+    text: 'When facing a problem, your first instinct is to...',
+    options: {
+      sanguine: 'Talk it through with friends',
+      choleric: 'Take immediate action to solve it',
+      melancholic: 'Analyze all possible solutions carefully',
+      phlegmatic: 'Wait and see if it resolves itself'
+    }
+  },
+  {
+    id: 'q3',
+    text: 'In your free time, you prefer to...',
+    options: {
+      sanguine: 'Be around people and have fun',
+      choleric: 'Work on personal goals and achievements',
+      melancholic: 'Engage in creative or intellectual pursuits',
+      phlegmatic: 'Relax and enjoy peaceful activities'
+    }
+  },
+  {
+    id: 'q4',
+    text: 'Your ideal work environment is...',
+    options: {
+      sanguine: 'Collaborative and energetic',
+      choleric: 'Fast-paced and results-oriented',
+      melancholic: 'Structured and detail-focused',
+      phlegmatic: 'Stable and harmonious'
+    }
+  },
+  {
+    id: 'q5',
+    text: 'When you disagree with someone, you tend to...',
+    options: {
+      sanguine: 'Express your feelings openly and seek compromise',
+      choleric: 'State your position firmly and argue your case',
+      melancholic: 'Present logical arguments and evidence',
+      phlegmatic: 'Avoid confrontation and find peaceful solutions'
+    }
+  },
+  {
+    id: 'q6',
+    text: 'Your approach to planning a vacation is...',
+    options: {
+      sanguine: 'Research exciting activities and social events',
+      choleric: 'Set clear goals and optimize the itinerary',
+      melancholic: 'Plan every detail and consider all contingencies',
+      phlegmatic: 'Keep it flexible and go with the flow'
+    }
+  },
+  {
+    id: 'q7',
+    text: 'When learning something new, you prefer to...',
+    options: {
+      sanguine: 'Learn through group discussions and activities',
+      choleric: 'Jump in and learn by doing',
+      melancholic: 'Study thoroughly before attempting',
+      phlegmatic: 'Take your time and learn at your own pace'
+    }
+  },
+  {
+    id: 'q8',
+    text: 'Your emotional response to stress is typically...',
+    options: {
+      sanguine: 'Seek support and talk through feelings',
+      choleric: 'Channel it into productive action',
+      melancholic: 'Reflect deeply and analyze the situation',
+      phlegmatic: 'Stay calm and wait for it to pass'
+    }
+  },
+  {
+    id: 'q9',
+    text: 'In a team project where there is conflict about direction...',
+    options: {
+      sanguine: 'Facilitate team discussions to build consensus and morale',
+      choleric: 'Make the decision and rally the team around clear objectives',
+      melancholic: 'Research best practices and present a detailed analysis',
+      phlegmatic: 'Mediate between viewpoints to find a compromise everyone accepts'
+    }
+  },
+  {
+    id: 'q10',
+    text: 'When you have achieved a significant personal goal, you...',
+    options: {
+      sanguine: 'Celebrate with others and share your excitement',
+      choleric: 'Set the next, more challenging goal immediately',
+      melancholic: 'Reflect on the journey and what you learned',
+      phlegmatic: 'Feel satisfied and enjoy the accomplishment quietly'
+    }
+  },
+  {
+    id: 'q11',
+    text: 'Your philosophy about work-life balance is...',
+    options: {
+      sanguine: 'Life should be enjoyed - work and play should both be fulfilling',
+      choleric: 'Success requires sacrifice - work hard now, enjoy later',
+      melancholic: 'Everything has its place - structured time for both work and rest',
+      phlegmatic: 'Balance comes naturally - neither should overwhelm the other'
+    }
+  },
+  {
+    id: 'q12',
+    text: 'When facing a major life decision, your process involves...',
+    options: {
+      sanguine: 'Talking with trusted friends and following your heart',
+      choleric: 'Evaluating options quickly and committing fully to your choice',
+      melancholic: 'Extensive research, pro/con lists, and careful deliberation',
+      phlegmatic: 'Taking time to consider all angles and sleeping on it'
+    }
+  }
+]
 
 export function TemperamentQuestionnaire({
   userId,
   onComplete,
   onClose,
   language = 'en'
-}: TemperamentQuestionnaireProps) {
-  const [questions, setQuestions] = useState<Question[]>([])
+}: QuestionnaireProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [responses, setResponses] = useState<Record<string, number>>({})
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [sessionId] = useState(() => crypto.randomUUID())
-
+  const [responses, setResponses] = useState<Record<string, keyof TemperamentResult['scores']>>({})
+  const [loading, setLoading] = useState(false)
   const supabase = createClient()
-
-  // Fetch questions from database
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const { data: questionsData, error } = await supabase
-          .from('axis6_temperament_questions')
-          .select('*')
-          .eq('is_active', true)
-          .order('order_index', { ascending: true })
-
-        if (error) throw error
-
-        setQuestions(questionsData || [])
-      } catch (error) {
-        handleError(error, {
-      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
-
-          userMessage: 'Psychology assessment failed. Please try again.'
-
-        })
-            // Error logged via handleError
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchQuestions()
-  }, [supabase])
 
   const currentQuestion = questions[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100
+  const isLastQuestion = currentQuestionIndex === questions.length - 1
 
-  const handleOptionSelect = useCallback(async (optionIndex: number) => {
-    if (!currentQuestion) return
+  const handleAnswer = async (temperament: keyof TemperamentResult['scores']) => {
+    const newResponses = { ...responses, [currentQuestion.id]: temperament }
+    setResponses(newResponses)
 
-    // Store response locally
-    setResponses(prev => ({
-      ...prev,
-      [currentQuestion.id]: optionIndex
-    }))
-
-    // Store response in database
-    try {
-      const selectedOption = currentQuestion.options[optionIndex]
-      await supabase
-        .from('axis6_temperament_responses')
-        .upsert({
-          user_id: userId,
-          question_id: currentQuestion.id,
-          selected_option_index: optionIndex,
-          response_value: selectedOption,
-          session_id: sessionId
-        })
-    } catch (error) {
-      handleError(error, {
-      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
-
-        userMessage: 'Psychology assessment failed. Please try again.'
-
-      })
-            // Error logged via handleError
-    }
-  }, [currentQuestion, userId, sessionId, supabase])
-
-  const goToNextQuestion = useCallback(() => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (isLastQuestion) {
+      await completeAssessment(newResponses)
+    } else {
       setCurrentQuestionIndex(prev => prev + 1)
     }
-  }, [currentQuestionIndex, questions.length])
+  }
 
-  const goToPreviousQuestion = useCallback(() => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1)
-    }
-  }, [currentQuestionIndex])
-
-  const submitQuestionnaire = useCallback(async () => {
-    setSubmitting(true)
+  const completeAssessment = async (finalResponses: Record<string, keyof TemperamentResult['scores']>) => {
+    setLoading(true)
     try {
-      // Calculate temperament using database function
-      const { data: result, error } = await supabase
-        .rpc('calculate_temperament_from_responses', {
-          p_user_id: userId,
-          p_session_id: sessionId
-        })
+      // Calculate scores
+      const scores = Object.values(finalResponses).reduce((acc, temperament) => {
+        acc[temperament] = (acc[temperament] || 0) + 1
+        return acc
+      }, {} as Record<keyof TemperamentResult['scores'], number>)
 
-      if (error) throw error
+      // Normalize to percentages
+      const totalResponses = Object.values(finalResponses).length
+      const normalizedScores = {
+        sanguine: (scores.sanguine || 0) / totalResponses,
+        choleric: (scores.choleric || 0) / totalResponses,
+        melancholic: (scores.melancholic || 0) / totalResponses,
+        phlegmatic: (scores.phlegmatic || 0) / totalResponses
+      }
 
-      // Generate personality insights based on temperament
-      const insights = generatePersonalityInsights(result.primary_temperament, result.secondary_temperament, result.scores)
+      // Find primary and secondary
+      const sortedTemperaments = Object.entries(normalizedScores)
+        .sort(([,a], [,b]) => b - a)
 
-      // Save temperament profile
-      await supabase
-        .from('axis6_temperament_profiles')
-        .upsert({
-          user_id: userId,
-          primary_temperament: result.primary_temperament,
-          secondary_temperament: result.secondary_temperament,
-          temperament_scores: result.scores,
-          personality_insights: insights
-        })
+      const result: TemperamentResult = {
+        primary_temperament: sortedTemperaments[0][0],
+        secondary_temperament: sortedTemperaments[1][0],
+        scores: normalizedScores,
+        total_responses: totalResponses
+      }
 
-      // Initialize personalization settings
-      await supabase
-        .from('axis6_personalization_settings')
-        .upsert({
-          user_id: userId,
-          preferred_motivation_style: getMotivationStyle(result.primary_temperament),
-          temperament_based_suggestions: true
-        })
-
+      // Save to database
+      await saveResults(result)
       onComplete(result)
+
     } catch (error) {
-      handleError(error, {
-      operation: 'psychology_assessment', component: 'TemperamentQuestionnaire',
-
-        userMessage: 'Psychology assessment failed. Please try again.'
-
-      })
-            // Error logged via handleError
+      logger.error('Failed to complete assessment:', error)
     } finally {
-      setSubmitting(false)
+      setLoading(false)
     }
-  }, [userId, sessionId, onComplete, supabase])
+  }
 
-  // Generate personality insights based on temperament
-  const generatePersonalityInsights = (primary: string, secondary: string, scores: any) => {
-    const insights: any = {
-      strengths: [],
-      challenges: [],
-      recommendations: [],
-      work_style: '',
-      social_style: '',
-      decision_style: ''
-    }
+  const saveResults = async (result: TemperamentResult) => {
+    const { error } = await supabase
+      .from('axis6_temperament_profiles')
+      .upsert({
+        user_id: userId,
+        primary_temperament: result.primary_temperament,
+        secondary_temperament: result.secondary_temperament,
+        temperament_scores: result.scores,
+        personality_insights: generateBasicInsights(result),
+        completed_at: new Date().toISOString(),
+        assessment_version: '1.0',
+        total_questions: questions.length
+      })
 
-    // Temperament-specific insights
-    const temperamentData = {
+    if (error) throw error
+  }
+
+  const generateBasicInsights = (result: TemperamentResult) => {
+    const insights: Record<string, any> = {
       sanguine: {
-        strengths: ['enthusiasm', 'creativity', 'social connection', 'optimism'],
-        challenges: ['focus', 'follow-through', 'organization'],
-        recommendations: ['group activities', 'variety in routines', 'social accountability'],
-        work_style: 'Collaborative and energetic, thrives with variety',
-        social_style: 'Outgoing and people-focused, enjoys large groups',
-        decision_style: 'Intuitive and quick, follows excitement'
+        strengths: ['Enthusiastic', 'Social', 'Optimistic'],
+        challenges: ['Disorganized', 'Impulsive'],
+        work_style: 'Thrives in collaborative environments',
+        social_style: 'Natural networker',
+        decision_style: 'Emotion and relationship focused'
       },
       choleric: {
-        strengths: ['leadership', 'goal achievement', 'efficiency', 'determination'],
-        challenges: ['patience', 'delegation', 'work-life balance'],
-        recommendations: ['challenging goals', 'leadership roles', 'competitive activities'],
-        work_style: 'Results-oriented and fast-paced, natural leader',
-        social_style: 'Direct and task-focused, prefers small groups',
-        decision_style: 'Quick and decisive, focuses on outcomes'
+        strengths: ['Decisive', 'Goal-oriented', 'Leader'],
+        challenges: ['Impatient', 'Domineering'],
+        work_style: 'Excels in fast-paced environments',
+        social_style: 'Takes charge of groups',
+        decision_style: 'Quick and logic-based'
       },
       melancholic: {
-        strengths: ['analysis', 'quality focus', 'depth', 'reliability'],
-        challenges: ['perfectionism', 'overthinking', 'social confidence'],
-        recommendations: ['detailed planning', 'solo reflection', 'skill mastery'],
-        work_style: 'Methodical and thorough, values quality over speed',
-        social_style: 'Thoughtful and reserved, prefers deep connections',
-        decision_style: 'Analytical and careful, considers all options'
+        strengths: ['Analytical', 'Detail-oriented', 'Creative'],
+        challenges: ['Perfectionist', 'Overthinking'],
+        work_style: 'Performs best with structure',
+        social_style: 'Prefers deep relationships',
+        decision_style: 'Careful analysis based'
       },
       phlegmatic: {
-        strengths: ['stability', 'diplomacy', 'patience', 'reliability'],
-        challenges: ['motivation', 'assertiveness', 'change adaptation'],
-        recommendations: ['steady routines', 'supportive environments', 'gradual changes'],
-        work_style: 'Steady and reliable, maintains consistent pace',
-        social_style: 'Harmonious and supportive, enjoys peaceful interactions',
-        decision_style: 'Consensus-seeking and careful, considers impact on others'
+        strengths: ['Diplomatic', 'Patient', 'Reliable'],
+        challenges: ['Indecisive', 'Passive'],
+        work_style: 'Values stability and harmony',
+        social_style: 'Peaceful mediator',
+        decision_style: 'Consensus seeking'
       }
     }
 
-    const primaryData = temperamentData[primary as keyof typeof temperamentData]
-    const secondaryData = secondary ? temperamentData[secondary as keyof typeof temperamentData] : null
+    return insights[result.primary_temperament] || insights.melancholic
+  }
 
-    if (primaryData) {
-      insights.strengths = [...primaryData.strengths]
-      insights.challenges = [...primaryData.challenges]
-      insights.recommendations = [...primaryData.recommendations]
-      insights.work_style = primaryData.work_style
-      insights.social_style = primaryData.social_style
-      insights.decision_style = primaryData.decision_style
-
-      // Blend with secondary if significant
-      if (secondaryData && scores[secondary] > 0.3) {
-        insights.strengths.push(...secondaryData.strengths.slice(0, 2))
-        insights.recommendations.push(...secondaryData.recommendations.slice(0, 2))
-      }
+  const goBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1)
+      // Remove the last response
+      const newResponses = { ...responses }
+      delete newResponses[currentQuestion.id]
+      setResponses(newResponses)
     }
-
-    return insights
   }
-
-  const getMotivationStyle = (temperament: string) => {
-    const styles = {
-      sanguine: 'encouraging',
-      choleric: 'challenging',
-      melancholic: 'analytical',
-      phlegmatic: 'supportive'
-    }
-    return styles[temperament as keyof typeof styles] || 'encouraging'
-  }
-
-  if (loading) {
-    return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="glass rounded-2xl p-8 max-w-sm mx-4">
-          <div className="text-center">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Loading Assessment</h3>
-            <p className="text-gray-400">Preparing your psychological profile questionnaire...</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (!currentQuestion) {
-    return null
-  }
-
-  const isLastQuestion = currentQuestionIndex === questions.length - 1
-  const hasSelectedOption = responses[currentQuestion.id] !== undefined
-  const QuestionIcon = questionTypeIcons[currentQuestion.question_type]
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="glass rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-gray-900 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-white/10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <LogoIcon size="sm" className="h-8" />
-              <div>
-                <h2 className="text-lg sm:text-xl font-semibold text-white">
-                  Personality Assessment
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-400">
-                  Discover your temperament for personalized wellness
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              ×
-            </button>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+              <Brain className="w-7 h-7 text-purple-400" />
+              Temperament Assessment
+            </h1>
+            <p className="text-gray-400">
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </p>
           </div>
-
-          {/* Progress Bar */}
-          <div className="mb-2">
-            <div className="flex justify-between text-xs text-gray-400 mb-2">
-              <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
-              <span>{Math.round(progress)}% complete</span>
-            </div>
-            <div className="w-full bg-white/10 rounded-full h-2">
-              <motion.div
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
-        {/* Question Content */}
-        <div className="p-4 sm:p-6">
-          <AnimatePresence mode="wait">
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex justify-between text-xs text-gray-400 mb-2">
+            <span>Progress</span>
+            <span>{Math.round(progress)}%</span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2">
             <motion.div
-              key={currentQuestionIndex}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Question */}
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-lg bg-purple-500/20">
-                    <QuestionIcon className="w-5 h-5 text-purple-400" />
-                  </div>
-                  <span className="text-xs uppercase tracking-wide text-gray-400">
-                    {currentQuestion.question_type.replace('_', ' ')}
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-medium text-white mb-4">
-                  {currentQuestion.question_text[language]}
-                </h3>
-              </div>
-
-              {/* Options */}
-              <div className="space-y-3">
-                {currentQuestion.options.map((option, index) => {
-                  const isSelected = responses[currentQuestion.id] === index
-                  const temperamentColor = temperamentColors[option.temperament]
-                  const TemperamentIcon = temperamentIcons[option.temperament]
-
-                  return (
-                    <motion.button
-                      key={index}
-                      onClick={() => handleOptionSelect(index)}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      className={`w-full text-left p-4 rounded-xl transition-all border-2 ${
-                        isSelected
-                          ? 'bg-white/10 border-purple-500/50'
-                          : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div
-                            className={`p-1.5 rounded-lg ${isSelected ? 'opacity-100' : 'opacity-60'}`}
-                            style={{ backgroundColor: `${temperamentColor}20` }}
-                          >
-                            <TemperamentIcon
-                              className="w-4 h-4"
-                              style={{ color: temperamentColor }}
-                            />
-                          </div>
-                          <span className={`text-sm sm:text-base ${
-                            isSelected ? 'text-white' : 'text-gray-300'
-                          }`}>
-                            {option.text[language]}
-                          </span>
-                        </div>
-                        {isSelected && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="p-1 bg-purple-500 rounded-full"
-                          >
-                            <Check className="w-3 h-3 text-white" />
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.button>
-                  )
-                })}
-              </div>
-            </motion.div>
-          </AnimatePresence>
+              className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 sm:p-6 border-t border-white/10">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={goToPreviousQuestion}
-              disabled={currentQuestionIndex === 0}
-              className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </button>
+        {/* Question */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-xl font-semibold text-white mb-6">
+              {currentQuestion.text}
+            </h2>
+            <div className="space-y-3">
+              {Object.entries(currentQuestion.options).map(([temperament, option]) => (
+                <motion.button
+                  key={temperament}
+                  onClick={() => handleAnswer(temperament as keyof TemperamentResult['scores'])}
+                  disabled={loading}
+                  className={cn(
+                    "w-full p-4 rounded-xl text-left transition-all border",
+                    "hover:border-purple-400 hover:bg-purple-500/10",
+                    "border-gray-700 bg-gray-800/50 text-white",
+                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                  )}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {option}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
-            {isLastQuestion ? (
-              <button
-                onClick={submitQuestionnaire}
-                disabled={!hasSelectedOption || submitting}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    Complete Assessment
-                    <Check className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={goToNextQuestion}
-                disabled={!hasSelectedOption}
-                className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </button>
+        {/* Navigation */}
+        <div className="flex items-center justify-between pt-6 border-t border-gray-700">
+          <button
+            onClick={goBack}
+            disabled={currentQuestionIndex === 0 || loading}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors",
+              "text-gray-400 hover:text-white hover:bg-gray-700",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
             )}
-          </div>
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Previous
+          </button>
+
+          {loading && (
+            <div className="flex items-center gap-2 text-purple-400">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Analyzing results...</span>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

@@ -1,22 +1,19 @@
 'use client'
-
 import { createClient } from '@/lib/supabase/client'
 import { MessageCircle, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-
 import { ChatRoom } from '@/components/chat/ChatRoom'
 import { ChatRoomList } from '@/components/chat/ChatRoomList'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useChatRooms } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
-
+import { handleError } from '@/lib/error/standardErrorHandler'
 export default function ChatPage() {
   const [selectedRoom, setSelectedRoom] = useState<ChatRoomWithParticipants | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
   const supabase = createClient()
   const router = useRouter()
-
   // Get user ID with better error handling
   useEffect(() => {
     const getUser = async () => {
@@ -24,13 +21,9 @@ export default function ChatPage() {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error || !session) {
           handleError(error, {
-
             operation: 'unknown_operation',
-
             component: 'page',
-
             userMessage: 'Something went wrong. Please try again.'
-
           })
     // // TODO: Replace with proper error handling
     // console.error('Auth error:', error);
@@ -40,13 +33,9 @@ export default function ChatPage() {
         setUserId(session.user.id)
       } catch (error) {
         handleError(error, {
-
           operation: 'unknown_operation',
-
           component: 'page',
-
           userMessage: 'Something went wrong. Please try again.'
-
         })
     // // TODO: Replace with proper error handling
     // console.error('Failed to get session:', error);
@@ -55,10 +44,10 @@ export default function ChatPage() {
     }
     getUser()
   }, [supabase, router])
-
   // Use the chat rooms hook with emergency fallback
-  const { data: rooms, isLoading, error } = useChatRooms(userId || undefined)
-
+  const { data: rooms, isLoading, error } = useChatRooms(
+    userId && userId !== 'undefined' && userId !== 'null' && userId.trim() !== '' ? userId : undefined
+  )
   // Emergency: If we have repeated errors, force a page reload to stop infinite loops
   const [errorCount, setErrorCount] = useState(0)
   useEffect(() => {
@@ -66,13 +55,9 @@ export default function ChatPage() {
       setErrorCount(prev => prev + 1)
       if (errorCount > 3) {
         handleError(error, {
-
           operation: 'unknown_operation',
-
           component: 'page',
-
           userMessage: 'Something went wrong. Please try again.'
-
         })
     // // TODO: Replace with proper error handling
     // console.error('Too many errors, forcing page reload to prevent infinite loops');
@@ -82,19 +67,15 @@ export default function ChatPage() {
       setErrorCount(0)
     }
   }, [error, errorCount])
-
   const handleCreateRoom = () => {
     router.push('/chat/new')
   }
-
   const handleRoomSelect = (room: ChatRoomWithParticipants) => {
     setSelectedRoom(room)
   }
-
   const handleCloseRoom = () => {
     setSelectedRoom(null)
   }
-
   if (!userId) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -102,7 +83,6 @@ export default function ChatPage() {
       </div>
     )
   }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -110,16 +90,11 @@ export default function ChatPage() {
       </div>
     )
   }
-
   if (error) {
     handleError(error, {
-
       operation: 'unknown_operation',
-
       component: 'page',
-
       userMessage: 'Something went wrong. Please try again.'
-
     })
     // // TODO: Replace with proper error handling
     // console.error('Chat error:', error);
@@ -131,7 +106,6 @@ export default function ChatPage() {
     const is500Error = error.message?.includes('500') || error.status === 500
     // Check if it's an authentication error
     const isAuthError = error.message?.includes('session') || error.message?.includes('auth') || error.status === 401
-
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center max-w-md">
@@ -203,7 +177,6 @@ export default function ChatPage() {
       </div>
     )
   }
-
   return (
     <div className="flex h-screen bg-gray-950">
       {/* Room List Sidebar */}
@@ -225,7 +198,6 @@ export default function ChatPage() {
             </Button>
           </div>
         </div>
-
         <div className="flex-1 overflow-hidden">
           {rooms && rooms.length === 0 ? (
             <div className="p-8 text-center">
@@ -248,7 +220,6 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-
       {/* Chat Area */}
       <div className={`${
         selectedRoom ? 'flex' : 'hidden md:flex'

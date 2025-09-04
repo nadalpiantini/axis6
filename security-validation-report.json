@@ -1,0 +1,137 @@
+{
+  "summary": {
+    "score": 43,
+    "status": "CRITICAL",
+    "totalTests": 15,
+    "passed": 1,
+    "failed": 3,
+    "warnings": 11,
+    "critical": 3,
+    "duration": 23,
+    "timestamp": "2025-08-30T11:28:51.603Z"
+  },
+  "tests": [
+    {
+      "name": "Database Security",
+      "status": "FAIL",
+      "message": "Database security test failed: supabaseUrl is required.",
+      "severity": "critical",
+      "timestamp": "2025-08-30T11:28:51.580Z"
+    },
+    {
+      "name": "Auth Required: /api/checkins",
+      "status": "WARN",
+      "message": "Cannot test endpoint: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.590Z"
+    },
+    {
+      "name": "Auth Required: /api/analytics",
+      "status": "WARN",
+      "message": "Cannot test endpoint: request to http://localhost:3000/api/analytics failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.591Z"
+    },
+    {
+      "name": "Auth Required: /api/streaks",
+      "status": "WARN",
+      "message": "Cannot test endpoint: request to http://localhost:3000/api/streaks failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.592Z"
+    },
+    {
+      "name": "Auth Required: /api/settings/user-preferences",
+      "status": "WARN",
+      "message": "Cannot test endpoint: request to http://localhost:3000/api/settings/user-preferences failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.593Z"
+    },
+    {
+      "name": "CSRF Protection",
+      "status": "WARN",
+      "message": "Cannot test CSRF: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.594Z"
+    },
+    {
+      "name": "Rate Limiting",
+      "status": "WARN",
+      "message": "Cannot test rate limiting: request to http://localhost:3000/api/health failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.598Z"
+    },
+    {
+      "name": "Security Headers",
+      "status": "FAIL",
+      "message": "Cannot test headers: request to http://localhost:3000/ failed, reason: ",
+      "severity": "critical",
+      "timestamp": "2025-08-30T11:28:51.599Z"
+    },
+    {
+      "name": "Environment Secrets",
+      "status": "PASS",
+      "message": "No obviously weak secrets detected",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.599Z"
+    },
+    {
+      "name": "Authentication Security",
+      "status": "FAIL",
+      "message": "Auth security test failed: supabaseUrl is required.",
+      "severity": "critical",
+      "timestamp": "2025-08-30T11:28:51.599Z"
+    },
+    {
+      "name": "Input Validation: XSS Script",
+      "status": "WARN",
+      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.600Z"
+    },
+    {
+      "name": "Input Validation: SQL Injection",
+      "status": "WARN",
+      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.601Z"
+    },
+    {
+      "name": "Input Validation: Path Traversal",
+      "status": "WARN",
+      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.602Z"
+    },
+    {
+      "name": "Input Validation: Null Byte",
+      "status": "WARN",
+      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.603Z"
+    },
+    {
+      "name": "Input Validation: Unicode Attack",
+      "status": "WARN",
+      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "severity": "normal",
+      "timestamp": "2025-08-30T11:28:51.603Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "action": "Fix critical security issues immediately",
+      "description": "Deploy RLS policies, add authentication to unprotected endpoints"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Address security warnings",
+      "description": "Review and implement security best practices"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement additional monitoring",
+      "description": "Add security event monitoring and alerting"
+    }
+  ]
+}

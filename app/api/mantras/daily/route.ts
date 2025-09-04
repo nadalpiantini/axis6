@@ -1,25 +1,18 @@
-
 import { NextResponse } from 'next/server'
-
 import { createClient } from '@/lib/supabase/server'
 import { logger } from '@/lib/utils/logger';
-
 export async function GET() {
   try {
     const supabase = await createClient()
-
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
-
     const today = new Date().toISOString().split('T')[0]
-
     // Check if user already has a mantra for today
     const { data: existingMantra, error: existingError } = await supabase
       .from('axis6_user_mantras')
@@ -39,7 +32,6 @@ export async function GET() {
       .eq('user_id', user.id)
       .eq('shown_date', today)
       .single()
-
     if (existingMantra && existingMantra.axis6_mantras) {
       return NextResponse.json({
         mantra: {
@@ -51,7 +43,6 @@ export async function GET() {
         completed: existingMantra.completed || false
       })
     }
-
     // Get a random active mantra
     const { data: mantras, error: mantrasError } = await supabase
       .from('axis6_mantras')
@@ -66,7 +57,6 @@ export async function GET() {
         )
       `)
       .eq('is_active', true)
-
     if (mantrasError || !mantras || mantras.length === 0) {
       // Return a default mantra if none exist in database
       return NextResponse.json({
@@ -82,10 +72,8 @@ export async function GET() {
         completed: false
       })
     }
-
     // Select a random mantra
     const randomMantra = mantras[Math.floor(Math.random() * mantras.length)]
-
     // Create user mantra record
     const { error: insertError } = await supabase
       .from('axis6_user_mantras')
@@ -97,11 +85,9 @@ export async function GET() {
           completed: false
         }
       ])
-
     if (insertError) {
       logger.error('Failed to create user mantra record:', insertError)
     }
-
     return NextResponse.json({
       mantra: {
         id: randomMantra.id,
@@ -111,7 +97,6 @@ export async function GET() {
       },
       completed: false
     })
-
   } catch (error) {
     logger.error('Error fetching daily mantra:', error)
     return NextResponse.json(

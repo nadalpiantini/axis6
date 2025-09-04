@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -11,12 +10,11 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
-
 import { AxisIcon } from '@/components/icons'
 import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
 import { useStartTimer, useStopTimer } from '@/lib/react-query/hooks/useMyDay'
 import { handleError, handleMutationError } from '@/lib/error/standardErrorHandler'
-
+import { getLocalizedText } from '@/lib/utils/i18n'
 interface ActivityTimerProps {
   isOpen: boolean
   onClose: () => void
@@ -25,7 +23,6 @@ interface ActivityTimerProps {
   selectedCategory?: any
   timeBlock?: any
 }
-
 export function ActivityTimer({
   isOpen,
   onClose,
@@ -47,13 +44,10 @@ export function ActivityTimer({
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
   const startTimer = useStartTimer()
   const stopTimer = useStopTimer()
-
   // Fetch activities for selected category
   const { data: activities = [] } = useAxisActivities(userId, selectedCategoryId)
-
   // Update activity name when selection changes
   useEffect(() => {
     if (selectedActivityId) {
@@ -63,7 +57,6 @@ export function ActivityTimer({
       }
     }
   }, [selectedActivityId, activities])
-
   // Timer logic
   useEffect(() => {
     if (isRunning) {
@@ -76,34 +69,27 @@ export function ActivityTimer({
         intervalRef.current = null
       }
     }
-
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
       }
     }
   }, [isRunning])
-
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
-
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const secs = seconds % 60
-
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
-
   const handleStart = async () => {
     setError(null)
-
     if (!activityName.trim()) {
       setError('Please enter an activity name')
       return
     }
-
     try {
       const result = await startTimer.mutateAsync({
         user_id: userId,
@@ -112,7 +98,6 @@ export function ActivityTimer({
         activity_name: activityName.trim(),
         time_block_id: timeBlock?.time_block_id
       })
-
       setActiveLogId(result.log_id)
       setIsRunning(true)
       setElapsedSeconds(0)
@@ -131,24 +116,19 @@ export function ActivityTimer({
       setError(error?.message || 'Failed to start timer. Please try again.')
     }
   }
-
   const handlePause = () => {
     setIsRunning(false)
   }
-
   const handleResume = () => {
     setIsRunning(true)
   }
-
   const handleStop = async () => {
     if (!activeLogId) return
-
     try {
       await stopTimer.mutateAsync({
         user_id: userId,
         log_id: activeLogId
       })
-
       setIsRunning(false)
       setElapsedSeconds(0)
       setActiveLogId(null)
@@ -163,9 +143,7 @@ export function ActivityTimer({
       })
     }
   }
-
   if (!isOpen) return null
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -178,26 +156,18 @@ export function ActivityTimer({
             onClick={onClose}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
-
-          {/* Modal - Perfect flexbox centering */}
+          {/* Modal - Perfect centering with flexbox */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 flex items-center justify-center p-4 z-50"
-            style={{
-              paddingTop: 'max(1rem, env(safe-area-inset-top))',
-              paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-              paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-              paddingRight: 'max(1rem, env(safe-area-inset-right))'
-            }}
           >
-            <div className="w-full max-w-lg lg:max-w-xl max-h-full overflow-y-auto">
-            <div className="glass rounded-2xl">
+            <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
-              <div className="p-6 border-b border-white/10">
+              <div className="p-4 sm:p-6 border-b border-white/10 bg-gradient-to-r from-green-900/50 to-blue-900/50">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
                     <Timer className="w-5 h-5 text-green-400" />
                     Activity Timer
                   </h2>
@@ -209,9 +179,8 @@ export function ActivityTimer({
                   </button>
                 </div>
               </div>
-
               {/* Content */}
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-4">
                 {/* Error Message */}
                 {error && (
                   <motion.div
@@ -223,7 +192,6 @@ export function ActivityTimer({
                     <span className="text-sm text-red-400">{error}</span>
                   </motion.div>
                 )}
-
                 {/* Timer Display */}
                 <motion.div
                   className="text-center py-8"
@@ -244,7 +212,6 @@ export function ActivityTimer({
                     </motion.div>
                   )}
                 </motion.div>
-
                 {!activeLogId && (
                   <>
                     {/* Category Selector */}
@@ -275,7 +242,6 @@ export function ActivityTimer({
                           </div>
                           <ChevronDown className="w-4 h-4 text-gray-400" />
                         </button>
-
                         {showCategoryDropdown && (
                           <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-10">
                             {categories.map(category => (
@@ -299,7 +265,7 @@ export function ActivityTimer({
                                   color={category.color}
                                 />
                                 <span className="text-white">
-                                  {category.name?.en || category.slug}
+                                  {getLocalizedText(category.name, 'en', category.slug)}
                                 </span>
                               </button>
                             ))}
@@ -307,7 +273,6 @@ export function ActivityTimer({
                         )}
                       </div>
                     </div>
-
                     {/* Activity Selector */}
                     <div>
                       <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -334,7 +299,6 @@ export function ActivityTimer({
                           No activities configured for this axis
                         </p>
                       )}
-
                       {(!selectedActivityId || activities.length === 0) && (
                         <input
                           type="text"
@@ -347,7 +311,6 @@ export function ActivityTimer({
                     </div>
                   </>
                 )}
-
                 {activeLogId && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -375,9 +338,8 @@ export function ActivityTimer({
                   </motion.div>
                 )}
               </div>
-
               {/* Footer */}
-              <div className="p-6 border-t border-white/10">
+              <div className="p-4 sm:p-6 border-t border-white/10">
                 {!activeLogId ? (
                   <button
                     onClick={handleStart}
@@ -418,7 +380,6 @@ export function ActivityTimer({
                 )}
               </div>
             </div>
-          </div>
           </motion.div>
         </>
       )}

@@ -2,9 +2,7 @@
  * Centralized error tracking and monitoring utility
  * Provides structured error reporting for production environments
  */
-
 import { logger } from '@/lib/logger'
-
 export interface ErrorReport {
   type: 'javascript_error' | 'api_error' | 'csp_violation' | 'network_error' | 'auth_error'
   message: string
@@ -17,7 +15,6 @@ export interface ErrorReport {
   severity: 'low' | 'medium' | 'high' | 'critical'
   metadata?: Record<string, unknown>
 }
-
 export interface PerformanceReport {
   type: 'page_load' | 'api_response' | 'component_render'
   metric: string
@@ -26,17 +23,14 @@ export interface PerformanceReport {
   timestamp: string
   metadata?: Record<string, unknown>
 }
-
 class ErrorTracker {
   private isClient = typeof window !== 'undefined'
   private isProd = process.env.NODE_ENV === 'production'
-
   constructor() {
     if (this.isClient && this.isProd) {
       this.setupGlobalErrorHandlers()
     }
   }
-
   /**
    * Track a custom error
    */
@@ -50,14 +44,11 @@ class ErrorTracker {
       url: this.isClient ? window.location.href : undefined,
       userAgent: this.isClient ? navigator.userAgent : undefined,
     }
-
     logger.error(report.message, error)
-
     if (this.isProd) {
       this.sendToMonitoring('error', report)
     }
   }
-
   /**
    * Track performance metrics
    */
@@ -70,14 +61,11 @@ class ErrorTracker {
       value: perf.value || 0,
       url: this.isClient ? window.location.href : undefined,
     }
-
     logger.info(`Performance: ${report.metric} = ${report.value}ms`, report.metadata)
-
     if (this.isProd) {
       this.sendToMonitoring('performance', report)
     }
   }
-
   /**
    * Track API errors specifically
    */
@@ -94,7 +82,6 @@ class ErrorTracker {
       }
     })
   }
-
   /**
    * Track authentication errors
    */
@@ -109,7 +96,6 @@ class ErrorTracker {
       }
     })
   }
-
   /**
    * Set up global error handlers for client-side
    */
@@ -128,7 +114,6 @@ class ErrorTracker {
         }
       })
     })
-
     // Catch unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
       this.trackError({
@@ -141,7 +126,6 @@ class ErrorTracker {
         }
       })
     })
-
     // Track navigation timing
     window.addEventListener('load', () => {
       setTimeout(() => {
@@ -158,7 +142,6 @@ class ErrorTracker {
       }, 0)
     })
   }
-
   /**
    * Send error reports to monitoring service
    */
@@ -166,7 +149,6 @@ class ErrorTracker {
     try {
       // Store in localStorage as fallback
       this.storeLocalFallback(type, data)
-
       // Send to API endpoint
       const response = await fetch('/api/monitoring/report', {
         method: 'POST',
@@ -175,7 +157,6 @@ class ErrorTracker {
         },
         body: JSON.stringify({ type, data })
       })
-
       if (!response.ok) {
         throw new Error(`Monitoring API error: ${response.status}`)
       }
@@ -186,35 +167,29 @@ class ErrorTracker {
       }
     }
   }
-
   /**
    * Store error reports in localStorage as fallback
    */
   private storeLocalFallback(type: 'error' | 'performance', data: ErrorReport | PerformanceReport): void {
     if (!this.isClient) return
-
     try {
       const key = `axis6_${type}_reports`
       const existing = JSON.parse(localStorage.getItem(key) || '[]')
       existing.push(data)
-
       // Keep only the last 50 reports
       if (existing.length > 50) {
         existing.splice(0, existing.length - 50)
       }
-
       localStorage.setItem(key, JSON.stringify(existing))
     } catch {
       // Fail silently if localStorage is not available
     }
   }
-
   /**
    * Get stored error reports from localStorage
    */
   getStoredReports(type: 'error' | 'performance'): Array<ErrorReport | PerformanceReport> {
     if (!this.isClient) return []
-
     try {
       const key = `axis6_${type}_reports`
       return JSON.parse(localStorage.getItem(key) || '[]')
@@ -222,13 +197,11 @@ class ErrorTracker {
       return []
     }
   }
-
   /**
    * Clear stored reports
    */
   clearStoredReports(type?: 'error' | 'performance'): void {
     if (!this.isClient) return
-
     if (type) {
       localStorage.removeItem(`axis6_${type}_reports`)
     } else {
@@ -237,9 +210,7 @@ class ErrorTracker {
     }
   }
 }
-
 // Export singleton instance
 export const errorTracker = new ErrorTracker()
-
 // Re-export types
 export type { ErrorReport as ClientErrorReport, PerformanceReport as ClientPerformanceReport }

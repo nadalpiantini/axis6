@@ -1,11 +1,8 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Heart, Users, Target, Briefcase, ChevronRight, Star, TrendingUp, Shield } from 'lucide-react'
 import Link from 'next/link'
-
 import { LogoFull } from '@/components/ui/Logo'
-
 const axes = [
   { name: 'Spiritual', icon: Sparkles, color: 'from-purple-400 to-purple-600' },
   { name: 'Mental', icon: Brain, color: 'from-blue-400 to-blue-600' },
@@ -14,13 +11,11 @@ const axes = [
   { name: 'Physical', icon: Target, color: 'from-orange-400 to-orange-600' },
   { name: 'Material', icon: Briefcase, color: 'from-yellow-400 to-yellow-600' },
 ]
-
 const features = [
   { icon: Star, title: 'Gamification', description: 'Transform your personal development into an engaging game' },
   { icon: TrendingUp, title: 'Streaks', description: 'Maintain your progress and celebrate every achievement' },
   { icon: Shield, title: 'Privacy', description: 'Your data is safe and encrypted' },
 ]
-
 export default function LandingPage() {
   return (
     <div
@@ -39,7 +34,6 @@ export default function LandingPage() {
           <div className="absolute w-72 h-72 sm:w-96 sm:h-96 bg-purple-500/20 rounded-full blur-3xl -top-36 sm:-top-48 -left-36 sm:-left-48 animate-pulse" />
           <div className="absolute w-72 h-72 sm:w-96 sm:h-96 bg-blue-500/20 rounded-full blur-3xl -bottom-36 sm:-bottom-48 -right-36 sm:-right-48 animate-pulse" />
         </div>
-
         <div className="relative z-10 text-center max-w-5xl mx-auto px-2 sm:px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -59,7 +53,6 @@ export default function LandingPage() {
               Transform your life by achieving perfect balance across the 6 essential dimensions of human wellbeing.
             </p>
           </motion.div>
-
           {/* Enhanced CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +73,6 @@ export default function LandingPage() {
               Sign In
             </Link>
           </motion.div>
-
           {/* Enhanced Mobile Hexagon Preview */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -94,7 +86,6 @@ export default function LandingPage() {
                 const x = 100 + 60 * Math.cos(angle)
                 const y = 100 + 60 * Math.sin(angle)
                 const Icon = axis.icon
-
                 return (
                   <g key={axis.name}>
                     {/* Lines to center */}
@@ -144,7 +135,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
-
       {/* Enhanced Features Section */}
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 lg:px-6 relative">
         <div className="max-w-6xl mx-auto">
@@ -156,7 +146,6 @@ export default function LandingPage() {
           >
             Why AXIS6?
           </motion.h2>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon
@@ -178,7 +167,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Enhanced 6 Axes Section */}
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
@@ -190,7 +178,6 @@ export default function LandingPage() {
           >
             The 6 Dimensions of Balance
           </motion.h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             {axes.map((axis, index) => {
               const Icon = axis.icon
@@ -216,7 +203,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Enhanced CTA Section */}
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 lg:px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -244,7 +230,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
-
       {/* Enhanced Footer */}
       <footer className="py-6 sm:py-8 px-3 sm:px-4 lg:px-6 border-t border-white/10">
         <div className="max-w-6xl mx-auto text-center text-gray-400">

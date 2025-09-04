@@ -1,17 +1,13 @@
 'use client'
-
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-
 import { logger } from '@/lib/logger'
 import { useAuthStore } from '@/lib/stores/useAppStore'
 import { createClient } from '@/lib/supabase/client'
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { setUser, setSession, setIsLoading } = useAuthStore()
   const supabase = createClient()
-
   useEffect(() => {
     // Check initial session
     const checkSession = async () => {
@@ -27,9 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false)
       }
     }
-
     checkSession()
-
     // Listen for auth changes
     const {
       data: { subscription },
@@ -46,18 +40,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const isPublicPath = publicPaths.some(path =>
           currentPath === path || currentPath.startsWith(`${path}/`)
         )
-
         if (!isPublicPath) {
           router.push('/auth/login')
         }
       }
       setIsLoading(false)
     })
-
     return () => {
       subscription.unsubscribe()
     }
   }, [supabase, router, setUser, setSession, setIsLoading])
-
   return <>{children}</>
 }

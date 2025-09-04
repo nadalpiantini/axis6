@@ -1,10 +1,7 @@
 'use client'
-
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
-
 import { useUser } from '@/lib/react-query/hooks'
-
 /**
  * Custom hook for protecting routes with authentication
  *
@@ -20,21 +17,18 @@ import { useUser } from '@/lib/react-query/hooks'
 export function useAuthGuard(redirectTo: string = '/auth/login') {
   const { data: user, isLoading: userLoading } = useUser()
   const router = useRouter()
-
   // Handle authentication redirect in useEffect to avoid state updates during render
   useEffect(() => {
     if (!userLoading && !user) {
       router.push(redirectTo)
     }
   }, [user, userLoading, redirectTo, router])
-
   return {
     user,
     isLoading: userLoading,
     isAuthenticated: !!user && !userLoading
   }
 }
-
 /**
  * Higher-order component for protecting entire pages
  *
@@ -47,7 +41,6 @@ export function withAuthGuard<P extends object>(
 ) {
   return function AuthGuardedComponent(props: P) {
     const { user, isLoading, isAuthenticated } = useAuthGuard(redirectTo)
-
     if (isLoading) {
       return (
         <div className="min-h-screen text-white flex items-center justify-center">
@@ -58,7 +51,6 @@ export function withAuthGuard<P extends object>(
         </div>
       )
     }
-
     if (!isAuthenticated) {
       return (
         <div className="min-h-screen text-white flex items-center justify-center">
@@ -69,7 +61,6 @@ export function withAuthGuard<P extends object>(
         </div>
       )
     }
-
     return <Component {...props} />
   }
 }

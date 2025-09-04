@@ -1,0 +1,20 @@
+{
+  "choose_language": "Choose your language",
+  "roles_title": "Select your roles (up to 4)",
+  "crew_subroles": "Select your crew subroles (up to 5)",
+  "location_title": "Your location & availability",
+  "capabilities_title": "Your gear & rates",
+  "notifications_title": "Notifications & privacy",
+  "actor": "Actor",
+  "crew": "Crew",
+  "producer": "Producer",
+  "city": "City",
+  "radius": "Work radius (km)",
+  "has_vehicle": "Has vehicle",
+  "ready_travel": "Ready to travel",
+  "day_rate": "Day rate",
+  "currency": "Currency",
+  "in_app": "In-app",
+  "email": "Email",
+  "whatsapp": "WhatsApp"
+}

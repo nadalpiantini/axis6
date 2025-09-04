@@ -1,16 +1,14 @@
 'use client'
-
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { Hash, Users, Settings, MessageCircle, Plus } from 'lucide-react'
 import React from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
-
+import { getCategoryName } from '@/lib/utils/i18n'
 interface ChatRoomListProps {
   rooms: ChatRoomWithParticipants[]
   selectedRoomId?: string
@@ -18,7 +16,6 @@ interface ChatRoomListProps {
   onCreateRoom?: () => void
   className?: string
 }
-
 export function ChatRoomList({
   rooms,
   selectedRoomId,
@@ -40,7 +37,6 @@ export function ChatRoomList({
         return <MessageCircle className="h-4 w-4 text-neutral-400" />
     }
   }
-
   const getRoomTypeBadge = (type: string) => {
     const badges = {
       direct: { label: 'Direct', color: 'bg-blue-500/20 text-blue-400' },
@@ -48,10 +44,8 @@ export function ChatRoomList({
       group: { label: 'Group', color: 'bg-green-500/20 text-green-400' },
       support: { label: 'Support', color: 'bg-orange-500/20 text-orange-400' }
     }
-
     const badge = badges[type as keyof typeof badges]
     if (!badge) return null
-
     return (
       <Badge
         variant="secondary"
@@ -61,12 +55,10 @@ export function ChatRoomList({
       </Badge>
     )
   }
-
   const formatLastMessageTime = (dateString?: string) => {
     if (!dateString) return ''
     return formatDistanceToNow(new Date(dateString), { addSuffix: true })
   }
-
   // Group rooms by type
   const groupedRooms = rooms.reduce((acc, room) => {
     if (!acc[room.type]) {
@@ -75,7 +67,6 @@ export function ChatRoomList({
     acc[room.type].push(room)
     return acc
   }, {} as Record<string, ChatRoomWithParticipants[]>)
-
   const roomTypeOrder = ['category', 'direct', 'group', 'support']
   const roomTypeLabels = {
     category: 'Category Rooms',
@@ -83,7 +74,6 @@ export function ChatRoomList({
     group: 'Group Chats',
     support: 'Support'
   }
-
   return (
     <div className={cn("h-full bg-neutral-950 border-r border-neutral-800", className)}>
       {/* Header */}
@@ -107,14 +97,12 @@ export function ChatRoomList({
           {rooms.length} room{rooms.length !== 1 ? 's' : ''}
         </p>
       </div>
-
       {/* Room List */}
       <ScrollArea className="flex-1">
         <div className="p-2">
           {roomTypeOrder.map((roomType) => {
             const typeRooms = groupedRooms[roomType]
             if (!typeRooms || typeRooms.length === 0) return null
-
             return (
               <div key={roomType} className="mb-6">
                 {/* Section Header */}
@@ -123,13 +111,11 @@ export function ChatRoomList({
                     {roomTypeLabels[roomType as keyof typeof roomTypeLabels]}
                   </h3>
                 </div>
-
                 {/* Rooms in this type */}
                 <div className="space-y-1">
                   {typeRooms.map((room) => {
                     const isSelected = room.id === selectedRoomId
                     const lastMessage = room.last_message?.[0]
-
                     return (
                       <motion.button
                         key={room.id}
@@ -147,7 +133,6 @@ export function ChatRoomList({
                           <div className="flex-shrink-0 mt-1">
                             {getRoomIcon(room.type, room.category?.color)}
                           </div>
-
                           {/* Room Info */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-1">
@@ -159,7 +144,6 @@ export function ChatRoomList({
                               </h4>
                               {getRoomTypeBadge(room.type)}
                             </div>
-
                             {/* Category Badge */}
                             {room.category && (
                               <div className="mb-2">
@@ -171,14 +155,10 @@ export function ChatRoomList({
                                     color: room.category.color
                                   }}
                                 >
-                                  {typeof room.category.name === 'object'
-                                    ? room.category.name.en || room.category.name.es
-                                    : room.category.name
-                                  }
+                                  {getCategoryName(room.category, 'en')}
                                 </Badge>
                               </div>
                             )}
-
                             {/* Last Message */}
                             {lastMessage && (
                               <div className="flex items-center justify-between">
@@ -193,13 +173,11 @@ export function ChatRoomList({
                                 </span>
                               </div>
                             )}
-
                             {/* Participant Count */}
                             <div className="flex items-center justify-between mt-2">
                               <span className="text-xs text-neutral-500">
                                 {room.participants.length} member{room.participants.length !== 1 ? 's' : ''}
                               </span>
-
                               {/* Unread indicator (placeholder) */}
                               <div className="w-2 h-2 bg-purple-500 rounded-full opacity-0" />
                             </div>
@@ -212,7 +190,6 @@ export function ChatRoomList({
               </div>
             )
           })}
-
           {/* Empty State */}
           {rooms.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">

@@ -1,0 +1,20 @@
+{
+  "choose_language": "Elige tu idioma",
+  "roles_title": "Selecciona tus roles (hasta 4)",
+  "crew_subroles": "Selecciona tus subroles de crew (hasta 5)",
+  "location_title": "Tu ubicación y disponibilidad",
+  "capabilities_title": "Tu equipo y tarifas",
+  "notifications_title": "Notificaciones y privacidad",
+  "actor": "Actor/Actriz",
+  "crew": "Crew/Técnico",
+  "producer": "Productor/a",
+  "city": "Ciudad",
+  "radius": "Radio de trabajo (km)",
+  "has_vehicle": "Tiene vehículo",
+  "ready_travel": "Listo para viajar",
+  "day_rate": "Tarifa día",
+  "currency": "Moneda",
+  "in_app": "En la app",
+  "email": "Correo",
+  "whatsapp": "WhatsApp"
+}

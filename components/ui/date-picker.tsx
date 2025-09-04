@@ -1,11 +1,8 @@
 "use client"
-
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
-
 export interface DatePickerProps {
   label?: string
   error?: string
@@ -18,7 +15,6 @@ export interface DatePickerProps {
   name?: string
   className?: string
 }
-
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   ({
     className,
@@ -34,7 +30,6 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     ...props
   }, ref) => {
     const datePickerId = React.useId()
-
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const dateValue = e.target.value
       if (dateValue && onChange) {
@@ -43,7 +38,6 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         onChange(undefined)
       }
     }
-
     const formatDateForInput = (date: Date | string | undefined): string => {
       if (!date) return ""
       try {
@@ -54,7 +48,6 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         return ""
       }
     }
-
     return (
       <div className="space-y-2">
         {label && (
@@ -104,5 +97,4 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   }
 )
 DatePicker.displayName = "DatePicker"
-
 export { DatePicker }

@@ -1,7 +1,5 @@
 'use client'
-
 import { motion } from 'framer-motion'
-
 interface CircularProgressProps {
   value: number
   size?: number
@@ -11,7 +9,6 @@ interface CircularProgressProps {
   color?: string
   showPercentage?: boolean
 }
-
 export default function CircularProgress({
   value,
   size = 200,
@@ -24,7 +21,6 @@ export default function CircularProgress({
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
   const offset = circumference - (value / 100) * circumference
-
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg
@@ -41,7 +37,6 @@ export default function CircularProgress({
           strokeWidth={strokeWidth}
           fill="none"
         />
-
         {/* Progress circle */}
         <motion.circle
           cx={size / 2}
@@ -59,7 +54,6 @@ export default function CircularProgress({
             filter: `drop-shadow(0 0 10px ${color}50)`
           }}
         />
-
         {/* Gradient definition */}
         <defs>
           <linearGradient id={`gradient-${color}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -68,7 +62,6 @@ export default function CircularProgress({
           </linearGradient>
         </defs>
       </svg>
-
       {/* Center content */}
       <motion.div
         className="absolute inset-0 flex flex-col items-center justify-center"
@@ -92,7 +85,6 @@ export default function CircularProgress({
           </div>
         )}
       </motion.div>
-
       {/* Decorative dots */}
       {value === 100 && (
         <>

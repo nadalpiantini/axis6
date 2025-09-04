@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
-
 import { messageSearchService, SearchResult, SearchOptions, SearchStats } from '@/lib/services/message-search'
-
 import { useDebounce } from './useDebounce'
-
 export function useMessageSearch() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -12,9 +9,7 @@ export function useMessageSearch() {
   const [error, setError] = useState<string | null>(null)
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [filters, setFilters] = useState<SearchOptions>({})
-
   const debouncedQuery = useDebounce(query, 300)
-
   // Perform search when debounced query changes
   useEffect(() => {
     if (debouncedQuery.trim().length >= 2) {
@@ -24,7 +19,6 @@ export function useMessageSearch() {
       setStats(null)
     }
   }, [debouncedQuery, filters])
-
   // Get suggestions when query changes
   useEffect(() => {
     if (query.length >= 2 && query.length < 10) {
@@ -33,11 +27,9 @@ export function useMessageSearch() {
       setSuggestions([])
     }
   }, [query])
-
   const performSearch = async (searchQuery: string) => {
     setIsLoading(true)
     setError(null)
-
     try {
       const { results: searchResults, stats: searchStats } = await messageSearchService.searchMessages(
         searchQuery,
@@ -53,7 +45,6 @@ export function useMessageSearch() {
       setIsLoading(false)
     }
   }
-
   const getSuggestions = async (partial: string) => {
     try {
       const suggestions = await messageSearchService.getSearchSuggestions(partial)
@@ -62,7 +53,6 @@ export function useMessageSearch() {
       setSuggestions([])
     }
   }
-
   const clearSearch = () => {
     setQuery('')
     setResults([])
@@ -70,19 +60,15 @@ export function useMessageSearch() {
     setError(null)
     setSuggestions([])
   }
-
   const updateFilters = (newFilters: Partial<SearchOptions>) => {
     setFilters(prev => ({ ...prev, ...newFilters }))
   }
-
   const getSearchHistory = () => {
     return messageSearchService.getSearchHistory()
   }
-
   const clearSearchHistory = () => {
     messageSearchService.clearSearchHistory()
   }
-
   return {
     // State
     query,
@@ -92,7 +78,6 @@ export function useMessageSearch() {
     error,
     suggestions,
     filters,
-
     // Actions
     setQuery,
     performSearch,
@@ -100,14 +85,12 @@ export function useMessageSearch() {
     updateFilters,
     getSearchHistory,
     clearSearchHistory,
-
     // Computed
     hasResults: results.length > 0,
     hasQuery: query.trim().length > 0,
     canSearch: query.trim().length >= 2
   }
 }
-
 export function useSearchAnalytics() {
   const [analytics, setAnalytics] = useState<{
     total_searches: number
@@ -117,11 +100,9 @@ export function useSearchAnalytics() {
   } | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const loadAnalytics = async () => {
     setIsLoading(true)
     setError(null)
-
     try {
       const analyticsData = await messageSearchService.getSearchAnalytics()
       setAnalytics(analyticsData)
@@ -131,11 +112,9 @@ export function useSearchAnalytics() {
       setIsLoading(false)
     }
   }
-
   useEffect(() => {
     loadAnalytics()
   }, [])
-
   return {
     analytics,
     isLoading,

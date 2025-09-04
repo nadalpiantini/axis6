@@ -37,7 +37,6 @@ export const BRAND_COLORS = {
     gradient: 'from-[#C85729] to-[#A64623]',
     shadow: 'shadow-[#C85729]/30'
   },
-
   // Neutral Colors
   neutral: {
     ivory: '#F2E9DC', // Marfil
@@ -47,7 +46,6 @@ export const BRAND_COLORS = {
     darkGray: '#4A4A4A'
   }
 } as const
-
 // Color type union
 type AxisColorScheme = {
   primary: string
@@ -55,7 +53,6 @@ type AxisColorScheme = {
   gradient: string
   shadow: string
 }
-
 // Mapping from database slugs to brand colors
 export const AXIS_COLORS: Record<string, AxisColorScheme> = {
   physical: BRAND_COLORS.physical,
@@ -64,13 +61,11 @@ export const AXIS_COLORS: Record<string, AxisColorScheme> = {
   social: BRAND_COLORS.social,
   spiritual: BRAND_COLORS.spiritual,
   material: BRAND_COLORS.material,
-
   // Spanish aliases
   físico: BRAND_COLORS.physical,
   emocional: BRAND_COLORS.emotional,
   espiritual: BRAND_COLORS.spiritual,
 } as const
-
 // Helper function to get colors by category slug
 export function getAxisColors(slug: string): AxisColorScheme {
   const normalizedSlug = slug.toLowerCase().replace(/[_\s]/g, '')
@@ -81,13 +76,11 @@ export function getAxisColors(slug: string): AxisColorScheme {
     shadow: 'shadow-[#2C3E50]/30'
   }
 }
-
 // Color utilities for CSS-in-JS or dynamic styling
 export function getCSSColor(slug: string, variant: 'primary' | 'gradient' | 'shadow' = 'primary') {
   const colors = getAxisColors(slug)
   return colors[variant] || colors.primary
 }
-
 // Generate dynamic CSS custom properties
 export function generateAxisCSSProps(slug: string) {
   const colors = getAxisColors(slug)

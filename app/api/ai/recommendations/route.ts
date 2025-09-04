@@ -1,14 +1,11 @@
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { activityRecommender } from '@/lib/ai/activity-recommender'
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
-import { logger } from '@/lib/utils/logger';
-
+import { logger } from '@/lib/utils/logger'
+import { getCategoryName } from '@/lib/utils/i18n'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
 /**
  * GET /api/ai/recommendations/activities
  * Get personalized activity recommendations for a category
@@ -16,7 +13,6 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -25,7 +21,6 @@ export async function GET(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     // Get query parameters
     const { searchParams } = new URL(_request.url)
     const categoryId = searchParams.get('category_id')
@@ -33,37 +28,31 @@ export async function GET(_request: NextRequest) {
     const socialPreference = searchParams.get('social_preference') as 'solo' | 'small_group' | 'large_group' | null
     const timeAvailable = searchParams.get('time_available') as 'quick' | 'moderate' | 'extended' | null
     const currentMood = searchParams.get('current_mood')
-
     if (!categoryId) {
       return NextResponse.json(
         { error: 'category_id parameter is required' },
         { status: 400 }
       )
     }
-
     const startTime = Date.now()
-
     // Get category name
     const { data: category, error: categoryError } = await supabase
       .from('axis6_categories')
       .select('name, slug')
       .eq('id', categoryId)
       .single()
-
     if (categoryError || !category) {
       return NextResponse.json(
         { error: 'Category not found' },
         { status: 404 }
       )
     }
-
     // Get user's temperament
     const { data: temperament } = await supabase
       .from('axis6_temperament_profiles')
       .select('primary_temperament, secondary_temperament')
       .eq('user_id', user.id)
       .single()
-
     // Get past activities for this category
     const { data: pastActivities } = await supabase
       .from('axis6_ai_recommendations')
@@ -71,11 +60,7 @@ export async function GET(_request: NextRequest) {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(5)
-
-    const categoryName = typeof category.name === 'object'
-      ? (category.name as any).en || category.slug
-      : category.name
-
+    const categoryName = getCategoryName(category, 'en')
     // Build recommendation input
     const recommendationInput = {
       userId: user.id,
@@ -92,12 +77,9 @@ export async function GET(_request: NextRequest) {
       currentMood: currentMood ? parseInt(currentMood) : undefined,
       language: 'en' as const
     }
-
     // Generate recommendations
     const activities = await activityRecommender.recommendActivities(recommendationInput)
-
     const responseTime = Date.now() - startTime
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -108,7 +90,6 @@ export async function GET(_request: NextRequest) {
         ? activities.reduce((sum, a) => sum + a.temperament_fit_score, 0) / activities.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -130,7 +111,6 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Activity recommendations API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to generate activity recommendations',
@@ -140,7 +120,6 @@ export async function GET(_request: NextRequest) {
     )
   }
 }
-
 /**
  * POST /api/ai/recommendations/goals
  * Get personalized goal recommendations
@@ -148,7 +127,6 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -157,24 +135,18 @@ export async function POST(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await _request.json()
     const { timeframe = 'weekly' } = body
-
     if (!['weekly', 'monthly'].includes(timeframe)) {
       return NextResponse.json(
         { error: 'timeframe must be "weekly" or "monthly"' },
         { status: 400 }
       )
     }
-
     const startTime = Date.now()
-
     // Generate personalized goals
     const goals = await behavioralAnalyzer.suggestPersonalizedGoals(user.id, timeframe)
-
     const responseTime = Date.now() - startTime
-
     // Store goals in database
     const goalRows = goals.map(goal => ({
       user_id: user.id,
@@ -193,16 +165,13 @@ export async function POST(_request: NextRequest) {
       },
       status: 'suggested'
     }))
-
     const { error: insertError } = await supabase
       .from('axis6_personalized_goals')
       .insert(goalRows)
-
     if (insertError) {
       logger.error('Failed to store goals:', insertError)
       // Continue without failing the request
     }
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -213,7 +182,6 @@ export async function POST(_request: NextRequest) {
         ? goals.reduce((sum, g) => sum + g.success_probability, 0) / goals.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -230,7 +198,6 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Goal recommendations API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to generate goal recommendations',

@@ -4,11 +4,9 @@
  * This module provides distributed rate limiting using Redis/Upstash
  * for better scalability and persistence across server instances.
  */
-
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextRequest, NextResponse } from 'next/server'
-
 // Initialize Redis client
 // For local development, you can use a local Redis instance
 // For production, use Upstash Redis or similar
@@ -18,10 +16,8 @@ const redis = process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDI
       token: process.env['UPSTASH_REDIS_REST_TOKEN'],
     })
   : null
-
 // Fallback to in-memory store if Redis is not configured
 const memoryStore = new Map<string, { count: number; resetTime: number }>()
-
 /**
  * Rate limiter configurations for different endpoints
  */
@@ -35,7 +31,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:login',
       })
     : null,
-
   register: redis
     ? new Ratelimit({
         redis,
@@ -44,7 +39,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:register',
       })
     : null,
-
   passwordReset: redis
     ? new Ratelimit({
         redis,
@@ -53,7 +47,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:password-reset',
       })
     : null,
-
   // API endpoints - more lenient
   api: redis
     ? new Ratelimit({
@@ -63,7 +56,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:api',
       })
     : null,
-
   // Sensitive operations
   sensitive: redis
     ? new Ratelimit({
@@ -73,7 +65,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:sensitive',
       })
     : null,
-
   // Write operations (POST, PUT, DELETE)
   write: redis
     ? new Ratelimit({
@@ -83,7 +74,6 @@ export const rateLimiters = {
         prefix: 'ratelimit:write',
       })
     : null,
-
   // Read operations (GET)
   read: redis
     ? new Ratelimit({
@@ -94,7 +84,6 @@ export const rateLimiters = {
       })
     : null,
 }
-
 /**
  * Get client identifier from request
  */
@@ -103,24 +92,18 @@ function getClientIdentifier(request: NextRequest, userId?: string): string {
   if (userId) {
     return `user:${userId}`
   }
-
   // Try to get real IP from various headers
   const forwardedFor = request.headers.get('x-forwarded-for')
   const realIp = request.headers.get('x-real-ip')
   const cfConnectingIp = request.headers.get('cf-connecting-ip') // Cloudflare
-
   const ip = cfConnectingIp || forwardedFor?.split(',')[0] || realIp || 'unknown'
-
   // Get session ID from cookie if available
   const sessionId = request.cookies.get('session-id')?.value
-
   if (sessionId) {
     return `session:${sessionId}:${ip}`
   }
-
   return `ip:${ip}`
 }
-
 /**
  * Fallback rate limiting using in-memory store
  */
@@ -131,16 +114,13 @@ function checkMemoryRateLimit(
 ): { success: boolean; remaining: number; reset: Date } {
   const now = Date.now()
   const resetTime = now + windowMs
-
   // Clean expired entries
   for (const [key, value] of memoryStore.entries()) {
     if (value.resetTime < now) {
       memoryStore.delete(key)
     }
   }
-
   const entry = memoryStore.get(identifier)
-
   if (!entry || entry.resetTime < now) {
     // New window
     memoryStore.set(identifier, { count: 1, resetTime })
@@ -150,7 +130,6 @@ function checkMemoryRateLimit(
       reset: new Date(resetTime)
     }
   }
-
   if (entry.count >= maxRequests) {
     return {
       success: false,
@@ -158,7 +137,6 @@ function checkMemoryRateLimit(
       reset: new Date(entry.resetTime)
     }
   }
-
   entry.count++
   return {
     success: true,
@@ -166,7 +144,6 @@ function checkMemoryRateLimit(
     reset: new Date(entry.resetTime)
   }
 }
-
 /**
  * Rate limiting middleware
  */
@@ -177,9 +154,7 @@ export async function withRateLimitRedis(
 ): Promise<NextResponse | null> {
   const identifier = getClientIdentifier(request, userId)
   const limiter = rateLimiters[limiterKey]
-
   let result: { success: boolean; remaining: number; reset: Date; limit?: number }
-
   if (limiter) {
     // Use Redis-based rate limiter
     const { success, limit, remaining, reset } = await limiter.limit(identifier)
@@ -195,21 +170,17 @@ export async function withRateLimitRedis(
       write: { max: 50, window: 60 * 1000 },
       read: { max: 300, window: 60 * 1000 },
     }[limiterKey] || { max: 100, window: 60 * 1000 }
-
     result = checkMemoryRateLimit(identifier, config.max, config.window)
     result.limit = config.max
   }
-
   // Add rate limit headers to all responses
   const headers = {
     'X-RateLimit-Limit': result.limit?.toString() || '100',
     'X-RateLimit-Remaining': result.remaining.toString(),
     'X-RateLimit-Reset': result.reset.toISOString(),
   }
-
   if (!result.success) {
     const retryAfter = Math.ceil((result.reset.getTime() - Date.now()) / 1000)
-
     return NextResponse.json(
       {
         error: 'Rate limit exceeded',
@@ -225,12 +196,10 @@ export async function withRateLimitRedis(
       }
     )
   }
-
   // Request is allowed - return null to continue
   // The calling function should add these headers to the successful response
   return null
 }
-
 /**
  * Get user-friendly rate limit message
  */
@@ -244,10 +213,8 @@ function getRateLimitMessage(limiterKey: string): string {
     write: 'Too many write operations. Please slow down.',
     read: 'Too many read operations. Please slow down.',
   }
-
   return messages[limiterKey as keyof typeof messages] || 'Rate limit exceeded. Please try again later.'
 }
-
 /**
  * Reset rate limit for a specific identifier
  * Useful after successful authentication
@@ -263,7 +230,6 @@ export async function resetRateLimit(
     memoryStore.delete(identifier)
   }
 }
-
 /**
  * Get current rate limit status
  */
@@ -273,13 +239,11 @@ export async function getRateLimitStatus(
   userId?: string
 ): Promise<{ used: number; remaining: number; total: number }> {
   const identifier = getClientIdentifier(request, userId)
-
   if (redis) {
     // This would need implementation based on the Upstash rate limit internals
     // For now, return a default response
     return { used: 0, remaining: 100, total: 100 }
   }
-
   const entry = memoryStore.get(identifier)
   const config = {
     login: 5,
@@ -290,11 +254,9 @@ export async function getRateLimitStatus(
     write: 50,
     read: 300,
   }[limiterKey] || 100
-
   if (!entry || entry.resetTime < Date.now()) {
     return { used: 0, remaining: config, total: config }
   }
-
   return {
     used: entry.count,
     remaining: Math.max(0, config - entry.count),

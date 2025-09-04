@@ -1,13 +1,9 @@
 'use client'
-
 import { AlertTriangle, RefreshCw, RotateCcw, Bug, Wifi, WifiOff } from 'lucide-react'
 import React, { Component, ErrorInfo, ReactNode, useState, useEffect, useCallback } from 'react'
-
 import { logger } from '@/lib/utils/logger'
-
 // Error severity levels
 type ErrorLevel = 'page' | 'section' | 'component' | 'critical'
-
 // Error types for better categorization
 type ErrorType =
   | 'network'
@@ -16,7 +12,6 @@ type ErrorType =
   | 'permission'
   | 'validation'
   | 'unknown'
-
 // Enhanced error context
 interface ErrorContext {
   component?: string
@@ -28,7 +23,6 @@ interface ErrorContext {
   previousError?: string
   retryCount?: number
 }
-
 interface ErrorInfo {
   error: Error
   errorInfo: ErrorInfo
@@ -37,7 +31,6 @@ interface ErrorInfo {
   context: ErrorContext
   timestamp: string
 }
-
 interface EnhancedErrorBoundaryProps {
   children: ReactNode
   level?: ErrorLevel
@@ -48,7 +41,6 @@ interface EnhancedErrorBoundaryProps {
   retryDelay?: number
   showDetails?: boolean
 }
-
 interface EnhancedErrorBoundaryState {
   hasError: boolean
   error: Error | null
@@ -59,72 +51,58 @@ interface EnhancedErrorBoundaryState {
   lastErrorTime: number
   errorId: string
 }
-
 // Error classification utility
 function classifyError(error: Error): ErrorType {
   const message = error.message.toLowerCase()
   const name = error.name.toLowerCase()
-
   // Network errors
   if (message.includes('fetch') || message.includes('network') ||
       message.includes('timeout') || name.includes('networkerror')) {
     return 'network'
   }
-
   // Database/API errors
   if (message.includes('supabase') || message.includes('database') ||
       message.includes('sql') || message.includes('rpc')) {
     return 'database'
   }
-
   // Permission errors
   if (message.includes('unauthorized') || message.includes('forbidden') ||
       message.includes('permission') || message.includes('access')) {
     return 'permission'
   }
-
   // Validation errors
   if (message.includes('validation') || message.includes('invalid') ||
       message.includes('required') || name.includes('validationerror')) {
     return 'validation'
   }
-
   // Rendering errors
   if (name.includes('typeerror') || name.includes('referenceerror') ||
       message.includes('undefined') || message.includes('null')) {
     return 'rendering'
   }
-
   return 'unknown'
 }
-
 // Generate unique error ID for tracking
 function generateErrorId(): string {
   return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
-
 // Network status hook
 function useNetworkStatus() {
   const [isOnline, setIsOnline] = useState(
     typeof window !== 'undefined' ? navigator.onLine : true
   )
-
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => setIsOnline(false)
-
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
-
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
   }, [])
-
   return isOnline
 }
-
 // Enhanced Error Fallback Components
 function NetworkErrorFallback({
   error,
@@ -178,7 +156,6 @@ function NetworkErrorFallback({
     </div>
   )
 }
-
 function DatabaseErrorFallback({
   error,
   retry,
@@ -224,7 +201,6 @@ function DatabaseErrorFallback({
     </div>
   )
 }
-
 function RenderingErrorFallback({
   error,
   retry,
@@ -241,7 +217,6 @@ function RenderingErrorFallback({
   errorId: string
 }) {
   const [showErrorDetails, setShowErrorDetails] = useState(false)
-
   return (
     <div className={`flex items-center justify-center p-4 ${
       level === 'page' ? 'min-h-screen' : level === 'section' ? 'min-h-[200px]' : 'min-h-[100px]'
@@ -259,7 +234,6 @@ function RenderingErrorFallback({
             : 'An unexpected error occurred. Our team has been notified.'
           }
         </p>
-
         {showDetails && (
           <div className="mb-4">
             <button
@@ -268,7 +242,6 @@ function RenderingErrorFallback({
             >
               {showErrorDetails ? 'Hide' : 'Show'} Details
             </button>
-
             {showErrorDetails && (
               <div className="bg-gray-800/50 rounded-lg p-3 text-left max-h-32 overflow-y-auto">
                 <div className="text-xs font-mono text-gray-300 mb-2">
@@ -281,7 +254,6 @@ function RenderingErrorFallback({
             )}
           </div>
         )}
-
         <div className="flex gap-2 justify-center">
           <button
             onClick={retry}
@@ -304,17 +276,14 @@ function RenderingErrorFallback({
     </div>
   )
 }
-
 // Main Enhanced Error Boundary Class Component
 export class EnhancedErrorBoundary extends Component<
   EnhancedErrorBoundaryProps,
   EnhancedErrorBoundaryState
 > {
   private retryTimeoutId: NodeJS.Timeout | null = null
-
   constructor(props: EnhancedErrorBoundaryProps) {
     super(props)
-
     this.state = {
       hasError: false,
       error: null,
@@ -326,7 +295,6 @@ export class EnhancedErrorBoundary extends Component<
       errorId: ''
     }
   }
-
   static getDerivedStateFromError(error: Error): Partial<EnhancedErrorBoundaryState> {
     return {
       hasError: true,
@@ -336,11 +304,9 @@ export class EnhancedErrorBoundary extends Component<
       lastErrorTime: Date.now()
     }
   }
-
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const { level = 'section', context = {}, onError, maxRetries = 3 } = this.props
     const { retryCount } = this.state
-
     // Enhanced error context
     const enhancedContext: ErrorContext = {
       ...context,
@@ -350,7 +316,6 @@ export class EnhancedErrorBoundary extends Component<
       previousError: this.state.error?.message,
       retryCount
     }
-
     // Log error based on severity
     const errorType = classifyError(error)
     const errorData = {
@@ -361,12 +326,10 @@ export class EnhancedErrorBoundary extends Component<
       context: enhancedContext,
       timestamp: new Date().toISOString()
     }
-
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
       logger.error(`Enhanced Error Boundary [${level}]:`, errorData)
     }
-
     // Report to external error tracking in production
     if (process.env.NODE_ENV === 'production' && level === 'page') {
       // Send to Sentry, LogRocket, etc.
@@ -376,44 +339,36 @@ export class EnhancedErrorBoundary extends Component<
         logger.error('Failed to report error:', reportingError)
       }
     }
-
     // Call custom error handler
     if (onError) {
       onError(error, errorData, enhancedContext)
     }
-
     // Update state with error info
     this.setState({
       errorInfo,
       errorType
     })
   }
-
   componentDidUpdate(prevProps: EnhancedErrorBoundaryProps, prevState: EnhancedErrorBoundaryState) {
     // Reset error boundary if children change (navigation)
     if (prevProps.children !== this.props.children && this.state.hasError) {
       this.handleReset()
     }
   }
-
   componentWillUnmount() {
     if (this.retryTimeoutId) {
       clearTimeout(this.retryTimeoutId)
     }
   }
-
   handleRetry = () => {
     const { maxRetries = 3, retryDelay = 1000 } = this.props
     const { retryCount } = this.state
-
     if (retryCount >= maxRetries) {
       return
     }
-
     this.setState({
       isRetrying: true
     })
-
     this.retryTimeoutId = setTimeout(() => {
       this.setState({
         hasError: false,
@@ -425,13 +380,11 @@ export class EnhancedErrorBoundary extends Component<
       })
     }, retryDelay)
   }
-
   handleReset = () => {
     // Clear retry timeout
     if (this.retryTimeoutId) {
       clearTimeout(this.retryTimeoutId)
     }
-
     // Reset state completely
     this.setState({
       hasError: false,
@@ -444,11 +397,9 @@ export class EnhancedErrorBoundary extends Component<
       errorId: ''
     })
   }
-
   render() {
     const { children, level = 'section', fallback, maxRetries = 3, showDetails = false } = this.props
     const { hasError, error, errorType, retryCount, isRetrying } = this.state
-
     // Show loading state during retry
     if (isRetrying) {
       return (
@@ -462,13 +413,11 @@ export class EnhancedErrorBoundary extends Component<
         </div>
       )
     }
-
     if (hasError && error) {
       // Custom fallback
       if (fallback) {
         return fallback(error, this.handleRetry, this.handleReset)
       }
-
       // Check if max retries exceeded
       if (retryCount >= maxRetries) {
         return (
@@ -496,7 +445,6 @@ export class EnhancedErrorBoundary extends Component<
           </div>
         )
       }
-
       // Render appropriate error UI based on error type
       switch (errorType) {
         case 'network':
@@ -530,11 +478,9 @@ export class EnhancedErrorBoundary extends Component<
           )
       }
     }
-
     return children
   }
 }
-
 // Network error wrapper with network status
 function NetworkErrorWrapper({
   error,
@@ -548,7 +494,6 @@ function NetworkErrorWrapper({
   level: ErrorLevel
 }) {
   const isOnline = useNetworkStatus()
-
   return (
     <NetworkErrorFallback
       error={error}
@@ -559,7 +504,6 @@ function NetworkErrorWrapper({
     />
   )
 }
-
 // Hook for manually triggering error boundaries
 export function useErrorHandler() {
   return useCallback((error: Error, context?: ErrorContext) => {
@@ -567,7 +511,6 @@ export function useErrorHandler() {
     throw error
   }, [])
 }
-
 // HOC for adding error boundary to any component
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
@@ -580,10 +523,7 @@ export function withErrorBoundary<P extends object>(
       </EnhancedErrorBoundary>
     )
   }
-
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
-
   return WrappedComponent
 }
-
 export default EnhancedErrorBoundary

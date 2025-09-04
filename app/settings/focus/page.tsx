@@ -1,15 +1,11 @@
 'use client'
-
 import { Focus } from 'lucide-react'
-
 import { FocusSettings } from '@/components/settings/FocusSettings'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
-
 export default function FocusSettingsPage() {
   const { data: user } = useUser()
-
   return (
     <SettingsLayout currentSection="focus">
       {/* Main Focus Settings Section */}
@@ -28,11 +24,9 @@ export default function FocusSettingsPage() {
               morning wellness rituals, allowing you to feel connected without distraction.
             </p>
           </div>
-
           <FocusSettings />
         </div>
       </SettingsSection>
-
       {/* Community Philosophy Section */}
       <SettingsSection
         title="5AM Club Philosophy"
@@ -72,7 +66,6 @@ export default function FocusSettingsPage() {
           </div>
         </div>
       </SettingsSection>
-
       {/* Technical Details Section */}
       <SettingsSection
         title="How It Works"

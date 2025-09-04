@@ -1,10 +1,7 @@
 import { Resend } from 'resend'
-
 import { logger } from '@/lib/logger'
-
 // Initialize Resend with API key
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-
 export interface EmailOptions {
   to: string
   type: 'welcome' | 'password-reset' | 'notification' | 'test'
@@ -16,10 +13,8 @@ export interface EmailOptions {
     message?: string
   }
 }
-
 export async function sendEmail(options: EmailOptions) {
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@axis6.app'
-
   if (!resend) {
     logger.info('Email would be sent (DEV MODE)', {
       to: options.to,
@@ -28,33 +23,27 @@ export async function sendEmail(options: EmailOptions) {
     })
     return { success: true, id: 'dev-mode' }
   }
-
   try {
     let subject = ''
     let html = ''
-
     switch (options.type) {
       case 'welcome':
         subject = '¡Bienvenido a AXIS6! 🎯'
         html = getWelcomeEmailHtml(options.data.name || 'Usuario')
         break
-
       case 'password-reset':
         subject = 'Restablecer contraseña - AXIS6'
         html = getPasswordResetHtml(options.data.name || 'Usuario', options.data.resetUrl || '')
         break
-
       case 'notification':
         subject = options.data.title || 'Notificación de AXIS6'
         html = getNotificationHtml(options.data.name || 'Usuario', options.data.message || '')
         break
-
       case 'test':
         subject = '🎉 Test de email AXIS6'
         html = getTestEmailHtml()
         break
     }
-
     const result = await resend.emails.send({
       from: `AXIS6 <${fromEmail}>`,
       to: options.to,
@@ -65,16 +54,13 @@ export async function sendEmail(options: EmailOptions) {
         { name: 'app', value: 'axis6' }
       ]
     })
-
     logger.info('Email sent successfully', { emailId: result.data?.id })
     return { success: true, id: result.data?.id }
-
   } catch (error: any) {
     logger.error('Failed to send email', error)
     return { success: false, error: error.message }
   }
 }
-
 // Email Templates
 function getWelcomeEmailHtml(name: string): string {
   return `
@@ -96,7 +82,6 @@ function getWelcomeEmailHtml(name: string): string {
                   <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">Six axes. One you. Don't break your Axis.</p>
                 </td>
               </tr>
-
               <!-- Content -->
               <tr>
                 <td style="padding: 40px;">
@@ -104,7 +89,6 @@ function getWelcomeEmailHtml(name: string): string {
                   <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                     Bienvenido a AXIS6, tu compañero personal para alcanzar el equilibrio perfecto en las 6 dimensiones esenciales de tu vida.
                   </p>
-
                   <div style="background: #f7fafc; border-radius: 12px; padding: 24px; margin: 30px 0;">
                     <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px;">Tus 6 Dimensiones:</h3>
                     <table width="100%" cellpadding="0" cellspacing="0">
@@ -140,17 +124,14 @@ function getWelcomeEmailHtml(name: string): string {
                       </tr>
                     </table>
                   </div>
-
                   <div style="text-align: center; margin: 40px 0;">
                     <a href="https://axis6.app/dashboard" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">Comenzar ahora</a>
                   </div>
-
                   <p style="color: #718096; font-size: 14px; line-height: 1.6; margin: 30px 0 0 0;">
                     Comienza con solo 5 minutos al día. Marca tus check-ins diarios, mantén tus rachas y observa cómo tu vida se transforma.
                   </p>
                 </td>
               </tr>
-
               <!-- Footer -->
               <tr>
                 <td style="padding: 30px; background: #f7fafc; text-align: center; border-top: 1px solid #e2e8f0;">
@@ -170,7 +151,6 @@ function getWelcomeEmailHtml(name: string): string {
     </html>
   `
 }
-
 function getPasswordResetHtml(name: string, resetUrl: string): string {
   return `
     <!DOCTYPE html>
@@ -196,7 +176,6 @@ function getPasswordResetHtml(name: string, resetUrl: string): string {
     </html>
   `
 }
-
 function getNotificationHtml(name: string, message: string): string {
   return `
     <!DOCTYPE html>
@@ -215,7 +194,6 @@ function getNotificationHtml(name: string, message: string): string {
     </html>
   `
 }
-
 function getTestEmailHtml(): string {
   return `
     <!DOCTYPE html>

@@ -1,18 +1,14 @@
 'use client'
-
 import { Check, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-
 interface PasswordStrengthProps {
   password: string
   showRequirements?: boolean
 }
-
 interface PasswordRequirement {
   label: string
   test: (password: string) => boolean
 }
-
 const requirements: PasswordRequirement[] = [
   {
     label: 'At least 8 characters',
@@ -35,12 +31,10 @@ const requirements: PasswordRequirement[] = [
     test: (password: string) => /[!@#$%^&*(),.?":{}|<>]/.test(password)
   }
 ]
-
 export function PasswordStrength({ password, showRequirements = true }: PasswordStrengthProps) {
   const [strength, setStrength] = useState(0)
   const [strengthLabel, setStrengthLabel] = useState<string>('None')
   const [strengthColor, setStrengthColor] = useState<string>('bg-gray-600')
-
   useEffect(() => {
     if (!password) {
       setStrength(0)
@@ -48,16 +42,13 @@ export function PasswordStrength({ password, showRequirements = true }: Password
       setStrengthColor('bg-gray-600')
       return
     }
-
     let score = 0
     requirements.forEach(req => {
       if (req.test(password)) {
         score++
       }
     })
-
     setStrength(score)
-
     // Set label and color based on score
     if (score === 0) {
       setStrengthLabel('None')
@@ -76,9 +67,7 @@ export function PasswordStrength({ password, showRequirements = true }: Password
       setStrengthColor('bg-green-500')
     }
   }, [password])
-
   const strengthPercentage = (strength / requirements.length) * 100
-
   return (
     <div className="space-y-3">
       <div className="space-y-2">
@@ -94,7 +83,6 @@ export function PasswordStrength({ password, showRequirements = true }: Password
             {strengthLabel}
           </span>
         </div>
-
         <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${strengthColor}`}
@@ -102,7 +90,6 @@ export function PasswordStrength({ password, showRequirements = true }: Password
           />
         </div>
       </div>
-
       {showRequirements && password && (
         <div className="space-y-1">
           {requirements.map((req, index) => {

@@ -1,34 +1,27 @@
 import { logger } from '@/lib/utils/logger';
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { handleError } from '@/lib/error/standardErrorHandler'
-
 // GET: Fetch user preferences
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const { data, error } = await supabase
       .from('axis6_user_preferences')
       .select('*')
       .eq('user_id', user.id)
       .single()
-
     if (error && error.code !== 'PGRST116') {
       throw error
     }
-
     // Return defaults if no preferences found
     if (!data) {
       return NextResponse.json({
@@ -49,7 +42,6 @@ export async function GET() {
         }
       })
     }
-
     return NextResponse.json({ preferences: data })
   } catch (error) {
     logger.error('Settings fetch error:', error)
@@ -59,24 +51,19 @@ export async function GET() {
     )
   }
 }
-
 // PUT: Update user preferences
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const body = await request.json()
     const { preferences } = body
-
     // Validate required fields
     if (!preferences) {
       return NextResponse.json(
@@ -84,7 +71,6 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Upsert preferences
     const { data, error } = await supabase
       .from('axis6_user_preferences')
@@ -95,11 +81,9 @@ export async function PUT(request: NextRequest) {
       })
       .select()
       .single()
-
     if (error) {
       throw error
     }
-
     return NextResponse.json({ 
       preferences: data,
       message: 'Preferences updated successfully' 
@@ -110,37 +94,30 @@ export async function PUT(request: NextRequest) {
       component: 'api_route',
       userMessage: 'Failed to update preferences'
     })
-    
     return NextResponse.json(
       { error: 'Failed to update user preferences' },
       { status: 500 }
     )
   }
 }
-
 // POST: Initialize default preferences for new user
 export async function POST() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Initialize all user settings using the database function
     const { error: initError } = await supabase.rpc('axis6_initialize_user_settings', {
       target_user_id: user.id
     })
-
     if (initError) {
       throw initError
     }
-
     return NextResponse.json({ 
       message: 'User settings initialized successfully' 
     })
@@ -150,7 +127,6 @@ export async function POST() {
       component: 'api_route',
       userMessage: 'Failed to initialize user settings'
     })
-    
     return NextResponse.json(
       { error: 'Failed to initialize user settings' },
       { status: 500 }

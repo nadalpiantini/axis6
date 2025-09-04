@@ -1,20 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-
 export interface HexagonResonanceData {
   axisSlug: string
   resonanceCount: number
   userCompleted: boolean
   hasResonance: boolean
 }
-
 export interface HexagonResonanceResponse {
   success: boolean
   date: string
   resonance: HexagonResonanceData[]
   totalResonance: number
 }
-
 // Custom hook to fetch hexagon resonance data
 export function useHexagonResonance(userId?: string, date?: string) {
   return useQuery<HexagonResonanceResponse>({
@@ -29,14 +26,11 @@ export function useHexagonResonance(userId?: string, date?: string) {
           totalResonance: 0
         }
       }
-
       const supabase = createClient()
       const dateParam = date || new Date().toISOString().split('T')[0]
-
       try {
         // Check session before making request
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
         if (sessionError || !session) {
           return {
             success: true,
@@ -45,7 +39,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
             totalResonance: 0
           }
         }
-
         // Make API request with credentials (cookies will be sent automatically)
         const response = await fetch(`/api/resonance/hexagon?date=${dateParam}`, {
           method: 'GET',
@@ -54,7 +47,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
             'Content-Type': 'application/json'
           }
         })
-
         if (!response.ok) {
           // Return empty data for any error to prevent UI issues
           return {
@@ -64,10 +56,8 @@ export function useHexagonResonance(userId?: string, date?: string) {
             totalResonance: 0
           }
         }
-
         const data = await response.json()
         return data
-
       } catch (error) {
         return {
           success: true,
@@ -88,7 +78,6 @@ export function useHexagonResonance(userId?: string, date?: string) {
       if (error && typeof error === 'object' && 'status' in error && (error.status === 401 || error.status === 403)) {
         return false
       }
-
       // Retry other errors up to 2 times
       return failureCount < 2
     },

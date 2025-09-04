@@ -2,7 +2,6 @@
  * Production-safe logging utility
  * Automatically strips console statements in production builds
  */
-
 const isDevelopment = process.env['NODE_ENV'] === 'development'
 const isTest = process.env['NODE_ENV'] === 'test'
 
@@ -120,6 +119,6 @@ export function assert(condition: any, message: string): asserts condition {
 // Development-only deprecation warning
 export function deprecated(message: string): void {
   if (isDevelopment) {
-    console.warn(`⚠️ DEPRECATED: ${message}`)
+    console.warn(`DEPRECATED: ${message}`)
   }
 }

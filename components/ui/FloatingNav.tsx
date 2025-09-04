@@ -1,21 +1,17 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Home, Activity, TrendingUp, User, Plus, Calendar, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
 interface NavItem {
   id: string
   label: string
   icon: React.ReactNode
   href: string
 }
-
 interface FloatingNavProps {
   onQuickAdd?: () => void
 }
-
 const navItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: <Home className="w-5 h-5" />, href: '/dashboard' },
   { id: 'my-day', label: 'My Day', icon: <Calendar className="w-5 h-5" />, href: '/my-day' },
@@ -23,10 +19,8 @@ const navItems: NavItem[] = [
   { id: 'stats', label: 'Stats', icon: <TrendingUp className="w-5 h-5" />, href: '/analytics' },
   { id: 'profile', label: 'Profile', icon: <User className="w-5 h-5" />, href: '/profile' }
 ]
-
 export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
   const pathname = usePathname()
-
   return (
     <>
       {/* Mobile Bottom Navigation */}
@@ -39,7 +33,6 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
           <div className="flex items-center justify-around py-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href
-
               return (
                 <Link
                   key={item.id}
@@ -69,7 +62,6 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
                 </Link>
               )
             })}
-
             {/* Floating Action Button for mobile */}
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -80,12 +72,11 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
               <div className="p-2 rounded-xl bg-gradient-to-br from-physical to-spiritual">
                 <Plus className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs text-gray-400">Añadir</span>
+                              <span className="text-xs text-gray-400">Add</span>
             </motion.button>
           </div>
         </div>
       </motion.div>
-
       {/* Desktop Floating Action Button */}
       <motion.button
         initial={{ scale: 0 }}
@@ -97,7 +88,6 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
       >
         <Plus className="w-6 h-6 text-white" />
       </motion.button>
-
       {/* Desktop Side Navigation (Optional) */}
       <motion.div
         initial={{ x: -100 }}
@@ -107,7 +97,6 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
         <div className="flex flex-col gap-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href
-
             return (
               <Link
                 key={item.id}
@@ -127,7 +116,6 @@ export default function FloatingNav({ onQuickAdd }: FloatingNavProps) {
                 >
                   {item.icon}
                 </motion.div>
-
                 {/* Tooltip */}
                 <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 pointer-events-none">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-md px-3 py-1 rounded-lg whitespace-nowrap">

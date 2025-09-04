@@ -1,9 +1,7 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { Sparkles, Brain, Heart, Users, Target, Briefcase } from 'lucide-react'
-
 // Unified icon props interface
 export interface IconProps {
   size?: number
@@ -11,7 +9,6 @@ export interface IconProps {
   className?: string
   animated?: boolean
 }
-
 // Map axis types to their icons - single source of truth
 export const AXIS_ICONS: Record<string, LucideIcon> = {
   physical: Target,
@@ -28,7 +25,6 @@ export const AXIS_ICONS: Record<string, LucideIcon> = {
   espiritual: Sparkles,
   material_purpose: Briefcase,
 }
-
 // Custom animated axis icons with brand personality
 export const PhysicalIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
@@ -61,7 +57,6 @@ export const PhysicalIcon = ({ size = 24, color = 'currentColor', className = ''
       />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -72,10 +67,8 @@ export const PhysicalIcon = ({ size = 24, color = 'currentColor', className = ''
       </motion.div>
     )
   }
-
   return Icon
 }
-
 export const MentalIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
     <svg
@@ -100,7 +93,6 @@ export const MentalIcon = ({ size = 24, color = 'currentColor', className = '', 
       />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -111,10 +103,8 @@ export const MentalIcon = ({ size = 24, color = 'currentColor', className = '', 
       </motion.div>
     )
   }
-
   return Icon
 }
-
 export const EmotionalIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
     <svg
@@ -134,7 +124,6 @@ export const EmotionalIcon = ({ size = 24, color = 'currentColor', className = '
       <circle cx="12" cy="10" r="2" fill={color} />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -145,10 +134,8 @@ export const EmotionalIcon = ({ size = 24, color = 'currentColor', className = '
       </motion.div>
     )
   }
-
   return Icon
 }
-
 export const SocialIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
     <svg
@@ -169,7 +156,6 @@ export const SocialIcon = ({ size = 24, color = 'currentColor', className = '', 
       <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="2" opacity="0.3" />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -180,10 +166,8 @@ export const SocialIcon = ({ size = 24, color = 'currentColor', className = '', 
       </motion.div>
     )
   }
-
   return Icon
 }
-
 export const SpiritualIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
     <svg
@@ -202,7 +186,6 @@ export const SpiritualIcon = ({ size = 24, color = 'currentColor', className = '
       <circle cx="12" cy="12" r="3" stroke={color} strokeWidth="2" opacity="0.5" />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -216,10 +199,8 @@ export const SpiritualIcon = ({ size = 24, color = 'currentColor', className = '
       </motion.div>
     )
   }
-
   return Icon
 }
-
 export const MaterialIcon = ({ size = 24, color = 'currentColor', className = '', animated = false }: IconProps) => {
   const Icon = (
     <svg
@@ -239,7 +220,6 @@ export const MaterialIcon = ({ size = 24, color = 'currentColor', className = ''
       <path d="M12 16V18" stroke={color} strokeWidth="2" />
     </svg>
   )
-
   if (animated) {
     return (
       <motion.div
@@ -250,10 +230,8 @@ export const MaterialIcon = ({ size = 24, color = 'currentColor', className = ''
       </motion.div>
     )
   }
-
   return Icon
 }
-
 // Export all custom icons as a collection
 export const CustomAxisIcons = {
   physical: PhysicalIcon,
@@ -263,33 +241,38 @@ export const CustomAxisIcons = {
   spiritual: SpiritualIcon,
   material: MaterialIcon,
 }
-
 // Helper function to get icon by axis name
 export function getAxisIcon(axis: string, custom: boolean = false) {
   const normalizedAxis = axis.toLowerCase().replace(/[_\s]/g, '')
-
   if (custom && CustomAxisIcons[normalizedAxis as keyof typeof CustomAxisIcons]) {
     return CustomAxisIcons[normalizedAxis as keyof typeof CustomAxisIcons]
   }
-
   return AXIS_ICONS[normalizedAxis] || Target
 }
-
 // Icon wrapper component with consistent styling
 interface AxisIconWrapperProps extends IconProps {
   axis: string
   custom?: boolean
 }
-
 export function AxisIcon({ axis, custom = false, animated, ...props }: AxisIconWrapperProps) {
   const IconComponent = getAxisIcon(axis, custom)
-
+  
   if (custom) {
-    // Pass animated to custom icons
-    return <IconComponent animated={animated} {...props} />
+    // For custom icons, only pass animated when it's true, otherwise omit it
+    const customProps = animated ? { ...props, animated } : props
+    return <IconComponent {...customProps} />
   }
-
-  // For Lucide icons - only pass supported props (exclude animated)
+  
+  // For Lucide icons, completely isolate the animated prop
   const LucideIcon = IconComponent as LucideIcon
-  return <LucideIcon size={props.size} color={props.color} className={props.className} />
+  
+  // Only extract the props that Lucide icons can handle
+  const lucideProps = {
+    size: props.size,
+    color: props.color,
+    className: props.className
+  }
+  
+  // Render Lucide icon with only the allowed props
+  return <LucideIcon {...lucideProps} />
 }

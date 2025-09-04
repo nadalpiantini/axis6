@@ -1,10 +1,8 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MoreVertical, Users, Hash, Phone, Video, Settings } from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
-
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { animations } from '@/lib/design-system/theme'
 import {
@@ -15,13 +13,11 @@ import {
 } from '@/lib/hooks/useChat'
 import { ChatRoomWithParticipants, ChatMessageWithSender } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
-
 import { ChatComposer } from './ChatComposer'
 import { ChatHeader } from './ChatHeader'
 import { ChatMessageList } from './ChatMessageList'
 import { ChatParticipants } from './ChatParticipants'
 import { TypingIndicator } from './TypingIndicator'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface ChatRoomProps {
   room: ChatRoomWithParticipants
@@ -29,12 +25,10 @@ interface ChatRoomProps {
   onClose?: () => void
   className?: string
 }
-
 export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
   const [showParticipants, setShowParticipants] = useState(false)
   const [replyToMessage, setReplyToMessage] = useState<ChatMessageWithSender | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
   // Chat hooks
   const {
     isConnected,
@@ -42,59 +36,47 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
     onlineUsers,
     sendTyping
   } = useChatRoom(room.id, userId)
-
   const {
     data: messagesData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
   } = useChatMessages(room.id)
-
   const sendMessage = useSendMessage(room.id)
   const { startTyping, stopTyping } = useTypingIndicator(room.id)
-
   // Flatten messages from pages
   const messages = messagesData?.pages.flatMap(page => page.data) || []
-
   // Auto scroll to bottom on new messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages.length])
-
   // Handle message send
   const handleSendMessage = async (content: string, messageType?: 'text' | 'image' | 'file' | 'achievement') => {
     if (!content.trim()) return
-
     try {
       await sendMessage.mutateAsync({
         content: content.trim(),
         messageType,
         replyToId: replyToMessage?.id
       })
-
       setReplyToMessage(null)
       stopTyping()
     } catch (error) {
       handleError(error, {
       operation: 'chat_operation', component: 'ChatRoom',
-
         userMessage: 'Chat operation failed. Please try again.'
-
       })
     }
   }
-
   // Handle typing events
   const handleTypingStart = () => {
     startTyping()
   }
-
   const handleTypingStop = () => {
     stopTyping()
   }
-
   return (
     <Card
       className={cn(
@@ -111,7 +93,6 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
         onToggleParticipants={() => setShowParticipants(!showParticipants)}
         onClose={onClose}
       />
-
       <div className="flex-1 flex min-h-0">
         {/* Messages Area */}
         <div className="flex-1 flex flex-col min-w-0">
@@ -125,17 +106,14 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
               isLoading={isFetchingNextPage}
               hasMore={hasNextPage}
             />
-
             {/* Typing Indicator */}
             {typingUsers.length > 0 && (
               <div className="px-4 pb-2">
                 <TypingIndicator users={typingUsers} />
               </div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
-
           {/* Reply Preview */}
           <AnimatePresence>
             {replyToMessage && (
@@ -166,7 +144,6 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Message Composer */}
           <div className="p-4 border-t border-neutral-800">
             <ChatComposer
@@ -178,7 +155,6 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
             />
           </div>
         </div>
-
         {/* Participants Sidebar */}
         <AnimatePresence>
           {showParticipants && (
@@ -199,7 +175,6 @@ export function ChatRoom({ room, userId, onClose, className }: ChatRoomProps) {
           )}
         </AnimatePresence>
       </div>
-
       {/* Connection Status */}
       {!isConnected && (
         <div className="absolute inset-x-0 top-0 bg-yellow-500/90 text-black text-center py-2 text-sm font-medium">

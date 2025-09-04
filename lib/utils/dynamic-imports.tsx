@@ -2,10 +2,8 @@
  * Dynamic imports for code splitting and lazy loading
  * Reduces initial bundle size by loading components on demand
  */
-
 import dynamic from 'next/dynamic'
 import { ComponentType } from 'react'
-
 // Loading component for lazy-loaded components
 const LoadingSpinner = () => {
   return (
@@ -14,11 +12,9 @@ const LoadingSpinner = () => {
     </div>
   )
 }
-
 /**
  * Heavy components that should be lazy loaded
  */
-
 // Charts and analytics components (only load when viewing stats)
 export const AreaChart = dynamic(
   () => import('recharts').then(mod => mod.AreaChart as any),
@@ -27,7 +23,6 @@ export const AreaChart = dynamic(
     ssr: false
   }
 )
-
 export const BarChart = dynamic(
   () => import('recharts').then(mod => mod.BarChart as any),
   {
@@ -35,7 +30,6 @@ export const BarChart = dynamic(
     ssr: false
   }
 )
-
 export const LineChart = dynamic(
   () => import('recharts').then(mod => mod.LineChart as any),
   {
@@ -43,7 +37,6 @@ export const LineChart = dynamic(
     ssr: false
   }
 )
-
 export const ResponsiveContainer = dynamic(
   () => import('recharts').then(mod => mod.ResponsiveContainer as any),
   {
@@ -51,7 +44,6 @@ export const ResponsiveContainer = dynamic(
     ssr: false
   }
 )
-
 // Psychology components (only load on profile page)
 export const TemperamentQuestionnaire = dynamic(
   () => import('@/components/psychology/TemperamentQuestionnaire').then(
@@ -62,7 +54,6 @@ export const TemperamentQuestionnaire = dynamic(
     ssr: false
   }
 )
-
 export const EnhancedTemperamentQuestionnaire = dynamic(
   () => import('@/components/psychology/EnhancedTemperamentQuestionnaire').then(
     mod => mod.EnhancedTemperamentQuestionnaire
@@ -72,7 +63,6 @@ export const EnhancedTemperamentQuestionnaire = dynamic(
     ssr: false
   }
 )
-
 export const TemperamentResults = dynamic(
   () => import('@/components/psychology/TemperamentResults').then(
     mod => mod.TemperamentResults
@@ -82,9 +72,7 @@ export const TemperamentResults = dynamic(
     ssr: false
   }
 )
-
 // AI components will be added when available
-
 // Heavy animation components
 export const HexagonChart = dynamic(
   () => import('@/components/axis/HexagonChart').then(
@@ -95,7 +83,6 @@ export const HexagonChart = dynamic(
     ssr: true // Keep SSR for SEO
   }
 )
-
 // Export utility for creating dynamic imports
 export function createDynamicImport<P = {}>(
   importFn: () => Promise<{ default: ComponentType<P> } | ComponentType<P>>,
@@ -109,7 +96,6 @@ export function createDynamicImport<P = {}>(
     ssr: options?.ssr ?? false,
   })
 }
-
 // Preload function for critical components
 export function preloadComponent(componentName: keyof typeof componentMap) {
   const component = componentMap[componentName]
@@ -117,7 +103,6 @@ export function preloadComponent(componentName: keyof typeof componentMap) {
     component()
   }
 }
-
 // Map of components for preloading
 const componentMap = {
   AreaChart: () => import('recharts'),

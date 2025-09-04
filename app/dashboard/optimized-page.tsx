@@ -1,18 +1,15 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Calendar, TrendingUp, Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { memo, useMemo, useCallback, useEffect, lazy, Suspense, useTransition } from 'react'
-
 // Lazy load heavy components for better bundle splitting and faster initial load
 const DailyMantraCard = lazy(() =>
   import('@/components/mantras/DailyMantraCard')
     .then(mod => ({ default: mod.DailyMantraCard }))
     .catch(() => ({ default: () => <div className="glass rounded-xl p-4 animate-pulse h-32" /> }))
 )
-
 // Optimized imports
 import { EnhancedErrorBoundary } from '@/components/error/EnhancedErrorBoundary'
 import { AxisIcon } from '@/components/icons'
@@ -25,7 +22,7 @@ import { useDashboardDataOptimized, useBatchCheckInMutation } from '@/lib/react-
 import { useUser } from '@/lib/react-query/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore, usePreferencesStore } from '@/lib/stores/useAppStore'
-
+import { getCategoryName } from '@/lib/utils/i18n'
 // Types for optimization
 interface OptimizedAxis {
   id: string | number
@@ -34,7 +31,6 @@ interface OptimizedAxis {
   icon: string
   completed: boolean
 }
-
 // Memoized HexagonChart wrapper with strict equality comparison
 const HexagonVisualizationOptimized = memo(function HexagonVisualizationOptimized({
   axes,
@@ -46,7 +42,6 @@ const HexagonVisualizationOptimized = memo(function HexagonVisualizationOptimize
   isToggling: boolean
 }) {
   const { showResonance } = usePreferencesStore()
-
   // Memoize hexagon data computation with deep comparison
   const hexagonData = useMemo(() => {
     const baseData = {
@@ -57,7 +52,6 @@ const HexagonVisualizationOptimized = memo(function HexagonVisualizationOptimize
       spiritual: 0,
       material: 0
     }
-
     // Convert axes to hexagon format efficiently
     for (const axis of axes) {
       const key = axis.name.toLowerCase() as keyof typeof baseData
@@ -65,16 +59,13 @@ const HexagonVisualizationOptimized = memo(function HexagonVisualizationOptimize
         baseData[key] = axis.completed ? 100 : 0
       }
     }
-
     return baseData
   }, [axes])
-
   // Lazy load HexagonChart to avoid blocking initial render
   const HexagonChart = useMemo(() =>
     lazy(() => import('@/components/axis/HexagonChartWithResonance')),
     []
   )
-
   return (
     <div className="flex justify-center mb-4 sm:mb-8 overflow-hidden" data-testid="hexagon-chart">
       <div className="w-full max-w-[95vw] sm:max-w-none flex justify-center">
@@ -122,7 +113,6 @@ const HexagonVisualizationOptimized = memo(function HexagonVisualizationOptimize
     })
   )
 })
-
 // Optimized category card with performance-first design
 const OptimizedCategoryCard = memo(function OptimizedCategoryCard({
   axis,
@@ -134,16 +124,13 @@ const OptimizedCategoryCard = memo(function OptimizedCategoryCard({
   isToggling: boolean
 }) {
   const showAnimations = usePreferencesStore(state => state.showAnimations)
-
   // Memoize button classes to prevent recalculation
   const buttonClasses = useMemo(() => {
     const baseClasses = "p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] hover:scale-[1.02] active:scale-[0.98] border"
     const completedClasses = "bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30"
     const incompleteClasses = "bg-white/5 hover:bg-white/10 border-white/10"
-
     return `${baseClasses} ${axis.completed ? completedClasses : incompleteClasses}`
   }, [axis.completed])
-
   return (
     <button
       onClick={onToggle}
@@ -160,7 +147,7 @@ const OptimizedCategoryCard = memo(function OptimizedCategoryCard({
             size={18}
             color={axis.color}
             custom
-            animated={showAnimations && axis.completed}
+                          {...(showAnimations && axis.completed ? { animated: true } : {})}
           />
         </div>
         <span className={`text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
@@ -177,7 +164,6 @@ const OptimizedCategoryCard = memo(function OptimizedCategoryCard({
     prevProps.isToggling === nextProps.isToggling
   )
 })
-
 // Stats component with memoized calculations
 const OptimizedStatsSection = memo(function OptimizedStatsSection({
   currentStreak,
@@ -212,20 +198,16 @@ const OptimizedStatsSection = memo(function OptimizedStatsSection({
     </div>
   )
 })
-
 // Main Dashboard Component with Maximum Optimization
 export default function OptimizedDashboardPage() {
   const router = useRouter()
   const { addNotification } = useUIStore()
   const { toasts, showToast, removeToast } = useToast()
   const [isPending, startTransition] = useTransition()
-
   // React Query client for manual cache management
   const queryClient = useQueryClient()
-
   // Get current user for authentication check
   const { data: authUser, isLoading: authLoading } = useUser()
-
   // Fetch all dashboard data with single optimized query
   const {
     data: dashboardData,
@@ -233,10 +215,8 @@ export default function OptimizedDashboardPage() {
     error: dashboardError,
     refetch
   } = useDashboardDataOptimized(authUser?.id)
-
   // Batch mutation for multiple check-ins (performance optimization)
   const batchCheckInMutation = useBatchCheckInMutation(authUser?.id)
-
   // Extract data from unified response with memoization
   const { user, categories, checkins, streaks, stats } = useMemo(() => ({
     user: dashboardData?.user || authUser,
@@ -245,47 +225,27 @@ export default function OptimizedDashboardPage() {
     streaks: dashboardData?.streaks || [],
     stats: dashboardData?.stats || {}
   }), [dashboardData, authUser])
-
   // Loading and error states
   const isLoading = authLoading || dashboardLoading || isPending
   const error = dashboardError
-
   // Enable realtime updates with connection monitoring
   const realtimeStatus = useRealtimeDashboard(user?.id)
-
   // Memoize axes calculation with performance optimization
   const axes = useMemo(() => {
     if (!Array.isArray(categories) || categories.length === 0) {
       return []
     }
-
     // Limit to exactly 6 categories for hexagon design
     const limitedCategories = categories.slice(0, 6)
-
     // Create completed set for O(1) lookups
     const completedSet = new Set(
       Array.isArray(checkins)
         ? checkins.map(c => Number(c.category_id)).filter(id => !isNaN(id))
         : []
     )
-
     return limitedCategories.map(cat => {
-      // Optimized JSONB name parsing
-      let displayName = 'Unknown'
-
-      try {
-        if (typeof cat.name === 'object' && cat.name?.en) {
-          displayName = cat.name.en
-        } else if (typeof cat.name === 'string') {
-          const parsed = JSON.parse(cat.name)
-          displayName = parsed.en || parsed.es || cat.slug || 'Unknown'
-        } else {
-          displayName = cat.slug || 'Unknown'
-        }
-      } catch {
-        displayName = cat.slug || 'Unknown'
-      }
-
+      // 🛡️ SAFE JSONB NAME PARSING with i18n utility
+      const displayName = getCategoryName(cat, 'en')
       return {
         id: cat.id,
         name: displayName,
@@ -295,24 +255,19 @@ export default function OptimizedDashboardPage() {
       }
     })
   }, [categories, checkins])
-
   // Memoize streak calculations for performance
   const { currentStreak, longestStreak } = useMemo(() => {
     const current = stats?.currentOverallStreak ||
       (Array.isArray(streaks) ? Math.max(...streaks.map(s => s.current_streak || 0), 0) : 0)
     const longest = stats?.longestOverallStreak ||
       (Array.isArray(streaks) ? Math.max(...streaks.map(s => s.longest_streak || 0), 0) : 0)
-
     return { currentStreak: current, longestStreak: longest }
   }, [streaks, stats])
-
   // Optimized toggle handler with batch support and transitions
   const handleToggleAxis = useCallback((axisId: string | number) => {
     if (batchCheckInMutation.isPending) return
-
     const axis = axes.find(a => a.id === axisId)
     if (!axis) return
-
     // Use transition for non-urgent updates
     startTransition(() => {
       batchCheckInMutation.mutate(
@@ -322,10 +277,8 @@ export default function OptimizedDashboardPage() {
             const message = axis.completed
               ? `${axis.name} unchecked`
               : `${axis.name} completed! 🎉`
-
             showToast(message, 'success', 2500)
             addNotification({ type: 'success', message })
-
             // Immediate cache invalidation for instant feedback
             queryClient.invalidateQueries({ queryKey: ['dashboard-optimized', user?.id] })
           },
@@ -333,7 +286,6 @@ export default function OptimizedDashboardPage() {
             const errorMessage = 'Failed to update. Please try again.'
             showToast(errorMessage, 'error', 4000)
             addNotification({ type: 'error', message: errorMessage })
-
             // Force refetch on error for consistency
             refetch()
           }
@@ -341,21 +293,18 @@ export default function OptimizedDashboardPage() {
       )
     })
   }, [axes, batchCheckInMutation, user?.id, showToast, addNotification, queryClient, refetch])
-
   const handleLogout = useCallback(async () => {
     const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/auth/login')
   }, [router])
-
   // Handle authentication redirect
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/auth/login')
     }
   }, [user, isLoading, router])
-
   // Loading state with optimization
   if (isLoading) {
     return (
@@ -372,7 +321,6 @@ export default function OptimizedDashboardPage() {
       </div>
     )
   }
-
   // Error state with enhanced error boundary
   if (error) {
     return (
@@ -397,7 +345,6 @@ export default function OptimizedDashboardPage() {
       </EnhancedErrorBoundary>
     )
   }
-
   // Authentication check
   if (!user) {
     return (
@@ -409,9 +356,7 @@ export default function OptimizedDashboardPage() {
       </div>
     )
   }
-
   const completedCount = axes.filter(a => a.completed).length
-
   return (
     <EnhancedErrorBoundary
       level="page"
@@ -433,13 +378,11 @@ export default function OptimizedDashboardPage() {
           completionPercentage={completedCount === 6 ? 100 : Math.round((completedCount / 6) * 100)}
           variant="dashboard"
         />
-
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8">
           {/* Logo Section */}
           <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
             <LogoFull size="lg" className="h-12 sm:h-14 lg:h-16" priority={true} />
           </div>
-
           {/* Welcome Section */}
           <main className="mb-3 sm:mb-6 lg:mb-8 px-1 sm:px-2" role="main">
             <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 text-center leading-tight">
@@ -454,7 +397,6 @@ export default function OptimizedDashboardPage() {
               })}
             </p>
           </main>
-
           {/* Main Grid with Optimized Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 xl:gap-8" role="region" aria-label="Main dashboard panel">
             {/* Hexagon Section */}
@@ -466,13 +408,11 @@ export default function OptimizedDashboardPage() {
                     {completedCount}/6 completed
                   </span>
                 </div>
-
                 <HexagonVisualizationOptimized
                   axes={axes}
                   onToggleAxis={handleToggleAxis}
                   isToggling={batchCheckInMutation.isPending}
                 />
-
                 {/* Axes List with Performance Optimization */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6" data-testid="category-cards">
                   {axes.map((axis) => (
@@ -486,7 +426,6 @@ export default function OptimizedDashboardPage() {
                 </div>
               </div>
             </div>
-
             {/* Stats Section */}
             <div className="space-y-3 sm:space-y-4 lg:space-y-6">
               {/* Realtime Status (Development Only) */}
@@ -509,7 +448,6 @@ export default function OptimizedDashboardPage() {
                   </div>
                 </div>
               )}
-
               {/* Daily Mantra with Error Boundary */}
               <EnhancedErrorBoundary
                 level="component"
@@ -535,14 +473,12 @@ export default function OptimizedDashboardPage() {
                   <DailyMantraCard />
                 </Suspense>
               </EnhancedErrorBoundary>
-
               {/* Optimized Stats */}
               <OptimizedStatsSection
                 currentStreak={currentStreak}
                 longestStreak={longestStreak}
                 completedCount={completedCount}
               />
-
               {/* Actions with Memoized Links */}
               <div className="space-y-2 sm:space-y-3">
                 <Link
@@ -573,7 +509,6 @@ export default function OptimizedDashboardPage() {
             </div>
           </div>
         </div>
-
         {/* Toast Notifications */}
         <ToastContainer toasts={toasts} onRemove={removeToast} />
       </div>

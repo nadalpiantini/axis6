@@ -2,12 +2,9 @@
  * Revolutionary Clock Example - Integration Guide
  * Shows how to use the HexagonClock with revolutionary positioning
  */
-
 'use client'
-
 import React from 'react';
 import { HexagonClock } from '@/components/hexagon-clock/HexagonClock';
-
 // Example 1: Dashboard with Revolutionary Clock Markers
 export const DashboardWithClock = () => {
   const completionData = {
@@ -18,13 +15,11 @@ export const DashboardWithClock = () => {
     spiritual: 75,  // 8 o'clock - Night reflection
     material: 55    // 10 o'clock - Late planning
   };
-
   return (
     <div className="p-8 bg-gradient-to-br from-slate-900 to-purple-900 min-h-screen">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">
         Dashboard with Revolutionary Clock
       </h2>
-
       <div className="max-w-lg mx-auto">
         <HexagonClock
           data={completionData}
@@ -41,7 +36,6 @@ export const DashboardWithClock = () => {
     </div>
   );
 };
-
 // Example 2: Time Planning with Clock Positioning
 export const TimePlanningWithClock = () => {
   const timeBlocks = [
@@ -95,13 +89,11 @@ export const TimePlanningWithClock = () => {
       title: '📝 Plan Tomorrow'
     }
   ];
-
   return (
     <div className="p-8 bg-gradient-to-br from-slate-900 to-blue-900 min-h-screen">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">
         Time Planning with Revolutionary Clock
       </h2>
-
       <div className="max-w-lg mx-auto">
         <HexagonClock
           timeBlocks={timeBlocks}
@@ -117,7 +109,6 @@ export const TimePlanningWithClock = () => {
           }}
         />
       </div>
-
       <div className="text-center mt-8 text-white/80">
         <p className="mb-2">🎯 Time blocks positioned at optimal circadian hours</p>
         <p>⏰ Real-time sun shows current position on your daily clock</p>
@@ -125,7 +116,6 @@ export const TimePlanningWithClock = () => {
     </div>
   );
 };
-
 // Example 3: Full Revolutionary System
 export const FullRevolutionarySystem = () => {
   const data = {
@@ -136,7 +126,6 @@ export const FullRevolutionarySystem = () => {
     spiritual: 85,
     material: 60
   };
-
   const timeBlocks = [
     {
       id: 'morning-routine',
@@ -156,13 +145,11 @@ export const FullRevolutionarySystem = () => {
       progress: 0.7
     }
   ];
-
   return (
     <div className="p-8 bg-gradient-to-br from-purple-900 to-indigo-900 min-h-screen">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">
         Full Revolutionary Clock System
       </h2>
-
       <div className="max-w-lg mx-auto">
         <HexagonClock
           data={data}
@@ -178,7 +165,6 @@ export const FullRevolutionarySystem = () => {
             }}
         />
       </div>
-
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80 text-sm">
         <div className="bg-white/10 p-4 rounded-lg">
           <h3 className="font-bold text-amber-400 mb-2">🌅 Circadian Mapping</h3>
@@ -200,7 +186,6 @@ export const FullRevolutionarySystem = () => {
     </div>
   );
 };
-
 // Usage in your pages
 export const UsageExamples = {
   // Basic dashboard with revolutionary markers
@@ -212,7 +197,6 @@ export const UsageExamples = {
       showCategoryPositions={true}
     />
   ),
-
   // Time planning with blocks
   planning: (
     <HexagonClock
@@ -223,7 +207,6 @@ export const UsageExamples = {
       showCategoryPositions={true}
     />
   ),
-
   // Full revolutionary system
   full: (
     <HexagonClock

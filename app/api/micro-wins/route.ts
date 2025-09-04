@@ -1,9 +1,7 @@
 import { logger } from '@/lib/utils/logger';
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
 // Validation schemas
 const createMicroWinSchema = z.object({
   axis: z.enum(['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']),
@@ -15,29 +13,24 @@ const createMicroWinSchema = z.object({
   privacy: z.enum(['public', 'followers', 'private']).default('public'),
   isMorning: z.boolean().default(false)
 })
-
 const feedQuerySchema = z.object({
   feedType: z.enum(['all', 'following', 'my']).default('all'),
   axis: z.enum(['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']).optional(),
   limit: z.number().int().min(1).max(50).default(20),
   offset: z.number().int().min(0).default(0)
 })
-
 // POST /api/micro-wins - Record a micro win
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Parse and validate request body
     const body = await _request.json()
     const validatedData = createMicroWinSchema.parse(body)
-
     // Call RPC function to record micro win
     const { data, error } = await supabase.rpc('record_micro_win', {
       p_user_id: user.id,
@@ -47,10 +40,8 @@ export async function POST(_request: NextRequest) {
       p_privacy: validatedData.privacy,
       p_is_morning: validatedData.isMorning
     })
-
     if (error) {
       logger.error('Error recording micro win:', error)
-
       // Check if it's outside morning window
       if (error.message?.includes('morning window')) {
         return NextResponse.json({
@@ -58,13 +49,11 @@ export async function POST(_request: NextRequest) {
           details: 'You can still record a regular micro win'
         }, { status: 400 })
       }
-
       return NextResponse.json({
         error: 'Failed to record micro win',
         details: error.message
       }, { status: 500 })
     }
-
     // Get the result from RPC function
     const result = data?.[0]
     if (!result?.success) {
@@ -72,14 +61,12 @@ export async function POST(_request: NextRequest) {
         error: result?.message || 'Failed to record micro win'
       }, { status: 400 })
     }
-
     return NextResponse.json({
       success: true,
       winId: result.win_id,
       message: result.message,
       streakUpdated: result.streak_updated
     }, { status: 201 })
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({
@@ -87,7 +74,6 @@ export async function POST(_request: NextRequest) {
         details: error.errors
       }, { status: 400 })
     }
-
     logger.error('Micro win creation error:', error)
     return NextResponse.json({
       error: 'Internal server error',
@@ -95,18 +81,15 @@ export async function POST(_request: NextRequest) {
     }, { status: 500 })
   }
 }
-
 // GET /api/micro-wins - Get micro wins feed
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Parse query parameters
     const { searchParams } = new URL(_request.url)
     const queryParams = {
@@ -115,9 +98,7 @@ export async function GET(_request: NextRequest) {
       limit: parseInt(searchParams.get('limit') || '20'),
       offset: parseInt(searchParams.get('offset') || '0')
     }
-
     const validatedQuery = feedQuerySchema.parse(queryParams)
-
     // Call RPC function to get feed
     const { data: feedData, error: feedError } = await supabase.rpc('get_micro_wins_feed', {
       p_user_id: user.id,
@@ -126,7 +107,6 @@ export async function GET(_request: NextRequest) {
       p_limit: validatedQuery.limit,
       p_offset: validatedQuery.offset
     })
-
     if (feedError) {
       logger.error('Error fetching micro wins feed:', feedError)
       return NextResponse.json({
@@ -134,7 +114,6 @@ export async function GET(_request: NextRequest) {
         details: feedError.message
       }, { status: 500 })
     }
-
     // Transform data for frontend
     const transformedFeed = feedData?.map((item: any) => ({
       id: item.win_id,
@@ -149,7 +128,6 @@ export async function GET(_request: NextRequest) {
       createdAt: item.created_at,
       userReacted: item.user_reacted
     })) || []
-
     return NextResponse.json({
       success: true,
       feed: transformedFeed,
@@ -159,7 +137,6 @@ export async function GET(_request: NextRequest) {
         hasMore: feedData?.length === validatedQuery.limit
       }
     })
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({
@@ -167,7 +144,6 @@ export async function GET(_request: NextRequest) {
         details: error.errors
       }, { status: 400 })
     }
-
     logger.error('Micro wins feed error:', error)
     return NextResponse.json({
       error: 'Internal server error',
@@ -175,31 +151,25 @@ export async function GET(_request: NextRequest) {
     }, { status: 500 })
   }
 }
-
 // PATCH /api/micro-wins/[id]/react - Add reaction to micro win
 export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Get win ID from URL
     const url = new URL(_request.url)
     const pathSegments = url.pathname.split('/')
     const winId = pathSegments[pathSegments.length - 2] // Get ID before /react
-
     if (!winId) {
       return NextResponse.json({ error: 'Win ID required' }, { status: 400 })
     }
-
     // Parse request body
     const body = await _request.json()
     const { reactionType = 'hex_star', axisResonance } = body
-
     // Create or update reaction
     const { error: reactionError } = await supabase
       .from('axis6_micro_reactions')
@@ -211,7 +181,6 @@ export async function PATCH(_request: NextRequest) {
       }, {
         onConflict: 'micro_win_id,user_id,reaction_type'
       })
-
     if (reactionError) {
       logger.error('Error adding reaction:', reactionError)
       return NextResponse.json({
@@ -219,7 +188,6 @@ export async function PATCH(_request: NextRequest) {
         details: reactionError.message
       }, { status: 500 })
     }
-
     // Update resonance count
     const { error: updateError } = await supabase
       .from('axis6_micro_wins')
@@ -227,16 +195,13 @@ export async function PATCH(_request: NextRequest) {
         resonance_count: supabase.raw('resonance_count + 1')
       })
       .eq('id', winId)
-
     if (updateError) {
       logger.error('Error updating resonance count:', updateError)
     }
-
     return NextResponse.json({
       success: true,
       message: 'Reaction added'
     })
-
   } catch (error) {
     logger.error('Reaction error:', error)
     return NextResponse.json({

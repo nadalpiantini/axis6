@@ -1,10 +1,10 @@
 'use client'
 
-import { memo, useMemo, useCallback, useEffect, lazy, Suspense } from 'react'
+import { memo, useMemo, useCallback, useEffect, lazy, Suspense, useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Flame, Settings, LogOut, TrendingUp, Trophy, User, Calendar } from 'lucide-react'
+import { Flame, Settings, LogOut, TrendingUp, Trophy, User, Calendar, ChevronDown, Check } from 'lucide-react'
 
 // Lazy load heavy components for better bundle splitting
 const DailyMantraCard = lazy(() => import('@/components/mantras/DailyMantraCard').then(mod => ({ default: mod.DailyMantraCard })))
@@ -155,11 +155,11 @@ const HexagonVisualization = memo(({
               cx={axis.x}
               cy={axis.y}
               r="30"
-              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.1)'}
-              fillOpacity={axis.completed ? 0.8 : 1}
-              stroke={axis.completed ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}
-              strokeWidth="2"
-              className="transition-all duration-200 hover:stroke-white hover:stroke-[3]"
+              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.05)'}
+              fillOpacity={axis.completed ? 1.0 : 0.3}
+              stroke={axis.completed ? axis.color : 'rgba(255,255,255,0.2)'}
+              strokeWidth={axis.completed ? "3" : "1"}
+              className="transition-all duration-300 hover:stroke-white hover:stroke-[3] hover:fill-opacity-90"
               style={{ pointerEvents: 'auto', cursor: 'pointer' }}
             />
             <foreignObject 
@@ -174,7 +174,7 @@ const HexagonVisualization = memo(({
                 size={28}
                 color={axis.completed ? 'white' : '#9ca3af'}
                 custom
-                animated={showAnimations && axis.completed}
+                {...(showAnimations && axis.completed ? { animated: true } : {})}
               />
             </foreignObject>
           </ClickableSVG>
@@ -186,10 +186,61 @@ const HexagonVisualization = memo(({
 
 HexagonVisualization.displayName = 'HexagonVisualization'
 
-// Memoized category card
+// Dropdown options for each axis category
+const getAxisOptions = (axisName: string) => {
+  const commonOptions = [
+    { id: 'quick-check', label: 'Quick Check', emoji: '✓' },
+    { id: 'detailed', label: 'Add Details', emoji: '📝' },
+    { id: 'view-progress', label: 'View Progress', emoji: '📊' },
+  ]
+  
+  const specificOptions = {
+    Physical: [
+      { id: 'workout', label: 'Workout', emoji: '💪' },
+      { id: 'walk', label: 'Walk/Run', emoji: '🏃' },
+      { id: 'nutrition', label: 'Healthy Meal', emoji: '🥗' },
+      { id: 'sleep', label: 'Good Sleep', emoji: '😴' },
+    ],
+    Mental: [
+      { id: 'learning', label: 'Learning', emoji: '🧠' },
+      { id: 'reading', label: 'Reading', emoji: '📚' },
+      { id: 'puzzle', label: 'Brain Games', emoji: '🧩' },
+      { id: 'focus', label: 'Deep Focus', emoji: '🎯' },
+    ],
+    Emotional: [
+      { id: 'meditation', label: 'Meditation', emoji: '🧘' },
+      { id: 'journaling', label: 'Journaling', emoji: '📖' },
+      { id: 'gratitude', label: 'Gratitude', emoji: '🙏' },
+      { id: 'therapy', label: 'Self-Care', emoji: '💆' },
+    ],
+    Social: [
+      { id: 'friends', label: 'Friends Time', emoji: '👥' },
+      { id: 'family', label: 'Family Time', emoji: '👨‍👩‍👧‍👦' },
+      { id: 'networking', label: 'Networking', emoji: '🤝' },
+      { id: 'community', label: 'Community', emoji: '🏘️' },
+    ],
+    Spiritual: [
+      { id: 'prayer', label: 'Prayer/Reflection', emoji: '🙏' },
+      { id: 'nature', label: 'Nature Time', emoji: '🌿' },
+      { id: 'purpose', label: 'Purpose Work', emoji: '🎯' },
+      { id: 'wisdom', label: 'Wisdom Study', emoji: '📜' },
+    ],
+    Material: [
+      { id: 'finance', label: 'Financial Planning', emoji: '💰' },
+      { id: 'career', label: 'Career Development', emoji: '📈' },
+      { id: 'organize', label: 'Organization', emoji: '🗂️' },
+      { id: 'skills', label: 'Skill Building', emoji: '🔧' },
+    ],
+  }
+  
+  return [...(specificOptions[axisName as keyof typeof specificOptions] || []), ...commonOptions]
+}
+
+// Enhanced category card with dropdown
 const MemoizedCategoryCard = memo(({ 
   axis, 
   onToggle,
+  onOptionSelect,
   isToggling 
 }: {
   axis: {
@@ -200,38 +251,106 @@ const MemoizedCategoryCard = memo(({
     completed: boolean
   }
   onToggle: () => void
+  onOptionSelect?: (option: { id: string, label: string, emoji: string }) => void
   isToggling: boolean
 }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const showAnimations = usePreferencesStore(state => state.showAnimations)
   
+  const options = useMemo(() => getAxisOptions(axis.name), [axis.name])
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isDropdownOpen])
+  
+  const handleOptionClick = (option: { id: string, label: string, emoji: string }) => {
+    if (option.id === 'quick-check') {
+      onToggle()
+    } else {
+      onOptionSelect?.(option)
+    }
+    setIsDropdownOpen(false)
+  }
+  
   return (
-    <button
-      onClick={onToggle}
-      disabled={isToggling}
-      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] hover:scale-[1.02] active:scale-[0.98] ${
-        axis.completed 
-          ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
-          : 'bg-white/5 hover:bg-white/10 border-white/10'
-      } border`}
-      aria-pressed={axis.completed}
-      data-testid={`category-card-${axis.name.toLowerCase()}`}
-      data-checked={axis.completed}
-    >
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className={`p-1.5 sm:p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
-          <AxisIcon 
-            axis={axis.icon}
-            size={18}
-            color={axis.color}
-            custom
-            animated={showAnimations && axis.completed}
-          />
+    <div className="relative" ref={dropdownRef}>
+      <div
+        className={`p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all min-h-[48px] sm:min-h-[56px] group ${
+          axis.completed 
+            ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
+            : 'bg-white/5 hover:bg-white/10 border-white/10'
+        } border cursor-pointer`}
+        data-testid={`category-card-${axis.name.toLowerCase()}`}
+        data-checked={axis.completed}
+      >
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className={`p-1.5 sm:p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
+                        <AxisIcon
+              axis={axis.icon}
+              size={18}
+              color={axis.color}
+              custom
+              {...(showAnimations && axis.completed ? { animated: true } : {})}
+            />
+          </div>
+          <span className={`flex-1 text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
+            {axis.name}
+            {axis.completed && <Check className="inline-block ml-2 w-4 h-4 text-green-400" />}
+          </span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsDropdownOpen(!isDropdownOpen)
+            }}
+            disabled={isToggling}
+            className="p-1 rounded hover:bg-white/10 transition-colors"
+            aria-label={`${axis.name} options menu`}
+          >
+            <ChevronDown 
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isDropdownOpen ? 'rotate-180' : ''
+              } ${axis.completed ? 'text-white' : 'text-gray-400'}`} 
+            />
+          </button>
         </div>
-        <span className={`text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
-          {axis.name}
-        </span>
       </div>
-    </button>
+      
+      <AnimatePresence>
+        {isDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 right-0 z-50 mt-2 bg-slate-800/95 backdrop-blur-md border border-white/20 rounded-lg shadow-xl overflow-hidden"
+          >
+            <div className="py-2 max-h-64 overflow-y-auto">
+              {options.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleOptionClick(option)}
+                  className="w-full px-4 py-3 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm"
+                >
+                  <span className="text-lg">{option.emoji}</span>
+                  <span className="text-white">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 })
 
@@ -240,7 +359,6 @@ MemoizedCategoryCard.displayName = 'MemoizedCategoryCard'
 // Main Dashboard Component
 export default function DashboardPageV2() {
   const router = useRouter()
-  const { addNotification } = useUIStore()
   const { toasts, showToast, removeToast } = useToast()
   
   // React Query client for manual invalidation
@@ -348,14 +466,8 @@ export default function DashboardPageV2() {
               ? `${axis.name} unchecked` 
               : `${axis.name} completed! 🎉`
             
-            // Show toast notification
+            // Use only one toast system (centered)
             showToast(message, 'success', 2500)
-            
-            // Also add to notification store for persistence
-            addNotification({
-              type: 'success',
-              message: message
-            })
             
             // Force immediate refetch of related queries
             queryClient.invalidateQueries({ queryKey: ['checkins', 'today', user?.id] })
@@ -364,19 +476,27 @@ export default function DashboardPageV2() {
           onError: (error) => {
             const errorMessage = 'Failed to update. Please try again.'
             
-            // Show error toast
+            // Use only one toast system (centered)
             showToast(errorMessage, 'error', 4000)
-            
-            // Also add to notification store
-            addNotification({
-              type: 'error',
-              message: errorMessage
-            })
           }
         }
       )
     }
-  }, [axisMap, toggleCheckIn, addNotification, queryClient, user?.id, showToast])
+  }, [axisMap, toggleCheckIn, queryClient, user?.id, showToast])
+
+  // Handler for dropdown option selections
+  const handleOptionSelect = useCallback((option: { id: string, label: string, emoji: string }) => {
+    if (option.id === 'detailed') {
+      // Future: Open detailed logging modal
+      showToast(`${option.emoji} Detailed logging coming soon!`, 'info', 2000)
+    } else if (option.id === 'view-progress') {
+      // Navigate to analytics for this category
+      router.push('/analytics')
+    } else {
+      // For specific activities, just show confirmation and mark as checked
+      showToast(`${option.emoji} ${option.label} logged!`, 'success', 2000)
+    }
+  }, [showToast, router])
 
   const handleLogout = useCallback(async () => {
     const { createClient } = await import('@/lib/supabase/client')
@@ -499,6 +619,7 @@ export default function DashboardPageV2() {
                         key={`${axis.id}-${axis.completed}`}
                         axis={axis}
                         onToggle={() => handleToggleAxis(axis.id)}
+                        onOptionSelect={handleOptionSelect}
                         isToggling={toggleCheckIn.isPending}
                       />
                     ))}
@@ -545,6 +666,16 @@ export default function DashboardPageV2() {
                   <DailyMantraCard />
                 </Suspense>
                 
+                {/* Plan My Day - Prominent Position */}
+                <Link 
+                  href="/my-day"
+                  className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 min-h-[56px] sm:min-h-[64px] flex items-center justify-between hover:bg-white/5 transition text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
+                  aria-label="Plan and track your daily activities"
+                >
+                  <span className="text-blue-300">Plan My Day</span>
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" aria-hidden="true" />
+                </Link>
+                
                 {/* Quick Stats */}
                 <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Statistics</h3>
@@ -570,14 +701,6 @@ export default function DashboardPageV2() {
 
                 {/* Actions */}
                 <div className="space-y-2 sm:space-y-3">
-                  <Link 
-                    href="/my-day"
-                    className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"
-                    aria-label="Plan and track your daily activities"
-                  >
-                    <span>Plan My Day</span>
-                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" aria-hidden="true" />
-                  </Link>
                   <Link 
                     href="/analytics"
                     className="glass rounded-lg sm:rounded-xl p-3 sm:p-4 min-h-[48px] sm:min-h-[56px] flex items-center justify-between hover:bg-white/5 transition text-sm sm:text-base"

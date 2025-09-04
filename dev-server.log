@@ -1,0 +1,740 @@
+
+> axis6-mvp@2.0.0 dev
+> next dev -p 3000
+
+ ⚠ Warning: Found multiple lockfiles. Selecting /Users/nadalpiantini/Dev/axis6-mvp/package-lock.json.
+   Consider removing the lockfiles at:
+   * /Users/nadalpiantini/Dev/axis6-mvp/axis6/package-lock.json
+
+   ▲ Next.js 15.4.7
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.6.249:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · serverActions
+
+ ✓ Starting...
+ ○ (pwa) PWA support is disabled.
+ ✓ Ready in 2.1s
+ ○ Compiling /middleware ...
+ ⚠ ./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ ./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+ ⚠ ./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ GET / 404 in 3ms
+ ⚠ ./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (128kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (108kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+
+./middleware.ts
+Attempted import error: 'applyEnhancedRateLimit' is not exported from '@/lib/security/production-rate-limit' (imported as 'applyEnhancedRateLimit').
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ GET / 404 in 2ms
+ ⨯ Error [TypeError]: (0 , crypto__WEBPACK_IMPORTED_MODULE_0__.createHash) is not a function
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.4.7
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.6.249:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · serverActions
+
+ ✓ Starting...
+ ○ (pwa) PWA support is disabled.
+ ✓ Ready in 3.6s
+ ○ Compiling /_not-found ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (128kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (108kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ GET /_next/static/webpack/d037a8d4228cf8fd.webpack.hot-update.json 404 in 14340ms
+ GET / 404 in 0ms
+ ⨯ Error: The edge runtime does not support Node.js 'crypto' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime
+    at generateSecureNonce (lib/security/csp-enhanced.ts:15:20)
+    at middleware (middleware.ts:190:35)
+  13 |  */
+  14 | export function generateSecureNonce(): string {
+> 15 |   return createHash('sha256')
+     |                    ^
+  16 |     .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  17 |     .digest('base64')
+  18 |     .substring(0, 24)
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+⚠️ Crypto not available, using fallback nonce generation {
+  error: ReferenceError: createHash is not defined
+    at generateSecureNonce (lib/security/csp-enhanced.ts:16:4)
+    at middleware (middleware.ts:190:35)
+  14 | export function generateSecureNonce(): string {
+  15 |   try {
+> 16 |     return createHash('sha256')
+     |    ^
+  17 |       .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  18 |       .digest('base64')
+  19 |       .substring(0, 24) {
+  
+}
+}
+ ⨯ Error [ReferenceError]: appUrl is not defined
+    at getEnhancedSecurityHeaders (lib/security/csp-enhanced.ts:235:28)
+    at middleware (middleware.ts:199:53)
+  233 |       group: 'csp-endpoint',
+  234 |       max_age: 86400,
+> 235 |       endpoints: [{ url: `${appUrl}/api/csp-report` }],
+      |                            ^
+  236 |     }),
+  237 |   }
+  238 | }
+⚠️ Crypto not available, using fallback nonce generation {
+  error: ReferenceError: createHash is not defined
+    at generateSecureNonce (lib/security/csp-enhanced.ts:16:4)
+    at middleware (middleware.ts:190:35)
+  14 | export function generateSecureNonce(): string {
+  15 |   try {
+> 16 |     return createHash('sha256')
+     |    ^
+  17 |       .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  18 |       .digest('base64')
+  19 |       .substring(0, 24) {
+  
+}
+}
+ ⨯ Error [ReferenceError]: appUrl is not defined
+    at getEnhancedSecurityHeaders (lib/security/csp-enhanced.ts:235:28)
+    at middleware (middleware.ts:199:53)
+  233 |       group: 'csp-endpoint',
+  234 |       max_age: 86400,
+> 235 |       endpoints: [{ url: `${appUrl}/api/csp-report` }],
+      |                            ^
+  236 |     }),
+  237 |   }
+  238 | }
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+⚠️ Crypto not available, using fallback nonce generation {
+  error: ReferenceError: createHash is not defined
+    at generateSecureNonce (lib/security/csp-enhanced.ts:16:4)
+    at middleware (middleware.ts:190:35)
+  14 | export function generateSecureNonce(): string {
+  15 |   try {
+> 16 |     return createHash('sha256')
+     |    ^
+  17 |       .update(`${Date.now()}-${Math.random()}-${process.hrtime.bigint()}`)
+  18 |       .digest('base64')
+  19 |       .substring(0, 24) {
+  
+}
+}
+ ⨯ Error [ReferenceError]: applyEnhancedRateLimit is not defined
+    at middleware (middleware.ts:214:28)
+  212 |   if (pathname.startsWith('/api/')) {
+  213 |     // Apply global rate limiting first
+> 214 |     const globalRateLimit = await applyEnhancedRateLimit(request, undefined, 'global_ip')
+      |                            ^
+  215 |     if (globalRateLimit) return globalRateLimit
+  216 |     
+  217 |     // Detect endpoint type for specific rate limiting
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+❌ Rate limiting error Error: fetch failed
+    at context.fetch (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/context.js:321:60)
+    at HttpClient.request (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:161:21)
+    at async Pipeline.exec (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:2405:17)
+    at async AutoPipelineExecutor.withAutoPipeline (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:3286:21)
+    at async safeEval (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:168:12)
+    at async Object.limit (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:1412:33)
+    at async Promise.all (index 0)
+    at async RegionRatelimit.getRatelimitResponse (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:830:116)
+    at async RegionRatelimit.limit (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:745:29)
+    at async applyRateLimit (webpack-internal:///(middleware)/./lib/security/production-rate-limit.ts:135:63)
+    at async middleware (webpack-internal:///(middleware)/./middleware.ts:191:33)
+    at async eval (webpack-internal:///(middleware)/./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=%2FUsers%2Fnadalpiantini%2FDev%2Faxis6-mvp%2Faxis6%2Fmiddleware.ts&page=%2Fmiddleware&rootDir=%2FUsers%2Fnadalpiantini%2FDev%2Faxis6-mvp%2Faxis6&matchers=&preferredRegion=&middlewareConfig=e30%3D!:32:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/next/dist/esm/server/web/adapter.js:259:28)
+    at async adapter (webpack-internal:///(middleware)/./node_modules/next/dist/esm/server/web/adapter.js:210:16)
+    at async /Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/sandbox.js:109:26
+    at async runWithTaggedErrors (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/sandbox.js:106:9)
+    at async DevServer.runMiddleware (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/next-server.js:1265:22)
+    at async DevServer.runMiddleware (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:296:28)
+    at async NextNodeServer.handleCatchallMiddlewareRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/next-server.js:447:26)
+    at async DevServer.handleRequestImpl (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/base-server.js:931:28)
+    at async /Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:398:20
+    at async Span.traceAsyncFn (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:394:24)
+    at async handleRoute (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-utils/resolve-routes.js:323:33)
+    at async resolveRoutes (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-utils/resolve-routes.js:594:28)
+    at async handleRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-server.js:287:96)
+    at async requestHandlerImpl (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-server.js:464:13)
+    at async Server.requestListener (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/start-server.js:218:13) {
+  
+}
+❌ Rate limiting error Error: fetch failed
+    at context.fetch (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/context.js:321:60)
+    at HttpClient.request (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:161:21)
+    at async Pipeline.exec (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:2405:17)
+    at async AutoPipelineExecutor.withAutoPipeline (webpack-internal:///(middleware)/./node_modules/@upstash/redis/chunk-2BA3VA6P.mjs:3286:21)
+    at async safeEval (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:168:12)
+    at async Object.limit (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:1412:33)
+    at async Promise.all (index 0)
+    at async RegionRatelimit.getRatelimitResponse (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:830:116)
+    at async RegionRatelimit.limit (webpack-internal:///(middleware)/./node_modules/@upstash/ratelimit/dist/index.js:745:29)
+    at async applyRateLimit (webpack-internal:///(middleware)/./lib/security/production-rate-limit.ts:135:63)
+    at async middleware (webpack-internal:///(middleware)/./middleware.ts:195:35)
+    at async eval (webpack-internal:///(middleware)/./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=%2FUsers%2Fnadalpiantini%2FDev%2Faxis6-mvp%2Faxis6%2Fmiddleware.ts&page=%2Fmiddleware&rootDir=%2FUsers%2Fnadalpiantini%2FDev%2Faxis6-mvp%2Faxis6&matchers=&preferredRegion=&middlewareConfig=e30%3D!:32:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/next/dist/esm/server/web/adapter.js:259:28)
+    at async adapter (webpack-internal:///(middleware)/./node_modules/next/dist/esm/server/web/adapter.js:210:16)
+    at async /Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/sandbox.js:109:26
+    at async runWithTaggedErrors (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/web/sandbox/sandbox.js:106:9)
+    at async DevServer.runMiddleware (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/next-server.js:1265:22)
+    at async DevServer.runMiddleware (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:296:28)
+    at async NextNodeServer.handleCatchallMiddlewareRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/next-server.js:447:26)
+    at async DevServer.handleRequestImpl (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/base-server.js:931:28)
+    at async /Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:398:20
+    at async Span.traceAsyncFn (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/dev/next-dev-server.js:394:24)
+    at async handleRoute (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-utils/resolve-routes.js:323:33)
+    at async resolveRoutes (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-utils/resolve-routes.js:594:28)
+    at async handleRequest (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-server.js:287:96)
+    at async requestHandlerImpl (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/router-server.js:464:13)
+    at async Server.requestListener (/Users/nadalpiantini/Dev/axis6-mvp/axis6/node_modules/next/dist/server/lib/start-server.js:218:13) {
+  
+}
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ✓ Compiled /api/health in 836ms (1665 modules)
+ GET /api/health 503 in 1448ms
+ ○ Compiling / ...
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ GET / 200 in 1177ms
+ HEAD / 200 in 47ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.4.7
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.6.249:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · serverActions
+
+ ✓ Starting...
+ ○ (pwa) PWA support is disabled.
+ ✓ Ready in 2.4s
+ ○ Compiling /_not-found ...
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/b7d1ed54ef4795d2.webpack.hot-update.json 404 in 3858ms
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ℹ️ CSP configuration validated { warnings: 0, errors: 0, isDevelopment: true }
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/b7d1ed54ef4795d2.webpack.hot-update.json 404 in 942ms
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (128kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (108kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ ./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/monitoring/sentry-config.ts
+./lib/error/standardErrorHandler.ts
+./lib/supabase/client.ts
+./components/providers/AuthProvider.tsx
+ GET / 200 in 1470ms
+ GET /_next/static/webpack/b7d1ed54ef4795d2.webpack.hot-update.json 404 in 305ms
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+[?25h

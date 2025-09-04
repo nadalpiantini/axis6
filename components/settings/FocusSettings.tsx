@@ -1,15 +1,11 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Focus, Users, Eye, EyeOff, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-
 import { usePreferencesStore } from '@/lib/stores/useAppStore'
-
 interface FocusSettingsProps {
   className?: string
 }
-
 export function FocusSettings({ className = '' }: FocusSettingsProps) {
   const {
     adhdFocusMode,
@@ -21,13 +17,10 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
     showAnimations,
     setShowAnimations
   } = usePreferencesStore()
-
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
-
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section)
   }
-
   return (
     <div className={`space-y-4 ${className}`}>
       {/* ADHD Focus Mode Section */}
@@ -47,7 +40,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
               <p className="text-xs text-gray-400">ADHD-friendly interface</p>
             </div>
           </div>
-
           <button
             onClick={() => setAdhdFocusMode(!adhdFocusMode)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -61,7 +53,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
             />
           </button>
         </div>
-
         {adhdFocusMode && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -80,7 +71,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
           </motion.div>
         )}
       </motion.div>
-
       {/* Social Features Section */}
       <motion.div
         className="glass rounded-xl p-4"
@@ -98,7 +88,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
               <p className="text-xs text-gray-400">Subtle social connections</p>
             </div>
           </div>
-
           <button
             onClick={() => toggleSection('social')}
             className="text-gray-400 hover:text-white transition-colors"
@@ -110,7 +99,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
             )}
           </button>
         </div>
-
         <div className="space-y-3">
           {/* Resonance Dots Setting */}
           <div className="flex items-center justify-between">
@@ -131,7 +119,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
               />
             </button>
           </div>
-
           {/* Community Metrics Setting */}
           <div className="flex items-center justify-between">
             <div>
@@ -152,7 +139,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
             </button>
           </div>
         </div>
-
         {expandedSection === 'social' && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -169,7 +155,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
           </motion.div>
         )}
       </motion.div>
-
       {/* Visual Preferences Section */}
       <motion.div
         className="glass rounded-xl p-4"
@@ -186,7 +171,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
             <p className="text-xs text-gray-400">Animations and transitions</p>
           </div>
         </div>
-
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-white">Animations</p>
@@ -208,7 +192,6 @@ export function FocusSettings({ className = '' }: FocusSettingsProps) {
           </button>
         </div>
       </motion.div>
-
       {/* Focus Mode Impact Notice */}
       {adhdFocusMode && (
         <motion.div

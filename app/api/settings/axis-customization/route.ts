@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { handleError } from '@/lib/error/standardErrorHandler'
-
 interface AxisCustomization {
   id: string | number
   name: string
@@ -13,7 +12,6 @@ interface AxisCustomization {
   showInQuickActions: boolean
   priority: number
 }
-
 interface WellnessPreferences {
   hexagon_size: 'small' | 'medium' | 'large'
   show_community_pulse: boolean
@@ -21,38 +19,31 @@ interface WellnessPreferences {
   default_view: 'hexagon' | 'list' | 'grid'
   axis_customizations: Record<string, AxisCustomization>
 }
-
 // GET: Fetch wellness preferences and axis customizations
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Get wellness preferences
     const { data: wellnessPrefs, error: wellnessError } = await supabase
       .from('axis6_wellness_preferences')
       .select('*')
       .eq('user_id', user.id)
       .single()
-
     // Get categories for default axis settings
     const { data: categories, error: categoriesError } = await supabase
       .from('axis6_categories')
       .select('*')
       .order('id')
-
     if (categoriesError) {
       throw categoriesError
     }
-
     // Generate default axis customizations if no preferences exist
     const defaultAxisCustomizations: Record<string, AxisCustomization> = {}
     categories?.forEach((cat, index) => {
@@ -67,7 +58,6 @@ export async function GET() {
         priority: index + 1
       }
     })
-
     const preferences: WellnessPreferences = {
       hexagon_size: 'medium',
       show_community_pulse: true,
@@ -76,7 +66,6 @@ export async function GET() {
       axis_customizations: defaultAxisCustomizations,
       ...wellnessPrefs
     }
-
     return NextResponse.json({ preferences })
   } catch (error) {
     console.error('Axis customization fetch error:', error)
@@ -86,21 +75,17 @@ export async function GET() {
     )
   }
 }
-
 // PUT: Update axis customization settings
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const body = await request.json()
     const { 
       hexagon_size, 
@@ -109,7 +94,6 @@ export async function PUT(request: NextRequest) {
       default_view, 
       axis_customizations 
     } = body
-
     // Validate input
     if (!hexagon_size || !default_view) {
       return NextResponse.json(
@@ -117,7 +101,6 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Update wellness preferences
     const { data, error } = await supabase
       .from('axis6_wellness_preferences')
@@ -135,11 +118,9 @@ export async function PUT(request: NextRequest) {
       })
       .select()
       .single()
-
     if (error) {
       throw error
     }
-
     // Also update quick actions in user preferences
     if (axis_customizations) {
       const quickActions = Object.values(axis_customizations)
@@ -151,7 +132,6 @@ export async function PUT(request: NextRequest) {
           priority: axis.priority
         }))
         .sort((a: any, b: any) => a.priority - b.priority)
-
       await supabase
         .from('axis6_user_preferences')
         .upsert({
@@ -160,7 +140,6 @@ export async function PUT(request: NextRequest) {
           updated_at: new Date().toISOString()
         })
     }
-
     return NextResponse.json({ 
       preferences: data,
       message: 'Axis customization settings updated successfully' 
@@ -171,7 +150,6 @@ export async function PUT(request: NextRequest) {
       component: 'api_route',
       userMessage: 'Failed to update axis customization settings'
     })
-    
     return NextResponse.json(
       { error: 'Failed to update axis customization settings' },
       { status: 500 }

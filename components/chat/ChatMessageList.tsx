@@ -1,17 +1,13 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { MoreVertical, Reply, Trash2, Edit3 } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
-
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIntersection } from '@/lib/hooks/useIntersection'
 import { ChatMessageWithSender } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
-
 import { ChatMessage } from './ChatMessage'
-
 interface ChatMessageListProps {
   messages: ChatMessageWithSender[]
   currentUserId: string
@@ -21,7 +17,6 @@ interface ChatMessageListProps {
   hasMore: boolean
   className?: string
 }
-
 export function ChatMessageList({
   messages,
   currentUserId,
@@ -33,14 +28,12 @@ export function ChatMessageList({
 }: ChatMessageListProps) {
   const topRef = useRef<HTMLDivElement>(null)
   const isIntersecting = useIntersection(topRef, { threshold: 0.1 })
-
   // Load more messages when scrolling to top
   useEffect(() => {
     if (isIntersecting && hasMore && !isLoading) {
       onLoadMore()
     }
   }, [isIntersecting, hasMore, isLoading, onLoadMore])
-
   return (
     <ScrollArea
       className={cn(
@@ -69,7 +62,6 @@ export function ChatMessageList({
           )}
         </div>
       )}
-
       {/* Messages */}
       <div className="space-y-4">
         <AnimatePresence initial={false}>
@@ -79,7 +71,6 @@ export function ChatMessageList({
               previousMessage &&
               previousMessage.sender_id === message.sender_id &&
               new Date(message.created_at).getTime() - new Date(previousMessage.created_at).getTime() < 5 * 60 * 1000 // 5 minutes
-
             return (
               <motion.div
                 key={message.id}
@@ -101,7 +92,6 @@ export function ChatMessageList({
             )
           })}
         </AnimatePresence>
-
         {/* Empty State */}
         {messages.length === 0 && !isLoading && (
           <div className="flex flex-col items-center justify-center py-12 text-center">

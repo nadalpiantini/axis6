@@ -2,10 +2,8 @@
  * Responsive Hexagon Sizing Hook
  * 60% mobile performance improvement through intelligent sizing
  */
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { ResponsiveSizing, SafeAreaInsets } from '../types/HexagonTypes';
-
 /**
  * Calculate safe area insets for notched devices
  */
@@ -16,11 +14,9 @@ function useSafeAreaInsets(): SafeAreaInsets {
     bottom: 0,
     left: 0
   });
-
   useEffect(() => {
     const updateSafeArea = () => {
       if (typeof window === 'undefined' || typeof document === 'undefined') return;
-
       try {
         const style = getComputedStyle(document.documentElement);
         setInsets({
@@ -34,22 +30,17 @@ function useSafeAreaInsets(): SafeAreaInsets {
         setInsets({ top: 0, right: 0, bottom: 0, left: 0 });
       }
     };
-
     updateSafeArea();
-
     // Update on orientation change
     window.addEventListener('orientationchange', updateSafeArea);
     window.addEventListener('resize', updateSafeArea);
-
     return () => {
       window.removeEventListener('orientationchange', updateSafeArea);
       window.removeEventListener('resize', updateSafeArea);
     };
   }, []);
-
   return insets;
 }
-
 /**
  * Responsive hexagon sizing with mobile optimization
  * Progressive sizing based on container width and safe areas
@@ -57,39 +48,30 @@ function useSafeAreaInsets(): SafeAreaInsets {
 export function useResponsiveHexagonSize(containerWidth: number): ResponsiveSizing {
   const [windowWidth, setWindowWidth] = useState(0);
   const safeAreaInsets = useSafeAreaInsets();
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const updateWindowWidth = () => setWindowWidth(window.innerWidth);
     updateWindowWidth();
-
     const resizeObserver = new ResizeObserver(() => updateWindowWidth());
     resizeObserver.observe(document.documentElement);
-
     return () => resizeObserver.disconnect();
   }, []);
-
   return useMemo(() => {
     // Calculate available space considering safe areas
     const availableWidth = Math.min(
       containerWidth - (safeAreaInsets.left + safeAreaInsets.right),
       windowWidth - 32 // 16px padding on each side
     );
-
     const availableHeight = (typeof window !== 'undefined' && window.innerHeight)
       ? window.innerHeight - (safeAreaInsets.top + safeAreaInsets.bottom) - 100 // Reserve space for UI
       : availableWidth;
-
     const availableSpace = Math.min(availableWidth, availableHeight);
-
     // Progressive sizing with mobile-first approach
     let size: number;
     let touchTarget: number;
     let labelDistance: number;
     let resonanceRadius: number;
     let fontSize: ResponsiveSizing['fontSize'];
-
     if (availableSpace < 320) {
       // Very small mobile (iPhone SE)
       size = 240;
@@ -168,7 +150,6 @@ export function useResponsiveHexagonSize(containerWidth: number): ResponsiveSizi
         time: 'text-lg'
       };
     }
-
     return {
       size,
       touchTarget,
@@ -178,7 +159,6 @@ export function useResponsiveHexagonSize(containerWidth: number): ResponsiveSizi
     };
   }, [containerWidth, windowWidth, safeAreaInsets]);
 }
-
 /**
  * Container size tracking hook
  */
@@ -190,10 +170,8 @@ export function useContainerSize(): {
   const [containerWidth, setContainerWidth] = useState(320);
   const [containerHeight, setContainerHeight] = useState(320);
   const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!containerRef.current) return;
-
     const resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect;
@@ -201,15 +179,11 @@ export function useContainerSize(): {
         setContainerHeight(height);
       }
     });
-
     resizeObserver.observe(containerRef.current);
-
     return () => resizeObserver.disconnect();
   }, []);
-
   return { containerRef, containerWidth, containerHeight };
 }
-
 /**
  * Device capability detection
  */
@@ -230,7 +204,6 @@ export function useDeviceCapabilities(): {
         isTouchDevice: true
       };
     }
-
     return {
       supportsHover: window.matchMedia('(hover: hover)').matches,
       supportsPointer: window.matchMedia('(pointer: fine)').matches,
@@ -240,7 +213,6 @@ export function useDeviceCapabilities(): {
     };
   }, []);
 }
-
 /**
  * Performance-aware sizing
  * Adjusts sizing based on device performance capabilities
@@ -252,7 +224,6 @@ export function usePerformanceAwareSizing(
   return useMemo(() => {
     // Reduce complexity on lower-end devices
     const isLowEnd = windowWidth < 375 || (typeof window !== 'undefined' && window.navigator?.hardwareConcurrency <= 2);
-
     if (isLowEnd) {
       return {
         ...baseSizing,
@@ -261,34 +232,27 @@ export function usePerformanceAwareSizing(
         resonanceRadius: baseSizing.resonanceRadius * 0.95
       };
     }
-
     return baseSizing;
   }, [baseSizing, windowWidth]);
 }
-
 /**
  * Orientation-aware adjustments
  */
 export function useOrientationAdjustments(sizing: ResponsiveSizing): ResponsiveSizing {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const updateOrientation = () => {
       setOrientation(window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
     };
-
     updateOrientation();
     window.addEventListener('orientationchange', updateOrientation);
     window.addEventListener('resize', updateOrientation);
-
     return () => {
       window.removeEventListener('orientationchange', updateOrientation);
       window.removeEventListener('resize', updateOrientation);
     };
   }, []);
-
   return useMemo(() => {
     if (orientation === 'landscape' && typeof window !== 'undefined' && window.innerWidth < 768) {
       // Mobile landscape - adjust for reduced height
@@ -298,7 +262,6 @@ export function useOrientationAdjustments(sizing: ResponsiveSizing): ResponsiveS
         labelDistance: sizing.labelDistance * 0.9
       };
     }
-
     return sizing;
   }, [sizing, orientation]);
 }

@@ -2,9 +2,7 @@
  * Time Blocks on Clock Component
  * Revolutionary time block positioning on 12-hour clock face
  */
-
 'use client'
-
 import React, { memo, useCallback } from 'react';
 import type { PrecomputedSVG, ResponsiveSizing } from '../types/HexagonTypes';
 import {
@@ -13,7 +11,6 @@ import {
   getOptimalTimeForCategory,
   CLOCK_POSITIONS
 } from '../utils/clockPositions';
-
 interface TimeBlock {
   id: string;
   startTime: string;
@@ -23,7 +20,6 @@ interface TimeBlock {
   title?: string;
   progress?: number; // 0-1 for active blocks
 }
-
 interface TimeBlocksOnClockProps {
   precomputedSVG: PrecomputedSVG;
   responsiveSizing: ResponsiveSizing;
@@ -33,7 +29,6 @@ interface TimeBlocksOnClockProps {
   onTimeBlockDrag?: (blockId: string, newHour: number) => void;
   showConflicts?: boolean;
 }
-
 /**
  * Individual time block arc on clock
  */
@@ -55,14 +50,11 @@ const TimeBlockArc = memo(function TimeBlockArc({
   conflicts?: any[];
 }) {
   const { arcStart, arcEnd, arcWidth } = clockPosition;
-
   // Convert angles to radians for SVG arc calculation
   const startRad = (arcStart * Math.PI) / 180;
   const endRad = (arcEnd * Math.PI) / 180;
-
   const innerRadius = radius * 0.75;
   const outerRadius = radius * 0.95;
-
   // Calculate arc path
   const innerStartX = center.x + innerRadius * Math.cos(startRad);
   const innerStartY = center.y + innerRadius * Math.sin(startRad);
@@ -72,9 +64,7 @@ const TimeBlockArc = memo(function TimeBlockArc({
   const innerEndY = center.y + innerRadius * Math.sin(endRad);
   const outerEndX = center.x + outerRadius * Math.cos(endRad);
   const outerEndY = center.y + outerRadius * Math.sin(endRad);
-
   const largeArcFlag = arcWidth > 180 ? 1 : 0;
-
   const arcPath = [
     `M ${innerStartX} ${innerStartY}`,
     `L ${outerStartX} ${outerStartY}`,
@@ -83,12 +73,10 @@ const TimeBlockArc = memo(function TimeBlockArc({
     `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStartX} ${innerStartY}`,
     'Z'
   ].join(' ');
-
   // Visual properties based on status
   const getVisualProps = () => {
     const categoryColor = CLOCK_POSITIONS[block.category];
     const baseColor = categoryColor ? CLOCK_POSITIONS[block.category] : '#A8C8B8'; // fallback to social color
-
     switch (block.status) {
       case 'empty':
         return {
@@ -146,10 +134,8 @@ const TimeBlockArc = memo(function TimeBlockArc({
         };
     }
   };
-
   const visual = getVisualProps();
   const hasConflicts = conflicts.length > 0;
-
   return (
     <g className={`time-block-arc time-block-${block.status}`}>
       {/* Main time block arc */}
@@ -167,7 +153,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
           transformOrigin: `${center.x}px ${center.y}px`
         }}
       />
-
       {/* Progress indicator for active blocks */}
       {block.status === 'active' && block.progress !== undefined && (
         <path
@@ -181,7 +166,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
           className="transform-gpu animate-pulse"
         />
       )}
-
       {/* Time display */}
       <text
         x={clockPosition.x}
@@ -193,7 +177,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
       >
         {block.timeDisplay}
       </text>
-
       {/* Title or category */}
       <text
         x={clockPosition.x}
@@ -205,7 +188,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
       >
         {block.title || block.category}
       </text>
-
       {/* Conflict indicator */}
       {hasConflicts && (
         <circle
@@ -216,7 +198,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
           className="animate-bounce"
         />
       )}
-
       {/* Completion checkmark */}
       {block.status === 'completed' && (
         <g transform={`translate(${clockPosition.x + 10}, ${clockPosition.y - 10})`}>
@@ -234,7 +215,6 @@ const TimeBlockArc = memo(function TimeBlockArc({
     </g>
   );
 });
-
 /**
  * Time conflict warnings
  */
@@ -248,7 +228,6 @@ const ConflictWarnings = memo(function ConflictWarnings({
   animate?: boolean;
 }) {
   if (conflicts.length === 0) return null;
-
   return (
     <g className="conflict-warnings">
       <text
@@ -267,7 +246,6 @@ const ConflictWarnings = memo(function ConflictWarnings({
     </g>
   );
 });
-
 /**
  * Optimal time suggestions
  */
@@ -281,14 +259,11 @@ const OptimalTimeSuggestions = memo(function OptimalTimeSuggestions({
   animate?: boolean;
 }) {
   const { center, radius } = precomputedSVG;
-
   // Get suggestions for empty time slots
   const suggestions = Object.keys(CLOCK_POSITIONS)
     .filter(category => !timeBlocks.some(block => block.category === category))
     .map(category => getOptimalTimeForCategory(category as keyof typeof CLOCK_POSITIONS));
-
   if (suggestions.length === 0) return null;
-
   return (
     <g className="optimal-time-suggestions">
       <text
@@ -307,7 +282,6 @@ const OptimalTimeSuggestions = memo(function OptimalTimeSuggestions({
     </g>
   );
 });
-
 /**
  * Main TimeBlocksOnClock component
  */
@@ -321,14 +295,12 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
   showConflicts = true
 }: TimeBlocksOnClockProps) {
   const { center, radius } = precomputedSVG;
-
   // Map time blocks to clock positions
   const clockTimeBlocks = mapTimeBlocksToClockPosition(
     timeBlocks,
     center,
     radius
   );
-
   // Detect conflicts
   const allConflicts = showConflicts
     ? timeBlocks.flatMap(block =>
@@ -338,11 +310,9 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
         )
       )
     : [];
-
   const handleTimeBlockClick = useCallback((block: TimeBlock) => {
     onTimeBlockClick?.(block);
   }, [onTimeBlockClick]);
-
   return (
     <g className="time-blocks-on-clock">
       {/* Time blocks as arcs */}
@@ -350,7 +320,6 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
         const blockConflicts = allConflicts.filter(conflict =>
           conflict.conflictingBlock.startTime === block.startTime
         );
-
         return (
           <TimeBlockArc
             key={block.id}
@@ -364,7 +333,6 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
           />
         );
       })}
-
       {/* Conflict warnings */}
       {showConflicts && (
         <ConflictWarnings
@@ -373,7 +341,6 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
           animate={animate}
         />
       )}
-
       {/* Optimal time suggestions */}
       <OptimalTimeSuggestions
         precomputedSVG={precomputedSVG}
@@ -383,5 +350,4 @@ export const TimeBlocksOnClock = memo(function TimeBlocksOnClock({
     </g>
   );
 });
-
 TimeBlocksOnClock.displayName = 'TimeBlocksOnClock';

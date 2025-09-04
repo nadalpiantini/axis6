@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
 import { useState, useEffect, useCallback, useRef } from 'react'
-
 import { chatRealtimeManager } from '../supabase/chat-realtime'
 import { createClient } from '../supabase/client'
 import {
@@ -12,57 +11,63 @@ import {
   RealtimeMessagePayload,
   RealtimeParticipantPayload
 } from '../supabase/types'
-
 import { useSupabaseClient } from './useSupabaseClient'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 const MESSAGE_PAGE_SIZE = 50
-
 /**
  * Hook for managing chat rooms list
  */
 export function useChatRooms(userId?: string) {
   const { client: supabase } = useSupabaseClient()
-
+  
+  // EMERGENCY FIX: Return empty data if no userId to prevent infinite loops
+  if (!userId || !supabase || userId === 'undefined' || userId === 'null') {
+    console.log('EMERGENCY FIX: useChatRooms disabled - invalid userId:', userId)
+    return {
+      data: [],
+      isLoading: false,
+      error: null,
+      refetch: () => Promise.resolve(),
+      isFetching: false,
+      isError: false,
+      isSuccess: true
+    } as any
+  }
+  
   return useQuery({
     queryKey: ['chatRooms', userId],
+    enabled: !!userId && !!supabase && userId !== 'undefined' && userId !== 'null',
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false, // EMERGENCY FIX: Disable refetch on window focus to stop infinite loop
+    retry: false, // EMERGENCY FIX: Disable all retries to stop infinite loop
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     queryFn: async (): Promise<ChatRoomWithParticipants[]> => {
       if (!userId || !supabase) throw new Error('User ID and Supabase client required')
-
       try {
         // Ensure we have a valid session before making queries
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         if (sessionError || !session) {
           throw new Error('No valid session available')
         }
-
         // First get room IDs where user is a participant
         const { data: participantRooms, error: participantError } = await supabase
           .from('axis6_chat_participants')
           .select('room_id')
           .eq('user_id', userId)
-
         if (participantError) {
-          handleError(error, {
-
+          handleError(participantError, {
             operation: 'unknown_operation',
-
             component: 'useChat',
-
             userMessage: 'Something went wrong. Please try again.'
-
           })
     // // TODO: Replace with proper error handling
     // console.error('Failed to fetch user participations:', participantError);
           throw participantError
         }
-
         if (!participantRooms || participantRooms.length === 0) {
           return []
         }
-
         const roomIds = participantRooms.map(p => p.room_id)
-
         // Get room details without relying on automatic foreign key relationships
         const { data: roomsData, error } = await supabase
           .from('axis6_chat_rooms')
@@ -70,36 +75,27 @@ export function useChatRooms(userId?: string) {
           .in('id', roomIds)
           .eq('is_active', true)
           .order('updated_at', { ascending: false })
-
         if (error) {
           handleError(error, {
-
             operation: 'unknown_operation',
-
             component: 'useChat',
-
             userMessage: 'Something went wrong. Please try again.'
-
           })
     // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
           throw error
         }
-
         if (!roomsData || roomsData.length === 0) {
           return []
         }
-
         // Fetch participants manually for each room
         const roomsWithData: ChatRoomWithParticipants[] = []
-
         for (const room of roomsData) {
           // Get participants for this room
           const { data: participantsData } = await supabase
             .from('axis6_chat_participants')
             .select('*')
             .eq('room_id', room.id)
-
           // Get participant profiles manually
           const participants: ChatParticipant[] = []
           if (participantsData) {
@@ -109,14 +105,12 @@ export function useChatRooms(userId?: string) {
                 .select('*')
                 .eq('id', participant.user_id)
                 .single()
-
               participants.push({
                 ...participant,
                 profile: profileData
               })
             }
           }
-
           // Get category if exists
           let category = null
           if (room.category_id) {
@@ -127,7 +121,6 @@ export function useChatRooms(userId?: string) {
               .single()
             category = categoryData
           }
-
           // Get last message if exists
           let lastMessage = null
           const { data: messageData } = await supabase
@@ -137,7 +130,6 @@ export function useChatRooms(userId?: string) {
             .order('created_at', { ascending: false })
             .limit(1)
             .single()
-
           if (messageData) {
             // Get sender profile for last message
             const { data: senderData } = await supabase
@@ -145,13 +137,11 @@ export function useChatRooms(userId?: string) {
               .select('*')
               .eq('id', messageData.sender_id)
               .single()
-
             lastMessage = {
               ...messageData,
               sender: senderData
             }
           }
-
           roomsWithData.push({
             ...room,
             participants,
@@ -159,17 +149,12 @@ export function useChatRooms(userId?: string) {
             last_message: lastMessage
           })
         }
-
         return roomsWithData
       } catch (error) {
         handleError(error, {
-
           operation: 'unknown_operation',
-
           component: 'useChat',
-
           userMessage: 'Something went wrong. Please try again.'
-
         })
     // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
@@ -178,12 +163,11 @@ export function useChatRooms(userId?: string) {
     },
     enabled: !!userId && !!supabase,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // EMERGENCY FIX: Disable refetch on window focus to stop infinite loop
     retry: false, // EMERGENCY FIX: Disable all retries to stop infinite loop
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   })
 }
-
 /**
  * Hook for managing a specific chat room
  */
@@ -192,13 +176,10 @@ export function useChatRoom(roomId: string, userId?: string) {
   const [isConnected, setIsConnected] = useState(false)
   const [typingUsers, setTypingUsers] = useState<string[]>([])
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
-
   // Join room on mount, leave on unmount
   useEffect(() => {
     if (!roomId || !userId) return
-
     let isMounted = true
-
     const connectToRoom = async () => {
       try {
         await chatRealtimeManager.joinRoom(roomId, userId)
@@ -208,34 +189,26 @@ export function useChatRoom(roomId: string, userId?: string) {
       } catch (error) {
         handleError(error, {
       operation: 'general_operation', component: 'useChat',
-
           userMessage: 'Operation failed. Please try again.'
-
         })
       }
     }
-
     connectToRoom()
-
     return () => {
       isMounted = false
       setIsConnected(false)
       chatRealtimeManager.leaveRoom(roomId)
     }
   }, [roomId, userId])
-
   // Set up realtime subscriptions
   useEffect(() => {
     if (!roomId || !isConnected) return
-
     const unsubscribeMessage = chatRealtimeManager.onMessage(roomId, (payload) => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages', roomId] })
-
       if (payload.eventType === 'INSERT' && payload.new) {
         // Optimistically update the messages cache
         queryClient.setQueryData(['chatMessages', roomId], (old: any) => {
           if (!old?.pages) return old
-
           const newPages = [...old.pages]
           if (newPages[0]?.data) {
             newPages[0] = {
@@ -243,19 +216,16 @@ export function useChatRoom(roomId: string, userId?: string) {
               data: [payload.new, ...newPages[0].data]
             }
           }
-
           return { ...old, pages: newPages }
         })
       }
     })
-
     const unsubscribeTyping = chatRealtimeManager.onTyping(roomId, setTypingUsers)
     const unsubscribePresence = chatRealtimeManager.onPresence(roomId, setOnlineUsers)
-
     const unsubscribeParticipants = chatRealtimeManager.onParticipantChange(roomId, (payload) => {
-      queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
+      // TEMPORARILY DISABLED: queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
+      // This was causing infinite loop - will be re-enabled after fixing the root cause
     })
-
     return () => {
       unsubscribeMessage()
       unsubscribeTyping()
@@ -263,7 +233,6 @@ export function useChatRoom(roomId: string, userId?: string) {
       unsubscribeParticipants()
     }
   }, [roomId, isConnected, queryClient])
-
   return {
     isConnected,
     typingUsers,
@@ -271,19 +240,16 @@ export function useChatRoom(roomId: string, userId?: string) {
     sendTyping: (isTyping: boolean) => chatRealtimeManager.sendTyping(roomId, isTyping)
   }
 }
-
 /**
  * Hook for managing chat messages with infinite scroll
  */
 export function useChatMessages(roomId: string) {
   const { client: supabase } = useSupabaseClient()
-
   return useInfiniteQuery({
     queryKey: ['chatMessages', roomId],
     initialPageParam: null,
     queryFn: async ({ pageParam }): Promise<{ data: ChatMessageWithSender[], nextCursor: string | null }> => {
       if (!supabase) throw new Error('Supabase client not available')
-
       let query = supabase
         .from('axis6_chat_messages')
         .select('*')
@@ -291,22 +257,16 @@ export function useChatMessages(roomId: string) {
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(MESSAGE_PAGE_SIZE)
-
       if (pageParam) {
         query = query.lt('created_at', pageParam)
       }
-
       const { data: messagesData, error } = await query
-
       if (error) throw error
-
       if (!messagesData || messagesData.length === 0) {
         return { data: [], nextCursor: null }
       }
-
       // Manually populate related data for each message
       const messages: ChatMessageWithSender[] = []
-
       for (const message of messagesData) {
         // Get sender profile
         const { data: senderData } = await supabase
@@ -314,13 +274,11 @@ export function useChatMessages(roomId: string) {
           .select('*')
           .eq('id', message.sender_id)
           .single()
-
         // Get reactions (optional - only if they exist)
         const { data: reactionsData } = await supabase
           .from('axis6_chat_reactions')
           .select('*')
           .eq('message_id', message.id)
-
         // Get reply-to message if exists
         let replyToMessage = null
         if (message.reply_to_id) {
@@ -329,7 +287,6 @@ export function useChatMessages(roomId: string) {
             .select('*')
             .eq('id', message.reply_to_id)
             .single()
-
           if (replyData) {
             // Get sender for reply-to message
             const { data: replySenderData } = await supabase
@@ -337,14 +294,12 @@ export function useChatMessages(roomId: string) {
               .select('*')
               .eq('id', replyData.sender_id)
               .single()
-
             replyToMessage = {
               ...replyData,
               sender: replySenderData
             }
           }
         }
-
         messages.push({
           ...message,
           sender: senderData,
@@ -355,7 +310,6 @@ export function useChatMessages(roomId: string) {
       const nextCursor = messages.length === MESSAGE_PAGE_SIZE
         ? messages[messages.length - 1]?.created_at
         : null
-
       return { data: messages.reverse(), nextCursor }
     },
     getNextPageParam: (lastPage: { data: ChatMessageWithSender[], nextCursor: string | null }) => lastPage.nextCursor,
@@ -364,13 +318,11 @@ export function useChatMessages(roomId: string) {
     refetchOnMount: true
   })
 }
-
 /**
  * Hook for sending messages with optimistic updates
  */
 export function useSendMessage(roomId: string) {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async ({
       content,
@@ -387,7 +339,6 @@ export function useSendMessage(roomId: string) {
         ...metadata,
         reply_to_id: replyToId
       })
-
       if (!success) {
         throw new Error('Failed to send message')
       }
@@ -398,49 +349,41 @@ export function useSendMessage(roomId: string) {
     onError: (error) => {
       handleError(error, {
       operation: 'general_operation', component: 'useChat',
-
         userMessage: 'Operation failed. Please try again.'
-
       })
       // Could add toast notification here
     }
   })
 }
-
 /**
  * Hook for managing message reactions
  */
 export function useMessageReaction(messageId: string) {
   const queryClient = useQueryClient()
-
   const addReaction = useMutation({
     mutationFn: (emoji: string) => chatRealtimeManager.addReaction(messageId, emoji),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages'] })
     }
   })
-
   const removeReaction = useMutation({
     mutationFn: (emoji: string) => chatRealtimeManager.removeReaction(messageId, emoji),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages'] })
     }
   })
-
   return {
     addReaction: addReaction.mutate,
     removeReaction: removeReaction.mutate,
     isLoading: addReaction.isPending || removeReaction.isPending
   }
 }
-
 /**
  * Hook for creating/joining chat rooms
  */
 export function useCreateChatRoom() {
   const { client: supabase } = useSupabaseClient()
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async ({
       name,
@@ -456,10 +399,8 @@ export function useCreateChatRoom() {
       maxParticipants?: number
     }) => {
       if (!supabase) throw new Error('Supabase client not available')
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
-
       const { data: room, error: roomError } = await supabase
         .from('axis6_chat_rooms')
         .insert({
@@ -472,9 +413,7 @@ export function useCreateChatRoom() {
         })
         .select()
         .single()
-
       if (roomError) throw roomError
-
       // Add creator as admin participant
       const { error: participantError } = await supabase
         .from('axis6_chat_participants')
@@ -483,9 +422,7 @@ export function useCreateChatRoom() {
           user_id: user.id,
           role: 'admin'
         })
-
       if (participantError) throw participantError
-
       return room
     },
     onSuccess: () => {
@@ -493,21 +430,17 @@ export function useCreateChatRoom() {
     }
   })
 }
-
 /**
  * Hook for joining/leaving chat rooms
  */
 export function useJoinChatRoom() {
   const { client: supabase } = useSupabaseClient()
   const queryClient = useQueryClient()
-
   const joinRoom = useMutation({
     mutationFn: async (roomId: string) => {
       if (!supabase) throw new Error('Supabase client not available')
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
-
       const { error } = await supabase
         .from('axis6_chat_participants')
         .insert({
@@ -515,33 +448,27 @@ export function useJoinChatRoom() {
           user_id: user.id,
           role: 'member'
         })
-
       if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
     }
   })
-
   const leaveRoom = useMutation({
     mutationFn: async (roomId: string) => {
       if (!supabase) throw new Error('Supabase client not available')
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
-
       const { error } = await supabase
         .from('axis6_chat_participants')
         .delete()
         .match({ room_id: roomId, user_id: user.id })
-
       if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
     }
   })
-
   return {
     joinRoom: joinRoom.mutate,
     leaveRoom: leaveRoom.mutate,
@@ -549,32 +476,27 @@ export function useJoinChatRoom() {
     isLeaving: leaveRoom.isPending
   }
 }
-
 /**
  * Hook for typing indicator with debouncing
  */
 export function useTypingIndicator(roomId: string, delay = 1000) {
   const [isTyping, setIsTyping] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout>()
-
   const startTyping = useCallback(() => {
     if (!isTyping) {
       setIsTyping(true)
       chatRealtimeManager.sendTyping(roomId, true)
     }
-
     // Clear existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
-
     // Set new timeout to stop typing
     timeoutRef.current = setTimeout(() => {
       setIsTyping(false)
       chatRealtimeManager.sendTyping(roomId, false)
     }, delay)
   }, [roomId, isTyping, delay])
-
   const stopTyping = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
@@ -582,7 +504,6 @@ export function useTypingIndicator(roomId: string, delay = 1000) {
     setIsTyping(false)
     chatRealtimeManager.sendTyping(roomId, false)
   }, [roomId])
-
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -590,7 +511,6 @@ export function useTypingIndicator(roomId: string, delay = 1000) {
       }
     }
   }, [])
-
   return {
     isTyping,
     startTyping,

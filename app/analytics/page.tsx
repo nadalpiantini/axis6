@@ -1,5 +1,4 @@
 'use client'
-
 import {
   TrendingUp,
   Calendar,
@@ -12,8 +11,11 @@ import {
   TrendingDown
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+
+// Import charts directly to avoid dynamic import type issues
 import {
+  ResponsiveContainer,
   LineChart,
   Line,
   BarChart,
@@ -21,7 +23,6 @@ import {
   PieChart as RechartsPieChart,
   Pie,
   Cell,
-  ResponsiveContainer,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -80,6 +81,13 @@ interface AnalyticsData {
   }>
 }
 
+// Chart loading component
+const ChartSkeleton = () => (
+  <div className="w-full h-64 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+    <div className="text-gray-500">Loading chart...</div>
+  </div>
+)
+
 export default function AnalyticsPage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
@@ -93,15 +101,11 @@ export default function AnalyticsPage() {
     try {
       setLoading(true)
       setError(null)
-
       const params = new URLSearchParams({period})
-
       const response = await fetch(`/api/analytics?${params}`)
-
       if (!response.ok) {
         throw new Error('Failed to fetch analytics')
       }
-
       const data = await response.json()
       setAnalytics(data.analytics)
     } catch (err) {
@@ -124,11 +128,9 @@ export default function AnalyticsPage() {
           includeAllData: true
         })
       })
-
       if (!response.ok) {
         throw new Error('Export failed')
       }
-
       if (format === 'csv') {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -222,7 +224,6 @@ export default function AnalyticsPage() {
         showBackButton={true}
         backUrl="/dashboard"
       />
-
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         {/* Controls */}
         <div data-testid="analytics-controls" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
@@ -230,7 +231,6 @@ export default function AnalyticsPage() {
             <TrendingUp className="w-6 h-6 text-purple-400" />
             <h2 data-testid="analytics-title" className="text-lg font-semibold">Your Analytics</h2>
           </div>
-
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
             <select
               data-testid="period-filter"
@@ -243,7 +243,6 @@ export default function AnalyticsPage() {
               <option value="90">Last 90 days</option>
               <option value="365">Last year</option>
             </select>
-
             <div className="flex items-center gap-2">
               <button
                 data-testid="export-csv"
@@ -265,7 +264,6 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
-
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Overview Stats */}
         <div data-testid="overview-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
@@ -279,7 +277,6 @@ export default function AnalyticsPage() {
               {Math.round(analytics.overview.totalCheckins / Math.max(analytics.overview.totalDays, 1) * 10) / 10} per day avg
             </p>
           </div>
-
           <div data-testid="active-days-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
@@ -292,7 +289,6 @@ export default function AnalyticsPage() {
               {analytics.overview.dataCompleteness}% of {analytics.overview.period}
             </p>
           </div>
-
           <div data-testid="completion-rate-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
@@ -303,7 +299,6 @@ export default function AnalyticsPage() {
             </p>
             <p className="text-xs sm:text-sm text-gray-400">Average daily completion</p>
           </div>
-
           <div data-testid="current-streak-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
@@ -317,190 +312,209 @@ export default function AnalyticsPage() {
             </p>
           </div>
         </div>
-
         {/* Interactive Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
-          {/* Chart 5: Completion Rate Trend */}
-          <div data-testid="chart-5" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
-              Completion Rate Trend
-            </h3>
-            <div className="recharts-wrapper">
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={analytics.dailyStats.slice(-14)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#9CA3AF"
-                      fontSize={12}
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    />
-                    <YAxis
-                      stroke="#9CA3AF"
-                      fontSize={12}
-                      tickFormatter={(value) => `${Math.round(value * 100)}%`}
-                    />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                      formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion Rate']}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="completion_rate"
-                      stroke="#8B5CF6"
-                      strokeWidth={2}
-                      dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+            <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <ChartSkeleton />
+            </div>
+            <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <ChartSkeleton />
+            </div>
+          </div>
+        }>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+            {/* Chart 5: Completion Rate Trend */}
+            <div data-testid="chart-5" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
+                Completion Rate Trend
+              </h3>
+              <div className="recharts-wrapper">
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={analytics.dailyStats.slice(-14)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#9CA3AF"
+                        fontSize={12}
+                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      />
+                      <YAxis
+                        stroke="#9CA3AF"
+                        fontSize={12}
+                        tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                      />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                        labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                        formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion Rate']}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="completion_rate"
+                        stroke="#8B5CF6"
+                        strokeWidth={2}
+                        dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+            {/* Chart 7: Category Performance Pie Chart */}
+            <div data-testid="chart-7" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+                <PieChart className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
+                Category Performance
+              </h3>
+              <div className="recharts-wrapper">
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <RechartsPieChart>
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                        formatter={(value) => [`${value}`, 'Check-ins']}
+                      />
+                      <Legend />
+                      <Pie
+                          data={Object.entries(analytics.categoryStats).map(([name, stats]) => ({
+                            name,
+                            value: stats.count,
+                            color: stats.color
+                          }))}
+                          cx="50%"
+                          cy="50%"
+                          label={({name, percent}: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {Object.entries(analytics.categoryStats).map(([_name, stats], index) => (
+                            <Cell key={`cell-${index}`} fill={stats.color} />
+                          ))}
+                      </Pie>
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Chart 7: Category Performance Pie Chart */}
-          <div data-testid="chart-7" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
-              <PieChart className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
-              Category Performance
-            </h3>
-            <div className="recharts-wrapper">
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={300}>
-                  <RechartsPieChart>
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      formatter={(value) => [`${value}`, 'Check-ins']}
-                    />
-                    <Legend />
-                    <Pie
-                        data={Object.entries(analytics.categoryStats).map(([name, stats]) => ({
-                          name,
-                          value: stats.count,
-                          color: stats.color
-                        }))}
-                        cx="50%"
-                        cy="50%"
-                        label={({name, percent}: any) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {Object.entries(analytics.categoryStats).map(([_name, stats], index) => (
-                          <Cell key={`cell-${index}`} fill={stats.color} />
-                        ))}
-                    </Pie>
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        </Suspense>
         {/* Additional Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
-          {/* Chart 10: Daily Stats Over Time */}
-          <div data-testid="chart-10" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-400" />
-              Daily Activity
-            </h3>
-            <div className="recharts-wrapper">
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={analytics.dailyStats.slice(-7)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#9CA3AF"
-                      fontSize={10}
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
-                    />
-                    <YAxis stroke="#9CA3AF" fontSize={10} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                    />
-                    <Bar dataKey="categories_completed" fill="#3B82F6" />
-                  </BarChart>
-                </ResponsiveContainer>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+            <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <ChartSkeleton />
+            </div>
+            <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <ChartSkeleton />
+            </div>
+            <div className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <ChartSkeleton />
+            </div>
+          </div>
+        }>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+            {/* Chart 10: Daily Stats Over Time */}
+            <div data-testid="chart-10" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-blue-400" />
+                Daily Activity
+              </h3>
+              <div className="recharts-wrapper">
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={analytics.dailyStats.slice(-7)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#9CA3AF"
+                        fontSize={10}
+                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+                      />
+                      <YAxis stroke="#9CA3AF" fontSize={10} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                        labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                      />
+                      <Bar dataKey="categories_completed" fill="#3B82F6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+            {/* Chart 11: Mood Trend */}
+            <div data-testid="chart-11" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5 text-green-400" />
+                Mood Trend
+              </h3>
+              <div className="recharts-wrapper">
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <LineChart data={analytics.moodTrend.slice(-7)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#9CA3AF"
+                        fontSize={10}
+                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+                      />
+                      <YAxis stroke="#9CA3AF" fontSize={10} domain={[0, 10]} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                        labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                        formatter={(value) => [`${value}/10`, 'Avg Mood']}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="averageMood"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                        dot={{ fill: '#10B981' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+            {/* Chart 12: Weekly Performance */}
+            <div data-testid="chart-12" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-orange-400" />
+                Weekly Progress
+              </h3>
+              <div className="recharts-wrapper">
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={analytics.dailyStats.slice(-7)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#9CA3AF"
+                        fontSize={10}
+                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+                      />
+                      <YAxis
+                        stroke="#9CA3AF"
+                        fontSize={10}
+                        tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                      />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                        formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion']}
+                      />
+                      <Bar dataKey="completion_rate" fill="#F59E0B" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Chart 11: Mood Trend */}
-          <div data-testid="chart-11" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-green-400" />
-              Mood Trend
-            </h3>
-            <div className="recharts-wrapper">
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={analytics.moodTrend.slice(-7)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#9CA3AF"
-                      fontSize={10}
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
-                    />
-                    <YAxis stroke="#9CA3AF" fontSize={10} domain={[0, 10]} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                      formatter={(value) => [`${value}/10`, 'Avg Mood']}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="averageMood"
-                      stroke="#10B981"
-                      strokeWidth={2}
-                      dot={{ fill: '#10B981' }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-
-          {/* Chart 12: Weekly Performance */}
-          <div data-testid="chart-12" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-orange-400" />
-              Weekly Progress
-            </h3>
-            <div className="recharts-wrapper">
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={analytics.dailyStats.slice(-7)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#9CA3AF"
-                      fontSize={10}
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
-                    />
-                    <YAxis
-                      stroke="#9CA3AF"
-                      fontSize={10}
-                      tickFormatter={(value) => `${Math.round(value * 100)}%`}
-                    />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                      formatter={(value: any) => [`${Math.round(Number(value) * 100)}%`, 'Completion']}
-                    />
-                    <Bar dataKey="completion_rate" fill="#F59E0B" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        </Suspense>
         {/* Streak Analysis with Static Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <div data-testid="category-performance" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
@@ -528,7 +542,6 @@ export default function AnalyticsPage() {
               ))}
             </div>
           </div>
-
           <div data-testid="streak-analysis" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
               <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
@@ -553,7 +566,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
         </div>
-
         {/* Best/Worst Performance */}
         <div data-testid="performance-trends" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <div data-testid="best-performance" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
@@ -577,7 +589,6 @@ export default function AnalyticsPage() {
               ))}
             </div>
           </div>
-
           <div data-testid="improvement-areas" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-red-400">
               <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -600,7 +611,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
         </div>
-
         {/* Insights and Recommendations */}
         <div data-testid="insights-recommendations" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
           <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">

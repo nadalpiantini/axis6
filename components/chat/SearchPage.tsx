@@ -1,24 +1,19 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Search, ArrowLeft, TrendingUp, Calendar } from 'lucide-react'
 import React, { useState } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useMessageSearch, useSearchAnalytics } from '@/lib/hooks/useMessageSearch'
 import { SearchResult } from '@/lib/services/message-search'
 import { cn } from '@/lib/utils'
-
 import { MessageSearch } from './MessageSearch'
 import { SearchResults } from './SearchResults'
-
 interface SearchPageProps {
   onBack?: () => void
   onResultSelect?: (result: SearchResult) => void
   className?: string
 }
-
 export function SearchPage({ onBack, onResultSelect, className }: SearchPageProps) {
   const [showMiniSearch, setShowMiniSearch] = useState(false)
   const {
@@ -32,22 +27,17 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
     setQuery,
     clearSearch
   } = useMessageSearch()
-
   const { analytics } = useSearchAnalytics()
-
   const handleSearchFocus = () => {
     setShowMiniSearch(true)
   }
-
   const handleSearchClose = () => {
     setShowMiniSearch(false)
   }
-
   const handleResultSelect = (result: SearchResult) => {
     setShowMiniSearch(false)
     onResultSelect?.(result)
   }
-
   return (
     <div className={cn("h-full flex flex-col", className)}>
       {/* Header */}
@@ -62,13 +52,11 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
             <ArrowLeft className="h-4 w-4" />
           </Button>
         )}
-
         <h1 className="text-lg font-semibold text-white flex items-center gap-2">
           <Search className="h-5 w-5 text-purple-400" />
           Message Search
         </h1>
       </div>
-
       {/* Search Input */}
       <div className="p-4 border-b border-neutral-700">
         <button
@@ -85,7 +73,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
           </span>
         </button>
       </div>
-
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         {hasResults ? (
@@ -114,7 +101,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
                     {analytics.total_searches}
                   </p>
                 </div>
-
                 <div className="bg-neutral-800 rounded-lg p-4 border border-neutral-700">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp className="h-4 w-4 text-green-400" />
@@ -124,7 +110,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
                     {analytics.average_results_per_search.toFixed(1)}
                   </p>
                 </div>
-
                 <div className="bg-neutral-800 rounded-lg p-4 border border-neutral-700">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="h-4 w-4 text-blue-400" />
@@ -136,7 +121,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
                 </div>
               </div>
             )}
-
             {/* Popular Search Terms */}
             {analytics?.most_searched_terms && analytics.most_searched_terms.length > 0 && (
               <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700">
@@ -164,7 +148,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
                 </div>
               </div>
             )}
-
             {/* Search Tips */}
             <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700">
               <h3 className="text-lg font-medium text-white mb-4">
@@ -197,7 +180,6 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
                 </div>
               </div>
             </div>
-
             {/* Empty State */}
             {!analytics || analytics.total_searches === 0 && (
               <div className="text-center py-12">
@@ -220,27 +202,22 @@ export function SearchPage({ onBack, onResultSelect, className }: SearchPageProp
           </div>
         )}
       </div>
-
       {/* Search Modal */}
       {showMiniSearch && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          style={{
-            paddingTop: 'max(env(safe-area-inset-top, 0px), 1rem)',
-            paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 1rem)',
-            paddingLeft: 'max(env(safe-area-inset-left, 0px), 1rem)',
-            paddingRight: 'max(env(safe-area-inset-right, 0px), 1rem)'
-          }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           onClick={(e) => e.target === e.currentTarget && handleSearchClose()}
         >
-          <MessageSearch
-            onClose={handleSearchClose}
-            onResultSelect={handleResultSelect}
-            className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-2xl max-h-[90vh] sm:max-h-[85vh]"
-          />
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:max-w-lg lg:max-w-xl max-h-[85vh] overflow-y-auto z-50">
+            <MessageSearch
+              onClose={handleSearchClose}
+              onResultSelect={handleResultSelect}
+              className="w-full h-full"
+            />
+          </div>
         </motion.div>
       )}
     </div>

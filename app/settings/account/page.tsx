@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {
   User,
@@ -17,12 +16,10 @@ import {
   RotateCcw
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
 import { createClient } from '@/lib/supabase/client'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface UserPreferences {
   theme_preference: string
@@ -38,13 +35,11 @@ interface UserPreferences {
     screen_reader: boolean
   }
 }
-
 interface ProfileData {
   name: string
   email: string
   created_at: string
 }
-
 export default function AccountSettingsPage() {
   const { data: user } = useUser()
   const [profile, setProfile] = useState<ProfileData | null>(null)
@@ -62,7 +57,6 @@ export default function AccountSettingsPage() {
       screen_reader: false
     }
   })
-
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
@@ -71,22 +65,18 @@ export default function AccountSettingsPage() {
     type: 'success' | 'error'
     message: string
   }>({ show: false, type: 'success', message: '' })
-
   // Load user data
   useEffect(() => {
     const loadUserData = async () => {
       if (!user) return
-
       try {
         const supabase = createClient()
-
         // Load profile
         const { data: profileData } = await supabase
           .from('axis6_profiles')
           .select('*')
           .eq('id', user.id)
           .single()
-
         if (profileData) {
           setProfile({
             name: profileData.name || user.email?.split('@')[0] || 'User',
@@ -94,14 +84,12 @@ export default function AccountSettingsPage() {
             created_at: user.created_at || new Date().toISOString()
           })
         }
-
         // Load preferences
         const { data: preferencesData } = await supabase
           .from('axis6_user_preferences')
           .select('*')
           .eq('user_id', user.id)
           .single()
-
         if (preferencesData) {
           setPreferences({
             theme_preference: preferencesData.theme_preference || 'temperament_based',
@@ -121,31 +109,25 @@ export default function AccountSettingsPage() {
       } catch (error) {
         handleError(error, {
       operation: 'settings_operation', component: 'page',
-
           userMessage: 'Settings operation failed. Please try again.'
-
         })
         showNotification('error', 'Failed to load settings')
       } finally {
         setLoading(false)
       }
     }
-
     loadUserData()
   }, [user])
-
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ show: true, type, message })
     setTimeout(() => {
       setNotification(prev => ({ ...prev, show: false }))
     }, 4000)
   }
-
   const handlePreferenceChange = (key: keyof UserPreferences, value: any) => {
     setPreferences(prev => ({ ...prev, [key]: value }))
     setHasChanges(true)
   }
-
   const handleAccessibilityChange = (key: keyof UserPreferences['accessibility_options'], value: boolean) => {
     setPreferences(prev => ({
       ...prev,
@@ -156,21 +138,17 @@ export default function AccountSettingsPage() {
     }))
     setHasChanges(true)
   }
-
   const handleProfileChange = (key: keyof ProfileData, value: string) => {
     if (profile) {
       setProfile(prev => prev ? ({ ...prev, [key]: value }) : null)
       setHasChanges(true)
     }
   }
-
   const saveSettings = async () => {
     if (!user) return
-
     setSaving(true)
     try {
       const supabase = createClient()
-
       // Save profile changes
       if (profile) {
         const { error: profileError } = await supabase
@@ -180,10 +158,8 @@ export default function AccountSettingsPage() {
             name: profile.name,
             updated_at: new Date().toISOString()
           })
-
         if (profileError) throw profileError
       }
-
       // Save preferences
       const { error: preferencesError } = await supabase
         .from('axis6_user_preferences')
@@ -192,24 +168,19 @@ export default function AccountSettingsPage() {
           ...preferences,
           updated_at: new Date().toISOString()
         })
-
       if (preferencesError) throw preferencesError
-
       setHasChanges(false)
       showNotification('success', 'Settings saved successfully!')
     } catch (error) {
       handleError(error, {
       operation: 'settings_operation', component: 'page',
-
         userMessage: 'Settings operation failed. Please try again.'
-
       })
       showNotification('error', 'Failed to save settings')
     } finally {
       setSaving(false)
     }
   }
-
   const resetSettings = () => {
     // Reset to defaults or reload from server
     setPreferences({
@@ -228,13 +199,10 @@ export default function AccountSettingsPage() {
     })
     setHasChanges(true)
   }
-
   const exportData = async () => {
     if (!user) return
-
     try {
       const supabase = createClient()
-
       // Fetch all user data
       const [checkinsRes, streaksRes, categoriesRes, profileRes] = await Promise.all([
         supabase.from('axis6_checkins').select('*').eq('user_id', user.id),
@@ -242,7 +210,6 @@ export default function AccountSettingsPage() {
         supabase.from('axis6_categories').select('*'),
         supabase.from('axis6_profiles').select('*').eq('id', user.id).single()
       ])
-
       const exportData = {
         profile: profileRes.data,
         preferences: preferences,
@@ -251,7 +218,6 @@ export default function AccountSettingsPage() {
         categories: categoriesRes.data || [],
         exported_at: new Date().toISOString()
       }
-
       // Create and download JSON file
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
@@ -262,33 +228,26 @@ export default function AccountSettingsPage() {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
       handleError(error, {
       operation: 'settings_operation', component: 'page',
-
         userMessage: 'Settings operation failed. Please try again.'
-
       })
       showNotification('error', 'Failed to export data')
     }
   }
-
   const deleteAccount = async () => {
     if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       return
     }
-
     if (!confirm('This is your final warning. All your data will be permanently deleted.')) {
       return
     }
-
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
       showNotification('success', 'Account deletion initiated. You will receive a confirmation email.')
-
       // Redirect to home after a delay
       setTimeout(() => {
         window.location.href = '/'
@@ -296,14 +255,11 @@ export default function AccountSettingsPage() {
     } catch (error) {
       handleError(error, {
       operation: 'settings_operation', component: 'page',
-
         userMessage: 'Settings operation failed. Please try again.'
-
       })
       showNotification('error', 'Failed to delete account')
     }
   }
-
   if (loading) {
     return (
       <SettingsLayout currentSection="account">
@@ -313,7 +269,6 @@ export default function AccountSettingsPage() {
       </SettingsLayout>
     )
   }
-
   return (
     <SettingsLayout currentSection="account">
       <div className="space-y-8">
@@ -355,7 +310,6 @@ export default function AccountSettingsPage() {
             />
           </SettingGroup>
         </SettingsSection>
-
         {/* Display Preferences */}
         <SettingsSection
           title="Display Preferences"
@@ -417,7 +371,6 @@ export default function AccountSettingsPage() {
             />
           </SettingGroup>
         </SettingsSection>
-
         {/* Regional Settings */}
         <SettingsSection
           title="Regional Settings"
@@ -459,7 +412,6 @@ export default function AccountSettingsPage() {
             />
           </SettingGroup>
         </SettingsSection>
-
         {/* Accessibility */}
         <SettingsSection
           title="Accessibility Options"
@@ -501,7 +453,6 @@ export default function AccountSettingsPage() {
             />
           </SettingGroup>
         </SettingsSection>
-
         {/* Account Actions */}
         <SettingsSection
           title="Account Management"
@@ -523,7 +474,6 @@ export default function AccountSettingsPage() {
                   </div>
                 </div>
               </button>
-
               <button
                 onClick={deleteAccount}
                 className="w-full flex items-center justify-between p-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
@@ -540,7 +490,6 @@ export default function AccountSettingsPage() {
           </SettingGroup>
         </SettingsSection>
       </div>
-
       {/* Notifications */}
       {notification.show && (
         <motion.div

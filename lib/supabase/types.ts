@@ -5,7 +5,6 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
-
 export interface Database {
   public: {
     Tables: {
@@ -364,7 +363,6 @@ export interface Database {
     }
   }
 }
-
 // Chat System Types (extends Database interface)
 export interface ChatDatabase extends Database {
   public: Database['public'] & {
@@ -506,13 +504,11 @@ export interface ChatDatabase extends Database {
     }
   }
 }
-
 // Chat-specific utility types
 export type ChatRoom = ChatDatabase['public']['Tables']['axis6_chat_rooms']['Row']
 export type ChatMessage = ChatDatabase['public']['Tables']['axis6_chat_messages']['Row']
 export type ChatParticipant = ChatDatabase['public']['Tables']['axis6_chat_participants']['Row']
 export type ChatReaction = ChatDatabase['public']['Tables']['axis6_chat_reactions']['Row']
-
 // Extended types with relationships
 export interface ChatRoomWithParticipants extends ChatRoom {
   participants: (ChatParticipant & {
@@ -524,7 +520,6 @@ export interface ChatRoomWithParticipants extends ChatRoom {
     sender: Database['public']['Tables']['axis6_profiles']['Row']
   }
 }
-
 export interface ChatMessageWithSender extends ChatMessage {
   sender: Database['public']['Tables']['axis6_profiles']['Row']
   reactions: (ChatReaction & {
@@ -532,20 +527,17 @@ export interface ChatMessageWithSender extends ChatMessage {
   })[]
   reply_to?: ChatMessageWithSender
 }
-
 // Realtime types for Supabase channels
 export interface RealtimeMessagePayload {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE'
   new?: ChatMessage
   old?: ChatMessage
 }
-
 export interface RealtimeParticipantPayload {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE'
   new?: ChatParticipant
   old?: ChatParticipant
 }
-
 // UI state types
 export interface ChatUIState {
   selectedRoomId: string | null
@@ -555,7 +547,6 @@ export interface ChatUIState {
   typingUsers: string[]
   onlineUsers: Set<string>
 }
-
 // Notification settings type
 export interface NotificationSettings {
   mentions: boolean

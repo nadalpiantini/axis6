@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   User,
@@ -18,7 +17,6 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-
 interface SettingsSection {
   id: string
   name: string
@@ -28,7 +26,6 @@ interface SettingsSection {
   badge?: string | number
   isNew?: boolean
 }
-
 const SETTINGS_SECTIONS: SettingsSection[] = [
   {
     id: 'account',
@@ -66,14 +63,12 @@ const SETTINGS_SECTIONS: SettingsSection[] = [
     icon: Shield
   }
 ]
-
 interface SettingsLayoutProps {
   children: React.ReactNode
   currentSection?: string
   title?: string
   subtitle?: string
 }
-
 export function SettingsLayout({
   children,
   currentSection,
@@ -82,14 +77,11 @@ export function SettingsLayout({
 }: SettingsLayoutProps) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
   // Determine active section
   const activeSection = currentSection || SETTINGS_SECTIONS.find(section =>
     pathname.startsWith(section.href)
   )?.id || 'overview'
-
   const activeSectionData = SETTINGS_SECTIONS.find(s => s.id === activeSection)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 text-white">
       {/* Mobile header */}
@@ -113,7 +105,6 @@ export function SettingsLayout({
           </button>
         </div>
       </div>
-
       <div className="flex">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block w-80 bg-black/20 backdrop-blur-md border-r border-white/10 h-screen sticky top-0 overflow-y-auto">
@@ -123,7 +114,6 @@ export function SettingsLayout({
             onSectionClick={() => {}}
           />
         </div>
-
         {/* Mobile Sidebar Overlay */}
         <AnimatePresence>
           {sidebarOpen && (
@@ -163,7 +153,6 @@ export function SettingsLayout({
             </>
           )}
         </AnimatePresence>
-
         {/* Main Content */}
         <div className="flex-1 lg:p-8 p-4">
           {/* Desktop Header */}
@@ -180,7 +169,6 @@ export function SettingsLayout({
               <h1 className="text-2xl font-bold">{activeSectionData?.name || 'Settings'}</h1>
             </div>
           </div>
-
           {/* Content Area */}
           <div className="max-w-6xl">
             {children}
@@ -190,13 +178,11 @@ export function SettingsLayout({
     </div>
   )
 }
-
 interface SettingsSidebarProps {
   sections: SettingsSection[]
   activeSection: string
   onSectionClick: () => void
 }
-
 function SettingsSidebar({ sections, activeSection, onSectionClick }: SettingsSidebarProps) {
   return (
     <div className="p-6">
@@ -205,7 +191,6 @@ function SettingsSidebar({ sections, activeSection, onSectionClick }: SettingsSi
         <h3 className="text-lg font-semibold mb-2">Settings</h3>
         <p className="text-sm text-gray-400">Configure your AXIS6 experience</p>
       </div>
-
       {/* Settings Overview Link */}
       <div className="mb-6">
         <Link
@@ -225,13 +210,11 @@ function SettingsSidebar({ sections, activeSection, onSectionClick }: SettingsSi
           </div>
         </Link>
       </div>
-
       {/* Settings Sections */}
       <div className="space-y-2">
         {sections.map((section) => {
           const isActive = activeSection === section.id
           const Icon = section.icon
-
           return (
             <Link
               key={section.id}

@@ -1,15 +1,12 @@
 import { RealtimeChannel, RealtimeChannelSendResponse } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
-
 import { createClient } from '@/lib/supabase/client'
-
 interface RealtimeState {
   isConnected: boolean
   error: string | null
   retryCount: number
 }
-
 export function useRealtimeCheckins(userId: string | undefined) {
   const queryClient = useQueryClient()
   const supabase = createClient()
@@ -22,22 +19,18 @@ export function useRealtimeCheckins(userId: string | undefined) {
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const maxRetries = 3
   const retryDelays = [1000, 3000, 5000] // Progressive backoff
-
   useEffect(() => {
     if (!userId) {
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
       return
     }
-
     const setupRealtime = async (attemptNumber = 0) => {
       try {
         // Wait for authentication to be fully established
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
         if (sessionError) {
           throw new Error(`Session error: ${sessionError.message}`)
         }
-
         if (!session?.access_token) {
           // If no session, wait a bit and retry (user might be logging in)
           if (attemptNumber < maxRetries) {
@@ -55,13 +48,11 @@ export function useRealtimeCheckins(userId: string | undefined) {
           }
           return
         }
-
         // Clean up any existing channel
         if (channelRef.current) {
           await supabase.removeChannel(channelRef.current)
           channelRef.current = null
         }
-
         // Create channel with authenticated session
         const channel = supabase
           .channel(`checkins:${userId}`, {
@@ -82,10 +73,8 @@ export function useRealtimeCheckins(userId: string | undefined) {
             (payload) => {
               // Invalidate and refetch checkins data
               queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
-
               // Also invalidate streaks as they depend on checkins
               queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-
               // Log successful realtime update for debugging
               }
           )
@@ -102,7 +91,6 @@ export function useRealtimeCheckins(userId: string | undefined) {
                 error: error?.message || `Connection ${status.toLowerCase()}`,
                 retryCount: attemptNumber
               })
-
               // Attempt retry with backoff
               if (attemptNumber < maxRetries) {
                 const delay = retryDelays[attemptNumber] || 5000
@@ -112,9 +100,7 @@ export function useRealtimeCheckins(userId: string | undefined) {
               }
             }
           })
-
         channelRef.current = channel
-
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown realtime error'
         setRealtimeState({
@@ -122,7 +108,6 @@ export function useRealtimeCheckins(userId: string | undefined) {
           error: errorMessage,
           retryCount: attemptNumber
         })
-
         // Don't retry on auth errors
         if (errorMessage.includes('Session error') && attemptNumber < maxRetries) {
           const delay = retryDelays[attemptNumber] || 5000
@@ -132,28 +117,22 @@ export function useRealtimeCheckins(userId: string | undefined) {
         }
       }
     }
-
     setupRealtime()
-
     // Cleanup function
     return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current)
         retryTimeoutRef.current = null
       }
-
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current)
         channelRef.current = null
       }
-
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
     }
   }, [userId, queryClient, supabase])
-
   return realtimeState
 }
-
 // Hook for realtime streak updates
 export function useRealtimeStreaks(userId: string | undefined) {
   const queryClient = useQueryClient()
@@ -167,22 +146,18 @@ export function useRealtimeStreaks(userId: string | undefined) {
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const maxRetries = 3
   const retryDelays = [1000, 3000, 5000]
-
   useEffect(() => {
     if (!userId) {
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
       return
     }
-
     const setupRealtime = async (attemptNumber = 0) => {
       try {
         // Wait for authentication to be fully established
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
         if (sessionError) {
           throw new Error(`Session error: ${sessionError.message}`)
         }
-
         if (!session?.access_token) {
           if (attemptNumber < maxRetries) {
             const delay = retryDelays[attemptNumber] || 5000
@@ -199,13 +174,11 @@ export function useRealtimeStreaks(userId: string | undefined) {
           }
           return
         }
-
         // Clean up any existing channel
         if (channelRef.current) {
           await supabase.removeChannel(channelRef.current)
           channelRef.current = null
         }
-
         // Create channel with authenticated session
         const channel = supabase
           .channel(`streaks:${userId}`, {
@@ -226,7 +199,6 @@ export function useRealtimeStreaks(userId: string | undefined) {
             (payload) => {
               // Invalidate and refetch streaks data
               queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-
               // Show achievement notification for milestone streaks
               if (payload.eventType === 'UPDATE' && payload.new) {
                 const newStreak = payload.new as any
@@ -248,7 +220,6 @@ export function useRealtimeStreaks(userId: string | undefined) {
                 error: error?.message || `Connection ${status.toLowerCase()}`,
                 retryCount: attemptNumber
               })
-
               // Attempt retry with backoff
               if (attemptNumber < maxRetries) {
                 const delay = retryDelays[attemptNumber] || 5000
@@ -258,9 +229,7 @@ export function useRealtimeStreaks(userId: string | undefined) {
               }
             }
           })
-
         channelRef.current = channel
-
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown realtime error'
         setRealtimeState({
@@ -268,36 +237,28 @@ export function useRealtimeStreaks(userId: string | undefined) {
           error: errorMessage,
           retryCount: attemptNumber
         })
-
         }
     }
-
     setupRealtime()
-
     // Cleanup function
     return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current)
         retryTimeoutRef.current = null
       }
-
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current)
         channelRef.current = null
       }
-
       setRealtimeState({ isConnected: false, error: null, retryCount: 0 })
     }
   }, [userId, queryClient, supabase])
-
   return realtimeState
 }
-
 // Combined hook for all realtime updates
 export function useRealtimeDashboard(userId: string | undefined) {
   const checkinsState = useRealtimeCheckins(userId)
   const streaksState = useRealtimeStreaks(userId)
-
   // Return combined state for monitoring
   return {
     checkins: checkinsState,

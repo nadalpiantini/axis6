@@ -1,8 +1,6 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
-
 interface BalanceWhisperProps {
   children: React.ReactNode
   content: string
@@ -11,7 +9,6 @@ interface BalanceWhisperProps {
   disabled?: boolean
   className?: string
 }
-
 // Subtle tooltip component for "balance whispers"
 // Maintains THE RITUAL OS aesthetic with organic styling
 export function BalanceWhisper({
@@ -27,34 +24,28 @@ export function BalanceWhisper({
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
-
   const handleMouseEnter = () => {
     if (disabled) return
-
     timeoutRef.current = setTimeout(() => {
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect()
         const scrollX = window.scrollX
         const scrollY = window.scrollY
-
         // Position tooltip above the trigger element
         setPosition({
           x: rect.left + scrollX + rect.width / 2,
           y: rect.top + scrollY - 10
         })
-
         setIsVisible(true)
       }
     }, delay)
   }
-
   const handleMouseLeave = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
     setIsVisible(false)
   }
-
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -62,7 +53,6 @@ export function BalanceWhisper({
       }
     }
   }, [])
-
   return (
     <>
       <div
@@ -73,7 +63,6 @@ export function BalanceWhisper({
       >
         {children}
       </div>
-
       <AnimatePresence>
         {isVisible && (
           <motion.div
@@ -106,7 +95,6 @@ export function BalanceWhisper({
                   background: `linear-gradient(135deg, ${axisColor}20 0%, transparent 50%)`,
                 }}
               />
-
               {/* Content */}
               <p
                 className="relative text-xs sm:text-sm font-medium leading-relaxed text-center"
@@ -114,7 +102,6 @@ export function BalanceWhisper({
               >
                 {content}
               </p>
-
               {/* Organic arrow pointing down */}
               <div
                 className="absolute top-full left-1/2 transform -translate-x-1/2 w-3 h-3"
@@ -131,7 +118,6 @@ export function BalanceWhisper({
     </>
   )
 }
-
 // Specialized whisper for resonance messages
 interface ResonanceWhisperProps {
   children: React.ReactNode
@@ -141,7 +127,6 @@ interface ResonanceWhisperProps {
   userCompleted: boolean
   disabled?: boolean
 }
-
 export function ResonanceWhisper({
   children,
   resonanceCount,
@@ -154,19 +139,15 @@ export function ResonanceWhisper({
     if (resonanceCount === 0) {
       return `Be the first to find balance in ${axisName} today`
     }
-
     if (userCompleted && resonanceCount === 1) {
       return `You completed ${axisName} • Others will feel your resonance`
     }
-
     if (userCompleted) {
       return `You and ${resonanceCount - 1} others found balance in ${axisName} today`
     }
-
     const others = resonanceCount === 1 ? '1 person has' : `${resonanceCount} people have`
     return `${others} found balance in ${axisName} today`
   }
-
   return (
     <BalanceWhisper
       content={getWhisperContent()}
@@ -178,7 +159,6 @@ export function ResonanceWhisper({
     </BalanceWhisper>
   )
 }
-
 // Whisper specifically for axis completion buttons
 export function AxisCompletionWhisper({
   children,
@@ -200,14 +180,11 @@ export function AxisCompletionWhisper({
       }
       return `${axisName} completed! Your inner balance radiates outward`
     }
-
     if (resonanceCount > 0) {
       return `${resonanceCount} others found balance in ${axisName} today. Join the resonance?`
     }
-
     return `Complete ${axisName} to strengthen your balance ritual`
   }
-
   return (
     <BalanceWhisper
       content={getEncouragementMessage()}

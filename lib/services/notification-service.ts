@@ -2,9 +2,7 @@
  * Browser Push Notification Service
  * Handles browser notifications for chat messages, mentions, and system events
  */
-
 import { logger } from '@/lib/logger'
-
 export interface NotificationOptions {
   title: string
   body: string
@@ -18,39 +16,33 @@ export interface NotificationOptions {
   silent?: boolean
   vibrate?: VibratePattern
 }
-
 export interface NotificationPermissionResult {
   granted: boolean
   denied: boolean
   prompt: boolean
   supported: boolean
 }
-
 export class NotificationService {
   private static instance: NotificationService
   private isSupported = false
   private permission: NotificationPermission = 'default'
   private activeNotifications = new Map<string, Notification>()
-
   constructor() {
     this.checkSupport()
     this.updatePermissionStatus()
   }
-
   static getInstance(): NotificationService {
     if (!NotificationService.instance) {
       NotificationService.instance = new NotificationService()
     }
     return NotificationService.instance
   }
-
   /**
    * Check if browser supports notifications
    */
   private checkSupport(): void {
     this.isSupported = 'Notification' in window && 'serviceWorker' in navigator
   }
-
   /**
    * Update current permission status
    */
@@ -59,13 +51,11 @@ export class NotificationService {
       this.permission = Notification.permission
     }
   }
-
   /**
    * Get current notification permission status
    */
   getPermissionStatus(): NotificationPermissionResult {
     this.updatePermissionStatus()
-
     return {
       granted: this.permission === 'granted',
       denied: this.permission === 'denied',
@@ -73,7 +63,6 @@ export class NotificationService {
       supported: this.isSupported
     }
   }
-
   /**
    * Request notification permission
    */
@@ -81,11 +70,9 @@ export class NotificationService {
     if (!this.isSupported) {
       return this.getPermissionStatus()
     }
-
     try {
       const permission = await Notification.requestPermission()
       this.permission = permission
-
       logger.info('Notification permission result:', permission)
       return this.getPermissionStatus()
     } catch (error) {
@@ -93,28 +80,23 @@ export class NotificationService {
       return this.getPermissionStatus()
     }
   }
-
   /**
    * Show a notification
    */
   async showNotification(options: NotificationOptions): Promise<boolean> {
     const status = this.getPermissionStatus()
-
     if (!status.supported) {
       logger.warn('Notifications not supported in this browser')
       return false
     }
-
     if (!status.granted) {
       logger.warn('Notification permission not granted')
       return false
     }
-
     try {
       // Use service worker if available, otherwise fallback to direct notification
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.ready
-
         if (registration.showNotification) {
           await registration.showNotification(options.title, {
             body: options.body,
@@ -128,11 +110,9 @@ export class NotificationService {
             silent: options.silent || false,
             vibrate: options.vibrate
           })
-
           return true
         }
       }
-
       // Fallback to direct notification
       const notification = new Notification(options.title, {
         body: options.body,
@@ -143,7 +123,6 @@ export class NotificationService {
         silent: options.silent || false,
         vibrate: options.vibrate
       })
-
       // Track notification for management
       if (options.tag) {
         // Close existing notification with same tag
@@ -151,37 +130,31 @@ export class NotificationService {
         if (existing) {
           existing.close()
         }
-
         this.activeNotifications.set(options.tag, notification)
       }
-
       // Handle notification events
       notification.onclick = () => {
         window.focus()
         this.handleNotificationClick(options.data)
         notification.close()
       }
-
       notification.onclose = () => {
         if (options.tag) {
           this.activeNotifications.delete(options.tag)
         }
       }
-
       // Auto-close after delay if not requiring interaction
       if (!options.requireInteraction) {
         setTimeout(() => {
           notification.close()
         }, 5000)
       }
-
       return true
     } catch (error) {
       logger.error('Failed to show notification:', error)
       return false
     }
   }
-
   /**
    * Show chat message notification
    */
@@ -217,7 +190,6 @@ export class NotificationService {
       ]
     })
   }
-
   /**
    * Show mention notification
    */
@@ -255,7 +227,6 @@ export class NotificationService {
       ]
     })
   }
-
   /**
    * Show typing notification
    */
@@ -277,7 +248,6 @@ export class NotificationService {
       }
     })
   }
-
   /**
    * Show system notification
    */
@@ -292,7 +262,6 @@ export class NotificationService {
       warning: '/icons/warning-icon-192.png',
       error: '/icons/error-icon-192.png'
     }
-
     return this.showNotification({
       title,
       body: message,
@@ -304,13 +273,11 @@ export class NotificationService {
       }
     })
   }
-
   /**
    * Handle notification click events
    */
   private handleNotificationClick(data: any): void {
     if (!data) return
-
     switch (data.type) {
       case 'chat_message':
       case 'mention':
@@ -319,21 +286,18 @@ export class NotificationService {
           window.location.href = `/chat/rooms/${data.roomId}?message=${data.messageId}`
         }
         break
-
       case 'typing':
         // Navigate to the chat room
         if (data.roomId) {
           window.location.href = `/chat/rooms/${data.roomId}`
         }
         break
-
       case 'system':
         // Just focus the window for system notifications
         window.focus()
         break
     }
   }
-
   /**
    * Close notification by tag
    */
@@ -344,7 +308,6 @@ export class NotificationService {
       this.activeNotifications.delete(tag)
     }
   }
-
   /**
    * Close all active notifications
    */
@@ -354,7 +317,6 @@ export class NotificationService {
     })
     this.activeNotifications.clear()
   }
-
   /**
    * Get notification preferences from localStorage
    */
@@ -372,7 +334,6 @@ export class NotificationService {
     } catch (error) {
       logger.error('Failed to load notification preferences:', error)
     }
-
     return {
       enabled: true,
       soundEnabled: true,
@@ -380,7 +341,6 @@ export class NotificationService {
       mutedRooms: []
     }
   }
-
   /**
    * Save notification preferences to localStorage
    */
@@ -396,23 +356,18 @@ export class NotificationService {
       logger.error('Failed to save notification preferences:', error)
     }
   }
-
   /**
    * Check if notifications should be shown for a room
    */
   shouldNotify(roomId: string, type: 'message' | 'mention' | 'typing' = 'message'): boolean {
     const prefs = this.getNotificationPreferences()
-
     if (!prefs.enabled) return false
     if (prefs.mutedRooms.includes(roomId)) return false
     if (prefs.mentionsOnly && type === 'message') return false
-
     // Don't show typing notifications if document is visible
     if (type === 'typing' && !document.hidden) return false
-
     return this.getPermissionStatus().granted
   }
-
   /**
    * Test notifications
    */
@@ -428,6 +383,5 @@ export class NotificationService {
     })
   }
 }
-
 // Export singleton instance
 export const notificationService = NotificationService.getInstance()

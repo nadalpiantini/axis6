@@ -11,7 +11,7 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 5
+      "actualWorkers": 1
     },
     "preserveOutput": "always",
     "reporter": [
@@ -49,7 +49,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "chromium",
         "name": "chromium",
@@ -58,14 +58,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "firefox",
         "name": "firefox",
@@ -74,14 +74,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "webkit",
         "name": "webkit",
@@ -90,14 +90,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "Mobile Chrome",
         "name": "Mobile Chrome",
@@ -106,14 +106,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "Mobile Safari",
         "name": "Mobile Safari",
@@ -122,14 +122,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "iPad",
         "name": "iPad",
@@ -138,7 +138,7 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 60000
+        "timeout": 180000
       }
     ],
     "shard": null,
@@ -150,1038 +150,136 @@
   },
   "suites": [
     {
-      "title": "auth.spec.ts",
-      "file": "auth.spec.ts",
+      "title": "dashboard-final-bug-report.spec.ts",
+      "file": "dashboard-final-bug-report.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "AXIS6 Authentication Flow",
-          "file": "auth.spec.ts",
-          "line": 4,
+          "title": "Dashboard Final Bug Report",
+          "file": "dashboard-final-bug-report.spec.ts",
+          "line": 7,
           "column": 6,
-          "specs": [],
-          "suites": [
+          "specs": [
             {
-              "title": "Landing Page",
-              "file": "auth.spec.ts",
-              "line": 6,
-              "column": 8,
-              "specs": [
+              "title": "complete dashboard functionality test with proper registration",
+              "ok": true,
+              "tags": [],
+              "tests": [
                 {
-                  "title": "should load landing page correctly",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
                     {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25097,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "workerIndex": 0,
-                          "parallelIndex": 0,
-                          "status": "passed",
-                          "duration": 16438,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:22:53.450Z",
-                          "annotations": [],
-                          "attachments": []
+                          "text": "\n🎯 AXIS6 DASHBOARD FINAL BUG REPORT\n"
+                        },
+                        {
+                          "text": "====================================================================================\n\n"
+                        },
+                        {
+                          "text": "📍 PHASE 1: AUTHENTICATION TESTING\n"
+                        },
+                        {
+                          "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                        },
+                        {
+                          "text": "\n🔍 Testing landing page...\n"
+                        },
+                        {
+                          "text": "  ✅ Landing page loads\n"
+                        },
+                        {
+                          "text": "\n🔍 Testing registration process...\n"
+                        },
+                        {
+                          "text": "  ✅ Name field filled\n"
+                        },
+                        {
+                          "text": "  ✅ Email field filled\n"
+                        },
+                        {
+                          "text": "  ✅ Password field filled\n"
+                        },
+                        {
+                          "text": "  ✅ Confirm password field filled\n"
+                        },
+                        {
+                          "text": "  ✅ Terms checkbox checked\n"
+                        },
+                        {
+                          "text": "  ✅ Registration button enabled after validation\n"
+                        },
+                        {
+                          "text": "  🔄 Registration submitted...\n"
+                        },
+                        {
+                          "text": "  ❌ Unexpected redirect: http://localhost:3000/auth/register\n"
+                        },
+                        {
+                          "text": "\n⚠️  Dashboard not accessible - testing what we can reach...\n"
+                        },
+                        {
+                          "text": "\n📋 ACCESSIBLE PAGES TEST SUMMARY:\n"
+                        },
+                        {
+                          "text": "  - Working functionality: 8 items\n"
+                        },
+                        {
+                          "text": "  - Issues found: 1 items\n"
+                        },
+                        {
+                          "text": "    ✅ Landing page loads successfully\n"
+                        },
+                        {
+                          "text": "    ✅ Name input works\n"
+                        },
+                        {
+                          "text": "    ✅ Email input works\n"
+                        },
+                        {
+                          "text": "    ✅ Password input works\n"
+                        },
+                        {
+                          "text": "    ✅ Confirm password input works\n"
+                        },
+                        {
+                          "text": "    ✅ Terms checkbox works\n"
+                        },
+                        {
+                          "text": "    ✅ Registration form validation works\n"
+                        },
+                        {
+                          "text": "    ✅ 2 navigation links found\n"
+                        },
+                        {
+                          "text": "    ❌ Unexpected redirect after registration\n"
                         }
                       ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-cbf1b8c0669fcc9b53a3",
-                  "file": "auth.spec.ts",
-                  "line": 7,
-                  "column": 9
-                },
-                {
-                  "title": "should navigate to login page",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T18:46:58.919Z",
                       "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "passed",
-                          "duration": 17129,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:22:53.458Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
+                      "attachments": []
                     }
                   ],
-                  "id": "d748ac400d08b85935ef-536baf9320435a900152",
-                  "file": "auth.spec.ts",
-                  "line": 20,
-                  "column": 9
-                },
-                {
-                  "title": "should navigate to register page",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 2,
-                          "parallelIndex": 2,
-                          "status": "passed",
-                          "duration": 16748,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:22:53.433Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-93da664d66016273f5af",
-                  "file": "auth.spec.ts",
-                  "line": 28,
-                  "column": 9
+                  "status": "expected"
                 }
-              ]
-            },
-            {
-              "title": "User Registration",
-              "file": "auth.spec.ts",
-              "line": 37,
-              "column": 8,
-              "specs": [
-                {
-                  "title": "should register new user successfully",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 3,
-                          "parallelIndex": 3,
-                          "status": "failed",
-                          "duration": 26072,
-                          "error": {
-                            "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                            "stack": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:43:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 31,
-                              "line": 223
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 31,
-                                "line": 223
-                              },
-                              "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n   at ../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:43:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:22:53.465Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--52325-ister-new-user-successfully-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 31,
-                            "line": 223
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-7d5d2e552804854bf8ab",
-                  "file": "auth.spec.ts",
-                  "line": 38,
-                  "column": 9
-                },
-                {
-                  "title": "should show validation errors for invalid data",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 4,
-                          "parallelIndex": 4,
-                          "status": "failed",
-                          "duration": 25797,
-                          "error": {
-                            "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                            "stack": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:62:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 31,
-                              "line": 223
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 31,
-                                "line": 223
-                              },
-                              "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n   at ../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:62:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:22:53.470Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--8b4e0-ion-errors-for-invalid-data-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 31,
-                            "line": 223
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-53dc160d3eed3930f67c",
-                  "file": "auth.spec.ts",
-                  "line": 58,
-                  "column": 9
-                },
-                {
-                  "title": "should prevent registration with existing email",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 0,
-                          "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 12546,
-                          "error": {
-                            "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                            "stack": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:72:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 31,
-                              "line": 223
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 31,
-                                "line": 223
-                              },
-                              "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n   at ../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:72:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:13.614Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--75e74-tration-with-existing-email-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 31,
-                            "line": 223
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-05c09267b13098d929fc",
-                  "file": "auth.spec.ts",
-                  "line": 68,
-                  "column": 9
-                }
-              ]
-            },
-            {
-              "title": "User Login",
-              "file": "auth.spec.ts",
-              "line": 84,
-              "column": 8,
-              "specs": [
-                {
-                  "title": "should login existing user successfully",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 2,
-                          "parallelIndex": 2,
-                          "status": "failed",
-                          "duration": 12322,
-                          "error": {
-                            "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                            "stack": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:88:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 31,
-                              "line": 223
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 31,
-                                "line": 223
-                              },
-                              "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n   at ../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:88:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:13.948Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--70f1d--existing-user-successfully-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 31,
-                            "line": 223
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-4af861f7b7734218d664",
-                  "file": "auth.spec.ts",
-                  "line": 85,
-                  "column": 9
-                },
-                {
-                  "title": "should show error for invalid credentials",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "passed",
-                          "duration": 3910,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:14.304Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-f15bbacf14beab524da7",
-                  "file": "auth.spec.ts",
-                  "line": 110,
-                  "column": 9
-                },
-                {
-                  "title": "should show error for non-existent user",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "passed",
-                          "duration": 1754,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:18.230Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-c5b813d11a3c2a9cb0a0",
-                  "file": "auth.spec.ts",
-                  "line": 120,
-                  "column": 9
-                },
-                {
-                  "title": "should handle empty form submission",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "passed",
-                          "duration": 1532,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:19.994Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-2ce964246e652e2395e2",
-                  "file": "auth.spec.ts",
-                  "line": 129,
-                  "column": 9
-                }
-              ]
-            },
-            {
-              "title": "Password Reset Flow",
-              "file": "auth.spec.ts",
-              "line": 143,
-              "column": 8,
-              "specs": [
-                {
-                  "title": "should navigate to forgot password page",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "passed",
-                          "duration": 2673,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:21.534Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-0f4c62a86e2ff872bf2f",
-                  "file": "auth.spec.ts",
-                  "line": 144,
-                  "column": 9
-                },
-                {
-                  "title": "should handle password reset request",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 5,
-                          "parallelIndex": 4,
-                          "status": "failed",
-                          "duration": 14383,
-                          "error": {
-                            "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                            "stack": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:162:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 31,
-                              "line": 223
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 31,
-                                "line": 223
-                              },
-                              "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /create.*account|sign up|register/i })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" data-testid=\"register-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n   at ../utils/page-objects.ts:223\n\n  221 |       await this.page.locator('input[type=\"password\"]').nth(1).fill(password);\n  222 |     }\n> 223 |     await this.registerButton.click();\n      |                               ^\n  224 |   }\n  225 |\n  226 |   async verifyRegisterForm() {\n    at RegisterPage.register (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:223:31)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:162:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:24.200Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--d741b-ndle-password-reset-request-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 31,
-                            "line": 223
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-d72163fda8b4eee36c69",
-                  "file": "auth.spec.ts",
-                  "line": 159,
-                  "column": 9
-                }
-              ]
-            },
-            {
-              "title": "Navigation and Session Management",
-              "file": "auth.spec.ts",
-              "line": 184,
-              "column": 8,
-              "specs": [
-                {
-                  "title": "should redirect unauthenticated users to login",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 6,
-                          "parallelIndex": 3,
-                          "status": "passed",
-                          "duration": 3041,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:24.256Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-0c5b53ab43097ba8255c",
-                  "file": "auth.spec.ts",
-                  "line": 185,
-                  "column": 9
-                },
-                {
-                  "title": "should maintain session across page refreshes",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 1,
-                          "parallelIndex": 1,
-                          "status": "failed",
-                          "duration": 15923,
-                          "error": {
-                            "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================",
-                            "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================\n    at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:199:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 21,
-                              "line": 182
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:182\n\n  180 |\n  181 |     // Wait for registration to complete (might redirect to login or dashboard)\n> 182 |     await this.page.waitForURL(/\\/(dashboard|auth\\/login)/, { timeout: 10000 });\n      |                     ^\n  183 |   }\n  184 |\n  185 |   async verifyLoginForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 21,
-                                "line": 182
-                              },
-                              "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================\n\n   at ../utils/page-objects.ts:182\n\n  180 |\n  181 |     // Wait for registration to complete (might redirect to login or dashboard)\n> 182 |     await this.page.waitForURL(/\\/(dashboard|auth\\/login)/, { timeout: 10000 });\n      |                     ^\n  183 |   }\n  184 |\n  185 |   async verifyLoginForm() {\n    at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:199:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:24.232Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--83e13-ssion-across-page-refreshes-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 21,
-                            "line": 182
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-27c5ca1eb3cd3043406c",
-                  "file": "auth.spec.ts",
-                  "line": 196,
-                  "column": 9
-                },
-                {
-                  "title": "should logout user successfully",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 7,
-                          "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 14335,
-                          "error": {
-                            "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================",
-                            "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================\n    at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:216:7",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                              "column": 21,
-                              "line": 182
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39m../utils/page-objects.ts:182\n\n  180 |\n  181 |     // Wait for registration to complete (might redirect to login or dashboard)\n> 182 |     await this.page.waitForURL(/\\/(dashboard|auth\\/login)/, { timeout: 10000 });\n      |                     ^\n  183 |   }\n  184 |\n  185 |   async verifyLoginForm() {"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                                "column": 21,
-                                "line": 182
-                              },
-                              "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:3000/auth/register\"\n============================================================\n\n   at ../utils/page-objects.ts:182\n\n  180 |\n  181 |     // Wait for registration to complete (might redirect to login or dashboard)\n> 182 |     await this.page.waitForURL(/\\/(dashboard|auth\\/login)/, { timeout: 10000 });\n      |                     ^\n  183 |   }\n  184 |\n  185 |   async verifyLoginForm() {\n    at LoginPage.registerUser (/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts:182:21)\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:216:7"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:28.010Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--3418d-ld-logout-user-successfully-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/utils/page-objects.ts",
-                            "column": 21,
-                            "line": 182
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-1c69621b5b168d34725e",
-                  "file": "auth.spec.ts",
-                  "line": 213,
-                  "column": 9
-                }
-              ]
-            },
-            {
-              "title": "Form Validation and UX",
-              "file": "auth.spec.ts",
-              "line": 234,
-              "column": 8,
-              "specs": [
-                {
-                  "title": "should show real-time validation feedback",
-                  "ok": true,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 8,
-                          "parallelIndex": 2,
-                          "status": "passed",
-                          "duration": 2184,
-                          "errors": [],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:28.241Z",
-                          "annotations": [],
-                          "attachments": []
-                        }
-                      ],
-                      "status": "expected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-839f5c30dbcdedccd5d8",
-                  "file": "auth.spec.ts",
-                  "line": 235,
-                  "column": 9
-                },
-                {
-                  "title": "should handle form accessibility",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 6,
-                          "parallelIndex": 3,
-                          "status": "failed",
-                          "duration": 1906,
-                          "error": {
-                            "message": "TypeError: testUtils.checkAccessibility is not a function",
-                            "stack": "TypeError: testUtils.checkAccessibility is not a function\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:253:42",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                              "column": 42,
-                              "line": 253
-                            },
-                            "snippet": "  251 |\n  252 |       // Check accessibility\n> 253 |       const a11yIssues = await testUtils.checkAccessibility(loginPage.page);\n      |                                          ^\n  254 |\n  255 |       // Should have proper labels\n  256 |       const emailLabel = await loginPage.emailInput.getAttribute('aria-label') ||"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                                "column": 42,
-                                "line": 253
-                              },
-                              "message": "TypeError: testUtils.checkAccessibility is not a function\n\n  251 |\n  252 |       // Check accessibility\n> 253 |       const a11yIssues = await testUtils.checkAccessibility(loginPage.page);\n      |                                          ^\n  254 |\n  255 |       // Should have proper labels\n  256 |       const emailLabel = await loginPage.emailInput.getAttribute('aria-label') ||\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:253:42"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:27.787Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--c4343-d-handle-form-accessibility-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                            "column": 42,
-                            "line": 253
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-e079baad50eb1eb90bee",
-                  "file": "auth.spec.ts",
-                  "line": 249,
-                  "column": 9
-                },
-                {
-                  "title": "should support keyboard navigation",
-                  "ok": false,
-                  "tags": [],
-                  "tests": [
-                    {
-                      "timeout": 60000,
-                      "annotations": [],
-                      "expectedStatus": "passed",
-                      "projectId": "chromium",
-                      "projectName": "chromium",
-                      "results": [
-                        {
-                          "workerIndex": 9,
-                          "parallelIndex": 3,
-                          "status": "failed",
-                          "duration": 11715,
-                          "error": {
-                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('button', { name: /sign in|login|welcome back/i })\nExpected: focused\nReceived: inactive\nTimeout:  10000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /sign in|login|welcome back/i })\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"submit\" data-testid=\"login-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"inactive\"\u001b[22m\n",
-                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('button', { name: /sign in|login|welcome back/i })\nExpected: focused\nReceived: inactive\nTimeout:  10000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /sign in|login|welcome back/i })\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"submit\" data-testid=\"login-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"inactive\"\u001b[22m\n\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:276:43",
-                            "location": {
-                              "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                              "column": 43,
-                              "line": 276
-                            },
-                            "snippet": "  274 |\n  275 |       await loginPage.page.keyboard.press('Tab');\n> 276 |       await expect(loginPage.loginButton).toBeFocused();\n      |                                           ^\n  277 |     });\n  278 |   });\n  279 | });"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                                "column": 43,
-                                "line": 276
-                              },
-                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('button', { name: /sign in|login|welcome back/i })\nExpected: focused\nReceived: inactive\nTimeout:  10000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /sign in|login|welcome back/i })\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"submit\" data-testid=\"login-submit\" class=\"w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center gap-2\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"inactive\"\u001b[22m\n\n\n  274 |\n  275 |       await loginPage.page.keyboard.press('Tab');\n> 276 |       await expect(loginPage.loginButton).toBeFocused();\n      |                                           ^\n  277 |     });\n  278 |   });\n  279 | });\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts:276:43"
-                            }
-                          ],
-                          "stdout": [],
-                          "stderr": [],
-                          "retry": 0,
-                          "startTime": "2025-08-30T01:23:30.609Z",
-                          "annotations": [],
-                          "attachments": [
-                            {
-                              "name": "screenshot",
-                              "contentType": "image/png",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/test-failed-1.png"
-                            },
-                            {
-                              "name": "video",
-                              "contentType": "video/webm",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/video.webm"
-                            },
-                            {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/auth-AXIS6-Authentication--dbd47-support-keyboard-navigation-chromium/error-context.md"
-                            }
-                          ],
-                          "errorLocation": {
-                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/auth.spec.ts",
-                            "column": 43,
-                            "line": 276
-                          }
-                        }
-                      ],
-                      "status": "unexpected"
-                    }
-                  ],
-                  "id": "d748ac400d08b85935ef-1fda5cbe02ba71227d78",
-                  "file": "auth.spec.ts",
-                  "line": 265,
-                  "column": 9
-                }
-              ]
+              ],
+              "id": "f96b360c1558763d0a70-ae724947bf6b955aad72",
+              "file": "dashboard-final-bug-report.spec.ts",
+              "line": 9,
+              "column": 7
             }
           ]
         }
@@ -1190,11 +288,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-30T01:22:52.223Z",
-    "duration": 50845.323000000004,
-    "expected": 9,
+    "startTime": "2025-09-03T18:46:56.685Z",
+    "duration": 28352.282,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 9,
+    "unexpected": 0,
     "flaky": 0
   }
 }

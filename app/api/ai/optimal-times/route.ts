@@ -1,14 +1,10 @@
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
 import { smartNotificationService } from '@/lib/ai/smart-notifications'
 import { logger } from '@/lib/utils/logger';
-
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
 /**
  * GET /api/ai/optimal-times
  * Predict optimal check-in times for the current user
@@ -16,7 +12,6 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -25,14 +20,10 @@ export async function GET(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const startTime = Date.now()
-
     // Predict optimal times
     const optimalTimes = await behavioralAnalyzer.predictOptimalTimes(user.id)
-
     const responseTime = Date.now() - startTime
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -43,7 +34,6 @@ export async function GET(_request: NextRequest) {
         ? optimalTimes.best_times.reduce((sum, t) => sum + t.probability, 0) / optimalTimes.best_times.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -60,7 +50,6 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Optimal times prediction API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to predict optimal times',
@@ -70,7 +59,6 @@ export async function GET(_request: NextRequest) {
     )
   }
 }
-
 /**
  * POST /api/ai/optimal-times/reminders
  * Generate adaptive reminders based on optimal times
@@ -78,7 +66,6 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -87,19 +74,15 @@ export async function POST(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await _request.json()
     const {
       enable_reminders = true,
       preferred_hours = null, // User can override with preferred hours
       reminder_types = ['daily_checkin', 'streak_maintenance']
     } = body
-
     const startTime = Date.now()
-
     // Generate adaptive reminders
     const reminders = await smartNotificationService.generateAdaptiveReminders(user.id)
-
     // If user provided preferred hours, filter reminders
     let filteredReminders = reminders
     if (preferred_hours && Array.isArray(preferred_hours)) {
@@ -108,9 +91,7 @@ export async function POST(_request: NextRequest) {
         return preferred_hours.includes(reminderHour)
       })
     }
-
     const responseTime = Date.now() - startTime
-
     // Store adaptive reminders in database if enabled
     if (enable_reminders && filteredReminders.length > 0) {
       const reminderRows = filteredReminders.map(reminder => {
@@ -129,23 +110,19 @@ export async function POST(_request: NextRequest) {
           is_active: true
         }
       })
-
       // Clear existing reminders first
       await supabase
         .from('axis6_adaptive_reminders')
         .delete()
         .eq('user_id', user.id)
-
       // Insert new reminders
       const { error: insertError } = await supabase
         .from('axis6_adaptive_reminders')
         .insert(reminderRows)
-
       if (insertError) {
         logger.error('Failed to store adaptive reminders:', insertError)
       }
     }
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -156,7 +133,6 @@ export async function POST(_request: NextRequest) {
         ? filteredReminders.reduce((sum, r) => sum + r.personalization_score, 0) / filteredReminders.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -177,7 +153,6 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Adaptive reminders API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to generate adaptive reminders',

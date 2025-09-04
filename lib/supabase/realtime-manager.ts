@@ -1,14 +1,11 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-
 import { createClient } from './client'
-
 interface RealtimeConnectionState {
   isConnected: boolean
   lastConnected: Date | null
   consecutiveFailures: number
   shouldUsePolling: boolean
 }
-
 class RealtimeConnectionManager {
   private state: RealtimeConnectionState = {
     isConnected: false,
@@ -16,22 +13,18 @@ class RealtimeConnectionManager {
     consecutiveFailures: 0,
     shouldUsePolling: false
   }
-
   private supabase: SupabaseClient
   private maxFailures = 3
   private pollingFallbackDelay = 30000 // 30 seconds
-
   constructor() {
     this.supabase = createClient()
   }
-
   /**
    * Check if realtime should be used or if we should fall back to polling
    */
   shouldUseRealtime(): boolean {
     return !this.state.shouldUsePolling && this.state.consecutiveFailures < this.maxFailures
   }
-
   /**
    * Record a successful connection
    */
@@ -41,14 +34,12 @@ class RealtimeConnectionManager {
     this.state.consecutiveFailures = 0
     this.state.shouldUsePolling = false
   }
-
   /**
    * Record a connection failure
    */
   onConnectionFailure() {
     this.state.isConnected = false
     this.state.consecutiveFailures += 1
-
     if (this.state.consecutiveFailures >= this.maxFailures) {
       this.state.shouldUsePolling = true
       // Auto-retry realtime after fallback delay
@@ -57,7 +48,6 @@ class RealtimeConnectionManager {
       }, this.pollingFallbackDelay)
     }
   }
-
   /**
    * Reset failure count to allow realtime retry
    */
@@ -65,14 +55,12 @@ class RealtimeConnectionManager {
     this.state.consecutiveFailures = 0
     this.state.shouldUsePolling = false
     }
-
   /**
    * Get current connection state for debugging
    */
   getState(): RealtimeConnectionState {
     return { ...this.state }
   }
-
   /**
    * Check if user is authenticated for realtime
    */
@@ -84,29 +72,23 @@ class RealtimeConnectionManager {
       return false
     }
   }
-
   /**
    * Wait for authentication with timeout
    */
   async waitForAuth(timeoutMs = 10000): Promise<boolean> {
     const startTime = Date.now()
-
     while (Date.now() - startTime < timeoutMs) {
       if (await this.isAuthenticated()) {
         return true
       }
-
       // Wait 500ms before checking again
       await new Promise(resolve => setTimeout(resolve, 500))
     }
-
     return false
   }
 }
-
 // Global instance
 export const realtimeManager = new RealtimeConnectionManager()
-
 /**
  * Enhanced hook for graceful realtime connections
  */
@@ -119,7 +101,6 @@ export function useRealtimeConnection() {
     waitForAuth: (timeout?: number) => realtimeManager.waitForAuth(timeout)
   }
 }
-
 /**
  * Utility to create a robust channel with auth handling
  */
@@ -129,19 +110,16 @@ export async function createAuthenticatedChannel(
   onConnectionChange?: (connected: boolean) => void
 ) {
   const supabase = createClient()
-
   // Wait for authentication
   const isAuthenticated = await realtimeManager.waitForAuth()
   if (!isAuthenticated) {
     throw new Error('Cannot create realtime channel: No authentication')
   }
-
   const channel = supabase.channel(channelName, {
     config: {
       presence: { key: userId }
     }
   })
-
   // Enhanced subscription with connection monitoring
   const subscribe = (callback: Parameters<typeof channel.subscribe>[0]) => {
     return channel.subscribe((status, error) => {
@@ -152,11 +130,9 @@ export async function createAuthenticatedChannel(
         realtimeManager.onConnectionFailure()
         onConnectionChange?.(false)
         }
-
       callback(status, error)
     })
   }
-
   return {
     channel,
     subscribe,

@@ -1,7 +1,5 @@
 import { logger } from '@/lib/utils/logger';
-
 import { NextRequest, NextResponse } from 'next/server'
-
 import { withChatAuth } from '@/lib/middleware/chat-auth'
 
 /**
@@ -12,7 +10,6 @@ export const GET = withChatAuth(async (context, _request) => {
   try {
     const { user } = context
     const { searchParams } = new URL(_request.url)
-
     const query = searchParams.get('q')?.trim()
     const roomId = searchParams.get('room_id')
     const senderId = searchParams.get('sender_id')
@@ -20,7 +17,6 @@ export const GET = withChatAuth(async (context, _request) => {
     const dateTo = searchParams.get('date_to')
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
-
     if (!query || query.length < 2) {
       return NextResponse.json({
         results: [],
@@ -31,12 +27,9 @@ export const GET = withChatAuth(async (context, _request) => {
         }
       })
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     const startTime = Date.now()
-
     // Call the search RPC function
     const { data: results, error } = await supabase.rpc('search_messages', {
       search_query: query,
@@ -47,7 +40,6 @@ export const GET = withChatAuth(async (context, _request) => {
       p_limit: Math.min(limit, 100),
       p_offset: Math.max(offset, 0)
     })
-
     if (error) {
       logger.error('Search error:', error)
       return NextResponse.json(
@@ -55,10 +47,8 @@ export const GET = withChatAuth(async (context, _request) => {
         { status: 500 }
       )
     }
-
     const searchTime = Date.now() - startTime
     const parsedResults = Array.isArray(results) ? results : JSON.parse(results || '[]')
-
     const stats = {
       total_results: parsedResults.length,
       search_time_ms: searchTime,
@@ -70,12 +60,10 @@ export const GET = withChatAuth(async (context, _request) => {
         }
       })
     }
-
     return NextResponse.json({
       results: parsedResults,
       stats
     })
-
   } catch (error) {
     logger.error('Search API error:', error)
     return NextResponse.json(
@@ -84,7 +72,6 @@ export const GET = withChatAuth(async (context, _request) => {
     )
   }
 })
-
 /**
  * GET /api/chat/search/suggestions
  * Get search suggestions based on partial query
@@ -94,29 +81,22 @@ export const POST = withChatAuth(async (context, _request) => {
     const { user } = context
     const body = await _request.json()
     const { partial } = body
-
     if (!partial || partial.length < 2) {
       return NextResponse.json({ suggestions: [] })
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     const { data: suggestions, error } = await supabase.rpc('get_search_suggestions', {
       partial_query: partial
     })
-
     if (error) {
       logger.error('Search suggestions error:', error)
       return NextResponse.json({ suggestions: [] })
     }
-
     const parsedSuggestions = Array.isArray(suggestions) ? suggestions : JSON.parse(suggestions || '[]')
-
     return NextResponse.json({
       suggestions: parsedSuggestions
     })
-
   } catch (error) {
     logger.error('Search suggestions API error:', error)
     return NextResponse.json(

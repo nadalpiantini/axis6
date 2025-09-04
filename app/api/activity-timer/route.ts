@@ -1,57 +1,45 @@
-
 import { NextResponse } from 'next/server'
-
 import { logger } from '@/lib/utils/logger';
-
 export async function POST(request: Request) {
   try {
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const body = await request.json()
     const action = body.action // 'start' or 'stop'
-
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     if (action === 'start') {
-      // Start timer
+      // Start timer - Fixed parameter order to match database function
       const { data, error } = await supabase
         .rpc('start_activity_timer', {
           p_user_id: user.id,
-          p_activity_id: body.activity_id,
           p_category_id: body.category_id,
+          p_time_block_id: body.time_block_id,
           p_activity_name: body.activity_name,
-          p_time_block_id: body.time_block_id
+          p_activity_id: body.activity_id
         })
-
       if (error) {
         logger.error('Error starting timer:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
       }
-
-      return NextResponse.json({ log_id: data })
-
+      return NextResponse.json({ log_id: data.id })
     } else if (action === 'stop') {
-      // Stop timer
+      // Stop timer - Fixed parameter name to match database function
       const { data, error } = await supabase
         .rpc('stop_activity_timer', {
           p_user_id: user.id,
-          p_log_id: body.log_id
+          p_activity_log_id: body.log_id
         })
-
       if (error) {
         logger.error('Error stopping timer:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
       }
-
-      return NextResponse.json({ duration_minutes: data })
-
+      return NextResponse.json({ duration_minutes: data.duration_minutes })
     } else {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
-
   } catch (error) {
     logger.error('Activity timer error:', error)
     return NextResponse.json(
@@ -60,16 +48,13 @@ export async function POST(request: Request) {
     )
   }
 }
-
 export async function GET() {
   try {
     const supabase = await createClient()
-
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Get active timers
     const { data, error } = await supabase
       .from('axis6_activity_logs')
@@ -78,12 +63,10 @@ export async function GET() {
       .is('ended_at', null)
       .order('started_at', { ascending: false })
       .limit(1)
-
     if (error) {
       logger.error('Error fetching active timer:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
-
     return NextResponse.json({ activeTimer: data?.[0] || null })
   } catch (error) {
     logger.error('Activity timer GET error:', error)

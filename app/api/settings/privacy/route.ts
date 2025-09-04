@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { handleError } from '@/lib/error/standardErrorHandler'
-
 interface PrivacySettings {
   profile_visibility: 'public' | 'friends' | 'private'
   stats_sharing: boolean
@@ -17,31 +16,25 @@ interface PrivacySettings {
   usage_analytics: boolean
   research_participation: boolean
 }
-
 // GET: Fetch privacy settings
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const { data, error } = await supabase
       .from('axis6_privacy_settings')
       .select('*')
       .eq('user_id', user.id)
       .single()
-
     if (error && error.code !== 'PGRST116') {
       throw error
     }
-
     // Return defaults if no privacy settings found
     if (!data) {
       const defaultSettings: PrivacySettings = {
@@ -58,10 +51,8 @@ export async function GET() {
         usage_analytics: true,
         research_participation: false
       }
-
       return NextResponse.json({ settings: defaultSettings })
     }
-
     return NextResponse.json({ settings: data })
   } catch (error) {
     console.error('Privacy settings fetch error:', error)
@@ -71,31 +62,25 @@ export async function GET() {
     )
   }
 }
-
 // PUT: Update privacy settings
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const body = await request.json()
     const { settings } = body
-
     if (!settings) {
       return NextResponse.json(
         { error: 'Settings data is required' },
         { status: 400 }
       )
     }
-
     // Validate data retention days (minimum 30 days)
     if (settings.data_retention_days && settings.data_retention_days < 30) {
       return NextResponse.json(
@@ -103,7 +88,6 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Log privacy setting changes for audit
     await supabase.rpc('axis6_log_security_event', {
       target_user_id: user.id,
@@ -114,7 +98,6 @@ export async function PUT(request: NextRequest) {
       },
       risk_level: 'low'
     })
-
     // Upsert privacy settings
     const { data, error } = await supabase
       .from('axis6_privacy_settings')
@@ -125,11 +108,9 @@ export async function PUT(request: NextRequest) {
       })
       .select()
       .single()
-
     if (error) {
       throw error
     }
-
     return NextResponse.json({ 
       settings: data,
       message: 'Privacy settings updated successfully' 
@@ -140,38 +121,31 @@ export async function PUT(request: NextRequest) {
       component: 'api_route',
       userMessage: 'Failed to update privacy settings'
     })
-    
     return NextResponse.json(
       { error: 'Failed to update privacy settings' },
       { status: 500 }
     )
   }
 }
-
 // POST: Get privacy score calculation
 export async function POST() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
-
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const { data: settings, error } = await supabase
       .from('axis6_privacy_settings')
       .select('*')
       .eq('user_id', user.id)
       .single()
-
     if (error && error.code !== 'PGRST116') {
       throw error
     }
-
     // Calculate privacy score (0-100)
     let score = 0
     const factors = [
@@ -185,9 +159,7 @@ export async function POST() {
       !settings?.stats_sharing,
       settings?.export_frequency !== 'never'
     ]
-
     score = Math.round((factors.filter(Boolean).length / factors.length) * 100)
-
     // Generate recommendations
     const recommendations = []
     if (settings?.usage_analytics) {
@@ -202,7 +174,6 @@ export async function POST() {
     if (settings?.behavioral_tracking_enabled) {
       recommendations.push('Turn off behavioral tracking if privacy is your top concern')
     }
-
     return NextResponse.json({ 
       privacyScore: score,
       recommendations,
@@ -214,7 +185,6 @@ export async function POST() {
       component: 'api_route',
       userMessage: 'Failed to calculate privacy score'
     })
-    
     return NextResponse.json(
       { error: 'Failed to calculate privacy score' },
       { status: 500 }

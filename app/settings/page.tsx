@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {
   User,
@@ -10,10 +9,8 @@ import {
   ArrowRight
 } from 'lucide-react'
 import Link from 'next/link'
-
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { useUser } from '@/lib/react-query/hooks'
-
 interface SettingsOverviewCard {
   id: string
   title: string
@@ -21,7 +18,6 @@ interface SettingsOverviewCard {
   href: string
   icon: React.ComponentType<{ className?: string }>
 }
-
 const OVERVIEW_CARDS: SettingsOverviewCard[] = [
   {
     id: 'account',
@@ -59,10 +55,8 @@ const OVERVIEW_CARDS: SettingsOverviewCard[] = [
     icon: Shield
   }
 ]
-
 export default function SettingsPage() {
   const { data: user } = useUser()
-
   return (
     <div
       style={{
@@ -79,7 +73,6 @@ export default function SettingsPage() {
             <h1 className="text-2xl font-bold mb-2">Settings</h1>
             <p className="text-gray-400 text-sm">Manage your AXIS6 experience</p>
           </div>
-
           <div className="grid grid-cols-1 gap-4">
             {OVERVIEW_CARDS.map((card) => {
               const Icon = card.icon

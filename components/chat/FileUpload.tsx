@@ -1,18 +1,14 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, X, File, Image, Video, Music, FileText, Archive, Download, ZoomIn } from 'lucide-react'
 import React, { useCallback, useState, useRef } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { logger } from '@/lib/logger'
 import { chatStorage, ChatAttachment, FileUploadProgress } from '@/lib/supabase/chat-storage'
 import { cn } from '@/lib/utils'
-
 import { ImageLightbox } from './ImageLightbox'
-
 interface FileUploadProps {
   messageId: string
   onFileUploaded?: (attachment: ChatAttachment) => void
@@ -20,7 +16,6 @@ interface FileUploadProps {
   className?: string
   disabled?: boolean
 }
-
 interface UploadingFile {
   id: string
   file: File
@@ -29,7 +24,6 @@ interface UploadingFile {
   attachment?: ChatAttachment
   error?: string
 }
-
 export function FileUpload({
   messageId,
   onFileUploaded,
@@ -40,7 +34,6 @@ export function FileUpload({
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([])
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   const getFileIcon = (mimeType: string) => {
     if (mimeType.startsWith('image/')) return <Image className="h-4 w-4" />
     if (mimeType.startsWith('video/')) return <Video className="h-4 w-4" />
@@ -49,12 +42,9 @@ export function FileUpload({
     if (mimeType.includes('zip')) return <Archive className="h-4 w-4" />
     return <File className="h-4 w-4" />
   }
-
   const handleFiles = useCallback(async (files: FileList | File[]) => {
     if (disabled) return
-
     const fileArray = Array.from(files)
-
     // Validate files
     const validFiles = fileArray.filter(file => {
       if (file.size > 50 * 1024 * 1024) {
@@ -63,9 +53,7 @@ export function FileUpload({
       }
       return true
     })
-
     if (validFiles.length === 0) return
-
     // Create uploading file entries
     const newUploadingFiles: UploadingFile[] = validFiles.map(file => ({
       id: `${Date.now()}-${Math.random()}`,
@@ -73,9 +61,7 @@ export function FileUpload({
       progress: 0,
       status: 'uploading'
     }))
-
     setUploadingFiles(prev => [...prev, ...newUploadingFiles])
-
     // Start uploads
     for (const uploadingFile of newUploadingFiles) {
       try {
@@ -123,38 +109,31 @@ export function FileUpload({
       }
     }
   }, [messageId, onFileUploaded, onError, disabled])
-
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
   }, [])
-
   const handleDragIn = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(true)
   }, [])
-
   const handleDragOut = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
   }, [])
-
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
-
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files)
     }
   }, [handleFiles])
-
   const handleFileSelect = useCallback(() => {
     fileInputRef.current?.click()
   }, [])
-
   const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files)
@@ -162,11 +141,9 @@ export function FileUpload({
       e.target.value = ''
     }
   }, [handleFiles])
-
   const removeUploadingFile = useCallback((id: string) => {
     setUploadingFiles(prev => prev.filter(f => f.id !== id))
   }, [])
-
   return (
     <div className={cn("space-y-2", className)}>
       {/* File Input */}
@@ -178,7 +155,6 @@ export function FileUpload({
         onChange={handleFileInputChange}
         accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip"
       />
-
       {/* Drop Zone */}
       <div
         className={cn(
@@ -215,7 +191,6 @@ export function FileUpload({
           </p>
         </div>
       </div>
-
       {/* Upload Progress */}
       <AnimatePresence>
         {uploadingFiles.map((uploadingFile) => (
@@ -230,7 +205,6 @@ export function FileUpload({
               <div className="flex-shrink-0">
                 {getFileIcon(uploadingFile.file.type)}
               </div>
-
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-medium text-neutral-200 truncate">
@@ -259,21 +233,18 @@ export function FileUpload({
                     </Button>
                   </div>
                 </div>
-
                 <div className="flex items-center justify-between text-xs text-neutral-400">
                   <span>{chatStorage.constructor.formatFileSize(uploadingFile.file.size)}</span>
                   {uploadingFile.status === 'uploading' && (
                     <span>{uploadingFile.progress.toFixed(0)}%</span>
                   )}
                 </div>
-
                 {uploadingFile.status === 'uploading' && (
                   <Progress
                     value={uploadingFile.progress}
                     className="mt-2 h-1"
                   />
                 )}
-
                 {uploadingFile.status === 'error' && uploadingFile.error && (
                   <p className="mt-1 text-xs text-red-400">
                     {uploadingFile.error}
@@ -284,7 +255,6 @@ export function FileUpload({
           </motion.div>
         ))}
       </AnimatePresence>
-
       {/* Quick Upload Button */}
       <Button
         variant="outline"
@@ -299,7 +269,6 @@ export function FileUpload({
     </div>
   )
 }
-
 /**
  * File Attachment Display Component
  */
@@ -310,7 +279,6 @@ interface FileAttachmentProps {
   onClick?: () => void
   className?: string
 }
-
 export function FileAttachment({
   attachment,
   onRemove,
@@ -322,12 +290,10 @@ export function FileAttachment({
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showLightbox, setShowLightbox] = useState(false)
-
   // Load file URL for display
   React.useEffect(() => {
     if (attachment.file_type === 'image') {
       setLoading(true)
-
       // Load both full size and thumbnail
       Promise.all([
         chatStorage.getFileUrl(attachment.storage_path),
@@ -339,7 +305,6 @@ export function FileAttachment({
       }).catch(() => setLoading(false))
     }
   }, [attachment])
-
   const handleDownload = async () => {
     try {
       const url = await chatStorage.getFileUrl(attachment.storage_path)
@@ -355,7 +320,6 @@ export function FileAttachment({
       logger.error('Failed to download file:', error)
     }
   }
-
   const handleImageClick = () => {
     if (onClick) {
       onClick()
@@ -363,7 +327,6 @@ export function FileAttachment({
       setShowLightbox(true)
     }
   }
-
   return (
     <>
       <div className={cn(
@@ -410,7 +373,6 @@ export function FileAttachment({
                   </div>
                 </>
               )}
-
               {showRemove && (
                 <Button
                   variant="destructive"
@@ -425,7 +387,6 @@ export function FileAttachment({
                 </Button>
               )}
             </div>
-
             <div className="p-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-neutral-300 truncate font-medium">
@@ -455,7 +416,6 @@ export function FileAttachment({
           <div className="flex-shrink-0">
             {getFileIcon(attachment.mime_type)}
           </div>
-
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-neutral-200 truncate">
               {attachment.file_name}
@@ -464,7 +424,6 @@ export function FileAttachment({
               {chatStorage.constructor.formatFileSize(attachment.file_size)}
             </p>
           </div>
-
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
@@ -488,7 +447,6 @@ export function FileAttachment({
           </div>
         )}
       </div>
-
       {/* Image Lightbox */}
       {attachment.file_type === 'image' && imageUrl && (
         <ImageLightbox
@@ -500,7 +458,6 @@ export function FileAttachment({
       )}
     </>
   )
-
   function getFileIcon(mimeType: string) {
     if (mimeType.startsWith('image/')) return <Image className="h-4 w-4 text-blue-400" />
     if (mimeType.startsWith('video/')) return <Video className="h-4 w-4 text-purple-400" />

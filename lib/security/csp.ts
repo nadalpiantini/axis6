@@ -1,22 +1,24 @@
-import { createHash } from 'crypto'
-
+// Web Crypto API compatible functions for Edge Runtime
 /**
- * Generate a cryptographically secure nonce for CSP
+ * Generate a cryptographically secure nonce for CSP (Edge Runtime compatible)
  */
 export function generateNonce(): string {
-  return createHash('sha256')
-    .update(Math.random().toString())
-    .digest('base64')
+  const array = new Uint8Array(12)
+  crypto.getRandomValues(array)
+  return btoa(String.fromCharCode.apply(null, Array.from(array)))
+    .replace(/[+/]/g, '')
     .substring(0, 16)
 }
-
 /**
- * Generate SHA256 hash for inline scripts/styles
+ * Generate SHA256 hash for inline scripts/styles (Edge Runtime compatible)
  */
-export function generateHash(content: string): string {
-  return createHash('sha256').update(content).digest('base64')
+export async function generateHash(content: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(content)
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hash))
+  return btoa(String.fromCharCode.apply(null, hashArray))
 }
-
 /**
  * Build CSP header value with proper directives
  */
@@ -90,7 +92,6 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
     'frame-ancestors': ["'self'"],
     'upgrade-insecure-requests': isDevelopment ? [] : [''],
   }
-
   // Convert to CSP string
   return Object.entries(directives)
     .filter(([, values]) => values.length > 0)
@@ -101,22 +102,18 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
     )
     .join('; ')
 }
-
 /**
  * Middleware helper to set CSP headers
  */
 export function setCSPHeaders(response: Response, nonce?: string, isDevelopment = false): Response {
   const csp = buildCSP(nonce, isDevelopment)
-
   // Set CSP header
   response.headers.set('Content-Security-Policy', csp)
-
   // Set additional security headers
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-
   // HSTS in production only
   if (!isDevelopment) {
     response.headers.set(
@@ -124,24 +121,20 @@ export function setCSPHeaders(response: Response, nonce?: string, isDevelopment 
       'max-age=31536000; includeSubDomains; preload'
     )
   }
-
   return response
 }
-
 /**
  * Get allowed inline script hashes for common patterns
  */
-export function getInlineScriptHashes(): string[] {
+export async function getInlineScriptHashes(): Promise<string[]> {
   const commonScripts = [
     // Supabase auth helper
     'window.supabaseAuthStateSync = true;',
     // Vercel analytics
     'window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};',
   ]
-
-  return commonScripts.map(generateHash)
+  return Promise.all(commonScripts.map(generateHash))
 }
-
 /**
  * CSP violation reporting endpoint helper
  */
@@ -153,10 +146,8 @@ export interface CSPViolationReport {
   'source-file': string
   'status-code': number
 }
-
 export function logCSPViolation(report: CSPViolationReport): void {
   const { logger } = require('@/lib/logger')
-
   logger.warn('CSP Violation detected', {
     directive: report['violated-directive'],
     blockedUri: report['blocked-uri'],
@@ -164,7 +155,6 @@ export function logCSPViolation(report: CSPViolationReport): void {
     sourceFile: report['source-file'],
     lineNumber: report['line-number'],
   })
-
   // In production, send to monitoring service
   if (process.env['NODE_ENV'] === 'production') {
     // Send to error tracking service

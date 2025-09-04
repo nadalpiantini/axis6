@@ -11,7 +11,6 @@ export const theme = {
       spiritual: '#9B8AE6', // Soft Purple
       material: '#D4A574', // Muted Gold
     },
-
     // Neutral colors
     neutral: {
       50: '#FAFAFA',
@@ -26,7 +25,6 @@ export const theme = {
       900: '#18181B',
       950: '#09090B'
     },
-
     // Semantic colors
     semantic: {
       success: '#10B981',
@@ -34,7 +32,6 @@ export const theme = {
       error: '#EF4444',
       info: '#3B82F6'
     },
-
     // Glass morphism colors
     glass: {
       light: 'rgba(255, 255, 255, 0.05)',
@@ -42,7 +39,6 @@ export const theme = {
       dark: 'rgba(0, 0, 0, 0.2)'
     }
   },
-
   // Typography
   typography: {
     fontFamily: {
@@ -75,7 +71,6 @@ export const theme = {
       loose: 2
     }
   },
-
   // Spacing (4px base unit)
   spacing: {
     0: '0px',
@@ -94,7 +89,6 @@ export const theme = {
     24: '96px',
     32: '128px'
   },
-
   // Border radius
   borderRadius: {
     none: '0',
@@ -106,7 +100,6 @@ export const theme = {
     '2xl': '32px',
     full: '9999px'
   },
-
   // Shadows
   shadows: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -118,7 +111,6 @@ export const theme = {
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
     glow: '0 0 20px rgba(155, 138, 230, 0.4)'
   },
-
   // Transitions
   transitions: {
     duration: {
@@ -135,7 +127,6 @@ export const theme = {
       bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
     }
   },
-
   // Breakpoints
   breakpoints: {
     xs: '475px',
@@ -145,7 +136,6 @@ export const theme = {
     xl: '1280px',
     '2xl': '1536px'
   },
-
   // Z-index scale
   zIndex: {
     base: 0,
@@ -159,47 +149,37 @@ export const theme = {
     notification: 80
   }
 }
-
 // CSS Variables generator
 export function generateCSSVariables() {
   const cssVars: Record<string, string> = {}
-
   // Colors
   Object.entries(theme.colors.axis).forEach(([key, value]) => {
     cssVars[`--color-axis-${key}`] = value
   })
-
   Object.entries(theme.colors.neutral).forEach(([key, value]) => {
     cssVars[`--color-neutral-${key}`] = value
   })
-
   Object.entries(theme.colors.semantic).forEach(([key, value]) => {
     cssVars[`--color-${key}`] = value
   })
-
   // Spacing
   Object.entries(theme.spacing).forEach(([key, value]) => {
     cssVars[`--spacing-${key}`] = value
   })
-
   // Typography
   Object.entries(theme.typography.fontSize).forEach(([key, value]) => {
     cssVars[`--font-size-${key}`] = value
   })
-
   // Border radius
   Object.entries(theme.borderRadius).forEach(([key, value]) => {
     cssVars[`--radius-${key}`] = value
   })
-
   // Shadows
   Object.entries(theme.shadows).forEach(([key, value]) => {
     cssVars[`--shadow-${key}`] = value
   })
-
   return cssVars
 }
-
 // Utility function to apply theme classes
 export function getThemeClass(
   category: 'axis' | 'neutral' | 'semantic',
@@ -207,7 +187,6 @@ export function getThemeClass(
 ): string {
   return `var(--color-${category}-${value})`
 }
-
 // Animation variants for Framer Motion
 export const animations = {
   fadeIn: {
@@ -236,7 +215,6 @@ export const animations = {
     exit: { rotate: 180, opacity: 0 }
   }
 }
-
 // Touch target sizes for accessibility
 export const touchTargets = {
   minimum: 44, // iOS minimum

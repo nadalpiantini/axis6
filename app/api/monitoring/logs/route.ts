@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-
 import { rateLimiter } from '@/lib/rate-limit/redis'
 import { logger } from '@/lib/utils/logger'
-
 interface LogEntry {
   level: 'debug' | 'info' | 'warn' | 'error' | 'security'
   message: string
   context?: Record<string, any>
   timestamp: string
 }
-
 export async function POST(_request: NextRequest) {
   try {
     // Apply rate limiting
@@ -19,7 +16,6 @@ export async function POST(_request: NextRequest) {
       windowMs: 60 * 1000,
       keyPrefix: 'monitoring-logs'
     })
-
     if (!rateLimit.allowed) {
       return new NextResponse('Too Many Requests', {
         status: 429,
@@ -30,10 +26,8 @@ export async function POST(_request: NextRequest) {
         }
       })
     }
-
     // Parse the log entry
     const logEntry: LogEntry = await _request.json()
-
     // Validate log entry
     if (!logEntry.level || !logEntry.message) {
       return NextResponse.json(
@@ -41,7 +35,6 @@ export async function POST(_request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Log to server-side logger
     switch (logEntry.level) {
       case 'debug':
@@ -60,14 +53,11 @@ export async function POST(_request: NextRequest) {
         logger.warn(`[CLIENT SECURITY] ${logEntry.message}`, logEntry.context)
         break
     }
-
     // In production, you might want to:
     // 1. Send to external logging service (DataDog, LogRocket, etc.)
     // 2. Store in database for analysis
     // 3. Trigger alerts for critical errors
-
     return NextResponse.json({ success: true })
-
   } catch (error) {
     logger.error('Failed to process monitoring log', error as Error)
     return NextResponse.json(

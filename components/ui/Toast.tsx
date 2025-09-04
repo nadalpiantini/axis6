@@ -1,42 +1,33 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-
 export type ToastType = 'success' | 'error' | 'warning'
-
 interface ToastProps {
   message: string
   type: ToastType
   duration?: number
   onClose?: () => void
 }
-
 export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(true)
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false)
       setTimeout(() => onClose?.(), 300) // Wait for animation to complete
     }, duration)
-
     return () => clearTimeout(timer)
   }, [duration, onClose])
-
   const icons = {
     success: <CheckCircle className="w-5 h-5" />,
     error: <XCircle className="w-5 h-5" />,
     warning: <AlertCircle className="w-5 h-5" />
   }
-
   const colors = {
     success: 'bg-green-500/10 border-green-500/20 text-green-400',
     error: 'bg-red-500/10 border-red-500/20 text-red-400',
     warning: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
   }
-
   return (
     <AnimatePresence>
       {isVisible && (
@@ -70,7 +61,6 @@ export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
     </AnimatePresence>
   )
 }
-
 // Toast Manager for managing multiple toasts
 interface ToastData {
   id: string
@@ -78,26 +68,21 @@ interface ToastData {
   type: ToastType
   duration?: number
 }
-
 export function useToast() {
   const [toasts, setToasts] = useState<ToastData[]>([])
-
   const showToast = (message: string, type: ToastType = 'success', duration?: number) => {
     const id = Date.now().toString()
     setToasts(prev => [...prev, { id, message, type, duration }])
   }
-
   const removeToast = (id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id))
   }
-
   return {
     toasts,
     showToast,
     removeToast
   }
 }
-
 export function ToastContainer({ toasts, onRemove }: {
   toasts: ToastData[]
   onRemove: (id: string) => void

@@ -1,13 +1,10 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-
 interface MoodSelectorProps {
   onMoodSelect?: (mood: string) => void
   selectedMood?: string
 }
-
 const moods = [
   { id: 'terrible', emoji: '😢', label: 'Terrible', color: '#EF4444' },
   { id: 'bad', emoji: '😔', label: 'Mal', color: '#F97316' },
@@ -15,16 +12,13 @@ const moods = [
   { id: 'good', emoji: '😊', label: 'Bien', color: '#22C55E' },
   { id: 'great', emoji: '😄', label: 'Excelente', color: '#10B981' }
 ]
-
 export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelectorProps) {
   const [hoveredMood, setHoveredMood] = useState<string | null>(null)
   const [selected, setSelected] = useState(selectedMood || '')
-
   const handleMoodSelect = (moodId: string) => {
     setSelected(moodId)
     onMoodSelect?.(moodId)
   }
-
   return (
     <div className="w-full">
       <div className="text-center mb-6">
@@ -32,15 +26,13 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
           ¿Cómo te sientes hoy?
         </h3>
         <p className="text-sm text-gray-400">
-          Tu estado de ánimo es importante para tu bienestar
+          Your mood is important for your wellbeing
         </p>
       </div>
-
       <div className="flex justify-center items-center gap-4">
         {moods.map((mood, index) => {
           const isSelected = selected === mood.id
           const isHovered = hoveredMood === mood.id
-
           return (
             <motion.div
               key={mood.id}
@@ -69,7 +61,6 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
                 <span className="block transform transition-transform">
                   {mood.emoji}
                 </span>
-
                 {/* Glow effect */}
                 {isSelected && (
                   <motion.div
@@ -82,7 +73,6 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
                     }}
                   />
                 )}
-
                 {/* Pulse animation for selected */}
                 {isSelected && (
                   <motion.div
@@ -100,7 +90,6 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
                   />
                 )}
               </motion.button>
-
               {/* Label */}
               <motion.span
                 initial={{ opacity: 0 }}
@@ -119,7 +108,6 @@ export default function MoodSelector({ onMoodSelect, selectedMood }: MoodSelecto
           )
         })}
       </div>
-
       {/* Mood message */}
       {selected && (
         <motion.div

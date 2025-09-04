@@ -1,30 +1,24 @@
 'use client'
-
 import { logger } from '@/lib/utils/logger';
-
 import { Wifi, WifiOff, RotateCcw } from 'lucide-react'
 import { Component, ReactNode } from 'react'
-
 interface RealtimeErrorBoundaryState {
   hasError: boolean
   error: Error | null
   errorInfo: any
   retryCount: number
 }
-
 interface RealtimeErrorBoundaryProps {
   children: ReactNode
   fallback?: ReactNode
   onError?: (error: Error, errorInfo: any) => void
   maxRetries?: number
 }
-
 export class RealtimeErrorBoundary extends Component<
   RealtimeErrorBoundaryProps,
   RealtimeErrorBoundaryState
 > {
   private retryTimeout: NodeJS.Timeout | null = null
-
   constructor(props: RealtimeErrorBoundaryProps) {
     super(props)
     this.state = {
@@ -34,31 +28,25 @@ export class RealtimeErrorBoundary extends Component<
       retryCount: 0
     }
   }
-
   static getDerivedStateFromError(error: Error): Partial<RealtimeErrorBoundaryState> {
     return {
       hasError: true,
       error
     }
   }
-
   componentDidCatch(error: Error, errorInfo: any) {
     logger.warn('Realtime Error Boundary caught error:', error, errorInfo)
-
     this.setState({
       error,
       errorInfo
     })
-
     // Call optional error handler
     this.props.onError?.(error, errorInfo)
-
     // Auto-retry for realtime-related errors
     if (this.isRealtimeError(error) && this.state.retryCount < (this.props.maxRetries || 3)) {
       this.scheduleRetry()
     }
   }
-
   private isRealtimeError(error: Error): boolean {
     const message = error.message.toLowerCase()
     return (
@@ -68,10 +56,8 @@ export class RealtimeErrorBoundary extends Component<
       message.includes('channel')
     )
   }
-
   private scheduleRetry = () => {
     const retryDelay = Math.min(1000 * Math.pow(2, this.state.retryCount), 10000)
-
     this.retryTimeout = setTimeout(() => {
       logger.log(`Retrying realtime connection (attempt ${this.state.retryCount + 1})`)
       this.setState(prevState => ({
@@ -82,7 +68,6 @@ export class RealtimeErrorBoundary extends Component<
       }))
     }, retryDelay)
   }
-
   private handleManualRetry = () => {
     this.setState({
       hasError: false,
@@ -91,20 +76,17 @@ export class RealtimeErrorBoundary extends Component<
       retryCount: 0
     })
   }
-
   componentWillUnmount() {
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout)
     }
   }
-
   render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback
       }
-
       // Default realtime error UI
       return (
         <div className="glass rounded-xl p-4 sm:p-6 border border-yellow-500/20">
@@ -122,14 +104,12 @@ export class RealtimeErrorBoundary extends Component<
                   : 'Something went wrong. Please try refreshing the page.'
                 }
               </p>
-
               {this.state.retryCount < (this.props.maxRetries || 3) && (
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <div className="w-3 h-3 border border-gray-500 border-t-transparent rounded-full animate-spin" />
                   <span>Reconnecting... (attempt {this.state.retryCount + 1})</span>
                 </div>
               )}
-
               {this.state.retryCount >= (this.props.maxRetries || 3) && (
                 <button
                   onClick={this.handleManualRetry}
@@ -141,7 +121,6 @@ export class RealtimeErrorBoundary extends Component<
               )}
             </div>
           </div>
-
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details className="mt-3 text-xs">
               <summary className="text-gray-500 cursor-pointer hover:text-gray-400">
@@ -156,11 +135,9 @@ export class RealtimeErrorBoundary extends Component<
         </div>
       )
     }
-
     return this.props.children
   }
 }
-
 // HOC for easy wrapping of realtime components
 export function withRealtimeErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
@@ -179,8 +156,6 @@ export function withRealtimeErrorBoundary<P extends object>(
       <Component {...props} />
     </RealtimeErrorBoundary>
   )
-
   WrappedComponent.displayName = `withRealtimeErrorBoundary(${Component.displayName || Component.name})`
-
   return WrappedComponent
 }

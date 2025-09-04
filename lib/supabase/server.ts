@@ -1,17 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-
+import { NextRequest } from 'next/server'
 export async function createClient() {
   const cookieStore = await cookies()
-
   // Use consistent bracket notation for environment variables
   const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
   const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
-
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Missing Supabase environment variables')
   }
-
   return createServerClient(
     supabaseUrl,
     supabaseAnonKey,
@@ -49,6 +46,50 @@ export async function createClient() {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+      },
+    }
+  )
+}
+
+/**
+ * Edge Runtime compatible Supabase client factory
+ * Works with NextRequest instead of cookies() function
+ */
+export function createEdgeClient(request: NextRequest) {
+  const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
+  const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        getAll() {
+          const cookieHeader = request.headers.get('cookie')
+          if (!cookieHeader) return []
+          
+          return cookieHeader
+            .split(';')
+            .map(cookie => {
+              const [name, value] = cookie.trim().split('=')
+              return { name, value: value || '' }
+            })
+            .filter(cookie => cookie.name)
+        },
+        setAll(cookiesToSet) {
+          // In Edge Runtime, we can't set cookies directly
+          // They need to be set in the response
+          // This is handled by the middleware or API route
+        },
+      },
+      auth: {
+        persistSession: false, // Edge Runtime doesn't persist sessions
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
       },
     }
   )

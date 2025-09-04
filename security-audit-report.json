@@ -1,13 +1,13 @@
 {
-  "timestamp": "2025-08-26T14:48:48.869Z",
+  "timestamp": "2025-08-30T02:45:50.352Z",
   "securityScore": 100,
   "summary": {
-    "vulnerabilities": 35,
-    "warnings": 33,
-    "critical": 14,
+    "vulnerabilities": 42,
+    "warnings": 53,
+    "critical": 20,
     "high": 3,
     "medium": 6,
-    "low": 12
+    "low": 13
   },
   "vulnerabilities": [
     {
@@ -56,6 +56,12 @@
       "type": "error_info_leakage",
       "severity": "low",
       "description": "Potential error information leakage in my-day/stats/route.ts",
+      "fix": "Sanitize error messages before sending to client"
+    },
+    {
+      "type": "error_info_leakage",
+      "severity": "low",
+      "description": "Potential error information leakage in micro-wins/route.ts",
       "fix": "Sanitize error messages before sending to client"
     },
     {
@@ -175,7 +181,37 @@
     {
       "type": "hardcoded_secret",
       "severity": "critical",
+      "description": "Potential hardcoded secret in app/api/settings/privacy/route.ts",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in app/api/settings/security/route.ts",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in app/settings/security/page.tsx",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
       "description": "Potential hardcoded secret in lib/supabase/database.types.ts",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/auth-debug.js",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
+      "description": "Potential hardcoded secret in scripts/auth-diagnostic.js",
       "fix": "Move secrets to environment variables"
     },
     {
@@ -217,6 +253,12 @@
     {
       "type": "hardcoded_secret",
       "severity": "critical",
+      "description": "Potential hardcoded secret in tests/e2e/plan-my-day.spec.ts",
+      "fix": "Move secrets to environment variables"
+    },
+    {
+      "type": "hardcoded_secret",
+      "severity": "critical",
       "description": "Potential hardcoded secret in tests/e2e/user-journey.spec.ts",
       "fix": "Move secrets to environment variables"
     }
@@ -226,6 +268,16 @@
       "type": "sql_injection_risk",
       "description": "Potential SQL injection risk in test/route.ts",
       "fix": "Use parameterized queries"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in chat-realtime.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
+    },
+    {
+      "type": "rls_not_enforced",
+      "description": "RLS not explicitly enforced in chat-storage.ts",
+      "fix": "Ensure Row Level Security is enabled on all tables"
     },
     {
       "type": "rls_not_enforced",
@@ -260,6 +312,31 @@
     {
       "type": "missing_input_validation",
       "description": "No input validation detected in streaks/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in settings/user-preferences/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in settings/security/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in settings/privacy/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in settings/notifications/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in settings/axis-customization/route.ts",
       "fix": "Add input validation using Zod or similar"
     },
     {
@@ -323,8 +400,73 @@
       "fix": "Add authentication verification for protected endpoints"
     },
     {
+      "type": "no_auth_check",
+      "description": "No authentication check in constellation/route.ts",
+      "fix": "Add authentication verification for protected endpoints"
+    },
+    {
       "type": "missing_input_validation",
       "description": "No input validation detected in checkins/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/search/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/participants/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/participants/[userId]/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/messages/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/messages/[messageId]/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/rooms/[roomId]/messages/[messageId]/reactions/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/mentions/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/attachments/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/attachments/[id]/route.ts",
+      "fix": "Add input validation using Zod or similar"
+    },
+    {
+      "type": "missing_input_validation",
+      "description": "No input validation detected in chat/analytics/route.ts",
       "fix": "Add input validation using Zod or similar"
     },
     {

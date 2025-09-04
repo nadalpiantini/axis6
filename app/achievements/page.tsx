@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {Trophy,
   Star,
@@ -10,10 +9,8 @@ import {Trophy,
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
-
 interface Achievement {
   id: string
   title: string
@@ -25,30 +22,23 @@ interface Achievement {
   progress: number
   maxProgress: number
 }
-
 export default function AchievementsPage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
   const { data: streaks = [] } = useStreaks(user?.id || '')
   const { data: checkins = [] } = useTodayCheckins(user?.id || '')
-
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     if (!user || userLoading) return
-
     const generateAchievements = () => {
       const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0
         ? Math.max(...streaks.map(s => s?.current_streak || 0))
         : 0
-
       const longestStreak = streaks && Array.isArray(streaks) && streaks.length > 0
         ? Math.max(...streaks.map(s => s?.longest_streak || 0))
         : 0
-
       const totalCheckins = checkins && Array.isArray(checkins) ? checkins.length : 0
-
       const achievementsList: Achievement[] = [
         // Streak Achievements
         {
@@ -113,14 +103,11 @@ export default function AchievementsPage() {
           maxProgress: 50
         }
       ]
-
       setAchievements(achievementsList)
       setLoading(false)
     }
-
     generateAchievements()
   }, [user, userLoading, streaks, checkins])
-
   // Handle loading state
   if (userLoading || loading) {
     return (
@@ -132,7 +119,6 @@ export default function AchievementsPage() {
       </div>
     )
   }
-
   // Only redirect after all loading is complete and we know there's no user
   if (!user) {
     // Use setTimeout to avoid navigation during render
@@ -148,11 +134,9 @@ export default function AchievementsPage() {
       </div>
     )
   }
-
   const unlockedAchievements = achievements.filter(a => a.unlocked)
   const lockedAchievements = achievements.filter(a => !a.unlocked)
   const completionRate = achievements.length > 0 ? Math.round((unlockedAchievements.length / achievements.length) * 100) : 0
-
   return (
     <div data-testid="achievements-page" className="min-h-screen text-white">
       {/* Header */}
@@ -165,14 +149,12 @@ export default function AchievementsPage() {
         backUrl="/dashboard"
         currentStreak={streaks && Array.isArray(streaks) && streaks.length > 0 ? Math.max(...streaks.map(s => s?.current_streak || 0)) : 0}
       />
-
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Page Title */}
         <div className="mb-8">
           <h1 data-testid="achievements-title" className="text-3xl font-bold mb-2">Achievements</h1>
           <p className="text-gray-400">Track your progress and unlock rewards</p>
         </div>
-
         {/* Stats Overview */}
         <div data-testid="achievements-stats" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div data-testid="unlocked-count-card" className="glass rounded-2xl p-6">
@@ -184,7 +166,6 @@ export default function AchievementsPage() {
               </div>
             </div>
           </div>
-
           <div data-testid="completion-rate-card" className="glass rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <Target className="w-8 h-8 text-purple-400" />
@@ -194,7 +175,6 @@ export default function AchievementsPage() {
               </div>
             </div>
           </div>
-
           <div data-testid="total-count-card" className="glass rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <Star className="w-8 h-8 text-blue-400" />
@@ -205,7 +185,6 @@ export default function AchievementsPage() {
             </div>
           </div>
         </div>
-
         {/* Progress Bar */}
         <div data-testid="overall-progress" className="glass rounded-2xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -222,7 +201,6 @@ export default function AchievementsPage() {
             />
           </div>
         </div>
-
         {/* Achievements Grid */}
         <div data-testid="achievements-grid" className="space-y-6">
           {/* Unlocked Achievements */}
@@ -264,7 +242,6 @@ export default function AchievementsPage() {
               </div>
             </div>
           )}
-
           {/* Locked Achievements */}
           {lockedAchievements.length > 0 && (
             <div data-testid="locked-achievements-section">
@@ -306,7 +283,6 @@ export default function AchievementsPage() {
               </div>
             </div>
           )}
-
           {/* No achievements yet */}
           {achievements.length === 0 && (
             <div data-testid="no-achievements" className="text-center py-12">

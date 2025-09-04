@@ -1,14 +1,11 @@
 'use client'
-
 import { useState, useEffect, useCallback } from 'react'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface CSRFState {
   token: string | null
   isLoading: boolean
   error: string | null
 }
-
 /**
  * Custom hook for managing CSRF tokens in the client
  */
@@ -18,36 +15,29 @@ export function useCSRF() {
     isLoading: false,
     error: null
   })
-
   /**
    * Fetches a new CSRF token from the server
    */
   const fetchToken = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
-
     try {
       const response = await fetch('/api/csrf', {
         method: 'GET',
         credentials: 'include' // Important for cookies
       })
-
       if (!response.ok) {
         throw new Error('Failed to fetch CSRF token')
       }
-
       const data = await response.json()
-
       setState({
         token: data.token,
         isLoading: false,
         error: null
       })
-
       // Store token in sessionStorage for easy access
       if (typeof window !== 'undefined' && data.token) {
         sessionStorage.setItem('csrf-token', data.token)
       }
-
       return data.token
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
@@ -59,7 +49,6 @@ export function useCSRF() {
       return null
     }
   }, [])
-
   /**
    * Gets the token from sessionStorage or fetches a new one
    */
@@ -71,11 +60,9 @@ export function useCSRF() {
         return storedToken
       }
     }
-
     // If no stored token, fetch a new one
     return fetchToken()
   }, [fetchToken])
-
   /**
    * Refreshes the CSRF token
    */
@@ -84,27 +71,22 @@ export function useCSRF() {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('csrf-token')
     }
-
     // Fetch new token
     return fetchToken()
   }, [fetchToken])
-
   /**
    * Helper function to add CSRF token to fetch headers
    */
   const getHeaders = useCallback(async (additionalHeaders: HeadersInit = {}): Promise<HeadersInit> => {
     const token = await getToken()
-
     if (!token) {
       throw new Error('No CSRF token available')
     }
-
     return {
       ...additionalHeaders,
       'x-csrf-token': token
     }
   }, [getToken])
-
   /**
    * Wrapper for fetch with automatic CSRF token inclusion
    */
@@ -116,21 +98,26 @@ export function useCSRF() {
     if (!options.method || options.method.toUpperCase() === 'GET') {
       return fetch(url, options)
     }
-
+    
+    // In development mode, if CSRF is disabled, use regular fetch
+    if (process.env.NODE_ENV === 'development' && !state.token) {
+      return fetch(url, {
+        ...options,
+        credentials: 'include' // Always include cookies
+      })
+    }
+    
     const headers = await getHeaders(options.headers || {})
-
     return fetch(url, {
       ...options,
       headers,
       credentials: 'include' // Always include cookies
     })
-  }, [getHeaders])
-
+  }, [getHeaders, state.token])
   // Fetch token on mount
   useEffect(() => {
     getToken()
   }, [getToken])
-
   return {
     token: state.token,
     isLoading: state.isLoading,
@@ -140,7 +127,6 @@ export function useCSRF() {
     secureFetch
   }
 }
-
 /**
  * Example usage in a component:
  *

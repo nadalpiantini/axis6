@@ -28,7 +28,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          category_id: number
+          category_id: string
           completed_at: string
           mood: number | null
           notes: string | null
@@ -37,7 +37,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          category_id: number
+          category_id: string
           completed_at?: string
           mood?: number | null
           notes?: string | null
@@ -46,7 +46,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          category_id?: number
+          category_id?: string
           completed_at?: string
           mood?: number | null
           notes?: string | null
@@ -57,7 +57,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          category_id: number
+          category_id: string
           current_streak: number
           longest_streak: number
           last_checkin: string | null
@@ -67,7 +67,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          category_id: number
+          category_id: string
           current_streak?: number
           longest_streak?: number
           last_checkin?: string | null
@@ -77,7 +77,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          category_id?: number
+          category_id?: string
           current_streak?: number
           longest_streak?: number
           last_checkin?: string | null

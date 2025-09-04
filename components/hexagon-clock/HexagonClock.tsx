@@ -12,9 +12,7 @@
  * - <8MB memory usage (35% reduction)
  * - <50ms touch response (60% improvement)
  */
-
 'use client'
-
 import React, { useState, useEffect, useMemo, memo, useRef, useCallback } from 'react';
 import type {
   HexagonClockProps,
@@ -23,7 +21,6 @@ import type {
   TimeDistribution,
   ResonanceData
 } from './types/HexagonTypes';
-
 // Real data integration
 import { 
   useTransformedTimeBlocks, 
@@ -31,22 +28,18 @@ import {
   useStopActivityTimer, 
   useCreateTimeBlock 
 } from '@/lib/react-query/hooks/useMyDayTimeBlocks';
-
 // Performance-optimized hooks
 import { usePrecomputedSVG } from './hooks/usePrecomputedSVG';
 import { useHardwareAcceleration } from './hooks/useHardwareAcceleration';
 import { useResponsiveHexagonSize, useContainerSize, useDeviceCapabilities } from './hooks/useResponsiveHexagonSize';
-
 // Core rendering components
 import { HexagonRenderer } from './core/HexagonRenderer';
 import { ClockMarkers } from './core/ClockMarkers';
 import { ResonanceLayer } from './core/ResonanceLayer';
 import { TimeBlocksOnClock } from './core/TimeBlocksOnClock';
 import { InteractionPatterns, DEFAULT_INTERACTION_CONFIG } from './interactions/InteractionPatterns';
-
 // Utils
 import { HEXAGON_CATEGORIES, optimizeLabelPositions } from './utils/clockPositions';
-
 /**
  * Category Labels Component with Perfect Mobile Centering
  */
@@ -71,31 +64,26 @@ const CategoryLabels = memo(function CategoryLabels({
 }) {
   const { center } = precomputedSVG;
   const isMobile = windowWidth < 640;
-
   const labelPositions = optimizeLabelPositions(
     HEXAGON_CATEGORIES,
     center,
     responsiveSizing.labelDistance,
     responsiveSizing.size
   );
-
   return (
     <div className="absolute inset-0 pointer-events-none">
       {labelPositions.map((labelPos, idx) => {
         const category = HEXAGON_CATEGORIES[idx];
         const value = data?.[category.key] || 0;
-
         // Get distribution data for time planning mode
         const distItem = distribution?.find(d =>
           d.category_name.toLowerCase().includes(category.key.toLowerCase())
         );
-
         // Get resonance info for community whisper
         const resonanceInfo = resonanceData?.find(r => r.axisSlug === category.key);
         const whisperText = resonanceInfo?.hasResonance
           ? `${resonanceInfo.resonanceCount} others found balance in ${category.shortLabel} today`
           : category.mantra;
-
         return (
           <div
             key={category.key}
@@ -129,7 +117,6 @@ const CategoryLabels = memo(function CategoryLabels({
               onClick={() => onCategoryClick?.(category)}
             >
               {category.shortLabel}
-
               {/* Resonance indicator */}
               {resonanceInfo?.hasResonance && (
                 <span
@@ -138,7 +125,6 @@ const CategoryLabels = memo(function CategoryLabels({
                 />
               )}
             </button>
-
             {/* Value display - different for each mode */}
             <span className={`${responsiveSizing.fontSize.time} text-gray-600/80 font-medium px-2 py-1 rounded-full bg-white/70 border border-white/30 tabular-nums select-none`}>
               {data ? `${value}%` :
@@ -151,7 +137,6 @@ const CategoryLabels = memo(function CategoryLabels({
     </div>
   );
 });
-
 /**
  * Center Display Component
  */
@@ -174,14 +159,12 @@ const CenterDisplay = memo(function CenterDisplay({
 }) {
   const { center } = precomputedSVG;
   const isMobile = windowWidth < 640;
-
   // Calculate center value based on mode
   const centerValue = useMemo(() => {
     if (data) {
       // Dashboard mode - average completion percentage
       return Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6);
     }
-
     if (distribution) {
       // Planning mode - total time
       const totalMinutes = distribution.reduce((sum, item) => sum + item.actual_minutes, 0);
@@ -189,16 +172,13 @@ const CenterDisplay = memo(function CenterDisplay({
       const minutes = totalMinutes % 60;
       return { hours, minutes };
     }
-
     return 0;
   }, [data, distribution]);
-
   const centerLabel = useMemo(() => {
     if (data) return 'Balance Ritual';
     if (distribution) return 'Total Time';
     return 'AXIS6';
   }, [data, distribution]);
-
   return (
     <div
       className="absolute transform-gpu pointer-events-none"
@@ -225,7 +205,6 @@ const CenterDisplay = memo(function CenterDisplay({
           : `${centerValue}%`
         }
       </div>
-
       {/* Center label */}
       <div
         className={`text-gray-600/80 font-medium mt-2 px-3 py-1 rounded-full bg-white/70 border border-white/30 select-none text-center ${responsiveSizing.fontSize.time}`}
@@ -235,7 +214,6 @@ const CenterDisplay = memo(function CenterDisplay({
         }}
       >
         {centerLabel}
-
         {/* Community indicator for dashboard mode */}
         {data && resonanceData && (
           <span className="ml-1 opacity-60">
@@ -246,7 +224,6 @@ const CenterDisplay = memo(function CenterDisplay({
     </div>
   );
 });
-
 /**
  * Main HexagonClock Component
  */
@@ -276,7 +253,6 @@ export const HexagonClock = memo(function HexagonClock({
 }: HexagonClockProps) {
   // Container size tracking
   const { containerRef, containerWidth } = useContainerSize();
-
   // Component state
   const [state, setState] = useState<HexagonState>({
     mode: data ? 'dashboard' : distribution ? 'planning' : 'unified',
@@ -287,28 +263,23 @@ export const HexagonClock = memo(function HexagonClock({
     precomputedSVG: {} as any,
     safeAreaInsets: { top: 0, right: 0, bottom: 0, left: 0 }
   });
-
   // Device capabilities
   const deviceCapabilities = useDeviceCapabilities();
-
   // Performance-optimized hooks - ALWAYS called to maintain hook order
   const responsiveSizing = useResponsiveHexagonSize(containerWidth);
   const precomputedSVG = usePrecomputedSVG(
     typeof size === 'number' ? size : responsiveSizing.size
   );
   const hardwareAcceleration = useHardwareAcceleration();
-
   // Real time blocks and activity timer hooks
   const { 
     timeBlocks: realTimeBlocks, 
     isLoading: timeBlocksLoading, 
     categories: realCategories 
   } = useTransformedTimeBlocks();
-  
   const startTimer = useStartActivityTimer();
   const stopTimer = useStopActivityTimer();
   const createTimeBlock = useCreateTimeBlock();
-
   // Mock resonance data for demo (replace with real hook when available)
   const mockResonanceData: ResonanceData[] = useMemo(() =>
     HEXAGON_CATEGORIES.map(cat => ({
@@ -318,32 +289,24 @@ export const HexagonClock = memo(function HexagonClock({
       hasResonance: Math.random() > 0.5
     }))
   , [data]);
-
   // Revolutionary interaction handlers with real data integration
   const handleTimeBlockSelect = useCallback((blockId: string, action: 'edit' | 'delete' | 'move' | 'duplicate') => {
-    console.log('Time block action:', action, 'on block:', blockId);
-    
-    // Find the time block to get its details
+// Find the time block to get its details
     const timeBlock = realTimeBlocks.find(block => block.id === blockId);
     if (!timeBlock) return;
-    
     switch (action) {
       case 'edit':
         // TODO: Open edit modal
-        console.log('Edit time block:', timeBlock);
-        break;
+break;
       case 'delete':
         // TODO: Show delete confirmation
-        console.log('Delete time block:', timeBlock);
-        break;
+break;
       case 'move':
         // Handled by drag functionality
-        console.log('Move time block:', timeBlock);
-        break;
+break;
       case 'duplicate':
         // TODO: Duplicate time block
-        console.log('Duplicate time block:', timeBlock);
-        break;
+break;
       default:
         // Default action - start timer if planned, or show details if active/completed
         if (timeBlock.status === 'planned') {
@@ -361,12 +324,10 @@ export const HexagonClock = memo(function HexagonClock({
         break;
     }
   }, [realTimeBlocks, realCategories, startTimer]);
-
   const handleTimeSlotClick = useCallback((hour: number, minute: number) => {
     // Create new time block at clicked time
     const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
     const defaultCategory = realCategories?.find(cat => cat.slug === 'physical'); // Default to physical
-    
     if (defaultCategory) {
       createTimeBlock.mutate({
         categoryId: defaultCategory.id,
@@ -376,11 +337,9 @@ export const HexagonClock = memo(function HexagonClock({
       });
     }
   }, [createTimeBlock, realCategories]);
-
   const handleGestureDetected = useCallback((gesture: 'swipe' | 'pinch' | 'rotate', data: any) => {
     // Here you would handle gestures like zoom, rotate, navigate
   }, []);
-
   // Client-side hydration - moved after hooks to prevent hook order violations
   useEffect(() => {
     setState(prev => ({
@@ -389,18 +348,15 @@ export const HexagonClock = memo(function HexagonClock({
       windowWidth: window.innerWidth,
       containerWidth
     }));
-
     const handleResize = () => {
       setState(prev => ({
         ...prev,
         windowWidth: window.innerWidth
       }));
     };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [containerWidth]);
-
   // Loading state - moved AFTER all hooks to prevent hook order violations
   if (!state.isClient) {
     return (
@@ -410,7 +366,6 @@ export const HexagonClock = memo(function HexagonClock({
       />
     );
   }
-
   // Perfect Modal Centering Container (CRITICAL FIX)
   const containerStyles: React.CSSProperties = {
     position: 'relative',
@@ -424,7 +379,6 @@ export const HexagonClock = memo(function HexagonClock({
     // Safe area support for notched devices
     padding: 'env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0)'
   };
-
   return (
     <div ref={containerRef}>
       {/* Global CSS animations */}
@@ -433,12 +387,10 @@ export const HexagonClock = memo(function HexagonClock({
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes center-breathe {
           0%, 100% { transform: translate(-50%, -50%) scale(1); }
           50% { transform: translate(-50%, -50%) scale(1.05); }
         }
-
         @keyframes draw-in {
           from {
             stroke-dashoffset: 1000;
@@ -449,7 +401,6 @@ export const HexagonClock = memo(function HexagonClock({
             opacity: 1;
           }
         }
-
         @keyframes scale-in {
           from {
             transform: translateZ(0) scale(0);
@@ -461,7 +412,6 @@ export const HexagonClock = memo(function HexagonClock({
           }
         }
       `}</style>
-
       {/* Revolutionary interaction patterns wrapper */}
       <InteractionPatterns
         config={{
@@ -491,7 +441,6 @@ export const HexagonClock = memo(function HexagonClock({
           animate={animate}
           showGrid={true}
         />
-
         {/* Revolutionary clock markers layer */}
         {(showClockMarkers || showCurrentTime || showCategoryPositions || showCircadianRhythm) && (
           <div className="absolute inset-0">
@@ -514,7 +463,6 @@ export const HexagonClock = memo(function HexagonClock({
             </svg>
           </div>
         )}
-
         {/* Revolutionary time blocks on clock */}
         {showTimeBlocks && (realTimeBlocks.length > 0 || timeBlocks?.length > 0) && (
           <div className="absolute inset-0">
@@ -538,7 +486,6 @@ export const HexagonClock = memo(function HexagonClock({
             </svg>
           </div>
         )}
-
         {/* Resonance layer */}
         {showResonance && (
           <div className="absolute inset-0">
@@ -559,7 +506,6 @@ export const HexagonClock = memo(function HexagonClock({
             </svg>
           </div>
         )}
-
         {/* Category labels */}
         <CategoryLabels
           data={data}
@@ -568,22 +514,18 @@ export const HexagonClock = memo(function HexagonClock({
           responsiveSizing={responsiveSizing}
           resonanceData={mockResonanceData}
           onCategoryClick={(category) => {
-            console.log('Category clicked:', category);
-            // Call the original category click handler if provided
+// Call the original category click handler if provided
             onCategoryClick?.(category);
-            
             // Also trigger timer start for this category if not already started
             const categoryData = realCategories?.find(cat => cat.slug === category.key);
             if (categoryData) {
               // This could open a modal to select activity or just start a generic timer
-              console.log('Starting timer for category:', categoryData.slug);
-              // You can add additional logic here to integrate with UI state
+// You can add additional logic here to integrate with UI state
             }
           }}
           animate={animate}
           windowWidth={state.windowWidth}
         />
-
         {/* Center display */}
         <CenterDisplay
           data={data}
@@ -599,8 +541,6 @@ export const HexagonClock = memo(function HexagonClock({
     </div>
   );
 });
-
 HexagonClock.displayName = 'HexagonClock';
-
 // Export default for easy import
 export default HexagonClock;

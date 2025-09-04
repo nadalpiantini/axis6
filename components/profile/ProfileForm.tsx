@@ -1,11 +1,9 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Save } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import { DatePicker } from "@/components/ui/date-picker"
 import {
   Form,
@@ -27,7 +25,6 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { profileFormSchema, type ProfileFormData, timezoneOptions } from "@/lib/validation/profile"
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface ProfileFormProps {
   userId: string
@@ -35,7 +32,6 @@ interface ProfileFormProps {
   onSuccess?: () => void
   onCancel?: () => void
 }
-
 export function ProfileForm({ userId, initialData, onSuccess, onCancel }: ProfileFormProps) {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
@@ -51,20 +47,16 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
       birthday: initialData?.birthday,
     },
   })
-
   const { handleSubmit, formState: { isSubmitting } } = form
-
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const supabase = createClient()
-
       // Convert birthday to ISO string if provided
       const formattedData = {
         ...data,
         birthday: data.birthday ? data.birthday.toISOString() : null,
         updated_at: new Date().toISOString(),
       }
-
       const { error } = await supabase
         .from('axis6_profiles')
         .upsert({
@@ -73,22 +65,17 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
         }, {
           onConflict: 'id'
         })
-
       if (error) throw error
-
       toast.success("Profile updated successfully!")
       onSuccess?.()
     } catch (error) {
       handleError(error, {
       operation: 'profile_operation', component: 'ProfileForm',
-
         userMessage: 'Profile operation failed. Please try again.'
-
       })
       toast.error("Failed to update profile. Please try again.")
     }
   }
-
   return (
     <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -111,7 +98,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
                 </FormItem>
               )}
             />
-
             {/* Email Field */}
             <FormField
               control={form.control}
@@ -131,7 +117,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
                 </FormItem>
               )}
             />
-
             {/* Phone Field */}
             <FormField
               control={form.control}
@@ -154,7 +139,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
                 </FormItem>
               )}
             />
-
             {/* Birthday Field */}
             <FormField
               control={form.control}
@@ -176,7 +160,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
                 </FormItem>
               )}
             />
-
             {/* Location Field */}
             <FormField
               control={form.control}
@@ -198,7 +181,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
                 </FormItem>
               )}
             />
-
             {/* Timezone Field */}
             <FormField
               control={form.control}
@@ -228,7 +210,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
               )}
             />
           </div>
-
           {/* Bio Field */}
           <FormField
             control={form.control}
@@ -251,7 +232,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
               </FormItem>
             )}
           />
-
           {/* About Field */}
           <FormField
             control={form.control}
@@ -274,7 +254,6 @@ export function ProfileForm({ userId, initialData, onSuccess, onCancel }: Profil
               </FormItem>
             )}
           />
-
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
             {onCancel && (

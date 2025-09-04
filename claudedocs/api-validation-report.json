@@ -1,0 +1,445 @@
+{
+  "timestamp": "2025-08-30T03:02:21.953Z",
+  "summary": {
+    "total": 33,
+    "success": 0,
+    "failed": 33,
+    "critical_failed": 12,
+    "auth_blocked": 0,
+    "server_errors": 0,
+    "not_found": 0,
+    "details": [
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/csp-report",
+        "method": "POST",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/auth/test",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/auth/login",
+        "method": "POST",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/auth/register",
+        "method": "POST",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/auth/user",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/auth/logout",
+        "method": "POST",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/categories",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/checkins",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/checkins",
+        "method": "POST",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/streaks",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/analytics",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/my-day/stats",
+        "method": "GET",
+        "error": "",
+        "critical": true,
+        "success": false
+      },
+      {
+        "path": "/api/settings/privacy",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/settings/security",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/settings/notifications",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/settings/axis-customization",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/settings/user-preferences",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/mantras/daily",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/time-blocks",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/activity-timer",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/micro-wins",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/ai/recommendations",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/constellation",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/hex-reactions",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/resonance/hexagon",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/resonance/streaks",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/chat/rooms",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/chat/search",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/chat/analytics",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/monitoring",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/admin/rate-limit-stats",
+        "method": "GET",
+        "error": "",
+        "critical": false,
+        "success": false
+      },
+      {
+        "path": "/api/email/test",
+        "method": "POST",
+        "error": "",
+        "critical": false,
+        "success": false
+      }
+    ]
+  },
+  "endpoints": [
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "auth": false,
+      "critical": true
+    },
+    {
+      "path": "/api/csp-report",
+      "method": "POST",
+      "auth": false,
+      "critical": false
+    },
+    {
+      "path": "/api/auth/test",
+      "method": "GET",
+      "auth": false,
+      "critical": true
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "auth": false,
+      "critical": true
+    },
+    {
+      "path": "/api/auth/register",
+      "method": "POST",
+      "auth": false,
+      "critical": true
+    },
+    {
+      "path": "/api/auth/user",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/auth/logout",
+      "method": "POST",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/categories",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/checkins",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/checkins",
+      "method": "POST",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/streaks",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/analytics",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/my-day/stats",
+      "method": "GET",
+      "auth": true,
+      "critical": true
+    },
+    {
+      "path": "/api/settings/privacy",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/settings/security",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/settings/notifications",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/settings/axis-customization",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/settings/user-preferences",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/mantras/daily",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/time-blocks",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/activity-timer",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/micro-wins",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/ai/recommendations",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/constellation",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/hex-reactions",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/resonance/hexagon",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/resonance/streaks",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/chat/rooms",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/chat/search",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/chat/analytics",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/monitoring",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/admin/rate-limit-stats",
+      "method": "GET",
+      "auth": true,
+      "critical": false
+    },
+    {
+      "path": "/api/email/test",
+      "method": "POST",
+      "auth": false,
+      "critical": false
+    }
+  ]
+}

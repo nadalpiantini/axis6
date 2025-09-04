@@ -1,15 +1,12 @@
 'use client'
-
 import { formatDistanceToNow, format } from 'date-fns'
 import { motion } from 'framer-motion'
 import { Search, MessageSquare, Calendar, User, Filter, ArrowUpDown } from 'lucide-react'
 import React, { useState } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { SearchResult, SearchStats } from '@/lib/services/message-search'
 import { cn } from '@/lib/utils'
-
 interface SearchResultsProps {
   results: SearchResult[]
   stats: SearchStats | null
@@ -18,9 +15,7 @@ interface SearchResultsProps {
   onResultSelect?: (result: SearchResult) => void
   className?: string
 }
-
 type SortOption = 'relevance' | 'date_desc' | 'date_asc'
-
 export function SearchResults({
   results,
   stats,
@@ -31,7 +26,6 @@ export function SearchResults({
 }: SearchResultsProps) {
   const [sortBy, setSortBy] = useState<SortOption>('relevance')
   const [groupByRoom, setGroupByRoom] = useState(false)
-
   const sortedResults = React.useMemo(() => {
     const sorted = [...results].sort((a, b) => {
       switch (sortBy) {
@@ -45,7 +39,6 @@ export function SearchResults({
           return 0
       }
     })
-
     if (groupByRoom) {
       const grouped = sorted.reduce((acc, result) => {
         const roomId = result.room.id
@@ -55,16 +48,12 @@ export function SearchResults({
         acc[roomId].push(result)
         return acc
       }, {} as Record<string, SearchResult[]>)
-
       return Object.entries(grouped).flatMap(([roomId, roomResults]) => roomResults)
     }
-
     return sorted
   }, [results, sortBy, groupByRoom])
-
   const groupedResults = React.useMemo(() => {
     if (!groupByRoom) return null
-
     return sortedResults.reduce((acc, result) => {
       const roomId = result.room.id
       if (!acc[roomId]) {
@@ -77,25 +66,19 @@ export function SearchResults({
       return acc
     }, {} as Record<string, { room: SearchResult['room']; results: SearchResult[] }>)
   }, [sortedResults, groupByRoom])
-
   const handleResultClick = (result: SearchResult) => {
     onResultSelect?.(result)
   }
-
   const highlightQuery = (text: string) => {
     if (!query.trim()) return text
-
     const terms = query.trim().split(/\s+/).filter(term => term.length > 1)
     let highlighted = text
-
     terms.forEach(term => {
       const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
       highlighted = highlighted.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>')
     })
-
     return highlighted
   }
-
   if (isLoading) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
@@ -106,7 +89,6 @@ export function SearchResults({
       </div>
     )
   }
-
   if (results.length === 0) {
     return (
       <div className={cn("text-center py-12", className)}>
@@ -120,7 +102,6 @@ export function SearchResults({
       </div>
     )
   }
-
   return (
     <div className={cn("space-y-4", className)}>
       {/* Stats and Controls */}
@@ -138,7 +119,6 @@ export function SearchResults({
             </div>
           )}
         </div>
-
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -152,7 +132,6 @@ export function SearchResults({
             <MessageSquare className="h-4 w-4 mr-2" />
             Group by Room
           </Button>
-
           <div className="flex items-center gap-1 bg-neutral-800 rounded-lg p-1">
             <Button
               variant="ghost"
@@ -190,7 +169,6 @@ export function SearchResults({
           </div>
         </div>
       </div>
-
       {/* Results */}
       {groupByRoom && groupedResults ? (
         // Grouped by room view
@@ -204,7 +182,6 @@ export function SearchResults({
                   {roomResults.length} results
                 </Badge>
               </div>
-
               <div className="space-y-2">
                 {roomResults.map((result, index) => (
                   <SearchResultItem
@@ -236,14 +213,12 @@ export function SearchResults({
     </div>
   )
 }
-
 interface SearchResultItemProps {
   result: SearchResult
   query: string
   onClick: (result: SearchResult) => void
   highlightQuery: (text: string) => string
 }
-
 function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResultItemProps) {
   return (
     <motion.button
@@ -260,7 +235,6 @@ function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResu
             </span>
           </div>
         </div>
-
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
             <span className="font-medium text-white">
@@ -279,7 +253,6 @@ function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResu
               {(result.match_rank * 100).toFixed(0)}% match
             </Badge>
           </div>
-
           <div
             className="text-sm text-neutral-300 leading-relaxed"
             dangerouslySetInnerHTML={{
@@ -287,7 +260,6 @@ function SearchResultItem({ result, query, onClick, highlightQuery }: SearchResu
             }}
           />
         </div>
-
         <div className="flex-shrink-0">
           <ArrowUpDown className="h-4 w-4 text-neutral-500" />
         </div>

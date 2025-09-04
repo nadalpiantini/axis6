@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -7,8 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Activity, Brain, Heart, Users, Sparkles, Briefcase, Clock, Star, TrendingUp } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
+import { useCSRF } from '@/lib/hooks/useCSRF'
 interface MicroWin {
   id: string
   userId: string
@@ -22,11 +21,9 @@ interface MicroWin {
   createdAt: string
   userReacted: boolean
 }
-
 interface ResonanceFeedProps {
   focusMode?: boolean // ADHD mode - hide counters
 }
-
 const AXIS_ICONS = {
   physical: Activity,
   mental: Brain,
@@ -35,7 +32,6 @@ const AXIS_ICONS = {
   spiritual: Sparkles,
   material: Briefcase
 }
-
 const AXIS_COLORS = {
   physical: '#65D39A',
   mental: '#9B8AE6',
@@ -44,89 +40,73 @@ const AXIS_COLORS = {
   spiritual: '#4ECDC4',
   material: '#FFD166'
 }
-
 export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
+  const { secureFetch } = useCSRF()
   const [feed, setFeed] = useState<MicroWin[]>([])
   const [loading, setLoading] = useState(true)
   const [feedType, setFeedType] = useState<'all' | 'following' | 'my'>('all')
   const [selectedAxis, setSelectedAxis] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
-
   const fetchFeed = async (reset = false) => {
     try {
       setLoading(true)
       const offset = reset ? 0 : page * 20
-
       const params = new URLSearchParams({
         feedType,
         limit: '20',
         offset: offset.toString(),
         ...(selectedAxis && { axis: selectedAxis })
       })
-
-      const response = await fetch(`/api/micro-wins?${params}`)
+      const response = await secureFetch(`/api/micro-wins?${params}`)
       const data = await response.json()
-
       if (!response.ok) {
         throw new Error(data.error || 'Failed to fetch feed')
       }
-
       setFeed(reset ? data.feed : [...feed, ...data.feed])
       setHasMore(data.pagination.hasMore)
       if (!reset) setPage(page + 1)
     } catch (error) {
       handleError(error, {
       operation: 'general_operation', component: 'ResonanceFeed',
-
         userMessage: 'Operation failed. Please try again.'
-
       })
       toast.error('Failed to load feed')
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => {
     fetchFeed(true)
   }, [feedType, selectedAxis])
-
   const handleReaction = async (winId: string) => {
     try {
-      const response = await fetch(`/api/micro-wins/${winId}/react`, {
+      const response = await secureFetch(`/api/micro-wins/${winId}/react`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reactionType: 'hex_star' })
       })
-
       if (!response.ok) {
         throw new Error('Failed to add reaction')
       }
-
       // Update local state
       setFeed(feed.map(win =>
         win.id === winId
           ? { ...win, userReacted: true, resonanceCount: win.resonanceCount + 1 }
           : win
       ))
-
       toast.success('Support added!')
     } catch (error) {
       handleError(error, {
       operation: 'general_operation', component: 'ResonanceFeed',
-
         userMessage: 'Operation failed. Please try again.'
-
       })
       toast.error('Failed to add support')
     }
   }
-
   const MicroWinCard = ({ win }: { win: MicroWin }) => {
     const Icon = AXIS_ICONS[win.axis as keyof typeof AXIS_ICONS]
     const axisColor = AXIS_COLORS[win.axis as keyof typeof AXIS_COLORS]
-
     return (
       <Card className="p-4 bg-navy-800/50 border-navy-700/50 hover:bg-navy-800/70 transition-colors">
         <div className="space-y-3">
@@ -152,12 +132,10 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
               {formatDistanceToNow(new Date(win.createdAt), { addSuffix: true })}
             </span>
           </div>
-
           {/* Content */}
           <p className="text-sm text-navy-100 leading-relaxed">
             {win.winText}
           </p>
-
           {/* Footer */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -173,7 +151,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
                 </span>
               )}
             </div>
-
             <Button
               variant="ghost"
               size="sm"
@@ -195,7 +172,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
       </Card>
     )
   }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -204,7 +180,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
           Tiny Actions. Total Balance.
         </h3>
       </div>
-
       {/* Filters */}
       <div className="space-y-4">
         <Tabs value={feedType} onValueChange={(v) => setFeedType(v as any)}>
@@ -220,7 +195,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
             </TabsTrigger>
           </TabsList>
         </Tabs>
-
         {/* Axis Filter */}
         <div className="flex gap-2 flex-wrap">
           <Button
@@ -245,7 +219,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
           ))}
         </div>
       </div>
-
       {/* Feed */}
       <div className="space-y-3">
         {loading && feed.length === 0 ? (
@@ -262,7 +235,6 @@ export function ResonanceFeed({ focusMode = false }: ResonanceFeedProps) {
             {feed.map((win) => (
               <MicroWinCard key={win.id} win={win} />
             ))}
-
             {hasMore && (
               <Button
                 variant="outline"

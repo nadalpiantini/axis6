@@ -1,9 +1,7 @@
 import { createClient, resetClientInstance } from './client'
 import type { Database } from './types'
-
 let safeClientInstance: ReturnType<typeof createClient> | null = null
 let initializationError: Error | null = null
-
 /**
  * Safe Supabase client creation with error handling
  */
@@ -12,19 +10,15 @@ export function createClientSafe() {
   if (safeClientInstance) {
     return safeClientInstance
   }
-
   // Return cached error if initialization failed
   if (initializationError) {
     throw initializationError
   }
-
   try {
     // Use the main client instance to avoid multiple GoTrueClient instances
     const client = createClient()
-
     // Cache the successful instance
     safeClientInstance = client
-
     return client
   } catch (error) {
     // Cache the error to prevent repeated failed initializations
@@ -32,7 +26,6 @@ export function createClientSafe() {
     throw initializationError
   }
 }
-
 /**
  * Reset the client instance (useful for testing or error recovery)
  */
@@ -42,7 +35,6 @@ export function resetClient() {
   // Also reset the main client instance
   resetClientInstance()
 }
-
 /**
  * Get client instance without throwing (returns null if not available)
  */

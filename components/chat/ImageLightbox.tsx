@@ -1,13 +1,10 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Download, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ChatAttachment } from '@/lib/supabase/chat-storage'
 import { cn } from '@/lib/utils'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface ImageLightboxProps {
   isOpen: boolean
@@ -16,7 +13,6 @@ interface ImageLightboxProps {
   imageUrl: string
   className?: string
 }
-
 export function ImageLightbox({
   isOpen,
   onClose,
@@ -29,7 +25,6 @@ export function ImageLightbox({
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-
   // Reset state when opening
   useEffect(() => {
     if (isOpen) {
@@ -38,11 +33,9 @@ export function ImageLightbox({
       setPosition({ x: 0, y: 0 })
     }
   }, [isOpen])
-
   // Handle keyboard shortcuts
   useEffect(() => {
     if (!isOpen) return
-
     const handleKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Escape':
@@ -66,11 +59,9 @@ export function ImageLightbox({
           break
       }
     }
-
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [isOpen, onClose])
-
   const handleMouseDown = (e: React.MouseEvent) => {
     if (zoom > 1) {
       setIsDragging(true)
@@ -80,7 +71,6 @@ export function ImageLightbox({
       })
     }
   }
-
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDragging && zoom > 1) {
       setPosition({
@@ -89,11 +79,9 @@ export function ImageLightbox({
       })
     }
   }
-
   const handleMouseUp = () => {
     setIsDragging(false)
   }
-
   const handleDownload = async () => {
     try {
       const link = document.createElement('a')
@@ -105,31 +93,24 @@ export function ImageLightbox({
     } catch (error) {
       handleError(error, {
       operation: 'chat_operation', component: 'ImageLightbox',
-
         userMessage: 'Chat operation failed. Please try again.'
-
       })
     }
   }
-
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev * 1.2, 5))
   }
-
   const handleZoomOut = () => {
     setZoom(prev => Math.max(prev / 1.2, 0.1))
   }
-
   const handleRotate = () => {
     setRotation(prev => prev + 90)
   }
-
   const handleReset = () => {
     setZoom(1)
     setPosition({ x: 0, y: 0 })
     setRotation(0)
   }
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -151,7 +132,6 @@ export function ImageLightbox({
                 {Math.round(zoom * 100)}%
               </span>
             </div>
-
             <Button
               variant="ghost"
               size="sm"
@@ -160,7 +140,6 @@ export function ImageLightbox({
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
-
             <Button
               variant="ghost"
               size="sm"
@@ -169,7 +148,6 @@ export function ImageLightbox({
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
-
             <Button
               variant="ghost"
               size="sm"
@@ -178,7 +156,6 @@ export function ImageLightbox({
             >
               <RotateCw className="h-4 w-4" />
             </Button>
-
             <Button
               variant="ghost"
               size="sm"
@@ -187,7 +164,6 @@ export function ImageLightbox({
             >
               <Download className="h-4 w-4" />
             </Button>
-
             <Button
               variant="ghost"
               size="sm"
@@ -197,7 +173,6 @@ export function ImageLightbox({
               <X className="h-4 w-4" />
             </Button>
           </div>
-
           {/* Image Info */}
           <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-lg px-3 py-2 text-white">
             <h3 className="font-medium text-sm">{attachment.file_name}</h3>
@@ -208,7 +183,6 @@ export function ImageLightbox({
               {(attachment.file_size / 1024).toFixed(1)} KB
             </p>
           </div>
-
           {/* Image Container */}
           <div
             className="relative max-w-[90vw] max-h-[90vh] overflow-hidden"
@@ -233,7 +207,6 @@ export function ImageLightbox({
               onDoubleClick={handleReset}
             />
           </div>
-
           {/* Instructions */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
             <div className="bg-black/50 rounded-lg px-3 py-2 text-white text-xs space-y-1">

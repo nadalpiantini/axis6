@@ -1,8 +1,6 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { TrendingUp, Award, Calendar, Target } from 'lucide-react'
-
 interface StatCardProps {
   icon: React.ReactNode
   label: string
@@ -11,7 +9,6 @@ interface StatCardProps {
   color: string
   trend?: 'up' | 'down' | 'neutral'
 }
-
 function StatCard({ icon, label, value, subvalue, color, trend }: StatCardProps) {
   return (
     <motion.div
@@ -25,7 +22,6 @@ function StatCard({ icon, label, value, subvalue, color, trend }: StatCardProps)
           background: `radial-gradient(circle at center, ${color}, transparent)`
         }}
       />
-
       <div className="relative">
         <div className="flex items-start justify-between mb-3">
           <div
@@ -37,7 +33,6 @@ function StatCard({ icon, label, value, subvalue, color, trend }: StatCardProps)
           >
             {icon}
           </div>
-
           {trend && (
             <div className={`
               text-xs px-2 py-1 rounded-full flex items-center gap-1
@@ -51,7 +46,6 @@ function StatCard({ icon, label, value, subvalue, color, trend }: StatCardProps)
             </div>
           )}
         </div>
-
         <div>
           <p className="text-xs text-gray-400 mb-1">{label}</p>
           <p className="text-2xl font-bold text-white">{value}</p>
@@ -63,7 +57,6 @@ function StatCard({ icon, label, value, subvalue, color, trend }: StatCardProps)
     </motion.div>
   )
 }
-
 interface QuickStatsProps {
   completedToday: number
   totalCategories: number
@@ -71,7 +64,6 @@ interface QuickStatsProps {
   longestStreak?: number
   weeklyProgress?: number
 }
-
 export default function QuickStats({
   completedToday,
   totalCategories,
@@ -80,7 +72,6 @@ export default function QuickStats({
   weeklyProgress = 0
 }: QuickStatsProps) {
   const completionPercentage = Math.round((completedToday / totalCategories) * 100)
-
   const stats: StatCardProps[] = [
     {
       icon: <Target className="w-5 h-5" />,
@@ -92,9 +83,9 @@ export default function QuickStats({
     },
     {
       icon: <Award className="w-5 h-5" />,
-      label: "Racha Actual",
+              label: "Current Streak",
       value: currentStreak,
-      subvalue: currentStreak === 1 ? 'día' : 'días',
+              subvalue: currentStreak === 1 ? 'day' : 'days',
       color: '#A78BFA',
       trend: currentStreak > 0 ? 'up' : 'neutral'
     },
@@ -108,14 +99,13 @@ export default function QuickStats({
     },
     {
       icon: <TrendingUp className="w-5 h-5" />,
-      label: "Progreso Semanal",
+              label: "Weekly Progress",
       value: `${weeklyProgress}%`,
-      subvalue: "últimos 7 días",
+              subvalue: "last 7 days",
       color: '#FBBF24',
       trend: weeklyProgress >= 70 ? 'up' : weeklyProgress >= 40 ? 'neutral' : 'down'
     }
   ]
-
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (

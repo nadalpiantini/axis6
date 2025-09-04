@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {
   Bell,
@@ -21,11 +20,9 @@ import {
   Settings
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface NotificationPreferences {
   // Delivery Methods
@@ -33,7 +30,6 @@ interface NotificationPreferences {
   push_enabled: boolean
   in_app_enabled: boolean
   sms_enabled: boolean
-
   // Notification Types
   checkin_reminders: boolean
   streak_alerts: boolean
@@ -43,31 +39,26 @@ interface NotificationPreferences {
   motivation_messages: boolean
   social_updates: boolean
   system_updates: boolean
-
   // Smart AI Features
   ai_optimal_timing: boolean
   ai_personalized_content: boolean
   ai_frequency_optimization: boolean
   ai_mood_aware: boolean
-
   // Timing Preferences
   quiet_hours_enabled: boolean
   quiet_start_time: string
   quiet_end_time: string
   timezone_aware: boolean
-
   // Frequency Settings
   daily_reminders_limit: number
   weekly_summary: boolean
   monthly_insights: boolean
-
   // Advanced Settings
   notification_sound: string
   vibration_enabled: boolean
   priority_notifications_only: boolean
   batch_notifications: boolean
 }
-
 export default function NotificationSettingsPage() {
   const { data: user } = useUser()
   const [preferences, setPreferences] = useState<NotificationPreferences>({
@@ -76,7 +67,6 @@ export default function NotificationSettingsPage() {
     push_enabled: true,
     in_app_enabled: true,
     sms_enabled: false,
-
     // Notification Types
     checkin_reminders: true,
     streak_alerts: true,
@@ -86,39 +76,32 @@ export default function NotificationSettingsPage() {
     motivation_messages: true,
     social_updates: false,
     system_updates: true,
-
     // Smart AI Features
     ai_optimal_timing: true,
     ai_personalized_content: true,
     ai_frequency_optimization: true,
     ai_mood_aware: true,
-
     // Timing Preferences
     quiet_hours_enabled: true,
     quiet_start_time: '22:00',
     quiet_end_time: '07:00',
     timezone_aware: true,
-
     // Frequency Settings
     daily_reminders_limit: 3,
     weekly_summary: true,
     monthly_insights: true,
-
     // Advanced Settings
     notification_sound: 'gentle',
     vibration_enabled: true,
     priority_notifications_only: false,
     batch_notifications: false
   })
-
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-
   const handlePreferenceChange = (key: keyof NotificationPreferences, value: any) => {
     setPreferences(prev => ({ ...prev, [key]: value }))
     setHasChanges(true)
   }
-
   const handleSave = async () => {
     setIsSaving(true)
     try {
@@ -126,25 +109,20 @@ export default function NotificationSettingsPage() {
       // await updateNotificationPreferences(preferences)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-
       setHasChanges(false)
     } catch (error) {
       handleError(error, {
       operation: 'settings_operation', component: 'page',
-
         userMessage: 'Settings operation failed. Please try again.'
-
       })
     } finally {
       setIsSaving(false)
     }
   }
-
   const handleReset = () => {
     // Reset to last saved state or defaults
     setHasChanges(false)
   }
-
   const soundOptions = [
     { value: 'gentle', label: 'Gentle Chime' },
     { value: 'bell', label: 'Bell' },
@@ -152,7 +130,6 @@ export default function NotificationSettingsPage() {
     { value: 'vibrate', label: 'Vibrate Only' },
     { value: 'silent', label: 'Silent' }
   ]
-
   const reminderLimitOptions = [
     { value: 1, label: '1 per day' },
     { value: 2, label: '2 per day' },
@@ -161,7 +138,6 @@ export default function NotificationSettingsPage() {
     { value: 10, label: '10 per day' },
     { value: 0, label: 'Unlimited' }
   ]
-
   return (
     <SettingsLayout currentSection="notifications">
       {/* AI-Powered Notifications */}
@@ -200,7 +176,6 @@ export default function NotificationSettingsPage() {
               </div>
             </div>
           </div>
-
           <SettingGroup title="AI Features" description="Let AI optimize your notification experience">
             <SettingItem
               label="Optimal Timing"
@@ -209,7 +184,6 @@ export default function NotificationSettingsPage() {
               value={preferences.ai_optimal_timing}
               onChange={(value) => handlePreferenceChange('ai_optimal_timing', value)}
             />
-
             <SettingItem
               label="Personalized Content"
               description="AI customizes notification messages based on your goals and personality"
@@ -217,7 +191,6 @@ export default function NotificationSettingsPage() {
               value={preferences.ai_personalized_content}
               onChange={(value) => handlePreferenceChange('ai_personalized_content', value)}
             />
-
             <SettingItem
               label="Frequency Optimization"
               description="AI adjusts notification frequency to avoid overwhelming you while maintaining engagement"
@@ -225,7 +198,6 @@ export default function NotificationSettingsPage() {
               value={preferences.ai_frequency_optimization}
               onChange={(value) => handlePreferenceChange('ai_frequency_optimization', value)}
             />
-
             <SettingItem
               label="Mood-Aware Delivery"
               description="AI considers your mood patterns to send supportive vs motivational messages"
@@ -236,7 +208,6 @@ export default function NotificationSettingsPage() {
           </SettingGroup>
         </div>
       </SettingsSection>
-
       {/* Delivery Methods */}
       <SettingsSection
         title="Delivery Methods"
@@ -252,7 +223,6 @@ export default function NotificationSettingsPage() {
             value={preferences.push_enabled}
             onChange={(value) => handlePreferenceChange('push_enabled', value)}
           />
-
           <SettingItem
             label="Email Notifications"
             description="Receive notifications and summaries via email"
@@ -260,7 +230,6 @@ export default function NotificationSettingsPage() {
             value={preferences.email_enabled}
             onChange={(value) => handlePreferenceChange('email_enabled', value)}
           />
-
           <SettingItem
             label="In-App Notifications"
             description="Show notifications within the app interface"
@@ -268,7 +237,6 @@ export default function NotificationSettingsPage() {
             value={preferences.in_app_enabled}
             onChange={(value) => handlePreferenceChange('in_app_enabled', value)}
           />
-
           <SettingItem
             label="SMS Notifications"
             description="Receive critical notifications via SMS (premium feature)"
@@ -279,7 +247,6 @@ export default function NotificationSettingsPage() {
           />
         </SettingGroup>
       </SettingsSection>
-
       {/* Notification Types */}
       <SettingsSection
         title="Notification Types"
@@ -296,7 +263,6 @@ export default function NotificationSettingsPage() {
               value={preferences.checkin_reminders}
               onChange={(value) => handlePreferenceChange('checkin_reminders', value)}
             />
-
             <SettingItem
               label="Mood Check Prompts"
               description="Gentle reminders to track your emotional state"
@@ -304,7 +270,6 @@ export default function NotificationSettingsPage() {
               value={preferences.mood_check_prompts}
               onChange={(value) => handlePreferenceChange('mood_check_prompts', value)}
             />
-
             <SettingItem
               label="Motivation Messages"
               description="Personalized encouragement and wellness tips"
@@ -313,7 +278,6 @@ export default function NotificationSettingsPage() {
               onChange={(value) => handlePreferenceChange('motivation_messages', value)}
             />
           </SettingGroup>
-
           <SettingGroup title="Achievements & Insights" description="Celebrate your progress and learn from your data">
             <SettingItem
               label="Streak Alerts"
@@ -322,7 +286,6 @@ export default function NotificationSettingsPage() {
               value={preferences.streak_alerts}
               onChange={(value) => handlePreferenceChange('streak_alerts', value)}
             />
-
             <SettingItem
               label="Goal Achievements"
               description="Celebrate when you reach milestones and complete goals"
@@ -330,7 +293,6 @@ export default function NotificationSettingsPage() {
               value={preferences.goal_achievements}
               onChange={(value) => handlePreferenceChange('goal_achievements', value)}
             />
-
             <SettingItem
               label="Weekly Insights"
               description="AI-generated insights about your wellness patterns"
@@ -340,7 +302,6 @@ export default function NotificationSettingsPage() {
             />
           </SettingGroup>
         </div>
-
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <SettingGroup title="Social & Updates">
             <SettingItem
@@ -350,7 +311,6 @@ export default function NotificationSettingsPage() {
               value={preferences.social_updates}
               onChange={(value) => handlePreferenceChange('social_updates', value)}
             />
-
             <SettingItem
               label="System Updates"
               description="App updates, new features, and important announcements"
@@ -359,7 +319,6 @@ export default function NotificationSettingsPage() {
               onChange={(value) => handlePreferenceChange('system_updates', value)}
             />
           </SettingGroup>
-
           <SettingGroup title="Frequency Limits">
             <SettingItem
               label="Daily Reminder Limit"
@@ -372,7 +331,6 @@ export default function NotificationSettingsPage() {
           </SettingGroup>
         </div>
       </SettingsSection>
-
       {/* Timing & Schedule */}
       <SettingsSection
         title="Timing & Schedule"
@@ -389,7 +347,6 @@ export default function NotificationSettingsPage() {
               value={preferences.quiet_hours_enabled}
               onChange={(value) => handlePreferenceChange('quiet_hours_enabled', value)}
             />
-
             {preferences.quiet_hours_enabled && (
               <>
                 <SettingItem
@@ -400,7 +357,6 @@ export default function NotificationSettingsPage() {
                   onChange={(value) => handlePreferenceChange('quiet_start_time', value)}
                   placeholder="22:00"
                 />
-
                 <SettingItem
                   label="Quiet Hours End"
                   description="Time when quiet hours end"
@@ -412,7 +368,6 @@ export default function NotificationSettingsPage() {
               </>
             )}
           </SettingGroup>
-
           <SettingGroup title="Schedule Preferences" description="Configure notification timing preferences">
             <SettingItem
               label="Timezone Awareness"
@@ -421,7 +376,6 @@ export default function NotificationSettingsPage() {
               value={preferences.timezone_aware}
               onChange={(value) => handlePreferenceChange('timezone_aware', value)}
             />
-
             <SettingItem
               label="Weekly Summary"
               description="Receive a weekly summary of your progress"
@@ -429,7 +383,6 @@ export default function NotificationSettingsPage() {
               value={preferences.weekly_summary}
               onChange={(value) => handlePreferenceChange('weekly_summary', value)}
             />
-
             <SettingItem
               label="Monthly Insights"
               description="Receive detailed monthly insights and trends"
@@ -440,7 +393,6 @@ export default function NotificationSettingsPage() {
           </SettingGroup>
         </div>
       </SettingsSection>
-
       {/* Advanced Settings */}
       <SettingsSection
         title="Advanced Settings"
@@ -460,7 +412,6 @@ export default function NotificationSettingsPage() {
               onChange={(value) => handlePreferenceChange('notification_sound', value)}
               options={soundOptions}
             />
-
             <SettingItem
               label="Vibration"
               description="Enable vibration for notifications on mobile devices"
@@ -469,7 +420,6 @@ export default function NotificationSettingsPage() {
               onChange={(value) => handlePreferenceChange('vibration_enabled', value)}
             />
           </SettingGroup>
-
           <SettingGroup title="Behavior Settings" description="Control how notifications are handled">
             <SettingItem
               label="Priority Only"
@@ -478,7 +428,6 @@ export default function NotificationSettingsPage() {
               value={preferences.priority_notifications_only}
               onChange={(value) => handlePreferenceChange('priority_notifications_only', value)}
             />
-
             <SettingItem
               label="Batch Notifications"
               description="Group similar notifications together to reduce interruptions"
@@ -488,7 +437,6 @@ export default function NotificationSettingsPage() {
             />
           </SettingGroup>
         </div>
-
         {/* Notification Preview */}
         <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
           <h4 className="font-medium mb-3 flex items-center gap-2">
@@ -508,7 +456,6 @@ export default function NotificationSettingsPage() {
                 <span className="text-xs text-gray-500">2 min ago</span>
               </div>
             </div>
-
             <div className="p-3 bg-white/5 rounded-lg border border-white/10">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-purple-500/20">
@@ -524,7 +471,6 @@ export default function NotificationSettingsPage() {
           </div>
         </div>
       </SettingsSection>
-
       {/* Notification Stats */}
       <SettingsSection
         title="Notification Analytics"
@@ -545,7 +491,6 @@ export default function NotificationSettingsPage() {
               <Bell className="w-8 h-8 text-green-400/50" />
             </div>
           </div>
-
           <div className="p-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-xl border border-blue-500/20">
             <div className="flex items-center justify-between">
               <div>
@@ -556,7 +501,6 @@ export default function NotificationSettingsPage() {
               <Target className="w-8 h-8 text-blue-400/50" />
             </div>
           </div>
-
           <div className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
             <div className="flex items-center justify-between">
               <div>
@@ -567,7 +511,6 @@ export default function NotificationSettingsPage() {
               <Clock className="w-8 h-8 text-purple-400/50" />
             </div>
           </div>
-
           <div className="p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/20">
             <div className="flex items-center justify-between">
               <div>
@@ -579,7 +522,6 @@ export default function NotificationSettingsPage() {
             </div>
           </div>
         </div>
-
         <div className="mt-6 p-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl border border-indigo-500/20">
           <h4 className="font-medium text-indigo-300 mb-2">AI Insights</h4>
           <ul className="space-y-1 text-sm text-gray-300">

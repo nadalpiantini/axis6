@@ -1,16 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr'
-
 import { initSupabaseDebug } from './debug'
 import type { Database } from './types'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 // Singleton instance to prevent multiple GoTrueClient instances
 let clientInstance: ReturnType<typeof createBrowserClient<Database>> | null = null
-
 // Clean corrupted cookies before initializing client
 function cleanCorruptedAuthData() {
   if (typeof window === 'undefined') return
-
   try {
     // Clean corrupted cookies
     const cookies = document.cookie.split(';')
@@ -30,7 +26,6 @@ function cleanCorruptedAuthData() {
         }
       }
     })
-
     // Clean corrupted localStorage items
     const keysToRemove: string[] = []
     for (let i = 0; i < localStorage.length; i++) {
@@ -53,24 +48,20 @@ function cleanCorruptedAuthData() {
   } catch (error) {
     }
 }
-
 export function createClient() {
   // Return cached instance if available to prevent multiple GoTrueClient instances
   if (clientInstance) {
     return clientInstance
   }
-
   // Clean up any malformed cookies before initializing the client
   if (typeof window !== 'undefined') {
     try {
       // Clear any malformed Supabase session cookies
       const keysToRemove = Object.keys(localStorage).filter(key => {
         if (!key.includes('supabase') && !key.startsWith('sb-')) return false
-
         try {
           const item = localStorage.getItem(key)
           if (!item) return false
-
           // Check if it's a malformed base64 cookie that can't be parsed
           if (item.startsWith('base64-')) {
             try {
@@ -81,7 +72,6 @@ export function createClient() {
               return true // It's malformed, remove it
             }
           }
-
           // Try to parse as JSON to check if it's valid
           JSON.parse(item)
           return false // It's valid, keep it
@@ -89,7 +79,6 @@ export function createClient() {
           return true // It's malformed, remove it
         }
       })
-
       keysToRemove.forEach(key => {
         localStorage.removeItem(key)
       })
@@ -97,24 +86,19 @@ export function createClient() {
       // Ignore cleanup errors
     }
   }
-
   // Clean any corrupted auth data first
   cleanCorruptedAuthData()
-
   // Use consistent bracket notation for environment variables
   const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
   const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
-
   if (!supabaseUrl || !supabaseAnonKey) {
-    handleError(error, {
+    const configError = new Error('Missing Supabase environment variables')
+    handleError(configError, {
       operation: 'database_operation', component: 'client',
-
       userMessage: 'Database operation failed. Please try again.'
-
     })
-    throw new Error('Missing Supabase environment variables')
+    throw configError
   }
-
   try {
     const client = createBrowserClient<Database>(
       supabaseUrl,
@@ -132,7 +116,6 @@ export function createClient() {
               try {
                 const item = localStorage.getItem(key)
                 if (!item) return null
-
                 // Handle corrupted base64 encoded session data
                 if (item.startsWith('base64-')) {
                   // Check if it's a valid base64 JSON string (should start with eyJ)
@@ -140,7 +123,6 @@ export function createClient() {
                     localStorage.removeItem(key)
                     return null
                   }
-
                   try {
                     const decoded = atob(item.substring(7))
                     return JSON.parse(decoded)
@@ -150,7 +132,6 @@ export function createClient() {
                     return null
                   }
                 }
-
                 // Try to parse as JSON if it looks like JSON
                 if (item.startsWith('{') || item.startsWith('[')) {
                   try {
@@ -160,7 +141,6 @@ export function createClient() {
                     return item
                   }
                 }
-
                 return item
               } catch (error) {
                 return null
@@ -210,7 +190,6 @@ export function createClient() {
         }
       }
     )
-
     // Enhanced error handling for auth state changes
     client.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || (event === 'USER_UPDATED' && !session)) {
@@ -222,7 +201,6 @@ export function createClient() {
               key.startsWith('sb-') && key.includes('-auth-token')
             )
             keysToRemove.forEach(key => localStorage.removeItem(key))
-
             // Clear React Query cache on logout
             // Check if React Query is available
             if ((window as any).queryClient) {
@@ -233,17 +211,14 @@ export function createClient() {
         }
       }
     })
-
     // Add global error handler for Supabase client
     if (typeof window !== 'undefined') {
       // Add error handler to window for debugging
       (window as any).__supabaseError = null
-
       // Override console.error to catch Supabase errors and provide better handling
       const originalConsoleError = console.error
       console.error = (...args) => {
         const errorMessage = args.join(' ')
-
         // Handle WebSocket authentication errors gracefully
         if (errorMessage.includes('WebSocket connection') &&
             errorMessage.includes('HTTP Authentication failed')) {
@@ -254,7 +229,6 @@ export function createClient() {
           (window as any).__realtimeAuthPending = true
           return
         }
-
         // Handle other realtime connection issues
         if (errorMessage.includes('WebSocket connection') &&
             (errorMessage.includes('failed') || errorMessage.includes('closed'))) {
@@ -262,54 +236,44 @@ export function createClient() {
           (window as any).__realtimeConnectionIssue = errorMessage
           return
         }
-
         if (errorMessage.includes('supabase') || errorMessage.includes('Supabase')) {
           // Store error for debugging
           (window as any).__supabaseError = errorMessage
         }
         originalConsoleError.apply(console, args)
       }
-
       // Initialize debug helpers in development
       initSupabaseDebug()
     }
-
     // Cache the client instance to prevent multiple GoTrueClient instances
     clientInstance = client
     return client
   } catch (error) {
     handleError(error, {
       operation: 'database_operation', component: 'client',
-
       userMessage: 'Database operation failed. Please try again.'
-
     })
     throw new Error(`Failed to initialize Supabase client: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
-
 /**
  * Reset the client instance (useful for testing or error recovery)
  */
 export function resetClientInstance() {
   clientInstance = null
 }
-
 /**
  * Cleanup malformed cookies that might cause parsing errors
  */
 export function cleanupMalformedCookies() {
   if (typeof window === 'undefined') return
-
   try {
     // Clear any malformed Supabase session cookies
     const keysToRemove = Object.keys(localStorage).filter(key => {
       if (!key.includes('supabase') && !key.startsWith('sb-')) return false
-
       try {
         const item = localStorage.getItem(key)
         if (!item) return false
-
         // Check if it's a malformed base64 cookie that can't be parsed
         if (item.startsWith('base64-')) {
           try {
@@ -320,7 +284,6 @@ export function cleanupMalformedCookies() {
             return true // It's malformed, remove it
           }
         }
-
         // Try to parse as JSON to check if it's valid
         JSON.parse(item)
         return false // It's valid, keep it
@@ -328,11 +291,9 @@ export function cleanupMalformedCookies() {
         return true // It's malformed, remove it
       }
     })
-
     keysToRemove.forEach(key => {
       localStorage.removeItem(key)
     })
-
     // Also clear any HTTP-only cookies by setting them to expire
     const cookiesToClear = [
       'sb-auth-token',
@@ -340,11 +301,10 @@ export function cleanupMalformedCookies() {
       'supabase-auth-token',
       'supabase.auth.token'
     ]
-
     cookiesToClear.forEach(cookieName => {
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     })
-
-    } catch (error) {
-    }
+  } catch (error) {
+    // Ignore cleanup errors
+  }
 }

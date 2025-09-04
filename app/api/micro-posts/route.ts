@@ -1,9 +1,7 @@
 import { logger } from '@/lib/utils/logger';
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
 // Validation schemas
 const createPostSchema = z.object({
   categoryId: z.number().int().positive(),
@@ -11,43 +9,36 @@ const createPostSchema = z.object({
   minutes: z.number().int().min(0).max(600).optional(),
   privacy: z.enum(['public', 'followers', 'private']).default('public')
 })
-
 const feedQuerySchema = z.object({
   axis: z.string().optional(),
   limit: z.number().int().min(1).max(50).default(20),
   offset: z.number().int().min(0).default(0),
   privacy: z.enum(['public', 'followers', 'all']).default('public')
 })
-
 // POST /api/micro-posts - Create a micro post
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Parse and validate request body
     const body = await _request.json()
     const validatedData = createPostSchema.parse(body)
-
     // Get category info for axis slug
     const { data: category, error: categoryError } = await supabase
       .from('axis6_categories')
       .select('id, slug, name, color')
       .eq('id', validatedData.categoryId)
       .single()
-
     if (categoryError || !category) {
       return NextResponse.json({
         error: 'Invalid category',
         details: 'Category not found'
       }, { status: 400 })
     }
-
     // Create micro post
     const { data: post, error: postError } = await supabase
       .from('axis6_micro_posts')
@@ -68,7 +59,6 @@ export async function POST(_request: NextRequest) {
         category_id
       `)
       .single()
-
     if (postError) {
       logger.error('Error creating micro post:', postError)
       return NextResponse.json({
@@ -76,7 +66,6 @@ export async function POST(_request: NextRequest) {
         details: postError.message
       }, { status: 500 })
     }
-
     // Return created post with category info
     return NextResponse.json({
       success: true,
@@ -84,7 +73,7 @@ export async function POST(_request: NextRequest) {
         ...post,
         category: {
           slug: category.slug,
-          name: category.name,
+          name: typeof category.name === 'object' ? category.name.en || category.slug : category.name,
           color: category.color
         },
         author: {
@@ -93,7 +82,6 @@ export async function POST(_request: NextRequest) {
         }
       }
     }, { status: 201 })
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({
@@ -101,7 +89,6 @@ export async function POST(_request: NextRequest) {
         details: error.errors
       }, { status: 400 })
     }
-
     logger.error('Micro post creation error:', error)
     return NextResponse.json({
       error: 'Internal server error',
@@ -109,12 +96,10 @@ export async function POST(_request: NextRequest) {
     }, { status: 500 })
   }
 }
-
 // GET /api/micro-posts - Get micro posts feed
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Parse query parameters
     const { searchParams } = new URL(_request.url)
     const queryParams = {
@@ -123,9 +108,7 @@ export async function GET(_request: NextRequest) {
       offset: parseInt(searchParams.get('offset') || '0'),
       privacy: (searchParams.get('privacy') || 'public') as 'public' | 'followers' | 'all'
     }
-
     const validatedQuery = feedQuerySchema.parse(queryParams)
-
     // Build query
     let query = supabase
       .from('axis6_micro_posts')
@@ -151,19 +134,15 @@ export async function GET(_request: NextRequest) {
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(validatedQuery.offset, validatedQuery.offset + validatedQuery.limit - 1)
-
     // Filter by axis if specified
     if (validatedQuery.axis) {
       query = query.eq('axis6_categories.slug', validatedQuery.axis)
     }
-
     // Apply privacy filter
     if (validatedQuery.privacy === 'public') {
       query = query.eq('privacy', 'public')
     }
-
     const { data: posts, error: postsError } = await query
-
     if (postsError) {
       logger.error('Error fetching micro posts:', postsError)
       return NextResponse.json({
@@ -171,7 +150,6 @@ export async function GET(_request: NextRequest) {
         details: postsError.message
       }, { status: 500 })
     }
-
     // Transform data for frontend
     const transformedPosts = posts?.map((post: any) => ({
       id: post.id,
@@ -183,7 +161,7 @@ export async function GET(_request: NextRequest) {
       category: {
         id: post.category_id,
         slug: post.axis6_categories.slug,
-        name: post.axis6_categories.name,
+        name: typeof post.axis6_categories.name === 'object' ? post.axis6_categories.name.en || post.axis6_categories.slug : post.axis6_categories.name,
         color: post.axis6_categories.color
       },
       author: {
@@ -191,7 +169,6 @@ export async function GET(_request: NextRequest) {
         name: post.axis6_profiles.name
       }
     })) || []
-
     return NextResponse.json({
       success: true,
       posts: transformedPosts,
@@ -201,7 +178,6 @@ export async function GET(_request: NextRequest) {
         hasMore: posts?.length === validatedQuery.limit
       }
     })
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({
@@ -209,7 +185,6 @@ export async function GET(_request: NextRequest) {
         details: error.errors
       }, { status: 400 })
     }
-
     logger.error('Micro posts feed error:', error)
     return NextResponse.json({
       error: 'Internal server error',

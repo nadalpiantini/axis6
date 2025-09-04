@@ -1,42 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
-
 import { logger } from '@/lib/logger'
 import { chatSecurity } from '@/lib/security/chat-validation'
-
 /**
  * Authentication and authorization middleware for chat API routes
  */
-
 export interface AuthenticatedUser {
   id: string
   email: string
 }
-
 export interface ChatAuthContext {
   user: AuthenticatedUser
   roomId?: string
   messageId?: string
   userId?: string // For participant operations
 }
-
 /**
- * Extract user from request and validate authentication
+ * Extract user from request and validate authentication (Edge Runtime compatible)
  */
 export async function authenticateUser(request: NextRequest): Promise<AuthenticatedUser | null> {
   try {
-    const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const { createEdgeClient } = await import('@/lib/supabase/server')
+    const supabase = createEdgeClient(request)
     const { data: { user }, error } = await supabase.auth.getUser()
-
     if (error) {
       logger.warn('Authentication error:', error)
       return null
     }
-
     if (!user || !user.email) {
       return null
     }
-
     return {
       id: user.id,
       email: user.email
@@ -46,7 +38,6 @@ export async function authenticateUser(request: NextRequest): Promise<Authentica
     return null
   }
 }
-
 /**
  * Extract room ID from request parameters or body
  */
@@ -55,17 +46,14 @@ export function extractRoomId(request: NextRequest, params?: { roomId?: string }
   if (params?.roomId) {
     return params.roomId
   }
-
   // Try from URL path
   const pathSegments = request.nextUrl.pathname.split('/')
   const roomsIndex = pathSegments.findIndex(segment => segment === 'rooms')
   if (roomsIndex !== -1 && roomsIndex + 1 < pathSegments.length) {
     return pathSegments[roomsIndex + 1]
   }
-
   return null
 }
-
 /**
  * Extract message ID from request parameters
  */
@@ -73,16 +61,13 @@ export function extractMessageId(request: NextRequest, params?: { messageId?: st
   if (params?.messageId) {
     return params.messageId
   }
-
   const pathSegments = request.nextUrl.pathname.split('/')
   const messagesIndex = pathSegments.findIndex(segment => segment === 'messages')
   if (messagesIndex !== -1 && messagesIndex + 1 < pathSegments.length) {
     return pathSegments[messagesIndex + 1]
   }
-
   return null
 }
-
 /**
  * Middleware wrapper for chat API routes
  */
@@ -92,25 +77,21 @@ export function withChatAuth<T extends any[]>(
   return async (request: NextRequest, ...args: T) => {
     // Extract route parameters if available
     const params = args[0] as { params?: { roomId?: string; messageId?: string; userId?: string } }
-
     // Authenticate user
     const user = await authenticateUser(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     // Extract context
     const roomId = extractRoomId(request, params?.params)
     const messageId = extractMessageId(request, params?.params)
     const userId = params?.params?.userId
-
     const context: ChatAuthContext = {
       user,
       roomId: roomId || undefined,
       messageId: messageId || undefined,
       userId: userId || undefined
     }
-
     try {
       return await handler(context, request, ...args)
     } catch (error) {
@@ -122,14 +103,12 @@ export function withChatAuth<T extends any[]>(
     }
   }
 }
-
 /**
  * Validate room access for authenticated user
  */
 export async function validateRoomAccess(userId: string, roomId: string): Promise<boolean> {
   return chatSecurity.validateRoomAccess(userId, roomId)
 }
-
 /**
  * Validate message permissions for authenticated user
  */
@@ -148,22 +127,18 @@ export async function validateMessagePermission(
         .select('room_id')
         .eq('id', messageId)
         .single()
-
       if (error || !message) {
         return false
       }
-
       return chatSecurity.validateRoomAccess(userId, message.room_id)
     } catch (error) {
       logger.error('Message read permission error:', error)
       return false
     }
   }
-
   // For edit/delete operations
   return chatSecurity.validateMessageEditPermission(userId, messageId)
 }
-
 /**
  * Rate limiting middleware for chat operations
  */
@@ -176,21 +151,17 @@ export async function validateChatRateLimit(
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const now = new Date()
-
     // Define rate limits per operation
     const rateLimits = {
       send_message: { count: 30, windowMs: 60 * 1000 }, // 30 messages per minute
       create_room: { count: 5, windowMs: 60 * 1000 }, // 5 rooms per minute
       join_room: { count: 10, windowMs: 60 * 1000 } // 10 joins per minute
     }
-
     const limit = rateLimits[operation]
     if (!limit) {
       return { allowed: true }
     }
-
     const windowStart = new Date(now.getTime() - limit.windowMs)
-
     // Check rate limit based on operation
     let query
     if (operation === 'send_message' && resourceId) {
@@ -213,28 +184,23 @@ export async function validateChatRateLimit(
         .eq('user_id', userId)
         .gte('joined_at', windowStart.toISOString())
     }
-
     if (query) {
       const { count, error } = await query
-
       if (error) {
         logger.warn(`Rate limit check failed for ${operation}:`, error)
         return { allowed: true } // Allow on error to avoid blocking legitimate users
       }
-
       if ((count || 0) >= limit.count) {
         const retryAfter = Math.ceil(limit.windowMs / 1000)
         return { allowed: false, retryAfter }
       }
     }
-
     return { allowed: true }
   } catch (error) {
     logger.error('Rate limit validation error:', error)
     return { allowed: true } // Allow on error
   }
 }
-
 /**
  * Enhanced middleware with permission validation
  */
@@ -244,10 +210,8 @@ export function withChatPermission<T extends any[]>(
 ) {
   return withChatAuth<T>(async (context, request, ...args) => {
     const { user, roomId, messageId, userId } = context
-
     // Validate permissions based on operation
     let validation: { isValid: boolean; reason?: string } = { isValid: true }
-
     switch (operation) {
       case 'access_room':
         if (roomId) {
@@ -257,7 +221,6 @@ export function withChatPermission<T extends any[]>(
           }
         }
         break
-
       case 'send_message':
         if (roomId) {
           validation = await chatSecurity.validateChatOperation(
@@ -267,7 +230,6 @@ export function withChatPermission<T extends any[]>(
           )
         }
         break
-
       case 'edit_message':
       case 'delete_message':
         if (messageId) {
@@ -278,7 +240,6 @@ export function withChatPermission<T extends any[]>(
           )
         }
         break
-
       case 'manage_participants':
         if (roomId) {
           validation = await chatSecurity.validateChatOperation(
@@ -289,14 +250,12 @@ export function withChatPermission<T extends any[]>(
         }
         break
     }
-
     if (!validation.isValid) {
       return NextResponse.json(
         { error: validation.reason || 'Permission denied' },
         { status: 403 }
       )
     }
-
     // Check rate limits for applicable operations
     if (['send_message'].includes(operation)) {
       const rateLimit = await validateChatRateLimit(user.id, operation as any, roomId)
@@ -312,7 +271,6 @@ export function withChatPermission<T extends any[]>(
         )
       }
     }
-
     return handler(context, request, ...args)
   })
 }

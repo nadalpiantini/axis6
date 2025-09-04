@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCSRF } from '@/lib/hooks/useCSRF'
 
 // Fetch my day data (time blocks)
 export function useMyDayData(userId: string, date: string) {
+  const { secureFetch } = useCSRF()
+  
   return useQuery({
     queryKey: ['my-day', userId, date],
     queryFn: async () => {
-      const response = await fetch(`/api/time-blocks?date=${date}`)
+      const response = await secureFetch(`/api/time-blocks?date=${date}`)
       if (!response.ok) {
         throw new Error('Failed to fetch my day data')
       }
@@ -17,10 +20,12 @@ export function useMyDayData(userId: string, date: string) {
 
 // Fetch time distribution for hexagon
 export function useTimeDistribution(userId: string, date: string) {
+  const { secureFetch } = useCSRF()
+  
   return useQuery({
     queryKey: ['time-distribution', userId, date],
     queryFn: async () => {
-      const response = await fetch(`/api/my-day/stats?date=${date}`)
+      const response = await secureFetch(`/api/my-day/stats?date=${date}`)
       if (!response.ok) {
         throw new Error('Failed to fetch time distribution')
       }
@@ -33,12 +38,13 @@ export function useTimeDistribution(userId: string, date: string) {
 // Create time block
 export function useCreateTimeBlock() {
   const queryClient = useQueryClient()
-
+  const { secureFetch } = useCSRF()
+  
   return useMutation({
     mutationFn: async (data: {
       user_id: string
       date: string
-      category_id: number
+      category_id: string  // Changed from number to string (UUID)
       activity_id: number | null
       activity_name: string
       start_time: string
@@ -46,21 +52,24 @@ export function useCreateTimeBlock() {
       notes?: string
       status?: string
     }) => {
-      const response = await fetch('/api/time-blocks', {
+      const response = await secureFetch('/api/time-blocks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       })
-
       if (!response.ok) {
-        throw new Error('Failed to create time block')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to create time block (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
-
       return response.json()
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['my-day', variables.user_id, variables.date] })
       queryClient.invalidateQueries({ queryKey: ['time-distribution', variables.user_id, variables.date] })
     }
@@ -70,11 +79,12 @@ export function useCreateTimeBlock() {
 // Update time block
 export function useUpdateTimeBlock() {
   const queryClient = useQueryClient()
-
+  const { secureFetch } = useCSRF()
+  
   return useMutation({
     mutationFn: async (data: {
       id: number
-      category_id?: number
+      category_id?: string  // Changed from number to string (UUID)
       activity_id?: number | null
       activity_name?: string
       start_time?: string
@@ -82,18 +92,21 @@ export function useUpdateTimeBlock() {
       notes?: string
       status?: string
     }) => {
-      const response = await fetch('/api/time-blocks', {
+      const response = await secureFetch('/api/time-blocks', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       })
-
       if (!response.ok) {
-        throw new Error('Failed to update time block')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to update time block (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -106,17 +119,19 @@ export function useUpdateTimeBlock() {
 // Delete time block
 export function useDeleteTimeBlock() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/time-blocks?id=${id}`, {
         method: 'DELETE',
       })
-
       if (!response.ok) {
-        throw new Error('Failed to delete time block')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to delete time block (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -125,11 +140,9 @@ export function useDeleteTimeBlock() {
     }
   })
 }
-
 // Start activity timer
 export function useStartTimer() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (data: {
       user_id: string
@@ -148,11 +161,14 @@ export function useStartTimer() {
           ...data
         }),
       })
-
       if (!response.ok) {
-        throw new Error('Failed to start timer')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to start timer (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -161,11 +177,9 @@ export function useStartTimer() {
     }
   })
 }
-
 // Stop activity timer
 export function useStopTimer() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (data: {
       user_id: string
@@ -181,11 +195,14 @@ export function useStopTimer() {
           ...data
         }),
       })
-
       if (!response.ok) {
-        throw new Error('Failed to stop timer')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to stop timer (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -195,7 +212,6 @@ export function useStopTimer() {
     }
   })
 }
-
 // Get active timer
 export function useActiveTimer(userId: string) {
   return useQuery({
@@ -203,7 +219,12 @@ export function useActiveTimer(userId: string) {
     queryFn: async () => {
       const response = await fetch('/api/activity-timer')
       if (!response.ok) {
-        throw new Error('Failed to fetch active timer')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || `Failed to fetch active timer (${response.status})`
+        const error = new Error(errorMessage)
+        ;(error as any).status = response.status
+        ;(error as any).details = errorData
+        throw error
       }
       return response.json()
     },

@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-
 // Types
 interface UserPreferences {
   theme_preference: 'temperament_based' | 'dark' | 'light' | 'auto'
@@ -22,7 +21,6 @@ interface UserPreferences {
     priority?: number
   }>
 }
-
 interface NotificationPreferences {
   [key: string]: {
     notification_type: string
@@ -40,7 +38,6 @@ interface NotificationPreferences {
     temperament_based: boolean
   }
 }
-
 interface PrivacySettings {
   profile_visibility: 'public' | 'friends' | 'private'
   stats_sharing: boolean
@@ -55,7 +52,6 @@ interface PrivacySettings {
   usage_analytics: boolean
   research_participation: boolean
 }
-
 interface SecuritySettings {
   two_factor_enabled: boolean
   two_factor_method?: 'totp' | 'sms' | 'email'
@@ -67,7 +63,6 @@ interface SecuritySettings {
   security_alerts_enabled: boolean
   security_questions_set: boolean
 }
-
 interface WellnessPreferences {
   hexagon_size: 'small' | 'medium' | 'large'
   show_community_pulse: boolean
@@ -75,7 +70,6 @@ interface WellnessPreferences {
   default_view: 'hexagon' | 'list' | 'grid'
   axis_customizations: Record<string, any>
 }
-
 // User Preferences Hooks
 export function useUserPreferences() {
   return useQuery<UserPreferences>({
@@ -90,10 +84,8 @@ export function useUserPreferences() {
     }
   })
 }
-
 export function useUpdateUserPreferences() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (preferences: Partial<UserPreferences>) => {
       const response = await fetch('/api/settings/user-preferences', {
@@ -103,12 +95,10 @@ export function useUpdateUserPreferences() {
         },
         body: JSON.stringify({ preferences })
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to update user preferences')
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -116,7 +106,6 @@ export function useUpdateUserPreferences() {
     }
   })
 }
-
 // Notification Preferences Hooks
 export function useNotificationPreferences() {
   return useQuery<NotificationPreferences>({
@@ -131,10 +120,8 @@ export function useNotificationPreferences() {
     }
   })
 }
-
 export function useUpdateNotificationPreferences() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (preferences: NotificationPreferences) => {
       const response = await fetch('/api/settings/notifications', {
@@ -144,12 +131,10 @@ export function useUpdateNotificationPreferences() {
         },
         body: JSON.stringify({ preferences })
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to update notification preferences')
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -157,7 +142,6 @@ export function useUpdateNotificationPreferences() {
     }
   })
 }
-
 // Privacy Settings Hooks
 export function usePrivacySettings() {
   return useQuery<PrivacySettings>({
@@ -172,10 +156,8 @@ export function usePrivacySettings() {
     }
   })
 }
-
 export function useUpdatePrivacySettings() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (settings: Partial<PrivacySettings>) => {
       const response = await fetch('/api/settings/privacy', {
@@ -185,12 +167,10 @@ export function useUpdatePrivacySettings() {
         },
         body: JSON.stringify({ settings })
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to update privacy settings')
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -198,7 +178,6 @@ export function useUpdatePrivacySettings() {
     }
   })
 }
-
 export function usePrivacyScore() {
   return useQuery<{
     privacyScore: number
@@ -217,7 +196,6 @@ export function usePrivacyScore() {
     }
   })
 }
-
 // Security Settings Hooks
 export function useSecuritySettings() {
   return useQuery<SecuritySettings>({
@@ -232,10 +210,8 @@ export function useSecuritySettings() {
     }
   })
 }
-
 export function useUpdateSecuritySettings() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (settings: Partial<SecuritySettings>) => {
       const response = await fetch('/api/settings/security', {
@@ -245,12 +221,10 @@ export function useUpdateSecuritySettings() {
         },
         body: JSON.stringify({ settings })
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to update security settings')
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -258,7 +232,6 @@ export function useUpdateSecuritySettings() {
     }
   })
 }
-
 export function useSecurityAudit() {
   return useQuery<{
     auditLogs: Array<any>
@@ -276,7 +249,6 @@ export function useSecurityAudit() {
     }
   })
 }
-
 // Axis Customization Hooks
 export function useAxisCustomization() {
   return useQuery<WellnessPreferences>({
@@ -291,10 +263,8 @@ export function useAxisCustomization() {
     }
   })
 }
-
 export function useUpdateAxisCustomization() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (preferences: Partial<WellnessPreferences>) => {
       const response = await fetch('/api/settings/axis-customization', {
@@ -304,12 +274,10 @@ export function useUpdateAxisCustomization() {
         },
         body: JSON.stringify(preferences)
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to update axis customization settings')
       }
-
       return response.json()
     },
     onSuccess: () => {
@@ -317,22 +285,18 @@ export function useUpdateAxisCustomization() {
     }
   })
 }
-
 // Initialize all user settings (for new users)
 export function useInitializeUserSettings() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async () => {
       const response = await fetch('/api/settings/user-preferences', {
         method: 'POST'
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to initialize user settings')
       }
-
       return response.json()
     },
     onSuccess: () => {

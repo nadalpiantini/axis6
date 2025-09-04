@@ -2,12 +2,9 @@
  * Interaction Patterns for HexagonClock
  * Revolutionary intuitive time block interaction system
  */
-
 'use client'
-
 import React, { memo, useCallback, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
 interface InteractionConfig {
   dragEnabled: boolean;
   hoverEffects: boolean;
@@ -15,14 +12,12 @@ interface InteractionConfig {
   touchOptimized: boolean;
   gestureSupport: boolean;
 }
-
 interface InteractionPatternsProps {
   config: InteractionConfig;
   onTimeBlockSelect: (blockId: string, action: 'edit' | 'delete' | 'move' | 'duplicate') => void;
   onTimeSlotClick: (hour: number, minute: number) => void;
   onGestureDetected: (gesture: 'swipe' | 'pinch' | 'rotate', data: any) => void;
 }
-
 /**
  * Touch/Click Feedback Component
  * Provides visual and haptic feedback for interactions
@@ -37,7 +32,6 @@ const InteractionFeedback = memo(function InteractionFeedback({
   onComplete: () => void;
 }) {
   if (!position) return null;
-
   const getFeedbackConfig = () => {
     switch (type) {
       case 'click':
@@ -84,9 +78,7 @@ const InteractionFeedback = memo(function InteractionFeedback({
         };
     }
   };
-
   const config = getFeedbackConfig();
-
   return (
     <motion.div
       className="pointer-events-none absolute"
@@ -119,7 +111,6 @@ const InteractionFeedback = memo(function InteractionFeedback({
     </motion.div>
   );
 });
-
 /**
  * Context Menu for Time Blocks
  * Radial menu with touch-optimized buttons
@@ -136,16 +127,13 @@ const TimeBlockContextMenu = memo(function TimeBlockContextMenu({
   onClose: () => void;
 }) {
   if (!position || !blockId) return null;
-
   const actions = [
     { key: 'edit', label: '✏️', title: 'Edit Time Block', angle: 0 },
     { key: 'move', label: '↻', title: 'Move Time Block', angle: 90 },
     { key: 'duplicate', label: '⊞', title: 'Duplicate Block', angle: 180 },
     { key: 'delete', label: '🗑️', title: 'Delete Block', angle: 270 }
   ] as const;
-
   const radius = 50;
-
   return (
     <AnimatePresence>
       <motion.div
@@ -176,13 +164,11 @@ const TimeBlockContextMenu = memo(function TimeBlockContextMenu({
             animate={{ scale: 1 }}
             transition={{ delay: 0.1 }}
           />
-
           {/* Action buttons */}
           {actions.map((action, index) => {
             const angle = (action.angle * Math.PI) / 180;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
-
             return (
               <motion.button
                 key={action.key}
@@ -229,7 +215,6 @@ const TimeBlockContextMenu = memo(function TimeBlockContextMenu({
     </AnimatePresence>
   );
 });
-
 /**
  * Drag and Drop Visual Indicators
  * Shows valid drop zones and visual feedback during dragging
@@ -244,7 +229,6 @@ const DragIndicators = memo(function DragIndicators({
   previewPosition: { x: number; y: number } | null;
 }) {
   if (!isDragging) return null;
-
   return (
     <>
       {/* Valid drop zones */}
@@ -273,7 +257,6 @@ const DragIndicators = memo(function DragIndicators({
           }}
         />
       ))}
-
       {/* Drag preview */}
       {previewPosition && (
         <motion.div
@@ -296,7 +279,6 @@ const DragIndicators = memo(function DragIndicators({
     </>
   );
 });
-
 /**
  * Gesture Detection System
  * Detects touch gestures like swipe, pinch, rotate
@@ -314,35 +296,29 @@ const GestureDetector = memo(function GestureDetector({
     initialTouches: [] as Array<{ x: number; y: number; identifier: number }>,
     currentTouches: [] as Array<{ x: number; y: number; identifier: number }>
   });
-
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touches = Array.from(e.touches).map(touch => ({
       x: touch.clientX,
       y: touch.clientY,
       identifier: touch.identifier
     }));
-
     setGestureState({
       isDetecting: true,
       initialTouches: touches,
       currentTouches: touches
     });
   }, []);
-
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!gestureState.isDetecting) return;
-
     const currentTouches = Array.from(e.touches).map(touch => ({
       x: touch.clientX,
       y: touch.clientY,
       identifier: touch.identifier
     }));
-
     setGestureState(prev => ({
       ...prev,
       currentTouches
     }));
-
     // Detect gestures
     if (gestureState.initialTouches.length === 1 && currentTouches.length === 1) {
       // Single finger - potential swipe
@@ -351,16 +327,13 @@ const GestureDetector = memo(function GestureDetector({
       const deltaX = current.x - initial.x;
       const deltaY = current.y - initial.y;
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
       if (distance > 50) {
         const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
         let direction: string;
-
         if (angle >= -45 && angle <= 45) direction = 'right';
         else if (angle >= 45 && angle <= 135) direction = 'down';
         else if (angle >= -135 && angle <= -45) direction = 'up';
         else direction = 'left';
-
         onGestureDetected('swipe', { direction, distance, deltaX, deltaY });
       }
     } else if (gestureState.initialTouches.length === 2 && currentTouches.length === 2) {
@@ -369,31 +342,25 @@ const GestureDetector = memo(function GestureDetector({
       const initial2 = gestureState.initialTouches[1];
       const current1 = currentTouches[0];
       const current2 = currentTouches[1];
-
       const initialDistance = Math.sqrt(
         Math.pow(initial2.x - initial1.x, 2) + Math.pow(initial2.y - initial1.y, 2)
       );
       const currentDistance = Math.sqrt(
         Math.pow(current2.x - current1.x, 2) + Math.pow(current2.y - current1.y, 2)
       );
-
       const scale = currentDistance / initialDistance;
-
       if (Math.abs(scale - 1) > 0.1) {
         onGestureDetected('pinch', { scale, type: scale > 1 ? 'zoom-in' : 'zoom-out' });
       }
-
       // Rotation detection
       const initialAngle = Math.atan2(initial2.y - initial1.y, initial2.x - initial1.x);
       const currentAngle = Math.atan2(current2.y - current1.y, current2.x - current1.x);
       const rotation = (currentAngle - initialAngle) * 180 / Math.PI;
-
       if (Math.abs(rotation) > 15) {
         onGestureDetected('rotate', { rotation, direction: rotation > 0 ? 'clockwise' : 'counterclockwise' });
       }
     }
   }, [gestureState, onGestureDetected]);
-
   const handleTouchEnd = useCallback(() => {
     setGestureState({
       isDetecting: false,
@@ -401,7 +368,6 @@ const GestureDetector = memo(function GestureDetector({
       currentTouches: []
     });
   }, []);
-
   return (
     <div
       ref={gestureRef}
@@ -415,7 +381,6 @@ const GestureDetector = memo(function GestureDetector({
     </div>
   );
 });
-
 /**
  * Main Interaction Patterns Controller
  * Orchestrates all interaction patterns and feedback systems
@@ -434,7 +399,6 @@ export const InteractionPatterns = memo(function InteractionPatterns({
     position: null,
     type: 'click'
   });
-
   const [contextMenu, setContextMenu] = useState<{
     position: { x: number; y: number } | null;
     blockId: string | null;
@@ -442,52 +406,51 @@ export const InteractionPatterns = memo(function InteractionPatterns({
     position: null,
     blockId: null
   });
-
   const [dragState, setDragState] = useState({
     isDragging: false,
     validDropZones: [] as Array<{ hour: number; valid: boolean; position: { x: number; y: number } }>,
     previewPosition: null as { x: number; y: number } | null
   });
-
   const showFeedback = useCallback((
     position: { x: number; y: number },
     type: 'click' | 'longpress' | 'drag' | 'success' | 'error' = 'click'
   ) => {
     if (!config.clickFeedback) return;
-
     setFeedback({ position, type });
-
     // Haptic feedback on supported devices
     if ('vibrate' in navigator && config.touchOptimized) {
       navigator.vibrate(type === 'success' ? [50, 30, 50] : [30]);
     }
   }, [config.clickFeedback, config.touchOptimized]);
-
   const showContextMenu = useCallback((
     position: { x: number; y: number },
     blockId: string
   ) => {
     setContextMenu({ position, blockId });
   }, []);
-
   const handleContextMenuAction = useCallback((action: 'edit' | 'delete' | 'move' | 'duplicate') => {
     if (contextMenu.blockId) {
       onTimeBlockSelect(contextMenu.blockId, action);
       showFeedback(contextMenu.position!, action === 'delete' ? 'error' : 'success');
     }
   }, [contextMenu, onTimeBlockSelect, showFeedback]);
-
   const wrappedChildren = React.Children.map(children, child => {
     if (React.isValidElement(child)) {
+      // Extract custom props that should not be passed to DOM elements
+      const { onInteractionFeedback, onContextMenu, onDragStateChange, ...domProps } = child.props;
+      
       return React.cloneElement(child as React.ReactElement<any>, {
-        onInteractionFeedback: showFeedback,
-        onContextMenu: showContextMenu,
-        onDragStateChange: setDragState
+        ...domProps,
+        // Only pass these props if the child component expects them
+        ...(child.type && typeof child.type === 'function' && {
+          onInteractionFeedback: showFeedback,
+          onContextMenu: showContextMenu,
+          onDragStateChange: setDragState
+        })
       });
     }
     return child;
   });
-
   return (
     <>
       {config.gestureSupport ? (
@@ -497,14 +460,12 @@ export const InteractionPatterns = memo(function InteractionPatterns({
       ) : (
         wrappedChildren
       )}
-
       {/* Interaction feedback */}
       <InteractionFeedback
         position={feedback.position}
         type={feedback.type}
         onComplete={() => setFeedback({ position: null, type: 'click' })}
       />
-
       {/* Context menu */}
       <TimeBlockContextMenu
         position={contextMenu.position}
@@ -512,7 +473,6 @@ export const InteractionPatterns = memo(function InteractionPatterns({
         onAction={handleContextMenuAction}
         onClose={() => setContextMenu({ position: null, blockId: null })}
       />
-
       {/* Drag indicators */}
       <DragIndicators
         isDragging={dragState.isDragging}
@@ -522,9 +482,7 @@ export const InteractionPatterns = memo(function InteractionPatterns({
     </>
   );
 });
-
 InteractionPatterns.displayName = 'InteractionPatterns';
-
 // Default interaction configuration
 export const DEFAULT_INTERACTION_CONFIG: InteractionConfig = {
   dragEnabled: true,
@@ -533,6 +491,5 @@ export const DEFAULT_INTERACTION_CONFIG: InteractionConfig = {
   touchOptimized: true,
   gestureSupport: true
 };
-
 // Export types for external use
 export type { InteractionConfig, InteractionPatternsProps };

@@ -1,11 +1,8 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-
 import { AxisIcon } from '@/components/icons'
 import { getAxisColors } from '@/lib/constants/brand-colors'
-
 export interface Category {
   id: number
   slug: string
@@ -15,7 +12,6 @@ export interface Category {
   icon: string
   position: number
 }
-
 interface CategoryCardProps {
   category: Category
   isSelected: boolean
@@ -24,7 +20,6 @@ interface CategoryCardProps {
   animationDelay?: number
   disabled?: boolean
 }
-
 export function CategoryCard({
   category,
   isSelected,
@@ -36,7 +31,6 @@ export function CategoryCard({
   const brandColors = getAxisColors(category.slug)
   const name = category.name[language] || category.name['en'] || category.slug
   const description = category.description?.[language] || category.description?.['en'] || ''
-
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },
     visible: {
@@ -54,13 +48,11 @@ export function CategoryCard({
       transition: { duration: 0.1 }
     }
   }
-
   const iconVariants = {
     idle: { rotate: 0, scale: 1 },
     hover: { rotate: 5, scale: 1.1 },
     selected: { rotate: 360, scale: 1.15 }
   }
-
   const checkVariants = {
     hidden: { scale: 0, opacity: 0 },
     visible: {
@@ -69,7 +61,6 @@ export function CategoryCard({
       transition: { type: "spring", stiffness: 300, damping: 25 }
     }
   }
-
   return (
     <motion.div
       variants={cardVariants}
@@ -103,7 +94,6 @@ export function CategoryCard({
       >
         <Check className="w-4 h-4 text-white" />
       </motion.div>
-
       {/* Icon Container */}
       <motion.div
         variants={iconVariants}
@@ -124,7 +114,6 @@ export function CategoryCard({
             background: `radial-gradient(circle, ${brandColors.primary}, transparent)`
           }}
         />
-
         <AxisIcon
           axis={category.slug}
           size={24}
@@ -132,7 +121,6 @@ export function CategoryCard({
           className="relative z-10 drop-shadow-sm"
         />
       </motion.div>
-
       {/* Content */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-white transition-colors">
@@ -142,7 +130,6 @@ export function CategoryCard({
           {description}
         </p>
       </div>
-
       {/* Subtle border glow for selected state */}
       {isSelected && (
         <motion.div
@@ -155,7 +142,6 @@ export function CategoryCard({
           }}
         />
       )}
-
       {/* Hover overlay */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </motion.div>

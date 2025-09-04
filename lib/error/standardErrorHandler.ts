@@ -1,13 +1,10 @@
 import { logger } from '@/lib/utils/logger';
-
 import { logError, addBreadcrumb } from '@/lib/monitoring/sentry-config'
 import { toast } from 'sonner'
-
 /**
  * Standard error handling patterns for AXIS6 application
  * Replaces all "TODO: Replace with proper error handling" comments
  */
-
 export interface ErrorContext {
   operation: string
   component?: string
@@ -16,7 +13,6 @@ export interface ErrorContext {
   showToast?: boolean
   fallbackMessage?: string
 }
-
 export interface ErrorHandlerOptions {
   /** Show toast notification to user */
   showToast?: boolean
@@ -33,7 +29,6 @@ export interface ErrorHandlerOptions {
   /** Operation being performed */
   operation: string
 }
-
 /**
  * Standard error handler that replaces all TODO comments
  * Logs to Sentry and optionally shows toast notification
@@ -49,7 +44,6 @@ export function handleError(error: unknown, options: ErrorHandlerOptions): void 
     userId,
     operation
   } = options
-
   // Add breadcrumb for debugging trail
   addBreadcrumb(
     `Error in ${operation}${component ? ` (${component})` : ''}`,
@@ -59,7 +53,6 @@ export function handleError(error: unknown, options: ErrorHandlerOptions): void 
       ...context
     }
   )
-
   // Log to Sentry with full context
   logError(errorObj, {
     level,
@@ -74,11 +67,9 @@ export function handleError(error: unknown, options: ErrorHandlerOptions): void 
     },
     user: userId ? { id: userId } : undefined
   })
-
   // Show user-friendly notification
   if (showToast) {
     const displayMessage = userMessage || getUserFriendlyMessage(operation, errorObj.message)
-
     if (level === 'error') {
       toast.error(displayMessage, {
         description: process.env.NODE_ENV === 'development' ? errorObj.message : undefined
@@ -89,7 +80,6 @@ export function handleError(error: unknown, options: ErrorHandlerOptions): void 
       toast.info(displayMessage)
     }
   }
-
   // Development console logging
   if (process.env.NODE_ENV === 'development') {
     console.group(`🔴 Error in ${operation}`)
@@ -99,62 +89,50 @@ export function handleError(error: unknown, options: ErrorHandlerOptions): void 
     console.groupEnd()
   }
 }
-
 /**
  * Generate user-friendly error messages based on operation type
  */
 function getUserFriendlyMessage(operation: string, originalMessage: string): string {
   const lowerOperation = operation.toLowerCase()
-
   // Network/API errors
   if (originalMessage.includes('fetch') || originalMessage.includes('network')) {
     return 'Unable to connect to the server. Please check your connection and try again.'
   }
-
   // Database errors
   if (originalMessage.includes('supabase') || originalMessage.includes('database')) {
     return 'Unable to save your data. Please try again in a moment.'
   }
-
   // Authentication errors
   if (lowerOperation.includes('auth') || lowerOperation.includes('login')) {
     return 'Authentication failed. Please try logging in again.'
   }
-
   // Profile operations
   if (lowerOperation.includes('profile')) {
     return 'Unable to update your profile. Please try again.'
   }
-
   // Check-in operations
   if (lowerOperation.includes('checkin') || lowerOperation.includes('activity')) {
     return 'Unable to save your check-in. Please try again.'
   }
-
   // Chat operations
   if (lowerOperation.includes('chat') || lowerOperation.includes('message')) {
     return 'Unable to send message. Please try again.'
   }
-
   // File operations
   if (lowerOperation.includes('upload') || lowerOperation.includes('file')) {
     return 'File upload failed. Please try again with a smaller file.'
   }
-
   // Timer operations
   if (lowerOperation.includes('timer')) {
     return 'Timer operation failed. Please try again.'
   }
-
   // Settings operations
   if (lowerOperation.includes('setting')) {
     return 'Unable to save settings. Please try again.'
   }
-
   // Generic fallback
   return 'Something went wrong. Please try again.'
 }
-
 /**
  * Async operation error handler with automatic retry capability
  */
@@ -167,7 +145,6 @@ export async function handleAsyncError<T>(
   }
 ): Promise<T | null> {
   const { retries = 0, retryDelay = 1000, onRetry, ...errorOptions } = options
-
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       return await operation()
@@ -184,29 +161,24 @@ export async function handleAsyncError<T>(
         })
         return null
       }
-
       // Notify about retry attempt
       if (onRetry) {
         onRetry(attempt + 1)
       }
-
       // Add breadcrumb for retry attempt
       addBreadcrumb(
         `Retrying ${options.operation} (attempt ${attempt + 1}/${retries + 1})`,
         'retry',
         { attempt: attempt + 1, maxRetries: retries + 1 }
       )
-
       // Wait before retry
       if (retryDelay > 0) {
         await new Promise(resolve => setTimeout(resolve, retryDelay))
       }
     }
   }
-
   return null
 }
-
 /**
  * Form validation error handler
  */
@@ -216,7 +188,6 @@ export function handleFormError(
   options: Omit<ErrorHandlerOptions, 'operation'> & { formName: string }
 ): void {
   const { formName, ...errorOptions } = options
-
   handleError(error, {
     ...errorOptions,
     operation: `form_submission_${formName}`,
@@ -227,7 +198,6 @@ export function handleFormError(
     }
   })
 }
-
 /**
  * API route error handler for consistent error responses
  */
@@ -245,7 +215,6 @@ export function handleAPIRouteError(
   statusCode: number
 } {
   const errorObj = error instanceof Error ? error : new Error(String(error))
-
   // Log the API error
   handleError(errorObj, {
     operation: `api_${context.method}_${context.endpoint}`,
@@ -257,21 +226,18 @@ export function handleAPIRouteError(
       requestData: context.requestData
     }
   })
-
   // Determine status code based on error type
   let statusCode = 500
   if (errorObj.message.includes('not found')) statusCode = 404
   if (errorObj.message.includes('unauthorized')) statusCode = 401
   if (errorObj.message.includes('forbidden')) statusCode = 403
   if (errorObj.message.includes('validation')) statusCode = 400
-
   return {
     error: 'An unexpected error occurred',
     message: process.env.NODE_ENV === 'development' ? errorObj.message : undefined,
     statusCode
   }
 }
-
 /**
  * React Query mutation error handler
  */
@@ -283,7 +249,6 @@ export function handleMutationError(
   }
 ): void {
   const { mutationName, optimisticUpdate, ...errorOptions } = options
-
   handleError(error, {
     ...errorOptions,
     operation: `mutation_${mutationName}`,
@@ -294,7 +259,6 @@ export function handleMutationError(
     }
   })
 }
-
 /**
  * WebSocket connection error handler
  */
@@ -306,7 +270,6 @@ export function handleWebSocketError(
   }
 ): void {
   const { connectionType, reconnectAttempt, ...errorOptions } = options
-
   handleError(error, {
     ...errorOptions,
     operation: `websocket_${connectionType}`,
@@ -318,7 +281,6 @@ export function handleWebSocketError(
     }
   })
 }
-
 /**
  * File operation error handler
  */
@@ -332,7 +294,6 @@ export function handleFileError(
   }
 ): void {
   const { fileName, fileSize, fileType, operationType, ...errorOptions } = options
-
   handleError(error, {
     ...errorOptions,
     operation: `file_${operationType}`,
@@ -345,7 +306,6 @@ export function handleFileError(
     }
   })
 }
-
 /**
  * Database operation error handler with specific patterns for AXIS6
  */
@@ -358,7 +318,6 @@ export function handleDatabaseError(
   }
 ): void {
   const { table, operation: dbOperation, rowId, ...errorOptions } = options
-
   handleError(error, {
     ...errorOptions,
     operation: `db_${dbOperation}_${table}`,
