@@ -20,6 +20,7 @@ import { StandardHeader } from '@/components/layout/StandardHeader'
 import { ActivityTimer } from '@/components/my-day/ActivityTimer'
 import { PlanMyDay } from '@/components/my-day/PlanMyDay'
 import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
+import { AxisActivityMenu } from '@/components/my-day/AxisActivityMenu'
 import { LogoFull } from '@/components/ui/Logo'
 import { useUser } from '@/lib/react-query/hooks'
 import { useDashboardSlice } from '@/lib/react-query/hooks/useDashboardDataOptimized'
@@ -184,6 +185,9 @@ export default function MyDayPage() {
   const [showPlanMyDay, setShowPlanMyDay] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<any>(null)
   const [activeTimer, setActiveTimer] = useState<any>(null)
+  const [showAxisMenu, setShowAxisMenu] = useState(false)
+  const [selectedAxis, setSelectedAxis] = useState<string>('')
+  const [axisMenuPosition, setAxisMenuPosition] = useState({ x: 0, y: 0 })
   // Add mutation for drag updates
   const updateTimeBlock = useUpdateTimeBlock()
   // Fetch data for selected date
@@ -212,6 +216,21 @@ export default function MyDayPage() {
     setSelectedCategory(category)
     setShowScheduler(true)
   }
+
+  const handleAxisClick = (category: any, event: React.MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    
+    // Get button position for menu placement
+    const rect = (event.target as HTMLElement).getBoundingClientRect()
+    setAxisMenuPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    })
+    
+    setSelectedAxis(category.slug)
+    setShowAxisMenu(true)
+  }
   const handleStartTimer = (category?: any) => {
     setSelectedCategory(category)
     setShowTimer(true)
@@ -231,6 +250,13 @@ export default function MyDayPage() {
   }
   const handlePlanMyDayClose = () => {
     setShowPlanMyDay(false)
+    refetchData()
+    refetchDistribution()
+  }
+
+  const handleAxisMenuClose = () => {
+    setShowAxisMenu(false)
+    setSelectedAxis('')
     refetchData()
     refetchDistribution()
   }
@@ -392,7 +418,7 @@ export default function MyDayPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 + index * 0.05 }}
-                    onClick={() => handleAddTimeBlock(category)}
+                    onClick={(e) => handleAxisClick(category, e)}
                     className="flex items-center gap-2 p-2 sm:p-3 glass rounded-lg hover:bg-white/10 transition-colors touch-manipulation"
                   >
                     <div 
@@ -537,6 +563,18 @@ export default function MyDayPage() {
             categories={categories}
             selectedDate={selectedDate}
             existingBlocks={myDayData}
+          />
+        )}
+        {showAxisMenu && (
+          <AxisActivityMenu
+            isOpen={showAxisMenu}
+            onClose={handleAxisMenuClose}
+            selectedAxis={selectedAxis}
+            position={axisMenuPosition}
+            onSuccess={() => {
+              refetchData()
+              refetchDistribution()
+            }}
           />
         )}
       </AnimatePresence>

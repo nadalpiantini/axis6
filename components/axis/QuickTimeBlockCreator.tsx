@@ -139,7 +139,7 @@ export function QuickTimeBlockCreator({
 
     try {
       await createTimeBlock.mutateAsync({
-        categoryId: category.id, // Use the actual UUID from the category
+        categoryId: category.id.toString(), // Convert numeric ID to string
         activityName,
         startTime: getCurrentTime(),
         durationMinutes: selectedDuration,

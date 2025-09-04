@@ -79,7 +79,7 @@ export function TimeBlockScheduler({
     const timeBlockData = {
       user_id: userId,
       date: format(selectedDate, 'yyyy-MM-dd'),
-      category_id: selectedCategoryId,
+      category_id: selectedCategoryId.toString(), // Convert numeric ID to string
       activity_id: selectedActivityId,
       activity_name: activityName.trim(),
       start_time: startTime,
