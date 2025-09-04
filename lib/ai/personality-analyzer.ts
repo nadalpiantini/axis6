@@ -229,11 +229,12 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
         })
     } catch (error) {
       handleError(error, {
-      operation: 'ai_operation', component: 'personality-analyzer',
-
+        operation: 'ai_operation', 
+        component: 'personality-analyzer',
         userMessage: 'AI operation failed. Please try again.'
-
-      })}
+      })
+      throw error // Re-throw to let caller handle the error
+    }
   }
 
   /**

@@ -26,7 +26,7 @@ import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { LogoFull } from '@/components/ui/Logo'
 import { useUser } from '@/lib/react-query/hooks'
 import { useDashboardSlice } from '@/lib/react-query/hooks/useDashboardDataOptimized'
-import { useMyDayData, useTimeDistribution, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'
+import { useMyDayData, useTimeDistribution, useUpdateTimeBlock, useActiveTimer } from '@/lib/react-query/hooks/useMyDay'
 
 // Transform database time blocks to clock format
 const transformTimeBlocksForClock = (timeBlocks: any[], currentDate: Date) => {
@@ -79,6 +79,18 @@ export default function MyDayPage() {
     user?.id || '',
     format(selectedDate, 'yyyy-MM-dd')
   )
+
+  // Fetch active timer
+  const { data: activeTimerData } = useActiveTimer(user?.id || '')
+
+  // Sync active timer from database
+  useEffect(() => {
+    if (activeTimerData?.activeTimer) {
+      setActiveTimer(activeTimerData.activeTimer)
+    } else {
+      setActiveTimer(null)
+    }
+  }, [activeTimerData])
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -213,12 +225,18 @@ export default function MyDayPage() {
 
             <button
               onClick={handleStartTimer}
-              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 min-h-[44px] bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors touch-manipulation active:scale-95"
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 min-h-[44px] rounded-lg transition-colors touch-manipulation active:scale-95 ${
+                activeTimer 
+                  ? 'bg-green-500/30 hover:bg-green-500/40 text-green-300 animate-pulse' 
+                  : 'bg-green-500/20 hover:bg-green-500/30 text-green-400'
+              }`}
               data-testid="start-timer-btn"
-              aria-label="Start activity timer"
+              aria-label={activeTimer ? "Timer is running" : "Start activity timer"}
             >
               <Timer className="w-4 h-4 flex-shrink-0" />
-              <span className="hidden sm:inline text-sm lg:text-base font-medium">Start Timer</span>
+              <span className="hidden sm:inline text-sm lg:text-base font-medium">
+                {activeTimer ? 'Timer Running' : 'Start Timer'}
+              </span>
             </button>
 
             <button

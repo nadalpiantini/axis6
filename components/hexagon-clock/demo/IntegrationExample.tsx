@@ -200,9 +200,9 @@ export function UnifiedExample() {
           showCurrentTime={true}
           animate={true}
           size={420}
-          onToggleAxis={(id) => }
-          onTimeBlockDrag={(block, hour) => }
-          onCategoryClick={(category) => }
+          onToggleAxis={(id) => { console.log('Toggle axis:', id) }}
+          onTimeBlockDrag={(block, hour) => { console.log('Time block drag:', block, hour) }}
+          onCategoryClick={(category) => { console.log('Category click:', category) }}
         />
       </div>
     </div>

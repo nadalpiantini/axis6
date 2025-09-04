@@ -116,15 +116,19 @@ export function EnhancedTemperamentQuestionnaire({
         if (error) throw error
 
         setQuestions(questionsData || [])
-                } catch (error) {
-            handleError(error, {
-      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
-
-              userMessage: 'Psychology assessment failed. Please try again.'
-
-            })
-            // Error logged via handleError
-          } finally {
+      } catch (error) {
+        console.error('❌ Failed to load assessment questions:', error)
+        handleError(error, {
+          operation: 'psychology_assessment_load', 
+          component: 'EnhancedTemperamentQuestionnaire',
+          userMessage: 'Failed to load assessment questions. Please refresh and try again.',
+          userId,
+          context: {
+            useAI,
+            sessionId
+          }
+        })
+      } finally {
         setLoading(false)
       }
     }
@@ -179,13 +183,18 @@ export function EnhancedTemperamentQuestionnaire({
         setTimeout(() => setShowAIInsight(false), 3000)
       }
     } catch (error) {
+      console.error('❌ Failed to generate follow-up question:', error)
       handleError(error, {
-      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
-
-        userMessage: 'Psychology assessment failed. Please try again.'
-
+        operation: 'psychology_assessment_ai_followup', 
+        component: 'EnhancedTemperamentQuestionnaire',
+        userMessage: 'Failed to generate personalized question. Continuing with standard questions.',
+        userId,
+        context: {
+          sessionId,
+          currentQuestionIndex,
+          responsesCount: Object.keys(responses).length
+        }
       })
-            // Error logged via handleError
     }
   }, [useAI, currentQuestionIndex, responses, questions, language])
 
@@ -221,13 +230,18 @@ export function EnhancedTemperamentQuestionnaire({
           session_id: sessionId
         })
     } catch (error) {
+      console.error('❌ Failed to save response:', error)
       handleError(error, {
-      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
-
-        userMessage: 'Psychology assessment failed. Please try again.'
-
+        operation: 'psychology_assessment_response', 
+        component: 'EnhancedTemperamentQuestionnaire',
+        userMessage: 'Failed to save your response. Please try again.',
+        userId,
+        context: {
+          questionId: currentQuestion.id,
+          optionIndex,
+          sessionId
+        }
       })
-            // Error logged via handleError
     }
 
     // Generate follow-up question if using AI
@@ -253,6 +267,14 @@ export function EnhancedTemperamentQuestionnaire({
     setAiAnalyzing(useAI)
 
     try {
+      const responsesCount = Object.keys(responses).length
+      console.log('🔄 Starting assessment submission...', { useAI, sessionId, responsesCount })
+
+      // Validate minimum responses
+      if (responsesCount < 3) {
+        throw new Error('Please answer at least 3 questions before completing the assessment')
+      }
+
       if (useAI) {
         // Use AI-enhanced analysis
         const formattedResponses = Object.entries(responses).map(([questionId, response]) => {
@@ -265,6 +287,8 @@ export function EnhancedTemperamentQuestionnaire({
           }
         })
 
+        console.log('📊 Formatted responses for AI analysis:', formattedResponses.length, 'responses')
+
         const analysisResponse = await fetch('/api/ai/analyze-personality', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -275,8 +299,13 @@ export function EnhancedTemperamentQuestionnaire({
           })
         })
 
+        console.log('📡 AI API response status:', analysisResponse.status, analysisResponse.statusText)
+
         if (analysisResponse.ok) {
-          const { data: aiResult } = await analysisResponse.json()
+          const responseData = await analysisResponse.json()
+          console.log('✅ AI analysis successful:', responseData)
+          
+          const { data: aiResult } = responseData
 
           // Convert to expected format
           const result: TemperamentResult = {
@@ -288,38 +317,70 @@ export function EnhancedTemperamentQuestionnaire({
             personality_insights: aiResult.personality_insights
           }
 
+          console.log('🎯 Final result prepared:', result.primary_temperament)
           onComplete(result)
         } else {
-          throw new Error('AI analysis failed')
+          const errorData = await analysisResponse.json().catch(() => ({}))
+          console.error('❌ AI analysis API error:', errorData)
+          throw new Error(`AI analysis failed: ${errorData.error || analysisResponse.statusText}`)
         }
       } else {
         // Fallback to basic calculation
+        console.log('📐 Using basic temperament calculation...')
         const { data: result, error } = await supabase
           .rpc('calculate_temperament_from_responses', {
             p_user_id: userId,
             p_session_id: sessionId
           })
 
-        if (error) throw error
+        if (error) {
+          console.error('❌ Basic calculation failed:', error)
+          throw error
+        }
+
+        console.log('✅ Basic calculation successful:', result)
         onComplete(result)
       }
     } catch (error) {
+      console.error('❌ Failed to save assessment results:', error)
       handleError(error, {
-      operation: 'psychology_assessment', component: 'EnhancedTemperamentQuestionnaire',
-
-        userMessage: 'Psychology assessment failed. Please try again.'
-
+        operation: 'psychology_assessment', 
+        component: 'EnhancedTemperamentQuestionnaire',
+        userMessage: 'Psychology assessment failed. Please try again.',
+        userId,
+        context: {
+          sessionId,
+          useAI,
+          responsesCount: Object.keys(responses).length
+        }
       })
-            // Error logged via handleError
 
       // Fallback to basic calculation if AI fails
-      const { data: result } = await supabase
-        .rpc('calculate_temperament_from_responses', {
-          p_user_id: userId,
-          p_session_id: sessionId
-        })
+      try {
+        const { data: result, error: fallbackError } = await supabase
+          .rpc('calculate_temperament_from_responses', {
+            p_user_id: userId,
+            p_session_id: sessionId
+          })
 
-      if (result) onComplete(result)
+        if (fallbackError) {
+          console.error('❌ Fallback calculation also failed:', fallbackError)
+          throw new Error('Both AI and basic analysis failed')
+        }
+
+        if (result) {
+          onComplete(result)
+        }
+      } catch (fallbackError) {
+        console.error('❌ Complete failure in assessment:', fallbackError)
+        handleError(fallbackError, {
+          operation: 'psychology_assessment_fallback', 
+          component: 'EnhancedTemperamentQuestionnaire',
+          userMessage: 'Assessment calculation failed. Please try again.',
+          userId,
+          context: { sessionId, originalError: error instanceof Error ? error.message : String(error) }
+        })
+      }
     } finally {
       setSubmitting(false)
       setAiAnalyzing(false)

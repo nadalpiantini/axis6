@@ -46,6 +46,7 @@ export function ActivityTimer({
   const [activeLogId, setActiveLogId] = useState<number | null>(null)
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [timerStartedAt, setTimerStartedAt] = useState<Date | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const startTimer = useStartTimer()
@@ -64,11 +65,57 @@ export function ActivityTimer({
     }
   }, [selectedActivityId, activities])
 
-  // Timer logic
+  // Initialize timer state if there's an active timer (recovery from database)
+  useEffect(() => {
+    if (timeBlock && timeBlock.id && timeBlock.started_at && !activeLogId) {
+      setActiveLogId(timeBlock.id)
+      setSelectedCategoryId(timeBlock.category_id)
+      setActivityName(timeBlock.activity_name)
+      setTimerStartedAt(new Date(timeBlock.started_at))
+      setIsRunning(true)
+      
+      // Calculate elapsed time from database timestamp
+      const startTime = new Date(timeBlock.started_at).getTime()
+      const currentTime = Date.now()
+      const elapsedMs = currentTime - startTime
+      setElapsedSeconds(Math.floor(elapsedMs / 1000))
+    }
+    // Reset timer state if no active timer in database
+    else if (!timeBlock || !timeBlock.started_at) {
+      if (activeLogId && isRunning) {
+        // Timer was stopped externally, clean up local state
+        setIsRunning(false)
+        setElapsedSeconds(0)
+        setActiveLogId(null)
+        setTimerStartedAt(null)
+      }
+    }
+  }, [timeBlock, isOpen, activeLogId, isRunning])
+
+  // Clean up timer when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [isOpen])
+
+  // Timer logic - enhanced with persistence and real-time sync
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setElapsedSeconds(prev => prev + 1)
+        if (timerStartedAt) {
+          // Calculate elapsed time from actual start time (from database)
+          const currentTime = Date.now()
+          const startTime = timerStartedAt.getTime()
+          const elapsedMs = currentTime - startTime
+          setElapsedSeconds(Math.floor(elapsedMs / 1000))
+        } else {
+          // Fallback to local increment for new timers
+          setElapsedSeconds(prev => prev + 1)
+        }
       }, 1000)
     } else {
       if (intervalRef.current) {
@@ -82,7 +129,24 @@ export function ActivityTimer({
         clearInterval(intervalRef.current)
       }
     }
-  }, [isRunning])
+  }, [isRunning, timerStartedAt])
+
+  // Periodic sync check to ensure timer accuracy
+  useEffect(() => {
+    if (isRunning && timerStartedAt && activeLogId) {
+      const syncInterval = setInterval(() => {
+        const expectedElapsed = Math.floor((Date.now() - timerStartedAt.getTime()) / 1000)
+        const difference = Math.abs(expectedElapsed - elapsedSeconds)
+        
+        // If difference is more than 2 seconds, resync
+        if (difference > 2) {
+          setElapsedSeconds(expectedElapsed)
+        }
+      }, 10000) // Check every 10 seconds
+
+      return () => clearInterval(syncInterval)
+    }
+  }, [isRunning, timerStartedAt, activeLogId, elapsedSeconds])
 
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
 
@@ -94,6 +158,18 @@ export function ActivityTimer({
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Reset timer state completely (for edge cases)
+  const resetTimerState = () => {
+    setIsRunning(false)
+    setElapsedSeconds(0)
+    setActiveLogId(null)
+    setTimerStartedAt(null)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
   }
 
   const handleStart = async () => {
@@ -113,9 +189,11 @@ export function ActivityTimer({
         time_block_id: timeBlock?.time_block_id
       })
 
+      const startTime = new Date()
       setActiveLogId(result.log_id)
       setIsRunning(true)
       setElapsedSeconds(0)
+      setTimerStartedAt(startTime) // Set timer start time for persistence
     } catch (error: any) {
       handleMutationError(error, {
         mutationName: 'start_activity_timer',
@@ -134,9 +212,15 @@ export function ActivityTimer({
 
   const handlePause = () => {
     setIsRunning(false)
+    // Timer will preserve current elapsedSeconds
   }
 
   const handleResume = () => {
+    // Adjust timerStartedAt to account for elapsed time
+    if (elapsedSeconds > 0) {
+      const adjustedStartTime = new Date(Date.now() - (elapsedSeconds * 1000))
+      setTimerStartedAt(adjustedStartTime)
+    }
     setIsRunning(true)
   }
 
@@ -152,6 +236,7 @@ export function ActivityTimer({
       setIsRunning(false)
       setElapsedSeconds(0)
       setActiveLogId(null)
+      setTimerStartedAt(null)
       onClose()
     } catch (error) {
       handleMutationError(error, {
