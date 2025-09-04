@@ -22,157 +22,12 @@ import { PlanMyDay } from '@/components/my-day/PlanMyDay'
 import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { AxisActivityMenu } from '@/components/my-day/AxisActivityMenu'
 import { LogoFull } from '@/components/ui/Logo'
+import HexagonChartWithResonance from '@/components/axis/HexagonChartWithResonance'
 import { useUser } from '@/lib/react-query/hooks'
 import { useDashboardSlice } from '@/lib/react-query/hooks/useDashboardDataOptimized'
 import { useMyDayData, useTimeDistribution, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'
 import { getLocalizedText } from '@/lib/utils/i18n'
 
-// Simple hexagon component following original design
-const SimpleHexagon = ({ categories, onCategoryClick }: { 
-  categories: any[], 
-  onCategoryClick?: (category: any) => void 
-}) => {
-  const hexagonColors = [
-    '#A6C26F', // Green (Physical)
-    '#D4A5F3', // Lavender (Mental) 
-    '#FF6B6B', // Red-orange (Emotional)
-    '#4ECDC4', // Teal (Social)
-    '#45B7D1', // Blue (Spiritual)
-    '#FFD93D'  // Yellow-orange (Material)
-  ]
-
-  const getNodePosition = (index: number) => {
-    const angle = (360 / 6) * index - 90 // Start from top
-    const rad = (angle * Math.PI) / 180
-    const radius = 80
-    return {
-      x: 120 + Math.cos(rad) * radius,
-      y: 120 + Math.sin(rad) * radius
-    }
-  }
-
-  return (
-    <div className="relative flex items-center justify-center w-full h-64">
-      <svg
-        width="240"
-        height="240"
-        viewBox="0 0 240 240"
-        className="transform rotate-0"
-      >
-        <defs>
-          {/* Subtle glow filter */}
-          <filter id="nodeGlow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge> 
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Subtle hexagon outline */}
-        <motion.path
-          d="M 120 40 L 200 80 L 200 160 L 120 200 L 40 160 L 40 80 Z"
-          fill="none"
-          stroke="rgba(255, 255, 255, 0.1)"
-          strokeWidth="1"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-
-        {/* Subtle connecting lines to center */}
-        {[0, 1, 2, 3, 4, 5].map(i => {
-          const pos = getNodePosition(i)
-          return (
-            <motion.line
-              key={i}
-              x1={pos.x}
-              y1={pos.y}
-              x2={120}
-              y2={120}
-              stroke="rgba(255, 255, 255, 0.05)"
-              strokeWidth="0.5"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
-            />
-          )
-        })}
-
-        {/* Category nodes */}
-        {categories.slice(0, 6).map((category, index) => {
-          const pos = getNodePosition(index)
-          return (
-            <motion.g
-              key={category.id}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.5 + index * 0.1, type: "spring", stiffness: 200 }}
-            >
-              {/* Outer circle with color */}
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r="12"
-                fill={hexagonColors[index]}
-                opacity="0.8"
-                filter="url(#nodeGlow)"
-                className="cursor-pointer hover:opacity-100 transition-opacity"
-                onClick={() => onCategoryClick?.(category)}
-              />
-              {/* Inner target icon */}
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r="6"
-                fill="rgba(255, 255, 255, 0.9)"
-                className="cursor-pointer"
-                onClick={() => onCategoryClick?.(category)}
-              />
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r="3"
-                fill={hexagonColors[index]}
-                className="cursor-pointer"
-                onClick={() => onCategoryClick?.(category)}
-              />
-            </motion.g>
-          )
-        })}
-
-        {/* Center node */}
-        <motion.g
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-        >
-          <circle
-            cx="120"
-            cy="120"
-            r="14"
-            fill="#2C3E50"
-            opacity="0.9"
-            filter="url(#nodeGlow)"
-          />
-          <circle
-            cx="120"
-            cy="120"
-            r="7"
-            fill="rgba(255, 255, 255, 0.9)"
-          />
-          <circle
-            cx="120"
-            cy="120"
-            r="3.5"
-            fill="#2C3E50"
-          />
-        </motion.g>
-      </svg>
-    </div>
-  )
-}
 
 export default function MyDayPage() {
   const router = useRouter()
@@ -395,7 +250,7 @@ export default function MyDayPage() {
 
           {/* Main Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-            {/* Simple Hexagon */}
+            {/* Hexagon Chart with Resonance */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -406,10 +261,21 @@ export default function MyDayPage() {
                 <Target className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
                 Day Overview
               </h2>
-              <SimpleHexagon 
-                categories={categories}
-                onCategoryClick={handleAddTimeBlock}
-              />
+              
+              <div className="flex justify-center mb-4 sm:mb-8 overflow-hidden">
+                <div className="w-full max-w-[95vw] sm:max-w-none flex justify-center">
+                  <HexagonChartWithResonance
+                    axes={categories}
+                    onAxisClick={handleAxisClick}
+                    size="mobile"
+                    showResonance={true}
+                    enableInteractions={true}
+                    centerText="My Day"
+                    className="max-w-full"
+                  />
+                </div>
+              </div>
+
               {/* Category Labels */}
               <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6">
                 {categories.slice(0, 6).map((category, index) => (
@@ -423,12 +289,7 @@ export default function MyDayPage() {
                   >
                     <div 
                       className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ 
-                        backgroundColor: [
-                          '#A6C26F', '#D4A5F3', '#FF6B6B', 
-                          '#4ECDC4', '#45B7D1', '#FFD93D'
-                        ][index] 
-                      }}
+                      style={{ backgroundColor: category.color }}
                     />
                     <span className="text-xs sm:text-sm text-white truncate">
                       {getLocalizedText(category.name, 'en', category.slug)}
