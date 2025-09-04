@@ -1,12 +1,10 @@
 'use client'
-
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
   Bell,
   Settings,
   User,
   LogOut,
-  Sparkles,
   Flame,
   TrendingUp,
   Calendar,
@@ -20,9 +18,7 @@ import {
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect, memo } from 'react'
-
 import { LogoIcon } from '@/components/ui/Logo'
-
 interface StandardHeaderProps {
   user?: any
   onLogout?: () => void
@@ -34,7 +30,6 @@ interface StandardHeaderProps {
   title?: string
   subtitle?: string
 }
-
 export const StandardHeader = memo<StandardHeaderProps>(({
   user,
   onLogout,
@@ -52,7 +47,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 50], [0.95, 1])
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
@@ -60,7 +54,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
   useEffect(() => {
     if (showDropdown) {
       const handleClickOutside = () => setShowDropdown(false)
@@ -69,24 +62,14 @@ export const StandardHeader = memo<StandardHeaderProps>(({
     }
     return undefined
   }, [showDropdown])
-
-  const getGreeting = () => {
-    const hour = new Date().getHours()
-    if (hour < 12) return 'Buenos días'
-    if (hour < 18) return 'Buenas tardes'
-    return 'Buenas noches'
-  }
-
   const getUserInitial = () => {
     const email = user?.email || ''
     return email.charAt(0).toUpperCase()
   }
-
   const getUserName = () => {
     const email = user?.email || ''
     return email.split('@')[0]
   }
-
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
@@ -94,16 +77,14 @@ export const StandardHeader = memo<StandardHeaderProps>(({
       router.push('/auth/login')
     }
   }
-
   const navigationItems = [
     { href: '/dashboard', icon: Home, label: 'Dashboard' },
-    { href: '/my-day', icon: Calendar, label: 'Mi Día' },
+    { href: '/my-day', icon: Calendar, label: 'My Day' },
     { href: '/chat', icon: MessageSquare, label: 'Chat' },
-    { href: '/analytics', icon: BarChart3, label: 'Análisis' },
-    { href: '/achievements', icon: Trophy, label: 'Logros' },
-    { href: '/profile', icon: User, label: 'Perfil' }
+    { href: '/analytics', icon: BarChart3, label: 'Analytics' },
+    { href: '/achievements', icon: Trophy, label: 'Achievements' },
+    { href: '/profile', icon: User, label: 'Profile' }
   ]
-
   return (
     <>
       <motion.header
@@ -124,52 +105,16 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push(backUrl)}
                   className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                  aria-label="Volver"
+                  aria-label="Back"
                 >
                   <ChevronLeft className="w-5 h-5 text-gray-300" />
                 </motion.button>
               )}
-
               <Link href="/dashboard" className="flex items-center gap-3">
                 <LogoIcon size="md" className="h-10 w-10" />
-                <div>
-                  <h1 className="text-lg font-bold text-white">
-                    {title || 'AXIS6'}
-                  </h1>
-                  {subtitle ? (
-                    <p className="text-xs text-gray-400 -mt-0.5">{subtitle}</p>
-                  ) : user && (
-                    <p className="text-xs text-gray-400 -mt-0.5">
-                      {getGreeting()}, {getUserName()}
-                    </p>
-                  )}
-                </div>
               </Link>
             </div>
-
-            {/* Center Section - Progress or Navigation */}
-            {variant === 'dashboard' && completionPercentage > 0 && (
-              <div className="hidden md:flex items-center gap-2">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full glass">
-                  <Sparkles className="w-4 h-4 text-yellow-400" />
-                  <span className="text-xs text-gray-300">Balance del día:</span>
-                  <div className="w-32 h-2 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{
-                        background: 'linear-gradient(90deg, #A6C26F, #365D63, #D36C50, #6F3D56, #2C3E50, #C85729)',
-                        width: `${completionPercentage}%`
-                      }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${completionPercentage}%` }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
-                    />
-                  </div>
-                  <span className="text-xs font-semibold text-white">{completionPercentage}%</span>
-                </div>
-              </div>
-            )}
-
+            {/* Center Section - Navigation */}
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2" aria-label="Main navigation">
               {navigationItems.map((item) => {
@@ -191,7 +136,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                 )
               })}
             </nav>
-
             {/* Right Section - User Actions */}
             <div className="flex items-center gap-3">
               {/* Streak Display */}
@@ -203,7 +147,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                   </span>
                 </div>
               )}
-
               {/* Notifications */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -214,7 +157,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                 <Bell className="w-5 h-5 text-gray-300" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-400 rounded-full" />
               </motion.button>
-
               {/* Settings - Desktop Only */}
               <Link
                 href="/settings"
@@ -223,7 +165,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
               >
                 <Settings className="w-5 h-5 text-gray-300" />
               </Link>
-
               {/* User Menu */}
               <div className="relative">
                 <motion.button
@@ -244,7 +185,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
                     {getUserName()}
                   </span>
                 </motion.button>
-
                 {/* Dropdown Menu */}
                 {showDropdown && (
                   <motion.div
@@ -280,28 +220,6 @@ export const StandardHeader = memo<StandardHeaderProps>(({
               </div>
             </div>
           </div>
-
-          {/* Mobile Progress Bar */}
-          {variant === 'dashboard' && completionPercentage > 0 && (
-            <div className="md:hidden px-4 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">Balance:</span>
-                <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{
-                      background: 'linear-gradient(90deg, #A6C26F, #365D63, #D36C50)',
-                      width: `${completionPercentage}%`
-                    }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${completionPercentage}%` }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-white">{completionPercentage}%</span>
-              </div>
-            </div>
-          )}
-
           {/* Mobile Navigation */}
           <nav className="md:hidden border-t border-white/10 px-2 py-2" aria-label="Mobile navigation">
             <div className="flex items-center justify-around">
@@ -327,11 +245,9 @@ export const StandardHeader = memo<StandardHeaderProps>(({
           </nav>
         </div>
       </motion.header>
-
       {/* Spacer for fixed header */}
       <div className={variant === 'dashboard' ? 'h-32 md:h-16' : 'h-28 md:h-16'} />
     </>
   )
 })
-
 StandardHeader.displayName = 'StandardHeader'

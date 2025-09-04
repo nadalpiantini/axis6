@@ -1,5 +1,4 @@
 'use client'
-
 import {
   TrendingUp,
   Calendar,
@@ -14,7 +13,6 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-
 import {
   CompletionRateChart,
   CategoryPerformanceChart,
@@ -31,7 +29,6 @@ import {
 } from '@/lib/hooks/useChartData'
 import { performanceOptimizer } from '@/lib/production/performance-optimizer'
 import { useUser } from '@/lib/react-query/hooks'
-
 // Types
 interface AnalyticsData {
   overview: {
@@ -79,7 +76,6 @@ interface AnalyticsData {
     categories_completed: number
   }>
 }
-
 // Chart Loading Skeleton
 function ChartSection({
   title,
@@ -108,7 +104,6 @@ function ChartSection({
     </div>
   )
 }
-
 export default function OptimizedAnalyticsPage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
@@ -116,57 +111,44 @@ export default function OptimizedAnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [period, setPeriod] = useState('30')
-
   // Optimized chart data with caching
   const completionData = useCompletionChartData(
     useCachedChartData('completion_data', analytics?.dailyStats || [], 300000), // 5min cache
     period === '7' ? 7 : 30
   )
-
   const categoryData = useCachedChartData('category_data', analytics?.categoryStats || {}, 300000)
-
   const moodData = useMoodChartData(
     useCachedChartData('mood_data', analytics?.moodTrend || [], 300000),
     period === '7' ? 7 : 14
   )
-
   const activityData = useDailyActivityData(
     useCachedChartData('activity_data', analytics?.dailyStats || [], 300000),
     7
   )
-
   // Fetch analytics data with performance monitoring
   const fetchAnalytics = async () => {
     try {
       setLoading(true)
       setError(null)
-
       const start = performance.now()
       const params = new URLSearchParams({ period })
       const response = await fetch(`/api/analytics?${params}`)
-
       if (!response.ok) {
         throw new Error('Failed to fetch analytics')
       }
-
       const data = await response.json()
       setAnalytics(data.analytics)
-
       const loadTime = performance.now() - start
       if (loadTime > 1000) {
-        console.log(`Analytics load time: ${loadTime}ms - consider optimizing`)
-      }
-
+}
       // Preload chart assets
       performanceOptimizer.preloadForPage('/analytics')
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load analytics')
     } finally {
       setLoading(false)
     }
   }
-
   // Export data with performance optimization
   const handleExport = async (format: 'json' | 'csv') => {
     try {
@@ -175,9 +157,7 @@ export default function OptimizedAnalyticsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ format, includeAllData: true })
       })
-
       if (!response.ok) throw new Error('Export failed')
-
       if (format === 'csv') {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -204,19 +184,16 @@ export default function OptimizedAnalyticsPage() {
       setError('Export failed. Please try again.')
     }
   }
-
   useEffect(() => {
     if (!userLoading && user) {
       fetchAnalytics()
     }
   }, [user, userLoading, period])
-
   useEffect(() => {
     if (!userLoading && !user) {
       router.push('/auth/login')
     }
   }, [user, userLoading, router])
-
   if (userLoading || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -227,7 +204,6 @@ export default function OptimizedAnalyticsPage() {
       </div>
     )
   }
-
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -247,7 +223,6 @@ export default function OptimizedAnalyticsPage() {
       </div>
     )
   }
-
   if (!analytics) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -258,7 +233,6 @@ export default function OptimizedAnalyticsPage() {
       </div>
     )
   }
-
   return (
     <div data-testid="analytics-page" className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <StandardHeader
@@ -269,7 +243,6 @@ export default function OptimizedAnalyticsPage() {
         showBackButton={true}
         backUrl="/dashboard"
       />
-
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         {/* Controls */}
         <div data-testid="analytics-controls" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
@@ -277,7 +250,6 @@ export default function OptimizedAnalyticsPage() {
             <TrendingUp className="w-6 h-6 text-purple-400" />
             <h2 data-testid="analytics-title" className="text-lg font-semibold">Your Analytics</h2>
           </div>
-
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
             <select
               data-testid="period-filter"
@@ -290,7 +262,6 @@ export default function OptimizedAnalyticsPage() {
               <option value="90">Last 90 days</option>
               <option value="365">Last year</option>
             </select>
-
             <div className="flex items-center gap-2">
               <button
                 data-testid="export-csv"
@@ -312,7 +283,6 @@ export default function OptimizedAnalyticsPage() {
           </div>
         </div>
       </div>
-
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Overview Stats */}
         <div data-testid="overview-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
@@ -326,7 +296,6 @@ export default function OptimizedAnalyticsPage() {
               {Math.round(analytics.overview.totalCheckins / Math.max(analytics.overview.totalDays, 1) * 10) / 10} per day avg
             </p>
           </div>
-
           <div data-testid="active-days-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
@@ -337,7 +306,6 @@ export default function OptimizedAnalyticsPage() {
               {analytics.overview.dataCompleteness}% of {analytics.overview.period}
             </p>
           </div>
-
           <div data-testid="completion-rate-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
@@ -348,7 +316,6 @@ export default function OptimizedAnalyticsPage() {
             </p>
             <p className="text-xs sm:text-sm text-gray-400">Average daily completion</p>
           </div>
-
           <div data-testid="current-streak-card" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
@@ -362,18 +329,15 @@ export default function OptimizedAnalyticsPage() {
             </p>
           </div>
         </div>
-
         {/* High Priority Charts - Load First */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <ChartSection title="Completion Rate Trend" icon={TrendingUp}>
             <CompletionRateChart data={completionData} height={300} />
           </ChartSection>
-
           <ChartSection title="Category Performance" icon={PieChart}>
             <CategoryPerformanceChart data={categoryData} height={300} />
           </ChartSection>
         </div>
-
         {/* Lower Priority Charts - Lazy Load */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <ChartSection title="Daily Activity" icon={Activity}>
@@ -381,20 +345,17 @@ export default function OptimizedAnalyticsPage() {
               <DailyActivityChart data={activityData} height={200} />
             </Suspense>
           </ChartSection>
-
           <ChartSection title="Mood Trend" icon={Target}>
             <Suspense fallback={<div className="h-[200px] animate-pulse bg-white/5 rounded" />}>
               <MoodTrendChart data={moodData} height={200} />
             </Suspense>
           </ChartSection>
-
           <ChartSection title="Weekly Progress" icon={BarChart3}>
             <Suspense fallback={<div className="h-[200px] animate-pulse bg-white/5 rounded" />}>
               <WeeklyProgressChart data={completionData} height={200} />
             </Suspense>
           </ChartSection>
         </div>
-
         {/* Static Data Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <div data-testid="category-performance" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
@@ -422,7 +383,6 @@ export default function OptimizedAnalyticsPage() {
               ))}
             </div>
           </div>
-
           <div data-testid="streak-analysis" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
               <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
@@ -447,7 +407,6 @@ export default function OptimizedAnalyticsPage() {
             </div>
           </div>
         </div>
-
         {/* Performance Trends */}
         <div data-testid="performance-trends" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           <div data-testid="best-performance" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
@@ -471,7 +430,6 @@ export default function OptimizedAnalyticsPage() {
               ))}
             </div>
           </div>
-
           <div data-testid="improvement-areas" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-red-400">
               <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -494,7 +452,6 @@ export default function OptimizedAnalyticsPage() {
             </div>
           </div>
         </div>
-
         {/* Insights and Recommendations */}
         <div data-testid="insights-recommendations" className="glass rounded-lg sm:rounded-xl p-4 sm:p-6">
           <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">

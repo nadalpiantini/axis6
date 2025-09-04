@@ -1,23 +1,19 @@
 'use client'
-
 import { formatDistanceToNow } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Clock, Filter, TrendingUp, Calendar, User, MessageSquare } from 'lucide-react'
 import React, { useState, useEffect, useRef } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useDebounce } from '@/lib/hooks/useDebounce'
 import { messageSearchService, SearchResult, SearchOptions, SearchStats } from '@/lib/services/message-search'
 import { cn } from '@/lib/utils'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface MessageSearchProps {
   className?: string
   onClose?: () => void
   onResultSelect?: (result: SearchResult) => void
 }
-
 export function MessageSearch({
   className,
   onClose,
@@ -31,22 +27,17 @@ export function MessageSearch({
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState<SearchOptions>({})
   const [selectedIndex, setSelectedIndex] = useState(-1)
-
   const searchInputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
-
   const debouncedQuery = useDebounce(query, 300)
-
   // Load search history on mount
   useEffect(() => {
     messageSearchService.loadSearchHistory()
   }, [])
-
   // Focus search input on mount
   useEffect(() => {
     searchInputRef.current?.focus()
   }, [])
-
   // Perform search when debounced query changes
   useEffect(() => {
     if (debouncedQuery.trim().length >= 2) {
@@ -56,7 +47,6 @@ export function MessageSearch({
       setStats(null)
     }
   }, [debouncedQuery, filters])
-
   // Get suggestions when query changes
   useEffect(() => {
     if (query.length >= 2 && query.length < 10) {
@@ -65,7 +55,6 @@ export function MessageSearch({
       setSuggestions([])
     }
   }, [query])
-
   const performSearch = async (searchQuery: string) => {
     setIsSearching(true)
     try {
@@ -79,9 +68,7 @@ export function MessageSearch({
     } catch (error) {
       handleError(error, {
       operation: 'chat_operation', component: 'MessageSearch',
-
         userMessage: 'Chat operation failed. Please try again.'
-
       })
       setResults([])
       setStats(null)
@@ -89,7 +76,6 @@ export function MessageSearch({
       setIsSearching(false)
     }
   }
-
   const getSuggestions = async (partial: string) => {
     try {
       const suggestions = await messageSearchService.getSearchSuggestions(partial)
@@ -97,47 +83,38 @@ export function MessageSearch({
     } catch (error) {
       handleError(error, {
       operation: 'chat_operation', component: 'MessageSearch',
-
         userMessage: 'Chat operation failed. Please try again.'
-
       })
       setSuggestions([])
     }
   }
-
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
     setSelectedIndex(-1)
   }
-
   const handleSuggestionSelect = (suggestion: string) => {
     setQuery(suggestion)
     setSuggestions([])
     searchInputRef.current?.focus()
   }
-
   const handleResultSelect = (result: SearchResult) => {
     onResultSelect?.(result)
     onClose?.()
   }
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       onClose?.()
       return
     }
-
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       const maxIndex = results.length + suggestions.length - 1
       setSelectedIndex(prev => Math.min(prev + 1, maxIndex))
     }
-
     if (e.key === 'ArrowUp') {
       e.preventDefault()
       setSelectedIndex(prev => Math.max(prev - 1, -1))
     }
-
     if (e.key === 'Enter') {
       e.preventDefault()
       if (selectedIndex >= 0) {
@@ -152,7 +129,6 @@ export function MessageSearch({
       }
     }
   }
-
   const clearSearch = () => {
     setQuery('')
     setResults([])
@@ -161,11 +137,9 @@ export function MessageSearch({
     setSelectedIndex(-1)
     searchInputRef.current?.focus()
   }
-
   const getSearchHistory = () => {
     return messageSearchService.getSearchHistory().slice(0, 5)
   }
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -180,7 +154,6 @@ export function MessageSearch({
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-neutral-700">
         <Search className="h-5 w-5 text-purple-400 flex-shrink-0" />
-
         <div className="relative flex-1">
           <input
             ref={searchInputRef}
@@ -194,7 +167,6 @@ export function MessageSearch({
               "text-lg outline-none"
             )}
           />
-
           {query && (
             <button
               onClick={clearSearch}
@@ -204,7 +176,6 @@ export function MessageSearch({
             </button>
           )}
         </div>
-
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -217,7 +188,6 @@ export function MessageSearch({
           >
             <Filter className="h-4 w-4" />
           </Button>
-
           {onClose && (
             <Button
               variant="ghost"
@@ -230,7 +200,6 @@ export function MessageSearch({
           )}
         </div>
       </div>
-
       {/* Filters */}
       <AnimatePresence>
         {showFilters && (
@@ -269,7 +238,6 @@ export function MessageSearch({
                   Clear Filters
                 </Button>
               </div>
-
               {Object.keys(filters).length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {filters.date_from && (
@@ -289,7 +257,6 @@ export function MessageSearch({
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         {/* Search Stats */}
@@ -307,7 +274,6 @@ export function MessageSearch({
             </div>
           </div>
         )}
-
         <div ref={resultsRef} className="overflow-y-auto max-h-96">
           {/* Loading */}
           {isSearching && (
@@ -315,7 +281,6 @@ export function MessageSearch({
               <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
-
           {/* Suggestions */}
           {suggestions.length > 0 && !isSearching && results.length === 0 && (
             <div className="p-4">
@@ -340,7 +305,6 @@ export function MessageSearch({
               </div>
             </div>
           )}
-
           {/* Search Results */}
           {results.length > 0 && (
             <div className="divide-y divide-neutral-700">
@@ -361,7 +325,6 @@ export function MessageSearch({
                         </span>
                       </div>
                     </div>
-
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-white text-sm">
@@ -377,7 +340,6 @@ export function MessageSearch({
                           {(result.match_rank * 100).toFixed(0)}% match
                         </Badge>
                       </div>
-
                       <div
                         className="text-sm text-neutral-300 line-clamp-2"
                         dangerouslySetInnerHTML={{
@@ -385,7 +347,6 @@ export function MessageSearch({
                         }}
                       />
                     </div>
-
                     <div className="flex-shrink-0">
                       <MessageSquare className="h-4 w-4 text-neutral-500" />
                     </div>
@@ -394,7 +355,6 @@ export function MessageSearch({
               ))}
             </div>
           )}
-
           {/* Search History */}
           {!query && !isSearching && results.length === 0 && (
             <div className="p-4">
@@ -416,7 +376,6 @@ export function MessageSearch({
                     </div>
                   </button>
                 ))}
-
                 {getSearchHistory().length === 0 && (
                   <p className="text-neutral-500 text-sm py-4 text-center">
                     No recent searches
@@ -425,7 +384,6 @@ export function MessageSearch({
               </div>
             </div>
           )}
-
           {/* No Results */}
           {query && !isSearching && results.length === 0 && suggestions.length === 0 && (
             <div className="p-8 text-center">
@@ -440,7 +398,6 @@ export function MessageSearch({
           )}
         </div>
       </div>
-
       {/* Footer with shortcuts */}
       <div className="px-4 py-2 border-t border-neutral-700 bg-neutral-900/50">
         <div className="flex items-center justify-between text-xs text-neutral-500">

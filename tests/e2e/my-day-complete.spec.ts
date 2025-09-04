@@ -62,7 +62,7 @@ test.describe('AXIS6 My Day Page - Complete Functionality Audit', () => {
     await expect(page.getByText('Add Block')).toBeVisible()
 
     // Check date navigation
-    await expect(page.locator('h1').filter({ hasText: /Mi Día/ })).toBeVisible()
+    await expect(page.locator('h1').filter({ hasText: /My Day/ })).toBeVisible()
     const chevronButtons = page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left, svg.lucide-chevron-right') })
     await expect(chevronButtons).toHaveCount(2)
 

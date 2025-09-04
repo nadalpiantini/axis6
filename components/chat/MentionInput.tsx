@@ -1,13 +1,10 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { AtSign, User } from 'lucide-react'
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-
 import { useDebounce } from '@/lib/hooks/useDebounce'
 import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
 import { cn } from '@/lib/utils'
-
 interface MentionInputProps {
   value: string
   onChange: (value: string) => void
@@ -17,12 +14,10 @@ interface MentionInputProps {
   className?: string
   disabled?: boolean
 }
-
 interface MentionSuggestion {
   user: MentionUser
   score: number
 }
-
 export function MentionInput({
   value,
   onChange,
@@ -37,11 +32,9 @@ export function MentionInput({
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionRange, setMentionRange] = useState<{ start: number; end: number } | null>(null)
-
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const debouncedQuery = useDebounce(mentionQuery, 300)
-
   // Search for users when mention query changes
   useEffect(() => {
     if (debouncedQuery && mentionRange && roomId) {
@@ -51,7 +44,6 @@ export function MentionInput({
             user,
             score: calculateRelevanceScore(user, debouncedQuery)
           })).sort((a, b) => b.score - a.score)
-
           setSuggestions(scoredSuggestions)
           setShowSuggestions(scoredSuggestions.length > 0)
           setSelectedIndex(0)
@@ -61,40 +53,31 @@ export function MentionInput({
       setShowSuggestions(false)
     }
   }, [debouncedQuery, mentionRange, roomId])
-
   // Calculate relevance score for user suggestions
   const calculateRelevanceScore = (user: MentionUser, query: string): number => {
     const name = user.name.toLowerCase()
     const q = query.toLowerCase()
-
     if (name === q) return 100
     if (name.startsWith(q)) return 80
     if (name.includes(q)) return 60
-
     // Fuzzy matching
     let score = 0
     let queryIndex = 0
-
     for (let i = 0; i < name.length && queryIndex < q.length; i++) {
       if (name[i] === q[queryIndex]) {
         score += 10
         queryIndex++
       }
     }
-
     return queryIndex === q.length ? score : 0
   }
-
   // Handle text changes
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value
     const cursorPosition = e.target.selectionStart
-
     onChange(newValue)
-
     // Check for mentions
     const mentionMatch = findActiveMention(newValue, cursorPosition)
-
     if (mentionMatch) {
       setMentionQuery(mentionMatch.query)
       setMentionRange(mentionMatch.range)
@@ -104,42 +87,32 @@ export function MentionInput({
       setShowSuggestions(false)
     }
   }
-
   // Find active @mention at cursor position
   const findActiveMention = (text: string, cursorPos: number): { query: string; range: { start: number; end: number } } | null => {
     const beforeCursor = text.slice(0, cursorPos)
     const afterCursor = text.slice(cursorPos)
-
     // Find the last @ before cursor
     const lastAtIndex = beforeCursor.lastIndexOf('@')
     if (lastAtIndex === -1) return null
-
     // Check if there's a space before @ (or it's at start)
     const beforeAt = beforeCursor[lastAtIndex - 1]
     if (beforeAt && beforeAt !== ' ' && beforeAt !== '\n') return null
-
     // Find the end of the mention (space, newline, or end of text)
     const afterAtText = beforeCursor.slice(lastAtIndex + 1) + afterCursor
     const endMatch = afterAtText.match(/^(\w*)/)
-
     if (!endMatch) return null
-
     const query = endMatch[1]
     const endIndex = lastAtIndex + 1 + query.length
-
     // Only show suggestions if cursor is within the mention
     if (cursorPos < lastAtIndex + 1 || cursorPos > endIndex) return null
-
     return {
       query,
       range: { start: lastAtIndex, end: endIndex }
     }
   }
-
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return
-
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
@@ -147,14 +120,12 @@ export function MentionInput({
           prev < suggestions.length - 1 ? prev + 1 : 0
         )
         break
-
       case 'ArrowUp':
         e.preventDefault()
         setSelectedIndex(prev =>
           prev > 0 ? prev - 1 : suggestions.length - 1
         )
         break
-
       case 'Enter':
       case 'Tab':
         e.preventDefault()
@@ -162,29 +133,23 @@ export function MentionInput({
           handleMentionSelect(suggestions[selectedIndex].user)
         }
         break
-
       case 'Escape':
         setShowSuggestions(false)
         break
     }
   }
-
   // Handle mention selection
   const handleMentionSelect = useCallback((user: MentionUser) => {
     if (!mentionRange) return
-
     const newValue =
       `${value.slice(0, mentionRange.start)
       }@${user.name} ${
       value.slice(mentionRange.end)}`
-
     onChange(newValue)
-
     // Reset mention state
     setShowSuggestions(false)
     setMentionQuery('')
     setMentionRange(null)
-
     // Focus back to textarea
     setTimeout(() => {
       if (textareaRef.current) {
@@ -193,14 +158,12 @@ export function MentionInput({
         textareaRef.current.setSelectionRange(newCursorPos, newCursorPos)
       }
     }, 0)
-
     // Notify parent
     onMentionSelect?.(user, {
       start: mentionRange.start,
       end: mentionRange.start + user.name.length + 1
     })
   }, [mentionRange, value, onChange, onMentionSelect])
-
   // Auto-resize textarea
   useEffect(() => {
     const textarea = textareaRef.current
@@ -209,7 +172,6 @@ export function MentionInput({
       textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`
     }
   }, [value])
-
   return (
     <div className={cn("relative", className)}>
       {/* Main textarea */}
@@ -229,7 +191,6 @@ export function MentionInput({
         )}
         rows={1}
       />
-
       {/* Mention suggestions */}
       <AnimatePresence>
         {showSuggestions && suggestions.length > 0 && (
@@ -251,7 +212,6 @@ export function MentionInput({
                 <span>Mention someone</span>
               </div>
             </div>
-
             {/* User suggestions */}
             <div className="max-h-[200px] overflow-y-auto">
               {suggestions.map((suggestion, index) => (
@@ -270,7 +230,6 @@ export function MentionInput({
                       {suggestion.user.name.charAt(0).toUpperCase()}
                     </div>
                   </div>
-
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">
                       {suggestion.user.name}
@@ -281,14 +240,12 @@ export function MentionInput({
                       </p>
                     )}
                   </div>
-
                   <div className="flex-shrink-0">
                     <User className="h-4 w-4 text-neutral-500" />
                   </div>
                 </button>
               ))}
             </div>
-
             {/* Footer */}
             <div className="px-3 py-2 border-t border-neutral-700">
               <p className="text-xs text-neutral-500">

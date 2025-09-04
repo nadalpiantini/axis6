@@ -1,13 +1,10 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-
 import { RealtimeErrorBoundary } from '@/components/error/RealtimeErrorBoundary'
-
 export const metadata: Metadata = {
   title: 'Chat | AXIS6',
   description: 'Connect with your wellness community',
 }
-
 export default function ChatLayout({
   children,
 }: {

@@ -1,26 +1,19 @@
 /**
  * React Query error handler with enhanced error tracking
  */
-
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
-
 import { logger } from '@/lib/utils/logger'
-
 import { reportError, categorizeError, type ErrorContext } from './error-tracking'
-
 export interface QueryError extends Error {
   status?: number
   statusText?: string
   data?: any
 }
-
 export function createQueryErrorHandler() {
   return (error: unknown, query?: any) => {
     const queryError = error as QueryError
     const queryKey = query?.queryKey || ['unknown']
-
     logger.error(`Query error for ${JSON.stringify(queryKey)}`, queryError)
-
     // Enhanced context for query errors
     const context: ErrorContext = {
       component: 'ReactQuery',
@@ -37,10 +30,8 @@ export function createQueryErrorHandler() {
         timestamp: new Date().toISOString(),
       },
     }
-
     // Determine severity based on error type and status
     let severity: 'low' | 'normal' | 'high' | 'critical' = 'normal'
-
     if (queryError.status) {
       if (queryError.status >= 500) {
         severity = 'high' // Server errors
@@ -50,33 +41,27 @@ export function createQueryErrorHandler() {
         severity = 'normal' // Client errors
       }
     }
-
     // Network errors should be critical
     if (queryError.message?.includes('NetworkError') || queryError.message?.includes('fetch')) {
       severity = 'critical'
     }
-
     reportError(queryError, severity, context)
   }
 }
-
 export function createEnhancedQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {
         retry: (failureCount, error) => {
           const queryError = error as QueryError
-
           // Don't retry on auth errors
           if (queryError.status === 401 || queryError.status === 403) {
             return false
           }
-
           // Don't retry on client errors (4xx)
           if (queryError.status && queryError.status >= 400 && queryError.status < 500) {
             return false
           }
-
           // Retry up to 3 times for network/server errors
           return failureCount < 3
         },
@@ -89,12 +74,10 @@ export function createEnhancedQueryClient(): QueryClient {
       mutations: {
         retry: (failureCount, error) => {
           const mutationError = error as QueryError
-
           // Never retry mutations on client errors
           if (mutationError.status && mutationError.status >= 400 && mutationError.status < 500) {
             return false
           }
-
           // Retry once for network/server errors
           return failureCount < 1
         },

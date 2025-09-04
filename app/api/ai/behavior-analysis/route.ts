@@ -1,13 +1,9 @@
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
 import { logger } from '@/lib/utils/logger';
-
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
 /**
  * GET /api/ai/behavior-analysis
  * Perform behavioral analysis for the current user
@@ -15,7 +11,6 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -24,14 +19,10 @@ export async function GET(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const startTime = Date.now()
-
     // Perform behavioral analysis
     const profile = await behavioralAnalyzer.analyzeBehavior(user.id)
-
     const responseTime = Date.now() - startTime
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -42,7 +33,6 @@ export async function GET(_request: NextRequest) {
         ? profile.patterns.reduce((sum, p) => sum + p.confidence_score, 0) / profile.patterns.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -58,7 +48,6 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Behavior analysis API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to analyze behavior',
@@ -68,7 +57,6 @@ export async function GET(_request: NextRequest) {
     )
   }
 }
-
 /**
  * POST /api/ai/behavior-analysis/insights
  * Generate personalized insights based on behavior analysis
@@ -76,7 +64,6 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -85,22 +72,16 @@ export async function POST(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await _request.json()
     const { include_profile } = body
-
     const startTime = Date.now()
-
     // Generate personalized insights
     let profile = null
     if (include_profile) {
       profile = await behavioralAnalyzer.analyzeBehavior(user.id)
     }
-
     const insights = await behavioralAnalyzer.generatePersonalizedInsights(user.id, profile || undefined)
-
     const responseTime = Date.now() - startTime
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -111,7 +92,6 @@ export async function POST(_request: NextRequest) {
         ? insights.reduce((sum, i) => sum + i.personalization_score, 0) / insights.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -128,7 +108,6 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Insights generation API error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to generate insights',

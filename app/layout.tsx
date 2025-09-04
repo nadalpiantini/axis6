@@ -2,20 +2,16 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 import { Toaster } from 'sonner'
-
 import { SupabaseErrorBoundary } from '@/components/error/SupabaseErrorBoundary'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { NotificationToast } from '@/components/ui/NotificationToast'
 import { ReactQueryProvider } from '@/lib/react-query/provider'
-
 import './globals.css'
-
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap', // Improves loading performance and prevents FOUT
   preload: false // Disable preload to avoid PWA conflict
 })
-
 export const metadata: Metadata = {
   metadataBase: new URL(process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:6789'),
   title: 'AXIS6 - Balance Across 6 Life Dimensions',
@@ -56,7 +52,6 @@ export const metadata: Metadata = {
     images: ['/brand/social/twitter-card.png'],
   },
 }
-
 export default async function RootLayout({
   children,
 }: {
@@ -65,19 +60,16 @@ export default async function RootLayout({
   // Get CSP nonce from headers if available (for future enhancement)
   const headersList = await headers()
   const nonce = headersList.get('x-csp-nonce') || undefined
-
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         {/* Additional meta tags for better CSP compatibility */}
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-
         {/* Enhanced mobile viewport with safe area and pinch zoom control */}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes, viewport-fit=cover"
         />
-
         {/* Mobile web app capabilities */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -87,14 +79,11 @@ export default async function RootLayout({
         <meta name="theme-color" content="#1e293b" />
         <meta name="msapplication-TileColor" content="#1e293b" />
         <meta name="msapplication-navbutton-color" content="#1e293b" />
-
         {/* Prevent text size adjustment on mobile devices */}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
-
         {/* Touch and gesture optimization */}
         <meta name="touch-action" content="manipulation" />
         <meta name="msapplication-tap-highlight" content="no" />
-
         {/* Safe area CSS variables setup */}
         <style dangerouslySetInnerHTML={{
           __html: `
@@ -104,13 +93,11 @@ export default async function RootLayout({
               --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
               --safe-area-inset-left: env(safe-area-inset-left, 0px);
             }
-
             /* Prevent overscroll bounce on iOS */
             html, body {
               overscroll-behavior: none;
               -webkit-overflow-scrolling: touch;
             }
-
             /* Optimize font rendering on mobile */
             html {
               -webkit-text-size-adjust: 100%;
@@ -118,19 +105,15 @@ export default async function RootLayout({
             }
           `
         }} />
-
         {/* Preconnect to improve performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://nvpnhqhjttgwfwvkgmpk.supabase.co" />
-
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//nvpnhqhjttgwfwvkgmpk.supabase.co" />
-
         {/* Logo assets are loaded on-demand with Next.js Image optimization */}
-
         {/* Splash screen for iOS */}
         <link rel="apple-touch-startup-image" href="/brand/splash/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
         <link rel="apple-touch-startup-image" href="/brand/splash/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
@@ -193,7 +176,6 @@ export default async function RootLayout({
             </AuthProvider>
           </SupabaseErrorBoundary>
         </ReactQueryProvider>
-
         {/* Supabase auth helper script - conditionally add nonce if available */}
         {nonce ? (
           <script

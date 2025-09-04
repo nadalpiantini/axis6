@@ -1,19 +1,15 @@
 'use client'
-
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { MoreVertical, Reply, Trash2, Edit3, Heart, ThumbsUp, Smile } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useMessageReaction } from '@/lib/hooks/useChat'
 import { chatStorage, ChatAttachment } from '@/lib/supabase/chat-storage'
 import { ChatMessageWithSender } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
-
 import { FileAttachment } from './FileUpload'
-
 interface ChatMessageProps {
   message: ChatMessageWithSender
   isOwn: boolean
@@ -21,7 +17,6 @@ interface ChatMessageProps {
   onReply: () => void
   className?: string
 }
-
 export function ChatMessage({
   message,
   isOwn,
@@ -33,7 +28,6 @@ export function ChatMessage({
   const [attachments, setAttachments] = useState<ChatAttachment[]>([])
   const [loadingAttachments, setLoadingAttachments] = useState(false)
   const { addReaction, removeReaction, isLoading: isReactionLoading } = useMessageReaction(message.id)
-
   // Load attachments if message has them
   useEffect(() => {
     if (message.has_attachments) {
@@ -43,7 +37,6 @@ export function ChatMessage({
         .finally(() => setLoadingAttachments(false))
     }
   }, [message.id, message.has_attachments])
-
   // Group reactions by emoji
   const reactionGroups = message.reactions.reduce((acc, reaction) => {
     if (!acc[reaction.emoji]) {
@@ -52,21 +45,17 @@ export function ChatMessage({
     acc[reaction.emoji].push(reaction)
     return acc
   }, {} as Record<string, typeof message.reactions>)
-
   const handleReaction = (emoji: string) => {
     const existingReaction = message.reactions.find(r => r.user.id === message.sender_id && r.emoji === emoji)
-
     if (existingReaction) {
       removeReaction(emoji)
     } else {
       addReaction(emoji)
     }
   }
-
   const formatTime = (dateString: string) => {
     return formatDistanceToNow(new Date(dateString), { addSuffix: true })
   }
-
   const getMessageTypeIcon = () => {
     switch (message.message_type) {
       case 'achievement':
@@ -81,7 +70,6 @@ export function ChatMessage({
         return null
     }
   }
-
   const getMessageBubbleStyles = () => {
     if (isOwn) {
       return cn(
@@ -89,13 +77,11 @@ export function ChatMessage({
         "text-white ml-auto max-w-[75%]"
       )
     }
-
     return cn(
       "bg-neutral-800 text-white mr-auto max-w-[75%]",
       "border border-neutral-700"
     )
   }
-
   return (
     <div
       className={cn(
@@ -124,7 +110,6 @@ export function ChatMessage({
             </span>
           </div>
         )}
-
         {/* Reply Context */}
         {message.reply_to && (
           <div className={cn(
@@ -140,7 +125,6 @@ export function ChatMessage({
             </p>
           </div>
         )}
-
         {/* Message Bubble */}
         <div className={cn(
           "relative px-4 py-2 rounded-2xl shadow-sm",
@@ -152,14 +136,12 @@ export function ChatMessage({
               {getMessageTypeIcon()}
             </span>
           )}
-
           {/* Message Content */}
           {message.content && (
             <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
               {message.content}
             </p>
           )}
-
           {/* File Attachments */}
           {(message.has_attachments || attachments.length > 0) && (
             <div className="mt-2 space-y-2">
@@ -180,14 +162,12 @@ export function ChatMessage({
               )}
             </div>
           )}
-
           {/* Edited Indicator */}
           {message.edited_at && (
             <span className="text-xs opacity-60 ml-2">
               (edited)
             </span>
           )}
-
           {/* Quick Actions */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -238,7 +218,6 @@ export function ChatMessage({
             )}
           </motion.div>
         </div>
-
         {/* Reactions */}
         {Object.keys(reactionGroups).length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2 px-3">
@@ -261,7 +240,6 @@ export function ChatMessage({
             ))}
           </div>
         )}
-
         {/* Timestamp (for grouped messages) */}
         {isGrouped && isOwn && (
           <span className="text-xs text-neutral-500 mt-1 px-3">

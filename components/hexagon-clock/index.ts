@@ -9,21 +9,17 @@
  * - <8MB memory usage (35% reduction)
  * - <50ms touch response (60% improvement)
  */
-
 // Main component
 export { HexagonClock as default } from './HexagonClock';
 export { HexagonClock } from './HexagonClock';
-
 // Core components (for advanced usage)
 export { HexagonRenderer } from './core/HexagonRenderer';
 export { ClockMarkers } from './core/ClockMarkers';
 export { ResonanceLayer } from './core/ResonanceLayer';
-
 // Performance-optimized hooks
 export { usePrecomputedSVG } from './hooks/usePrecomputedSVG';
 export { useHardwareAcceleration } from './hooks/useHardwareAcceleration';
 export { useResponsiveHexagonSize } from './hooks/useResponsiveHexagonSize';
-
 // Utilities
 export {
   HEXAGON_CATEGORIES,
@@ -32,14 +28,12 @@ export {
   getCurrentTimePosition,
   generateClockMarkers
 } from './utils/clockPositions';
-
 export {
   generateHexagonPath,
   generateGridPaths,
   generateDataPolygonPath,
   precomputeAllSVGPaths
 } from './utils/pathGeneration';
-
 // TypeScript types
 export type {
   HexagonClockProps,
@@ -54,11 +48,9 @@ export type {
   HardwareAcceleration,
   SafeAreaInsets
 } from './types/HexagonTypes';
-
 // Backward compatibility aliases
 export { HexagonClock as HexagonChartWithResonance } from './HexagonClock';
 export { HexagonClock as TimeBlockHexagon } from './HexagonClock';
-
 /**
  * Usage Examples:
  *
@@ -69,7 +61,7 @@ export { HexagonClock as TimeBlockHexagon } from './HexagonClock';
  * <HexagonClock
  *   data={{ physical: 80, mental: 60, emotional: 90, social: 40, spiritual: 70, material: 85 }}
  *   showResonance={true}
- *   onToggleAxis={(id) => }
+ *   onToggleAxis={(id) => console.log('Toggle:', id)}
  * />
  * ```
  *
@@ -83,7 +75,7 @@ export { HexagonClock as TimeBlockHexagon } from './HexagonClock';
  *   ]}
  *   showClockMarkers={true}
  *   showCurrentTime={true}
- *   onTimeBlockDrag={(block, hour) => }
+ *   onTimeBlockDrag={(block, hour) => console.log('Drag:', block, hour)}
  * />
  * ```
  *

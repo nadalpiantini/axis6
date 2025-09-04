@@ -1,5 +1,4 @@
 'use client'
-
 import { format, formatDistanceToNow, parseISO } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -19,22 +18,19 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { useState } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SmartNotification } from '@/lib/ai/smart-notifications'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface SmartNotificationPanelProps {
   className?: string
   maxNotifications?: number
   showActions?: boolean
 }
-
 export function SmartNotificationPanel({
   className,
   maxNotifications = 5,
@@ -51,13 +47,10 @@ export function SmartNotificationPanel({
     hasHighPriorityNotifications,
     getNotificationsByPriority
   } = useAIPersonalization()
-
   const [dismissedNotifications, setDismissedNotifications] = useState<Set<string>>(new Set())
-
   const activeNotifications = notifications
     .filter(n => !n.delivered && !dismissedNotifications.has(n.id))
     .slice(0, maxNotifications)
-
   const handleNotificationAction = async (
     notification: SmartNotification,
     action: 'read' | 'dismiss' | 'thumbs_up' | 'thumbs_down'
@@ -65,7 +58,6 @@ export function SmartNotificationPanel({
     try {
       let markAction: 'mark_read' | 'mark_delivered' | 'dismiss' = 'mark_read'
       let feedback = undefined
-
       switch (action) {
         case 'read':
           markAction = 'mark_read'
@@ -84,17 +76,13 @@ export function SmartNotificationPanel({
           setDismissedNotifications(prev => new Set([...prev, notification.id]))
           break
       }
-
       await markNotification(notification.id, markAction, feedback)
     } catch (error) {
       handleError(error, {
       operation: 'ai_operation', component: 'SmartNotificationPanel',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })}
   }
-
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'reminder': return <Bell className="w-4 h-4" />
@@ -105,7 +93,6 @@ export function SmartNotificationPanel({
       default: return <BellRing className="w-4 h-4" />
     }
   }
-
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'text-red-600 bg-red-50 border-red-200'
@@ -115,7 +102,6 @@ export function SmartNotificationPanel({
       default: return 'text-blue-600 bg-blue-50 border-blue-200'
     }
   }
-
   const getPriorityBadgeVariant = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'destructive'
@@ -125,7 +111,6 @@ export function SmartNotificationPanel({
       default: return 'secondary'
     }
   }
-
   if (isLoading) {
     return (
       <Card className={className}>
@@ -149,7 +134,6 @@ export function SmartNotificationPanel({
       </Card>
     )
   }
-
   return (
     <Card className={className}>
       <CardHeader>
@@ -236,9 +220,7 @@ export function SmartNotificationPanel({
                             </Badge>
                           </div>
                         </div>
-
                         <p className="text-sm">{notification.message}</p>
-
                         <div className="flex items-center gap-4 text-xs text-gray-500">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -251,7 +233,6 @@ export function SmartNotificationPanel({
                             </div>
                           )}
                         </div>
-
                         {notification.personalization_score && (
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-gray-500">Relevance:</span>
@@ -263,7 +244,6 @@ export function SmartNotificationPanel({
                             </div>
                           </div>
                         )}
-
                         {showActions && (
                           <div className="flex items-center gap-2 pt-2">
                             <Button
@@ -308,7 +288,6 @@ export function SmartNotificationPanel({
             </div>
           </ScrollArea>
         )}
-
         {notifications.length > maxNotifications && (
           <div className="mt-4 text-center text-xs text-gray-500">
             Showing {Math.min(maxNotifications, activeNotifications.length)} of {notifications.filter(n => !n.delivered).length} active notifications
@@ -318,7 +297,6 @@ export function SmartNotificationPanel({
     </Card>
   )
 }
-
 export function NotificationSummary() {
   const {
     notifications,
@@ -326,13 +304,10 @@ export function NotificationSummary() {
     hasActiveNotifications,
     hasHighPriorityNotifications
   } = useAIPersonalization()
-
   const activeCount = notifications.filter(n => !n.delivered).length
   const urgentCount = getNotificationsByPriority('urgent').length
   const highCount = getNotificationsByPriority('high').length
-
   if (!hasActiveNotifications) return null
-
   return (
     <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
       <div className="flex items-center gap-2">
@@ -341,7 +316,6 @@ export function NotificationSummary() {
           {activeCount} active notification{activeCount !== 1 ? 's' : ''}
         </span>
       </div>
-
       {(urgentCount > 0 || highCount > 0) && (
         <div className="flex items-center gap-2">
           {urgentCount > 0 && (

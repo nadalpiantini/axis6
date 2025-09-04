@@ -1,7 +1,5 @@
 import { logger } from '@/lib/utils/logger';
-
 import { NextRequest, NextResponse } from 'next/server'
-
 import { withChatAuth } from '@/lib/middleware/chat-auth'
 
 /**
@@ -11,15 +9,11 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
 export const GET = withChatAuth(async (_context, _request) => {
   try {
     const { searchParams } = new URL(_request.url)
-
     const type = searchParams.get('type') // 'overview', 'room', 'user', 'realtime'
     const roomId = searchParams.get('room_id')
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     let data, error
-
     switch (type) {
       case 'room':
         if (!roomId) {
@@ -28,26 +22,22 @@ export const GET = withChatAuth(async (_context, _request) => {
             { status: 400 }
           )
         }
-
         const { data: roomData, error: roomError } = await supabase.rpc('get_room_analytics', {
           p_room_id: roomId
         })
         data = roomData
         error = roomError
         break
-
       case 'user':
         const { data: userData, error: userError } = await supabase.rpc('get_user_analytics')
         data = userData
         error = userError
         break
-
       case 'realtime':
         const { data: realtimeData, error: realtimeError } = await supabase.rpc('get_realtime_metrics')
         data = realtimeData
         error = realtimeError
         break
-
       default:
         // Default to comprehensive analytics
         const { data: analyticsData, error: analyticsError } = await supabase.rpc('get_chat_analytics')
@@ -55,7 +45,6 @@ export const GET = withChatAuth(async (_context, _request) => {
         error = analyticsError
         break
     }
-
     if (error) {
       logger.error('Analytics error:', error)
       return NextResponse.json(
@@ -63,12 +52,9 @@ export const GET = withChatAuth(async (_context, _request) => {
         { status: 500 }
       )
     }
-
     // Parse JSON if it's a string
     const parsedData = typeof data === 'string' ? JSON.parse(data) : data
-
     return NextResponse.json(parsedData || {})
-
   } catch (error) {
     logger.error('Analytics API error:', error)
     return NextResponse.json(
@@ -77,7 +63,6 @@ export const GET = withChatAuth(async (_context, _request) => {
     )
   }
 })
-
 /**
  * POST /api/chat/analytics/export
  * Export analytics data in different formats
@@ -86,12 +71,9 @@ export const POST = withChatAuth(async (_context, _request) => {
   try {
     const body = await _request.json()
     const { format = 'json' } = body
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     const { data: analytics, error } = await supabase.rpc('get_chat_analytics')
-
     if (error) {
       logger.error('Export analytics error:', error)
       return NextResponse.json(
@@ -99,9 +81,7 @@ export const POST = withChatAuth(async (_context, _request) => {
         { status: 500 }
       )
     }
-
     const parsedAnalytics = typeof analytics === 'string' ? JSON.parse(analytics) : analytics
-
     if (format === 'csv') {
       // Convert to CSV format
       const headers = ['Metric', 'Value']
@@ -121,12 +101,10 @@ export const POST = withChatAuth(async (_context, _request) => {
         ['Avg Results Per Search', parsedAnalytics?.search?.avg_results_per_search || 0],
         ['Search Success Rate (%)', parsedAnalytics?.search?.search_success_rate || 0]
       ]
-
       const csvContent = [
         headers.join(','),
         ...rows.map(row => row.join(','))
       ].join('\n')
-
       return new NextResponse(csvContent, {
         headers: {
           'Content-Type': 'text/csv',
@@ -134,14 +112,12 @@ export const POST = withChatAuth(async (_context, _request) => {
         }
       })
     }
-
     // Default to JSON export
     return NextResponse.json(parsedAnalytics, {
       headers: {
         'Content-Disposition': 'attachment; filename=chat-analytics.json'
       }
     })
-
   } catch (error) {
     logger.error('Export analytics API error:', error)
     return NextResponse.json(

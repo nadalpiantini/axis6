@@ -1,14 +1,30 @@
 // Simple logger for AXIS6
 export const logger = {
   info: (message: string, data?: any) => {
-    console.log(`ℹ️ ${message}`, data || '')
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        console.log(`ℹ️ ${message}`, data || '')
+      } catch (e) {
+        console.log(`ℹ️ ${message}`)
+      }
+    }
   },
-
   error: (message: string, error?: any) => {
-    console.error(`❌ ${message}`, error || '')
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        console.error(`❌ ${message}`, error || '')
+      } catch (e) {
+        console.error(`❌ ${message}`)
+      }
+    }
   },
-
   warn: (message: string, data?: any) => {
-    console.warn(`⚠️ ${message}`, data || '')
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        console.warn(`⚠️ ${message}`, data || '')
+      } catch (e) {
+        console.warn(`⚠️ ${message}`)
+      }
+    }
   }
 }

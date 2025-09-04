@@ -1,5 +1,4 @@
 'use client'
-
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -19,16 +18,14 @@ import {
   Star
 } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { activityRecommender } from '@/lib/ai/activity-recommender'
 import { behavioralAnalyzer } from '@/lib/ai/behavioral-analyzer'
 import { personalityAnalyzer } from '@/lib/ai/personality-analyzer'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface OnboardingStep {
   id: string
@@ -38,7 +35,6 @@ interface OnboardingStep {
   isComplete: boolean
   aiEnhanced?: boolean
 }
-
 interface AIOnboardingState {
   currentStep: number
   steps: OnboardingStep[]
@@ -51,7 +47,6 @@ interface AIOnboardingState {
   isGeneratingInsights: boolean
   insights: string[]
 }
-
 export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void }) {
   const [state, setState] = useState<AIOnboardingState>({
     currentStep: 0,
@@ -99,30 +94,24 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
     isGeneratingInsights: false,
     insights: []
   })
-
   const supabase = createClient()
-
   const goToNextStep = () => {
     setState(prev => ({
       ...prev,
       currentStep: Math.min(prev.currentStep + 1, prev.steps.length - 1)
     }))
   }
-
   const goToPrevStep = () => {
     setState(prev => ({
       ...prev,
       currentStep: Math.max(prev.currentStep - 1, 0)
     }))
   }
-
   const completeCurrentStep = (data?: any) => {
     setState(prev => {
       const newSteps = [...prev.steps]
       newSteps[prev.currentStep] = { ...newSteps[prev.currentStep], isComplete: true }
-
       const newUserData = data ? { ...prev.userData, ...data } : prev.userData
-
       return {
         ...prev,
         steps: newSteps,
@@ -130,13 +119,10 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
       }
     })
   }
-
   const generateAIInsights = async () => {
     setState(prev => ({ ...prev, isGeneratingInsights: true }))
-
     try {
       const insights: string[] = []
-
       if (state.userData.temperament) {
         insights.push(
           `Based on your ${state.userData.temperament.primary_temperament} temperament, you thrive with ${
@@ -147,7 +133,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           }.`
         )
       }
-
       if (state.userData.preferences) {
         const pref = state.userData.preferences
         if (pref.energyLevel === 'high') {
@@ -157,9 +142,7 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           insights.push("Morning person detected! We'll prioritize early-day reminders and activities.")
         }
       }
-
       insights.push("Your AI coach will learn from every interaction to provide increasingly personalized guidance.")
-
       setState(prev => ({
         ...prev,
         insights,
@@ -174,10 +157,8 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
     setState(prev => ({ ...prev, isGeneratingInsights: false }))
     }
   }
-
   const currentStepComponent = state.steps[state.currentStep]?.component
   const progress = ((state.currentStep + 1) / state.steps.length) * 100
-
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Progress Bar */}
@@ -190,7 +171,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
         </div>
         <Progress value={progress} className="h-2" />
       </div>
-
       {/* AI Insights Banner */}
       <AnimatePresence>
         {state.insights.length > 0 && (
@@ -216,7 +196,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Step Content */}
       <Card className="mb-6">
         <CardHeader>
@@ -262,7 +241,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           </AnimatePresence>
         </CardContent>
       </Card>
-
       {/* Navigation */}
       <div className="flex justify-between items-center">
         <Button
@@ -273,7 +251,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
           <ArrowLeft className="w-4 h-4 mr-2" />
           Previous
         </Button>
-
         <div className="flex gap-2">
           {state.steps.map((step, index) => (
             <div
@@ -288,7 +265,6 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
             />
           ))}
         </div>
-
         {state.currentStep === state.steps.length - 1 ? (
           <Button
             onClick={onComplete}
@@ -310,14 +286,12 @@ export function AIEnhancedOnboarding({ onComplete }: { onComplete: () => void })
     </div>
   )
 }
-
 // Individual step components
 function WelcomeStep({ onComplete, onNext }: any) {
   useEffect(() => {
     // Auto-complete welcome step
     onComplete()
   }, [onComplete])
-
   return (
     <div className="text-center space-y-6">
       <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center">
@@ -358,12 +332,10 @@ function WelcomeStep({ onComplete, onNext }: any) {
     </div>
   )
 }
-
 function PersonalityStep({ onComplete, userData, generateInsights }: any) {
   const [responses, setResponses] = useState<any[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-
   const questions = [
     {
       id: 'work_style',
@@ -396,7 +368,6 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       ]
     }
   ]
-
   const handleAnswer = (option: any) => {
     const newResponses = [...responses, {
       questionId: questions[currentQuestion].id,
@@ -404,33 +375,27 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       answerText: option.text,
       selectedTemperament: option.temperament
     }]
-
     setResponses(newResponses)
-
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     } else {
       analyzePersonality(newResponses)
     }
   }
-
   const analyzePersonality = async (allResponses: any[]) => {
     setIsAnalyzing(true)
-
     try {
       // Simple analysis for demo - in production, use AI
       const temperamentCounts: Record<string, number> = {}
       allResponses.forEach(r => {
         temperamentCounts[r.selectedTemperament] = (temperamentCounts[r.selectedTemperament] || 0) + 1
       })
-
       const sorted = Object.entries(temperamentCounts).sort((a, b) => b[1] - a[1])
       const temperament = {
         primary_temperament: sorted[0]?.[0] || 'balanced',
         secondary_temperament: sorted[1]?.[0] || 'balanced',
         responses: allResponses
       }
-
       onComplete({ temperament })
       generateInsights()
     } catch (error) {
@@ -444,7 +409,6 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       setIsAnalyzing(false)
     }
   }
-
   if (isAnalyzing) {
     return (
       <div className="text-center space-y-6">
@@ -458,7 +422,6 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       </div>
     )
   }
-
   if (userData.temperament) {
     return (
       <div className="text-center space-y-6">
@@ -477,9 +440,7 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
       </div>
     )
   }
-
   const question = questions[currentQuestion]
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -492,7 +453,6 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
         <Progress value={((currentQuestion + 1) / questions.length) * 100} className="mb-6" />
         <h3 className="text-xl font-semibold mb-6">{question.text}</h3>
       </div>
-
       <div className="grid gap-4">
         {question.options.map((option, index) => (
           <motion.div
@@ -519,7 +479,6 @@ function PersonalityStep({ onComplete, userData, generateInsights }: any) {
     </div>
   )
 }
-
 function PreferencesStep({ onComplete }: any) {
   const [preferences, setPreferences] = useState({
     energyLevel: '',
@@ -527,13 +486,10 @@ function PreferencesStep({ onComplete }: any) {
     socialPreference: '',
     notificationFrequency: 'moderate'
   })
-
   const handleComplete = () => {
     onComplete({ preferences })
   }
-
   const isComplete = preferences.energyLevel && preferences.timePreference && preferences.socialPreference
-
   return (
     <div className="space-y-6">
       <div className="grid gap-6">
@@ -559,7 +515,6 @@ function PreferencesStep({ onComplete }: any) {
             ))}
           </div>
         </div>
-
         <div>
           <label className="text-sm font-medium text-gray-700 mb-3 block">
             When do you prefer to focus on wellness?
@@ -582,7 +537,6 @@ function PreferencesStep({ onComplete }: any) {
             ))}
           </div>
         </div>
-
         <div>
           <label className="text-sm font-medium text-gray-700 mb-3 block">
             How do you prefer to engage with wellness?
@@ -606,7 +560,6 @@ function PreferencesStep({ onComplete }: any) {
           </div>
         </div>
       </div>
-
       {isComplete && (
         <div className="text-center">
           <Button onClick={handleComplete} className="px-8">
@@ -618,26 +571,20 @@ function PreferencesStep({ onComplete }: any) {
     </div>
   )
 }
-
 function GoalsStep({ onComplete, userData }: any) {
   const [selectedGoals, setSelectedGoals] = useState<string[]>([])
   const [isGeneratingGoals, setIsGeneratingGoals] = useState(false)
   const [suggestedGoals, setSuggestedGoals] = useState<any[]>([])
-
   useEffect(() => {
     generatePersonalizedGoals()
   }, [])
-
   const generatePersonalizedGoals = () => {
     setIsGeneratingGoals(true)
-
     // Simulate AI goal generation based on temperament and preferences
     setTimeout(() => {
       const temperament = userData.temperament?.primary_temperament || 'balanced'
       const energyLevel = userData.preferences?.energyLevel || 'medium'
-
       let goals = []
-
       if (temperament === 'sanguine') {
         goals = [
           { id: '1', title: 'Connect socially 3x/week', description: 'Engage with friends during wellness activities', difficulty: 'easy', category: 'Social' },
@@ -659,12 +606,10 @@ function GoalsStep({ onComplete, userData }: any) {
           { id: '2', title: 'Gentle growth weekly', description: 'Small, sustainable improvements', difficulty: 'easy', category: 'Physical' }
         ]
       }
-
       setSuggestedGoals(goals)
       setIsGeneratingGoals(false)
     }, 2000)
   }
-
   const toggleGoal = (goalId: string) => {
     setSelectedGoals(prev =>
       prev.includes(goalId)
@@ -672,13 +617,11 @@ function GoalsStep({ onComplete, userData }: any) {
         : [...prev, goalId]
     )
   }
-
   const handleComplete = () => {
     onComplete({
       goals: suggestedGoals.filter(g => selectedGoals.includes(g.id))
     })
   }
-
   if (isGeneratingGoals) {
     return (
       <div className="text-center space-y-6">
@@ -695,7 +638,6 @@ function GoalsStep({ onComplete, userData }: any) {
       </div>
     )
   }
-
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -704,7 +646,6 @@ function GoalsStep({ onComplete, userData }: any) {
           Based on your personality and preferences, here are some personalized wellness goals
         </p>
       </div>
-
       <div className="grid gap-4">
         {suggestedGoals.map(goal => (
           <motion.div
@@ -745,7 +686,6 @@ function GoalsStep({ onComplete, userData }: any) {
           </motion.div>
         ))}
       </div>
-
       {selectedGoals.length > 0 && (
         <div className="text-center pt-4">
           <Button onClick={handleComplete} className="px-8">
@@ -757,19 +697,15 @@ function GoalsStep({ onComplete, userData }: any) {
     </div>
   )
 }
-
 function RecommendationsStep({ onComplete, userData }: any) {
   const [isLoading, setIsLoading] = useState(true)
   const [recommendations, setRecommendations] = useState<any[]>([])
-
   useEffect(() => {
     generateRecommendations()
   }, [])
-
   const generateRecommendations = () => {
     setTimeout(() => {
       const temperament = userData.temperament?.primary_temperament || 'balanced'
-
       const recs = [
         {
           title: 'Morning Energizer',
@@ -793,13 +729,11 @@ function RecommendationsStep({ onComplete, userData }: any) {
           reason: 'Aligned with your social preferences'
         }
       ]
-
       setRecommendations(recs)
       setIsLoading(false)
       setTimeout(() => onComplete({ recommendations: recs }), 1000)
     }, 2000)
   }
-
   if (isLoading) {
     return (
       <div className="text-center space-y-6">
@@ -813,7 +747,6 @@ function RecommendationsStep({ onComplete, userData }: any) {
       </div>
     )
   }
-
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -822,7 +755,6 @@ function RecommendationsStep({ onComplete, userData }: any) {
           Here's a preview of your personalized AXIS6 dashboard
         </p>
       </div>
-
       <div className="grid gap-4">
         {recommendations.map((rec, index) => (
           <motion.div
@@ -847,7 +779,6 @@ function RecommendationsStep({ onComplete, userData }: any) {
           </motion.div>
         ))}
       </div>
-
       <div className="text-center pt-6 border-t">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Sparkles className="w-5 h-5 text-purple-600" />

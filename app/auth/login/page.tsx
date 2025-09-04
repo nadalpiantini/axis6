@@ -1,38 +1,30 @@
 'use client'
-
 import { Mail, Lock, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
 import { LogoFull } from '@/components/ui/Logo'
 import { shouldBypassRateLimit } from '@/lib/test-config'
 import { logger } from '@/lib/utils/logger';
-
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-
     try {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
-
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-
       if (error) {
         logger.error('Login error:', error)
-
         // Handle specific error cases with user-friendly messages
         if (error.message.toLowerCase().includes('invalid login credentials')) {
           setError('Invalid email or password. Please check your credentials and try again.')
@@ -45,7 +37,6 @@ export default function LoginPage() {
         }
         return
       }
-
       if (data.user) {
         // Login successful, redirect to dashboard
         router.push('/dashboard')
@@ -57,7 +48,6 @@ export default function LoginPage() {
       setLoading(false)
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -71,13 +61,11 @@ export default function LoginPage() {
             </h1>
             <p className="text-gray-400">Continue your balance journey</p>
           </div>
-
           {error && (
             <div role="alert" className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300">
               {error}
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -98,7 +86,6 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
@@ -118,7 +105,6 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center text-gray-300">
                 <input type="checkbox" className="mr-2 rounded" />
@@ -128,7 +114,6 @@ export default function LoginPage() {
                 Forgot your password?
               </Link>
             </div>
-
             <button
               type="submit"
               data-testid="login-submit"
@@ -139,7 +124,6 @@ export default function LoginPage() {
               <ChevronRight className="w-5 h-5" />
             </button>
           </form>
-
           <div className="mt-6 text-center text-gray-400">
             Don't have an account?{' '}
             <Link href="/auth/register" className="text-purple-400 hover:text-purple-300 font-semibold">

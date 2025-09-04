@@ -2,17 +2,13 @@
  * Enhanced Rate Limiting Middleware with Monitoring
  * Integrates with error tracking and provides comprehensive protection
  */
-
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { reportError, reportEvent } from '@/lib/monitoring/error-tracking'
 import { logger } from '@/lib/utils/logger'
-
 // Initialize Redis with proper error handling
 let redis: Redis | null = null
-
 try {
   if (process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDIS_REST_TOKEN']) {
     redis = new Redis({
@@ -31,10 +27,8 @@ try {
     metadata: { environment: process.env['NODE_ENV'] }
   })
 }
-
 // Memory fallback store
 const memoryStore = new Map<string, { count: number; resetTime: number; blocked: number }>()
-
 // Rate limit configurations with adaptive thresholds
 export const rateLimitConfig = {
   // Authentication - very strict to prevent brute force
@@ -44,7 +38,6 @@ export const rateLimitConfig = {
     message: 'Too many authentication attempts. Please try again in 15 minutes.',
     type: 'authentication' as const,
   },
-
   // Registration - prevent abuse
   register: {
     requests: 3,
@@ -52,7 +45,6 @@ export const rateLimitConfig = {
     message: 'Registration limit exceeded. Please try again later.',
     type: 'registration' as const,
   },
-
   // Password reset - prevent enumeration attacks
   passwordReset: {
     requests: 3,
@@ -60,7 +52,6 @@ export const rateLimitConfig = {
     message: 'Password reset limit exceeded. Please try again later.',
     type: 'password_reset' as const,
   },
-
   // API endpoints - balanced protection
   api: {
     requests: 100,
@@ -68,7 +59,6 @@ export const rateLimitConfig = {
     message: 'API rate limit exceeded. Please slow down your requests.',
     type: 'api' as const,
   },
-
   // Write operations - protect against data manipulation
   write: {
     requests: 50,
@@ -76,7 +66,6 @@ export const rateLimitConfig = {
     message: 'Write operation limit exceeded. Please slow down.',
     type: 'write' as const,
   },
-
   // Read operations - generous but still protected
   read: {
     requests: 300,
@@ -84,7 +73,6 @@ export const rateLimitConfig = {
     message: 'Read operation limit exceeded. Please slow down.',
     type: 'read' as const,
   },
-
   // Sensitive operations - very strict
   sensitive: {
     requests: 10,
@@ -92,7 +80,6 @@ export const rateLimitConfig = {
     message: 'Sensitive operation limit exceeded. Please try again later.',
     type: 'sensitive' as const,
   },
-
   // Global fallback
   global: {
     requests: 1000,
@@ -101,11 +88,9 @@ export const rateLimitConfig = {
     type: 'global' as const,
   },
 } as const
-
 // Create rate limiters with enhanced configuration
 function createRateLimiter(config: typeof rateLimitConfig[keyof typeof rateLimitConfig]) {
   if (!redis) return null
-
   return new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(config.requests, config.window),
@@ -114,7 +99,6 @@ function createRateLimiter(config: typeof rateLimitConfig[keyof typeof rateLimit
     ephemeralCache: new Map(), // Add in-memory cache for better performance
   })
 }
-
 export const rateLimiters = {
   auth: createRateLimiter(rateLimitConfig.auth),
   register: createRateLimiter(rateLimitConfig.register),
@@ -125,14 +109,12 @@ export const rateLimiters = {
   sensitive: createRateLimiter(rateLimitConfig.sensitive),
   global: createRateLimiter(rateLimitConfig.global),
 }
-
 /**
  * Enhanced client identification with multiple fallbacks
  */
 function getEnhancedClientId(request: NextRequest, userId?: string): string {
   // Priority hierarchy for identification
   if (userId) return `user:${userId}`
-
   // Try multiple IP sources (Vercel, Cloudflare, etc.)
   const sources = [
     request.headers.get('x-vercel-forwarded-for'),
@@ -140,29 +122,22 @@ function getEnhancedClientId(request: NextRequest, userId?: string): string {
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim(),
     request.headers.get('x-real-ip'),
   ]
-
   const ip = sources.find(source => source && source !== 'unknown') || 'anonymous'
-
   // Get additional identifiers
   const userAgent = request.headers.get('user-agent')
   const sessionId = request.cookies.get('session-id')?.value
-
   // Create composite identifier
   let identifier = `ip:${ip}`
-
   if (sessionId) {
     identifier += `:session:${sessionId}`
   }
-
   // Add user agent hash for additional uniqueness (but keep it anonymous)
   if (userAgent) {
     const uaHash = btoa(userAgent).substring(0, 8)
     identifier += `:ua:${uaHash}`
   }
-
   return identifier
 }
-
 /**
  * Memory-based rate limiting with decay
  */
@@ -173,7 +148,6 @@ function checkMemoryRateLimit(
   const now = Date.now()
   const windowMs = parseWindow(config.window)
   const resetTime = now + windowMs
-
   // Clean expired entries periodically
   if (Math.random() < 0.01) { // 1% chance to clean
     for (const [key, value] of memoryStore.entries()) {
@@ -182,9 +156,7 @@ function checkMemoryRateLimit(
       }
     }
   }
-
   const entry = memoryStore.get(identifier)
-
   if (!entry || entry.resetTime < now) {
     // New window
     memoryStore.set(identifier, { count: 1, resetTime, blocked: 0 })
@@ -195,7 +167,6 @@ function checkMemoryRateLimit(
       total: config.requests,
     }
   }
-
   if (entry.count >= config.requests) {
     entry.blocked++
     return {
@@ -205,7 +176,6 @@ function checkMemoryRateLimit(
       total: config.requests,
     }
   }
-
   entry.count++
   return {
     success: true,
@@ -214,17 +184,14 @@ function checkMemoryRateLimit(
     total: config.requests,
   }
 }
-
 /**
  * Parse window string to milliseconds
  */
 function parseWindow(window: string): number {
   const match = window.match(/(\\d+)\\s*([smh])/i)
   if (!match) return 60000 // Default 1 minute
-
   const value = parseInt(match[1])
   const unit = match[2].toLowerCase()
-
   switch (unit) {
     case 's': return value * 1000
     case 'm': return value * 60 * 1000
@@ -232,7 +199,6 @@ function parseWindow(window: string): number {
     default: return 60000
   }
 }
-
 /**
  * Enhanced rate limiting middleware with monitoring
  */
@@ -254,7 +220,6 @@ export async function withEnhancedRateLimit(
   const identifier = getEnhancedClientId(request, userId)
   const config = rateLimitConfig[limiterType]
   const limiter = rateLimiters[limiterType]
-
   let result: {
     success: boolean
     remaining: number
@@ -262,7 +227,6 @@ export async function withEnhancedRateLimit(
     total: number
     limit?: number
   }
-
   try {
     if (limiter && redis) {
       // Use Redis-based rate limiter
@@ -286,7 +250,6 @@ export async function withEnhancedRateLimit(
       action: 'rate_limit_check',
       metadata: { limiterType, identifier, hasRedis: !!redis }
     })
-
     // Allow request but log the incident
     result = {
       success: true,
@@ -295,7 +258,6 @@ export async function withEnhancedRateLimit(
       total: config.requests,
     }
   }
-
   // Prepare headers
   const headers = {
     'X-RateLimit-Limit': result.total.toString(),
@@ -303,11 +265,9 @@ export async function withEnhancedRateLimit(
     'X-RateLimit-Reset': result.reset.toISOString(),
     'X-RateLimit-Policy': `${config.requests}; w=${config.window}`,
   }
-
   // Log rate limiting events
   if (!result.success) {
     const retryAfter = Math.ceil((result.reset.getTime() - Date.now()) / 1000)
-
     // Report rate limit violation
     reportEvent(
       'rate_limit_exceeded',
@@ -323,14 +283,12 @@ export async function withEnhancedRateLimit(
       },
       'warning'
     )
-
     logger.warn(`Rate limit exceeded: ${limiterType}`, {
       identifier: `${identifier.split(':')[0]  }:***`,
       remaining: result.remaining,
       total: result.total,
       retryAfter,
     })
-
     const response = NextResponse.json(
       {
         error: 'Rate limit exceeded',
@@ -347,7 +305,6 @@ export async function withEnhancedRateLimit(
         },
       }
     )
-
     return {
       response,
       headers,
@@ -360,7 +317,6 @@ export async function withEnhancedRateLimit(
       },
     }
   }
-
   // Request allowed - log if we're getting close to the limit
   if (result.remaining <= Math.floor(result.total * 0.1)) {
     logger.info(`Rate limit warning: ${limiterType}`, {
@@ -370,7 +326,6 @@ export async function withEnhancedRateLimit(
       percentage: (result.remaining / result.total) * 100,
     })
   }
-
   return {
     response: null, // Allow request to continue
     headers,
@@ -383,7 +338,6 @@ export async function withEnhancedRateLimit(
     },
   }
 }
-
 /**
  * Middleware wrapper for easy integration
  */
@@ -392,15 +346,12 @@ export function createRateLimitMiddleware(
 ) {
   return async function(request: NextRequest, userId?: string) {
     const { response, headers } = await withEnhancedRateLimit(request, limiterType, userId)
-
     if (response) {
       return response // Rate limited
     }
-
     return { headers } // Continue with these headers
   }
 }
-
 /**
  * Reset rate limit for successful authentication
  */
@@ -420,7 +371,6 @@ export async function resetRateLimit(
     logger.error(`Failed to reset rate limit for ${limiterType}`, error as Error)
   }
 }
-
 /**
  * Get rate limit analytics
  */

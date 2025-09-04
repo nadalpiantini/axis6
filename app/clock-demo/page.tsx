@@ -1,16 +1,12 @@
 'use client'
-
 /**
  * Revolutionary Clock System Demo Page
  * Showcases the 12-hour clock positioning system with sun at 12 o'clock
  */
-
 import React, { useState, useMemo } from 'react';
 import { HexagonClock } from '@/components/hexagon-clock/HexagonClock';
-
 const ClockDemoPage = () => {
   const [clockMode, setClockMode] = useState<'basic' | 'categories' | 'timeblocks' | 'full'>('basic');
-
   // Sample completion data for dashboard mode
   const sampleData = {
     physical: 75,    // 12 o'clock - Morning energy
@@ -20,7 +16,6 @@ const ClockDemoPage = () => {
     spiritual: 80,   // 8 o'clock - Night reflection
     material: 55     // 10 o'clock - Late planning
   };
-
   // Sample time blocks for revolutionary clock positioning
   const sampleTimeBlocks = [
     {
@@ -74,7 +69,6 @@ const ClockDemoPage = () => {
       title: 'Tomorrow Planning'
     }
   ];
-
   // Configuration for each demo mode
   const getModeConfig = () => {
     switch (clockMode) {
@@ -120,9 +114,7 @@ const ClockDemoPage = () => {
         };
     }
   };
-
   const modeConfig = getModeConfig();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       <div className="max-w-6xl mx-auto">
@@ -139,7 +131,6 @@ const ClockDemoPage = () => {
             with real-time sun indicator showing current time position.
           </p>
         </div>
-
         {/* Demo Mode Controls */}
         <div className="flex justify-center gap-4 mb-8">
           <button
@@ -183,7 +174,6 @@ const ClockDemoPage = () => {
             Full System
           </button>
         </div>
-
         {/* Current Mode Description */}
         <div className="text-center mb-8">
           <div className="inline-block bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3">
@@ -209,7 +199,6 @@ const ClockDemoPage = () => {
             )}
           </div>
         </div>
-
         {/* Main Clock Display */}
         <div className="flex justify-center mb-8">
           <div className="w-full max-w-lg">
@@ -226,7 +215,6 @@ const ClockDemoPage = () => {
             />
           </div>
         </div>
-
         {/* Feature Explanations */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
@@ -238,7 +226,6 @@ const ClockDemoPage = () => {
               representing morning energy and vitality peak.
             </p>
           </div>
-
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
             <h3 className="text-xl font-bold text-amber-400 mb-3 flex items-center">
               🧠 Circadian Alignment
@@ -249,7 +236,6 @@ const ClockDemoPage = () => {
               Spiritual at 8 PM (reflection).
             </p>
           </div>
-
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
             <h3 className="text-xl font-bold text-amber-400 mb-3 flex items-center">
               ⏰ Real-Time Awareness
@@ -260,7 +246,6 @@ const ClockDemoPage = () => {
               NOW indicator for temporal context.
             </p>
           </div>
-
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
             <h3 className="text-xl font-bold text-amber-400 mb-3 flex items-center">
               📅 Time Block Arcs
@@ -271,7 +256,6 @@ const ClockDemoPage = () => {
               planned, active, completed, overflowing.
             </p>
           </div>
-
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
             <h3 className="text-xl font-bold text-amber-400 mb-3 flex items-center">
               ⚠️ Conflict Detection
@@ -282,7 +266,6 @@ const ClockDemoPage = () => {
               based on circadian rhythms.
             </p>
           </div>
-
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
             <h3 className="text-xl font-bold text-amber-400 mb-3 flex items-center">
               🎨 Interactive Planning
@@ -294,7 +277,6 @@ const ClockDemoPage = () => {
             </p>
           </div>
         </div>
-
         {/* Current Time & Category Status */}
         <div className="text-center text-white/60">
           <p className="mb-2">
@@ -311,5 +293,4 @@ const ClockDemoPage = () => {
     </div>
   );
 };
-
 export default ClockDemoPage;

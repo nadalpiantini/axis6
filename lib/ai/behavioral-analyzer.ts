@@ -1,9 +1,6 @@
 import { addDays, subDays, format, parseISO } from 'date-fns'
-
 import { createClient } from '@/lib/supabase/client'
-
 import { deepseekClient } from './deepseek'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 export interface BehaviorPattern {
   pattern_type: 'checkin_timing' | 'completion_rate' | 'category_preference' | 'streak_behavior' | 'mood_correlation'
@@ -14,7 +11,6 @@ export interface BehaviorPattern {
   triggers: string[]
   frequency: 'daily' | 'weekly' | 'monthly' | 'occasional'
 }
-
 export interface UserBehaviorProfile {
   user_id: string
   active_hours: Array<{ hour: number; frequency: number }>
@@ -35,7 +31,6 @@ export interface UserBehaviorProfile {
   last_analyzed: string
   analysis_version: string
 }
-
 export interface PersonalizedInsight {
   id: string
   type: 'daily' | 'weekly' | 'milestone' | 'recommendation' | 'coaching'
@@ -47,11 +42,9 @@ export interface PersonalizedInsight {
   expires_at?: string
   personalization_score: number
 }
-
 export class BehavioralAnalyzer {
   private supabase = createClient()
   private analysisCache: Map<string, UserBehaviorProfile> = new Map()
-
   /**
    * Perform comprehensive behavioral analysis for a user
    */
@@ -62,32 +55,22 @@ export class BehavioralAnalyzer {
       if (cached && this.isCacheValid(cached.last_analyzed)) {
         return cached
       }
-
       // Gather user data for analysis
       const userData = await this.gatherUserData(userId)
-
       // Perform pattern analysis
       const patterns = await this.identifyPatterns(userData)
-
       // Generate behavioral profile
       const profile = await this.generateBehaviorProfile(userId, userData, patterns)
-
       // Cache the results
       this.analysisCache.set(userId, profile)
-
       // Store in database
       await this.storeBehaviorProfile(profile)
-
       return profile
     } catch (error) {
             handleError(error, {
-
               operation: 'ai_operation',
-
               component: 'behavioral-analyzer',
-
               userMessage: 'AI operation failed. Please try again.'
-
             })
             // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
@@ -96,7 +79,6 @@ export class BehavioralAnalyzer {
       return this.getDefaultProfile(userId)
     }
   }
-
   /**
    * Generate personalized insights based on behavior analysis
    */
@@ -106,31 +88,22 @@ export class BehavioralAnalyzer {
   ): Promise<PersonalizedInsight[]> {
     try {
       const behaviorProfile = profile || await this.analyzeBehavior(userId)
-
       // Get recent activity data
       const recentData = await this.getRecentActivityData(userId)
-
       // Check if AI features are enabled
       if (!deepseekClient.isAIEnabled()) {
         return this.generateBasicInsights(behaviorProfile, recentData)
       }
-
       // Generate AI-powered insights
       const aiInsights = await this.generateAIInsights(behaviorProfile, recentData)
-
       // Store insights in database
       await this.storeInsights(userId, aiInsights)
-
       return aiInsights
     } catch (error) {
             handleError(error, {
-
               operation: 'ai_operation',
-
               component: 'behavioral-analyzer',
-
               userMessage: 'AI operation failed. Please try again.'
-
             })
             // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
@@ -139,7 +112,6 @@ export class BehavioralAnalyzer {
       return this.generateBasicInsights(profile || await this.getDefaultProfile(userId))
     }
   }
-
   /**
    * Predict optimal check-in times based on behavior patterns
    */
@@ -152,7 +124,6 @@ export class BehavioralAnalyzer {
     }>
   }> {
     const profile = await this.analyzeBehavior(userId)
-
     const bestTimes = profile.active_hours
       .filter(ah => ah.frequency > 0.3)
       .map(ah => ({
@@ -162,13 +133,10 @@ export class BehavioralAnalyzer {
       }))
       .sort((a, b) => b.probability - a.probability)
       .slice(0, 5)
-
     // Generate personalized reminder messages
     const reminders = await this.generatePersonalizedReminders(profile, bestTimes)
-
     return { best_times: bestTimes, personalized_reminders: reminders }
   }
-
   /**
    * Analyze goal-setting patterns and suggest optimal goals
    */
@@ -185,16 +153,13 @@ export class BehavioralAnalyzer {
   }>> {
     const profile = await this.analyzeBehavior(userId)
     const historicalData = await this.getHistoricalPerformance(userId, timeframe)
-
     // Analyze performance patterns
     const goals = profile.preferred_categories.map(cat => {
       const historical = historicalData.find(h => h.category_id === cat.category_id)
       const avgCompletion = historical?.completion_rate || 0.3
-
       // Calculate suggested target based on historical performance and personality
       let target = Math.round(avgCompletion * (timeframe === 'weekly' ? 7 : 30))
       let difficulty: 'easy' | 'medium' | 'challenging' = 'medium'
-
       // Adjust based on behavioral traits
       if (profile.behavioral_traits.goal_orientation === 'process') {
         target = Math.max(1, Math.round(target * 0.8)) // Lower but consistent
@@ -203,7 +168,6 @@ export class BehavioralAnalyzer {
         target = Math.round(target * 1.3) // Higher challenge
         difficulty = 'challenging'
       }
-
       return {
         category_id: cat.category_id,
         goal_type: 'frequency' as const,
@@ -213,16 +177,13 @@ export class BehavioralAnalyzer {
         success_probability: this.calculateSuccessProbability(profile, target, historical)
       }
     })
-
     return goals.sort((a, b) => b.success_probability - a.success_probability)
   }
-
   /**
    * Gather comprehensive user data for analysis
    */
   private async gatherUserData(userId: string) {
     const thirtyDaysAgo = subDays(new Date(), 30)
-
     const [checkins, streaks, temperament, dailyStats] = await Promise.all([
       // Recent check-ins with timestamps
       this.supabase
@@ -231,20 +192,17 @@ export class BehavioralAnalyzer {
         .eq('user_id', userId)
         .gte('completed_at', format(thirtyDaysAgo, 'yyyy-MM-dd'))
         .order('completed_at', { ascending: false }),
-
       // Current streaks
       this.supabase
         .from('axis6_streaks')
         .select('*')
         .eq('user_id', userId),
-
       // Temperament profile
       this.supabase
         .from('axis6_temperament_profiles')
         .select('*')
         .eq('user_id', userId)
         .single(),
-
       // Daily statistics
       this.supabase
         .from('axis6_daily_stats')
@@ -253,7 +211,6 @@ export class BehavioralAnalyzer {
         .gte('date', format(thirtyDaysAgo, 'yyyy-MM-dd'))
         .order('date', { ascending: false })
     ])
-
     return {
       checkins: checkins.data || [],
       streaks: streaks.data || [],
@@ -261,78 +218,64 @@ export class BehavioralAnalyzer {
       dailyStats: dailyStats.data || []
     }
   }
-
   /**
    * Identify behavioral patterns using ML-style analysis
    */
   private async identifyPatterns(userData: any): Promise<BehaviorPattern[]> {
     const patterns: BehaviorPattern[] = []
     const { checkins, streaks, dailyStats } = userData
-
     // 1. Check-in timing patterns
     if (checkins.length > 10) {
       const timingPattern = this.analyzeTimingPatterns(checkins)
       patterns.push(timingPattern)
     }
-
     // 2. Completion rate patterns
     if (dailyStats.length > 7) {
       const completionPattern = this.analyzeCompletionPatterns(dailyStats)
       patterns.push(completionPattern)
     }
-
     // 3. Category preference patterns
     if (checkins.length > 15) {
       const preferencePattern = this.analyzeCategoryPreferences(checkins)
       patterns.push(preferencePattern)
     }
-
     // 4. Streak behavior patterns
     if (streaks.length > 0) {
       const streakPattern = this.analyzeStreakBehavior(streaks, checkins)
       patterns.push(streakPattern)
     }
-
     // 5. Mood correlation patterns (if mood data exists)
     const moodCheckins = checkins.filter((c: any) => c.mood !== null)
     if (moodCheckins.length > 10) {
       const moodPattern = this.analyzeMoodCorrelations(moodCheckins)
       patterns.push(moodPattern)
     }
-
     return patterns.filter(p => p.confidence_score > 0.6)
   }
-
   /**
    * Analyze timing patterns for check-ins
    */
   private analyzeTimingPatterns(checkins: any[]): BehaviorPattern {
     const hourCounts: Record<number, number> = {}
     const dayOfWeekCounts: Record<number, number> = {}
-
     checkins.forEach(checkin => {
       const date = parseISO(checkin.created_at || checkin.completed_at)
       const hour = date.getHours()
       const dayOfWeek = date.getDay()
-
       hourCounts[hour] = (hourCounts[hour] || 0) + 1
       dayOfWeekCounts[dayOfWeek] = (dayOfWeekCounts[dayOfWeek] || 0) + 1
     })
-
     // Find peak hours
     const peakHours = Object.entries(hourCounts)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 3)
       .map(([hour]) => parseInt(hour))
-
     // Find best days
     const bestDays = Object.entries(dayOfWeekCounts)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 3)
       .map(([day]) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][parseInt(day)])
-
     const confidence = Math.min(0.95, checkins.length / 30) // Higher confidence with more data
-
     return {
       pattern_type: 'checkin_timing',
       confidence_score: confidence,
@@ -351,7 +294,6 @@ export class BehavioralAnalyzer {
       frequency: confidence > 0.8 ? 'daily' : 'weekly'
     }
   }
-
   /**
    * Analyze completion rate patterns
    */
@@ -359,10 +301,8 @@ export class BehavioralAnalyzer {
     const completionRates = dailyStats.map(stat => stat.completion_rate || 0)
     const avgCompletion = completionRates.reduce((sum, rate) => sum + rate, 0) / completionRates.length
     const consistency = 1 - (Math.sqrt(completionRates.reduce((sum, rate) => sum + Math.pow(rate - avgCompletion, 2), 0) / completionRates.length) / avgCompletion)
-
     const trends = this.analyzeTrends(completionRates)
     const confidence = Math.min(0.95, dailyStats.length / 14)
-
     return {
       pattern_type: 'completion_rate',
       confidence_score: confidence,
@@ -377,17 +317,14 @@ export class BehavioralAnalyzer {
       frequency: consistency > 0.8 ? 'daily' : 'weekly'
     }
   }
-
   /**
    * Analyze category preferences
    */
   private analyzeCategoryPreferences(checkins: any[]): BehaviorPattern {
     const categoryCount: Record<number, number> = {}
-
     checkins.forEach(checkin => {
       categoryCount[checkin.category_id] = (categoryCount[checkin.category_id] || 0) + 1
     })
-
     const total = checkins.length
     const preferences = Object.entries(categoryCount)
       .map(([catId, count]) => ({
@@ -396,10 +333,8 @@ export class BehavioralAnalyzer {
         count
       }))
       .sort((a, b) => b.percentage - a.percentage)
-
     const topCategory = preferences[0]
     const confidence = Math.min(0.95, total / 20)
-
     return {
       pattern_type: 'category_preference',
       confidence_score: confidence,
@@ -420,7 +355,6 @@ export class BehavioralAnalyzer {
       frequency: 'weekly'
     }
   }
-
   /**
    * Analyze streak behavior patterns
    */
@@ -429,9 +363,7 @@ export class BehavioralAnalyzer {
     const avgStreak = totalStreaks / streaks.length
     const currentStreaks = streaks.reduce((sum, streak) => sum + streak.current_streak, 0)
     const streakMaintenance = currentStreaks > 0 ? currentStreaks / totalStreaks : 0
-
     const confidence = Math.min(0.95, checkins.length / 25)
-
     return {
       pattern_type: 'streak_behavior',
       confidence_score: confidence,
@@ -450,7 +382,6 @@ export class BehavioralAnalyzer {
       frequency: 'daily'
     }
   }
-
   /**
    * Analyze mood correlation patterns
    */
@@ -460,15 +391,12 @@ export class BehavioralAnalyzer {
       hour: parseISO(c.created_at || c.completed_at).getHours(),
       category: c.category_id
     }))
-
     const avgMood = moodData.reduce((sum, data) => sum + data.mood, 0) / moodData.length
     const moodByHour: Record<number, number[]> = {}
-
     moodData.forEach(data => {
       if (!moodByHour[data.hour]) moodByHour[data.hour] = []
       moodByHour[data.hour].push(data.mood)
     })
-
     // Find best mood hours
     const bestHours = Object.entries(moodByHour)
       .map(([hour, moods]) => ({
@@ -477,9 +405,7 @@ export class BehavioralAnalyzer {
       }))
       .filter(h => h.avgMood > avgMood)
       .sort((a, b) => b.avgMood - a.avgMood)
-
     const confidence = Math.min(0.95, moodCheckins.length / 15)
-
     return {
       pattern_type: 'mood_correlation',
       confidence_score: confidence,
@@ -498,7 +424,6 @@ export class BehavioralAnalyzer {
       frequency: 'daily'
     }
   }
-
   /**
    * Generate behavioral profile from patterns and data
    */
@@ -508,19 +433,14 @@ export class BehavioralAnalyzer {
     patterns: BehaviorPattern[]
   ): Promise<UserBehaviorProfile> {
     const { checkins, streaks, temperament } = userData
-
     // Calculate active hours
     const activeHours = this.calculateActiveHours(checkins)
-
     // Calculate preferred categories
     const preferredCategories = this.calculatePreferredCategories(checkins)
-
     // Analyze completion patterns
     const completionPatterns = this.analyzeCompletionPatternDetails(userData)
-
     // Determine behavioral traits
     const behavioralTraits = await this.determineBehavioralTraits(patterns, temperament)
-
     return {
       user_id: userId,
       active_hours: activeHours,
@@ -532,37 +452,31 @@ export class BehavioralAnalyzer {
       analysis_version: '1.0-ai-enhanced'
     }
   }
-
   /**
    * Calculate active hours from check-in data
    */
   private calculateActiveHours(checkins: any[]): Array<{ hour: number; frequency: number }> {
     const hourCounts: Record<number, number> = {}
     const total = checkins.length
-
     checkins.forEach(checkin => {
       const date = parseISO(checkin.created_at || checkin.completed_at)
       const hour = date.getHours()
       hourCounts[hour] = (hourCounts[hour] || 0) + 1
     })
-
     return Array.from({ length: 24 }, (_, hour) => ({
       hour,
       frequency: (hourCounts[hour] || 0) / total
     })).filter(ah => ah.frequency > 0)
   }
-
   /**
    * Calculate preferred categories from check-in data
    */
   private calculatePreferredCategories(checkins: any[]): Array<{ category_id: number; preference_score: number }> {
     const categoryCount: Record<number, number> = {}
     const total = checkins.length
-
     checkins.forEach(checkin => {
       categoryCount[checkin.category_id] = (categoryCount[checkin.category_id] || 0) + 1
     })
-
     return Object.entries(categoryCount)
       .map(([catId, count]) => ({
         category_id: parseInt(catId),
@@ -570,13 +484,11 @@ export class BehavioralAnalyzer {
       }))
       .sort((a, b) => b.preference_score - a.preference_score)
   }
-
   /**
    * Analyze detailed completion patterns
    */
   private analyzeCompletionPatternDetails(userData: any) {
     const { checkins, dailyStats } = userData
-
     // Analyze by day of week
     const dayOfWeekCounts: Record<number, number> = {}
     checkins.forEach((checkin: any) => {
@@ -584,23 +496,19 @@ export class BehavioralAnalyzer {
       const dayOfWeek = date.getDay()
       dayOfWeekCounts[dayOfWeek] = (dayOfWeekCounts[dayOfWeek] || 0) + 1
     })
-
     const bestDays = Object.entries(dayOfWeekCounts)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 3)
       .map(([day]) => ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][parseInt(day)])
-
     // Calculate peak hours
     const peakHours = this.calculateActiveHours(checkins)
       .filter(ah => ah.frequency > 0.2)
       .map(ah => ah.hour)
       .slice(0, 4)
-
     // Calculate streak potential and consistency
     const completionRates = dailyStats.map((stat: any) => stat.completion_rate || 0)
     const avgCompletion = completionRates.reduce((sum: number, rate: number) => sum + rate, 0) / completionRates.length
     const streakPotential = avgCompletion * 0.8 + (completionRates.filter((rate: number) => rate > 0.8).length / completionRates.length) * 0.2
-
     return {
       best_days: bestDays,
       peak_hours: peakHours,
@@ -608,7 +516,6 @@ export class BehavioralAnalyzer {
       consistency_score: this.calculateConsistencyScore(completionRates) || 0.5
     }
   }
-
   /**
    * Determine behavioral traits from patterns and temperament
    */
@@ -620,11 +527,9 @@ export class BehavioralAnalyzer {
       social_tendency: 'independent' as const,
       stress_response: 'adaptive' as const
     }
-
     // Adjust based on temperament if available
     if (temperament) {
       const primary = temperament.primary_temperament
-
       switch (primary) {
         case 'sanguine':
           traits.social_tendency = 'independent'
@@ -645,16 +550,13 @@ export class BehavioralAnalyzer {
           break
       }
     }
-
     // Fine-tune based on behavioral patterns
     const streakPattern = patterns.find(p => p.pattern_type === 'streak_behavior')
     if (streakPattern && streakPattern.confidence_score > 0.8) {
       traits.goal_orientation = 'balanced' // Good at building habits
     }
-
     return traits
   }
-
   /**
    * Generate AI-powered personalized insights
    */
@@ -663,14 +565,12 @@ export class BehavioralAnalyzer {
     recentData: any
   ): Promise<PersonalizedInsight[]> {
     const prompt = this.buildInsightsPrompt(profile, recentData)
-
     try {
       const response = await deepseekClient.generateCompletion(
         prompt,
         'You are an expert wellness coach and behavioral analyst. Generate personalized insights based on user behavior patterns.',
         { temperature: 0.7 }
       )
-
       return this.parseInsightsResponse(response)
     } catch (error) {
       handleError(error, {
@@ -681,66 +581,52 @@ export class BehavioralAnalyzer {
     return this.generateBasicInsights(profile, recentData)
     }
   }
-
   /**
    * Build prompt for AI insights generation
    */
   private buildInsightsPrompt(profile: UserBehaviorProfile, recentData: any): string {
     return `
     Analyze this user's behavior profile and generate 3-5 personalized insights:
-
     **User Profile:**
     - Most active during: ${profile.active_hours.filter(ah => ah.frequency > 0.2).map(ah => `${ah.hour}:00`).join(', ')}
     - Preferred categories: ${profile.preferred_categories.slice(0, 3).map(cat => `Category ${cat.category_id} (${Math.round(cat.preference_score * 100)}%)`).join(', ')}
     - Completion patterns: ${JSON.stringify(profile.completion_patterns)}
     - Behavioral traits: ${JSON.stringify(profile.behavioral_traits)}
-
     **Recent Activity:**
     - Recent check-ins: ${recentData?.recentCheckins?.length || 0}
     - Recent completion rate: ${recentData?.recentCompletionRate || 'N/A'}
     - Current streaks: ${recentData?.activeStreaks || 0}
-
     **Behavioral Patterns:**
     ${profile.patterns.map(p => `- ${p.pattern_type}: ${p.description} (confidence: ${Math.round(p.confidence_score * 100)}%)`).join('\n')}
-
     Generate insights in this format:
     1. **Daily Insight**: [Observation about today/recent behavior]
        - Action: [Specific actionable advice]
        - Priority: [low/medium/high]
-
     2. **Weekly Pattern**: [Weekly trend observation]
        - Action: [Weekly strategy suggestion]
        - Priority: [low/medium/high]
-
     3. **Coaching Tip**: [Behavioral coaching based on personality]
        - Action: [Personalized development suggestion]
        - Priority: [low/medium/high]
-
     Keep insights encouraging, specific, and actionable. Focus on strengths while gently addressing improvement areas.
     `
   }
-
   /**
    * Parse AI response into structured insights
    */
   private parseInsightsResponse(response: string): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = []
     const sections = response.split(/\d+\.\s\*\*/)
-
     sections.slice(1).forEach((section, index) => {
       const lines = section.split('\n').filter(line => line.trim())
       if (lines.length < 2) return
-
       const titleMatch = lines[0].match(/([^*]+)/)
       const title = titleMatch ? titleMatch[1].replace(':', '').trim() : `Insight ${index + 1}`
-
       const content = lines[1]?.trim() || ''
       const actionLine = lines.find(line => line.includes('Action:'))
       const priorityLine = lines.find(line => line.includes('Priority:'))
-
       const action = actionLine ? actionLine.replace(/.*Action:\s*/, '').trim() : ''
       const priority = priorityLine ? priorityLine.replace(/.*Priority:\s*/, '').toLowerCase() as 'low' | 'medium' | 'high' : 'medium'
-
       insights.push({
         id: `ai-${Date.now()}-${index}`,
         type: index === 0 ? 'daily' : index === 1 ? 'weekly' : 'coaching',
@@ -751,10 +637,8 @@ export class BehavioralAnalyzer {
         personalization_score: 0.8 + (Math.random() * 0.2) // 0.8-1.0
       })
     })
-
     return insights
   }
-
   /**
    * Generate basic insights when AI is not available
    */
@@ -763,12 +647,10 @@ export class BehavioralAnalyzer {
     recentData?: any
   ): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = []
-
     // Peak time insight
     const peakHour = profile.active_hours.reduce((max, ah) =>
       ah.frequency > max.frequency ? ah : max, profile.active_hours[0]
     )
-
     if (peakHour) {
       insights.push({
         id: `basic-timing-${Date.now()}`,
@@ -780,7 +662,6 @@ export class BehavioralAnalyzer {
         personalization_score: 0.7
       })
     }
-
     // Category balance insight
     const topCategory = profile.preferred_categories[0]
     if (topCategory && topCategory.preference_score > 0.4) {
@@ -794,7 +675,6 @@ export class BehavioralAnalyzer {
         personalization_score: 0.6
       })
     }
-
     // Consistency insight
     if (profile.completion_patterns.consistency_score < 0.6) {
       insights.push({
@@ -807,10 +687,8 @@ export class BehavioralAnalyzer {
         personalization_score: 0.8
       })
     }
-
     return insights
   }
-
   /**
    * Generate personalized reminder messages
    */
@@ -824,10 +702,8 @@ export class BehavioralAnalyzer {
   }>> {
     const messages = []
     const topCategories = profile.preferred_categories.slice(0, 3).map(cat => cat.category_id)
-
     for (const time of bestTimes.slice(0, 3)) {
       let message = ''
-
       // Personalize based on behavioral traits
       switch (profile.behavioral_traits.motivation_type) {
         case 'intrinsic':
@@ -839,49 +715,39 @@ export class BehavioralAnalyzer {
         default:
           message = "Perfect time for your wellness check-in! You've got this."
       }
-
       // Add time-specific context
       if (time.hour < 10) {
         message = `🌅 ${  message.replace("Perfect time", "Great morning")}`
       } else if (time.hour > 18) {
         message = `🌙 ${  message.replace("Perfect time", "Evening reflection time")}`
       }
-
       messages.push({
         time: `${time.hour.toString().padStart(2, '0')}:00`,
         message,
         category_focus: topCategories
       })
     }
-
     return messages
   }
-
   // Helper methods
   private formatHours(hours: number[]): string {
     return hours.map(h => `${h.toString().padStart(2, '0')}:00`).join(', ')
   }
-
   private analyzeTrends(data: number[]): { direction: 'improving' | 'declining' | 'stable'; slope: number } {
     if (data.length < 2) return { direction: 'stable', slope: 0 }
-
     const n = data.length
     const sumX = n * (n - 1) / 2
     const sumY = data.reduce((sum, val) => sum + val, 0)
     const sumXY = data.reduce((sum, val, i) => sum + i * val, 0)
     const sumX2 = n * (n - 1) * (2 * n - 1) / 6
-
     const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
-
     return {
       direction: slope > 0.05 ? 'improving' : slope < -0.05 ? 'declining' : 'stable',
       slope
     }
   }
-
   private generateCompletionRecommendations(avgCompletion: number, consistency: number, trends: any): string[] {
     const recommendations = []
-
     if (avgCompletion < 0.5) {
       recommendations.push('Start with 1-2 easy wins daily to build momentum')
       recommendations.push('Focus on your strongest time of day')
@@ -889,40 +755,33 @@ export class BehavioralAnalyzer {
       recommendations.push('Great consistency! Consider adding challenging goals')
       recommendations.push('Share your success strategy with the community')
     }
-
     if (consistency < 0.6) {
       recommendations.push('Reduce variability by creating standard routines')
       recommendations.push('Use habit stacking to link new behaviors to existing ones')
     }
-
     if (trends.direction === 'declining') {
       recommendations.push('Identify what changed recently and adjust accordingly')
       recommendations.push('Consider simplifying your approach temporarily')
     } else if (trends.direction === 'improving') {
       recommendations.push('Maintain current momentum - you\'re on the right track!')
     }
-
     return recommendations
   }
-
   private calculateMoodConsistency(moodData: any[]): number {
     const moods = moodData.map(d => d.mood)
     const avg = moods.reduce((sum, mood) => sum + mood, 0) / moods.length
     const variance = moods.reduce((sum, mood) => sum + Math.pow(mood - avg, 2), 0) / moods.length
     return Math.round((1 - Math.sqrt(variance) / 5) * 100) // Convert to percentage
   }
-
   private calculateConsistencyScore(data: number[]): number {
     if (data.length === 0) return 0
     const mean = data.reduce((sum, val) => sum + val, 0) / data.length
     const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length
     return Math.max(0, 1 - Math.sqrt(variance))
   }
-
   private generateGoalReasoning(profile: UserBehaviorProfile, category: any, historical: any): string {
     const performance = historical?.completion_rate || 0.3
     const trait = profile.behavioral_traits.goal_orientation
-
     if (trait === 'process') {
       return `Based on your process-focused approach and ${Math.round(performance * 100)}% historical performance`
     } else if (trait === 'outcome') {
@@ -931,36 +790,29 @@ export class BehavioralAnalyzer {
       return `Balanced target considering your ${Math.round(performance * 100)}% completion rate and steady progress style`
     }
   }
-
   private calculateSuccessProbability(profile: UserBehaviorProfile, target: number, historical: any): number {
     const baseRate = historical?.completion_rate || 0.3
     const consistency = profile.completion_patterns.consistency_score
     const preference = profile.preferred_categories.find(cat => cat.category_id === historical?.category_id)?.preference_score || 0.2
-
     return Math.min(0.95, baseRate * 0.5 + consistency * 0.3 + preference * 0.2)
   }
-
   private async getRecentActivityData(userId: string) {
     const sevenDaysAgo = subDays(new Date(), 7)
-
     const [recentCheckins, recentStats] = await Promise.all([
       this.supabase
         .from('axis6_checkins')
         .select('*')
         .eq('user_id', userId)
         .gte('completed_at', format(sevenDaysAgo, 'yyyy-MM-dd')),
-
       this.supabase
         .from('axis6_daily_stats')
         .select('*')
         .eq('user_id', userId)
         .gte('date', format(sevenDaysAgo, 'yyyy-MM-dd'))
     ])
-
     const stats = recentStats.data || []
     const checkins = recentCheckins.data || []
     const activeStreaks = checkins.filter((c: any) => c.completed_at === format(new Date(), 'yyyy-MM-dd')).length
-
     return {
       recentCheckins: checkins,
       recentCompletionRate: stats.length > 0
@@ -969,23 +821,18 @@ export class BehavioralAnalyzer {
       activeStreaks
     }
   }
-
   private async getHistoricalPerformance(userId: string, timeframe: 'weekly' | 'monthly') {
     const daysBack = timeframe === 'weekly' ? 21 : 90 // 3 weeks or 3 months of data
     const startDate = subDays(new Date(), daysBack)
-
     const { data } = await this.supabase
       .from('axis6_checkins')
       .select('category_id, completed_at')
       .eq('user_id', userId)
       .gte('completed_at', format(startDate, 'yyyy-MM-dd'))
-
     if (!data || data.length === 0) return []
-
     // Group by category and calculate completion rates
     const categoryStats: Record<number, { count: number; total_days: number }> = {}
     const totalDays = Math.ceil((new Date().getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-
     data.forEach((checkin: any) => {
       const catId = checkin.category_id
       if (!categoryStats[catId]) {
@@ -993,19 +840,16 @@ export class BehavioralAnalyzer {
       }
       categoryStats[catId].count += 1
     })
-
     return Object.entries(categoryStats).map(([catId, stats]) => ({
       category_id: parseInt(catId),
       completion_rate: stats.count / stats.total_days
     }))
   }
-
   private isCacheValid(lastAnalyzed: string): boolean {
     const cacheAge = new Date().getTime() - new Date(lastAnalyzed).getTime()
     const maxAge = 4 * 60 * 60 * 1000 // 4 hours
     return cacheAge < maxAge
   }
-
   private async storeBehaviorProfile(profile: UserBehaviorProfile): Promise<void> {
     try {
       await this.supabase
@@ -1026,7 +870,6 @@ export class BehavioralAnalyzer {
       // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
-
   private async storeInsights(userId: string, insights: PersonalizedInsight[]): Promise<void> {
     try {
       const insightRows = insights.map(insight => ({
@@ -1041,7 +884,6 @@ export class BehavioralAnalyzer {
         personalization_score: insight.personalization_score,
         created_at: new Date().toISOString()
       }))
-
       await this.supabase
         .from('axis6_ai_insights')
         .insert(insightRows)
@@ -1050,7 +892,6 @@ export class BehavioralAnalyzer {
       // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
-
   private getDefaultProfile(userId: string): UserBehaviorProfile {
     return {
       user_id: userId,
@@ -1082,6 +923,5 @@ export class BehavioralAnalyzer {
     }
   }
 }
-
 // Export singleton instance
 export const behavioralAnalyzer = new BehavioralAnalyzer()

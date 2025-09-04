@@ -1,23 +1,19 @@
 'use client'
-
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Bell, Settings, User, LogOut, Sparkles } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { LogoIcon } from '@/components/ui/Logo'
-
+import Link from 'next/link'
 interface HeaderProps {
   user: any
   onLogout: () => void
   completionPercentage?: number
 }
-
 export default function Header({ user, onLogout, completionPercentage = 0 }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 50], [0.95, 1])
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
@@ -25,24 +21,20 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Buenos días'
     if (hour < 18) return 'Buenas tardes'
     return 'Buenas noches'
   }
-
   const getUserInitial = () => {
     const email = user?.email || ''
     return email.charAt(0).toUpperCase()
   }
-
   const getUserName = () => {
     const email = user?.email || ''
     return email.split('@')[0]
   }
-
   return (
     <>
       <motion.header
@@ -58,16 +50,17 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
             {/* Logo and Greeting - More Compact */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <LogoIcon size="sm" className="h-8 w-8" />
-                <div className="hidden sm:block">
-                  <h1 className="text-sm font-bold text-white">AXIS6</h1>
-                  <p className="text-xs text-gray-400 -mt-1">
-                    {getGreeting()}, {getUserName()}
-                  </p>
-                </div>
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  <LogoIcon size="sm" className="h-8 w-8" />
+                  <div className="hidden sm:block">
+                    <h1 className="text-sm font-bold text-white">AXIS6</h1>
+                    <p className="text-xs text-gray-400 -mt-1">
+                      {getGreeting()}, {getUserName()}
+                    </p>
+                  </div>
+                </Link>
               </div>
             </div>
-
             {/* Center Progress Indicator - Desktop Only */}
             <div className="hidden md:flex items-center gap-2">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
@@ -87,7 +80,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
                 <span className="text-xs font-semibold text-textPrimary">{completionPercentage}%</span>
               </div>
             </div>
-
             {/* Right Section - More Compact */}
             <div className="flex items-center gap-2">
               {/* Notifications - Smaller */}
@@ -99,7 +91,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
                 <Bell className="w-4 h-4 text-gray-300" />
                 <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-physical rounded-full" />
               </motion.button>
-
               {/* Settings - Hidden on mobile */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -108,7 +99,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
               >
                 <Settings className="w-4 h-4 text-gray-300" />
               </motion.button>
-
               {/* User Avatar Dropdown - Smaller */}
               <div className="relative">
                 <motion.button
@@ -126,7 +116,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
                     {getUserName()}
                   </span>
                 </motion.button>
-
                 {/* Dropdown Menu - More Compact */}
                 {showDropdown && (
                   <motion.div
@@ -156,7 +145,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
             </div>
           </div>
         </div>
-
         {/* Mobile Progress Bar - Bottom of Header */}
         <div className="md:hidden px-4 pb-2">
           <div className="flex items-center gap-2">
@@ -174,7 +162,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
           </div>
         </div>
       </motion.header>
-
       {/* Spacer for fixed header */}
       <div className="h-14 md:h-14" />
     </>

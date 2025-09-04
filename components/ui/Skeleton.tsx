@@ -1,12 +1,10 @@
 import { cn } from '@/lib/utils'
-
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'circular' | 'rectangular'
   animation?: 'pulse' | 'wave' | 'none'
   width?: string | number
   height?: string | number
 }
-
 export function Skeleton({
   className,
   variant = 'default',
@@ -20,13 +18,11 @@ export function Skeleton({
     wave: 'animate-shimmer',
     none: ''
   }[animation]
-
   const variantClass = {
     default: 'rounded-md',
     circular: 'rounded-full',
     rectangular: 'rounded-none'
   }[variant]
-
   return (
     <div
       className={cn(
@@ -43,7 +39,6 @@ export function Skeleton({
     />
   )
 }
-
 // Skeleton components for specific UI elements
 export function SkeletonCard({ className }: { className?: string }) {
   return (
@@ -60,7 +55,6 @@ export function SkeletonCard({ className }: { className?: string }) {
     </div>
   )
 }
-
 export function SkeletonHexagon({ size = 300 }: { size?: number }) {
   return (
     <div className="flex justify-center">
@@ -88,7 +82,6 @@ export function SkeletonHexagon({ size = 300 }: { size?: number }) {
     </div>
   )
 }
-
 export function SkeletonCategoryGrid() {
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -103,7 +96,6 @@ export function SkeletonCategoryGrid() {
     </div>
   )
 }
-
 export function SkeletonStats() {
   return (
     <div className="glass rounded-2xl p-6">
@@ -119,7 +111,6 @@ export function SkeletonStats() {
     </div>
   )
 }
-
 export function SkeletonDashboard() {
   return (
     <div className="grid lg:grid-cols-3 gap-8">
@@ -137,7 +128,6 @@ export function SkeletonDashboard() {
     </div>
   )
 }
-
 // Helper function for hexagon path
 function createHexagonPath(size: number, centerX: number, centerY: number) {
   const points = []
@@ -149,7 +139,6 @@ function createHexagonPath(size: number, centerX: number, centerY: number) {
   }
   return points.join(' ')
 }
-
 // Add shimmer animation to tailwind.config.ts
 // @keyframes shimmer {
 //   0% { background-position: -200% 0; }

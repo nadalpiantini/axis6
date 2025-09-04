@@ -1,22 +1,18 @@
 'use client'
-
 import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { ArrowLeft, MessageCircle, Users, Lock, Globe } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
+import { getLocalizedText } from '@/lib/utils/i18n'
 type RoomType = 'group' | 'category' | 'support'
-
 export default function NewChatRoomPage() {
   const router = useRouter()
   const supabase = createClient()
-
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState<RoomType>('group')
@@ -24,7 +20,6 @@ export default function NewChatRoomPage() {
   const [categoryId, setCategoryId] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const categories = [
     { id: 1, name: 'Physical', color: 'text-green-400' },
     { id: 2, name: 'Mental', color: 'text-blue-400' },
@@ -33,25 +28,20 @@ export default function NewChatRoomPage() {
     { id: 5, name: 'Spiritual', color: 'text-indigo-400' },
     { id: 6, name: 'Material', color: 'text-orange-400' }
   ]
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
     if (!name.trim()) {
       setError('Room name is required')
       return
     }
-
     try {
       setLoading(true)
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
         return
       }
-
       // Create the room
       const { data: room, error: roomError } = await supabase
         .from('axis6_chat_rooms')
@@ -65,11 +55,9 @@ export default function NewChatRoomPage() {
         })
         .select()
         .single()
-
       if (roomError) {
         throw roomError
       }
-
       // Add creator as admin participant
       const { error: participantError } = await supabase
         .from('axis6_chat_participants')
@@ -78,11 +66,9 @@ export default function NewChatRoomPage() {
           user_id: user.id,
           role: 'admin'
         })
-
       if (participantError) {
         throw participantError
       }
-
       // Send initial system message
       await supabase
         .from('axis6_chat_messages')
@@ -98,22 +84,18 @@ export default function NewChatRoomPage() {
           }.`,
           message_type: 'system'
         })
-
       // Navigate to the new room
       router.push(`/chat?room=${room.id}`)
     } catch (err) {
       handleError(error, {
       operation: 'chat_operation', component: 'page',
-
         userMessage: 'Chat operation failed. Please try again.'
-
       })
       setError('Failed to create room. Please try again.')
     } finally {
       setLoading(false)
     }
   }
-
   return (
     <div className="min-h-screen bg-gray-950 p-4">
       <div className="max-w-2xl mx-auto">
@@ -144,7 +126,6 @@ export default function NewChatRoomPage() {
               </div>
             </div>
           </div>
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Room Name */}
@@ -162,7 +143,6 @@ export default function NewChatRoomPage() {
                 required
               />
             </div>
-
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -176,7 +156,6 @@ export default function NewChatRoomPage() {
                 maxLength={500}
               />
             </div>
-
             {/* Room Type */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -206,7 +185,6 @@ export default function NewChatRoomPage() {
                 ))}
               </div>
             </div>
-
             {/* Category Selection (if type is category) */}
             {type === 'category' && (
               <div>
@@ -228,14 +206,13 @@ export default function NewChatRoomPage() {
                       `}
                     >
                       <span className={categoryId === category.id ? 'text-white' : category.color}>
-                        {category.name}
+                        {getLocalizedText(category.name, 'en', category.slug)}
                       </span>
                     </button>
                   ))}
                 </div>
               </div>
             )}
-
             {/* Privacy */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -282,14 +259,12 @@ export default function NewChatRoomPage() {
                 }
               </p>
             </div>
-
             {/* Error Message */}
             {error && (
               <div className="p-3 bg-red-900/20 border border-red-800 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
-
             {/* Submit Buttons */}
             <div className="flex gap-3 pt-4">
               <Button

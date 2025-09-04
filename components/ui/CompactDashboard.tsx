@@ -1,14 +1,10 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { TrendingUp, Calendar, Award, BarChart3 } from 'lucide-react'
 import { useState } from 'react'
-
 import { PhysicalIcon, MentalIcon, EmotionalIcon, SocialIcon, SpiritualIcon, MaterialIcon } from '../icons'
-
 import MiniHexagon from './MiniHexagon'
 import WellnessScore from './WellnessScore'
-
 interface Category {
   id: number
   slug: string
@@ -19,7 +15,6 @@ interface Category {
   position: number
   isCompleted?: boolean
 }
-
 interface CompactDashboardProps {
   categories: Category[]
   completedToday: Set<number>
@@ -27,7 +22,6 @@ interface CompactDashboardProps {
   streaks: any[]
   user: any
 }
-
 const iconMap: Record<string, React.ReactNode> = {
   'activity': <PhysicalIcon size={20} />,
   'brain': <MentalIcon size={20} />,
@@ -36,13 +30,11 @@ const iconMap: Record<string, React.ReactNode> = {
   'sparkles': <SpiritualIcon size={20} />,
   'briefcase': <MaterialIcon size={20} />
 }
-
 const tabConfig = [
   { id: 'overview', label: 'Vista General', icon: <TrendingUp className="w-4 h-4" /> },
   { id: 'activities', label: 'Actividades', icon: <PhysicalIcon size={16} /> },
   { id: 'progress', label: 'Progreso', icon: <Award className="w-4 h-4" /> }
 ]
-
 export default function CompactDashboard({
   categories,
   completedToday,
@@ -52,19 +44,16 @@ export default function CompactDashboard({
 }: CompactDashboardProps) {
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
-
   const getCategoryName = (name: any) => {
     if (typeof name === 'object') {
       return name.es || name.en || 'Sin nombre'
     }
     return name || 'Sin nombre'
   }
-
   const getCompletionPercentage = () => {
     if (categories.length === 0) return 0
     return Math.round((completedToday.size / categories.length) * 100)
   }
-
   const getHexagonData = () => {
     const categoryMap: Record<string, number> = {
       physical: 0,
@@ -74,26 +63,21 @@ export default function CompactDashboard({
       spiritual: 0,
       material: 0
     }
-
     categories.forEach(cat => {
       if (completedToday.has(cat.id)) {
         categoryMap[cat.slug] = 100
       }
     })
-
     return categoryMap
   }
-
   const handleCategoryClick = (categoryId: number | null) => {
     setSelectedCategory(categoryId === selectedCategory ? null : categoryId)
     if (categoryId !== null) {
       onToggleCategory(categoryId)
     }
   }
-
   const currentStreak = streaks?.find(s => s.category_id === null)?.current_streak || 0
   const longestStreak = streaks?.find(s => s.category_id === null)?.longest_streak || 0
-
   return (
     <div className="w-full max-w-7xl mx-auto">
       {/* Tab Navigation */}
@@ -113,7 +97,6 @@ export default function CompactDashboard({
           ))}
         </div>
       </div>
-
       {/* Content Areas */}
       <AnimatePresence mode="wait">
         {activeTab === 'overview' && (
@@ -136,7 +119,6 @@ export default function CompactDashboard({
                     selectedCategory={selectedCategory}
                   />
                 </div>
-
                 {/* Category Grid */}
                 <div className="flex-1 w-full">
                   <h3 className="text-lg font-serif font-semibold text-textPrimary mb-3">Check-in Rápido</h3>
@@ -144,7 +126,6 @@ export default function CompactDashboard({
                     {categories.map(category => {
                       const isCompleted = completedToday.has(category.id)
                       const isSelected = selectedCategory === category.id
-
                       return (
                         <motion.button
                           key={category.id}
@@ -197,7 +178,6 @@ export default function CompactDashboard({
                   </div>
                 </div>
               </div>
-
               {/* Progress Bar */}
               <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between mb-2">
@@ -218,7 +198,6 @@ export default function CompactDashboard({
                 </div>
               </div>
             </div>
-
             {/* Wellness Score Card */}
             <div className="glass-premium rounded-2xl p-4">
               <WellnessScore
@@ -231,7 +210,6 @@ export default function CompactDashboard({
             </div>
           </motion.div>
         )}
-
         {activeTab === 'activities' && (
           <motion.div
             key="activities"
@@ -246,7 +224,6 @@ export default function CompactDashboard({
                 "Camina 15 minutos", "Medita 5 minutos", "Escribe 3 gratitudes",
                 "Llama a un amigo", "Reflexiona", "Organiza tu espacio"
               ]
-
               return (
                 <motion.div
                   key={category.id}
@@ -299,7 +276,6 @@ export default function CompactDashboard({
             })}
           </motion.div>
         )}
-
         {activeTab === 'progress' && (
           <motion.div
             key="progress"
@@ -322,7 +298,6 @@ export default function CompactDashboard({
                 </div>
               </div>
             </div>
-
             <div className="card-compact">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-mental/20 flex items-center justify-center">
@@ -336,7 +311,6 @@ export default function CompactDashboard({
                 </div>
               </div>
             </div>
-
             <div className="card-compact">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emotional/20 flex items-center justify-center">
@@ -350,7 +324,6 @@ export default function CompactDashboard({
                 </div>
               </div>
             </div>
-
             <div className="card-compact">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-social/20 flex items-center justify-center">
@@ -364,7 +337,6 @@ export default function CompactDashboard({
                 </div>
               </div>
             </div>
-
             {/* Category Progress */}
             <div className="col-span-2 lg:col-span-4 card-compact">
               <h4 className="text-sm font-semibold text-white mb-3">Progreso por Categoría</h4>
@@ -372,7 +344,6 @@ export default function CompactDashboard({
                 {categories.map(category => {
                   const isCompleted = completedToday.has(category.id)
                   const categoryStreak = streaks?.find(s => s.category_id === category.id)?.current_streak || 0
-
                   return (
                     <div key={category.id} className="flex items-center gap-3">
                       <div

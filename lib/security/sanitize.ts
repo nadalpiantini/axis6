@@ -1,5 +1,4 @@
 import DOMPurify from 'isomorphic-dompurify'
-
 /**
  * Sanitization configuration for different content types
  */
@@ -10,14 +9,12 @@ const SANITIZE_CONFIGS = {
     ALLOWED_ATTR: [],
     KEEP_CONTENT: true,
   },
-
   // Rich text - allow formatting tags
   richText: {
     ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'u', 'p', 'br', 'span'],
     ALLOWED_ATTR: ['class'],
     KEEP_CONTENT: true,
   },
-
   // Markdown-like content
   markdown: {
     ALLOWED_TAGS: [
@@ -30,7 +27,6 @@ const SANITIZE_CONFIGS = {
     ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
   },
-
   // Strict - for user inputs in forms
   strict: {
     ALLOWED_TAGS: [],
@@ -40,7 +36,6 @@ const SANITIZE_CONFIGS = {
     RETURN_DOM_FRAGMENT: false,
   }
 }
-
 /**
  * Sanitize HTML content
  */
@@ -48,7 +43,6 @@ export function sanitizeHTML(dirty: string, config: keyof typeof SANITIZE_CONFIG
   const sanitizeConfig = SANITIZE_CONFIGS[config]
   return DOMPurify.sanitize(dirty, sanitizeConfig)
 }
-
 /**
  * Sanitize user input for database storage
  */
@@ -56,10 +50,8 @@ export function sanitizeInput(input: unknown): string {
   if (typeof input !== 'string') {
     return String(input)
   }
-
   // Remove any HTML tags and trim whitespace
   const cleaned = sanitizeHTML(input, 'strict')
-
   // Additional sanitization for common injection patterns
   return cleaned
     .replace(/[<>]/g, '') // Remove angle brackets
@@ -67,7 +59,6 @@ export function sanitizeInput(input: unknown): string {
     .replace(/on\w+=/gi, '') // Remove event handlers
     .trim()
 }
-
 /**
  * Sanitize object with multiple string fields
  */
@@ -77,7 +68,6 @@ export function sanitizeObject<T extends Record<string, unknown>>(
 ): T {
   const sanitized = { ...obj }
   const fields = fieldsToSanitize || Object.keys(obj)
-
   fields.forEach(field => {
     const value = obj[field as keyof T]
     if (typeof value === 'string') {
@@ -86,45 +76,36 @@ export function sanitizeObject<T extends Record<string, unknown>>(
       sanitized[field as keyof T] = sanitizeObject(value as Record<string, unknown>) as T[keyof T]
     }
   })
-
   return sanitized
 }
-
 /**
  * Validate and sanitize email
  */
 export function sanitizeEmail(email: string): string {
   const sanitized = sanitizeInput(email).toLowerCase()
-
   // Basic email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(sanitized)) {
     throw new Error('Invalid email format')
   }
-
   return sanitized
 }
-
 /**
  * Validate and sanitize URL
  */
 export function sanitizeURL(url: string): string {
   const sanitized = sanitizeInput(url)
-
   try {
     const urlObj = new URL(sanitized)
-
     // Only allow http(s) protocols
     if (!['http:', 'https:'].includes(urlObj.protocol)) {
       throw new Error('Invalid URL protocol')
     }
-
     return urlObj.toString()
   } catch {
     throw new Error('Invalid URL format')
   }
 }
-
 /**
  * Sanitize file name
  */
@@ -134,7 +115,6 @@ export function sanitizeFileName(fileName: string): string {
     .replace(/^\.+/, '') // Remove leading dots
     .substring(0, 255) // Limit length
 }
-
 /**
  * SQL injection prevention for dynamic queries
  * Note: Always prefer parameterized queries over this
@@ -159,7 +139,6 @@ export function escapeSQLString(str: string): string {
       }
     })
 }
-
 /**
  * XSS prevention for rendering user content
  */
@@ -168,7 +147,6 @@ export function escapeHTML(str: string): string {
   div.appendChild(document.createTextNode(str))
   return div.innerHTML
 }
-
 /**
  * Create a sanitized error message (no sensitive data)
  */

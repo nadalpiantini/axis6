@@ -1,9 +1,7 @@
 'use client'
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-
 // Dynamically import DevTools only in development to avoid SSR issues
 const ReactQueryDevtools = dynamic(
   () => import('@tanstack/react-query-devtools').then((mod) => ({
@@ -13,16 +11,13 @@ const ReactQueryDevtools = dynamic(
     ssr: false,
   }
 )
-
 // Wrapper component that uses the QueryClient from context
 function DevToolsWrapper() {
   if (process.env['NODE_ENV'] !== 'development') {
     return null
   }
-
   return <ReactQueryDevtools initialIsOpen={false} />
 }
-
 export function ReactQueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -65,7 +60,6 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
         },
       })
   )
-
   return (
     <QueryClientProvider client={queryClient}>
       {children}

@@ -1,10 +1,9 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Heart, Brain, Users, Sun, Briefcase, Palette, Check, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
+import { useCSRF } from '@/lib/hooks/useCSRF'
 interface Mantra {
   id: number
   category_id: number
@@ -14,7 +13,6 @@ interface Mantra {
   category_color: string
   is_completed: boolean
 }
-
 // Icon mapping for categories
 const categoryIcons: Record<number, React.ReactNode> = {
   1: <Heart className="w-5 h-5" />,     // Physical
@@ -24,7 +22,6 @@ const categoryIcons: Record<number, React.ReactNode> = {
   5: <Sun className="w-5 h-5" />,       // Spiritual
   6: <Briefcase className="w-5 h-5" />  // Material
 }
-
 // Gradient mapping for categories
 const categoryGradients: Record<number, string> = {
   1: 'from-physical/80 to-physical/40',
@@ -34,7 +31,6 @@ const categoryGradients: Record<number, string> = {
   5: 'from-spiritual/80 to-spiritual/40',
   6: 'from-material/80 to-material/40'
 }
-
 // Ritual names for categories
 const ritualNames: Record<number, { es: string; en: string }> = {
   1: { es: 'Movimiento Vivo', en: 'Living Movement' },
@@ -44,7 +40,6 @@ const ritualNames: Record<number, { es: string; en: string }> = {
   5: { es: 'Presencia Elevada', en: 'Elevated Presence' },
   6: { es: 'Sustento Terrenal', en: 'Earthly Sustenance' }
 }
-
 // Micro-actions for each category
 const microActions: Record<number, string[]> = {
   1: [
@@ -90,7 +85,6 @@ const microActions: Record<number, string[]> = {
     'Value invisible work'
   ]
 }
-
 // Movement animations for different categories
 const movementVariants: Record<number, any> = {
   1: { // Physical - heartbeat
@@ -123,29 +117,25 @@ const movementVariants: Record<number, any> = {
     transition: { duration: 0.5, repeat: Infinity, repeatDelay: 3 }
   }
 }
-
 export default function DailyMantra() {
+  const { secureFetch } = useCSRF()
   const [mantra, setMantra] = useState<Mantra | null>(null)
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
   const [showMicroAction, setShowMicroAction] = useState(false)
   const [showReflection, setShowReflection] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   useEffect(() => {
     fetchDailyMantra()
   }, [])
-
   const fetchDailyMantra = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch('/api/mantras')
-
+      const response = await secureFetch('/api/mantras')
       if (!response.ok) {
         throw new Error('Failed to fetch mantra')
       }
-
       const data = await response.json()
       if (data.mantra) {
         setMantra(data.mantra)
@@ -155,33 +145,26 @@ export default function DailyMantra() {
       if (process.env['NODE_ENV'] === 'development') {
         handleError(error, {
       operation: 'ai_operation', component: 'DailyMantra',
-
           userMessage: 'AI operation failed. Please try again.'
-
         })}
       setError('No se pudo cargar el mantra del día')
     } finally {
       setLoading(false)
     }
   }
-
   const completeMantra = async () => {
     if (!mantra || mantra.is_completed) return
-
     try {
       setCompleting(true)
-      const response = await fetch('/api/mantras', {
+      const response = await secureFetch('/api/mantras', {
         method: 'POST',
       })
-
       if (!response.ok) {
         throw new Error('Failed to complete mantra')
       }
-
       // Update local state
       setMantra({ ...mantra, is_completed: true })
       setShowReflection(true)
-
       // Hide reflection after 3 seconds
       setTimeout(() => {
         setShowReflection(false)
@@ -191,32 +174,25 @@ export default function DailyMantra() {
       if (process.env['NODE_ENV'] === 'development') {
         handleError(error, {
       operation: 'ai_operation', component: 'DailyMantra',
-
           userMessage: 'AI operation failed. Please try again.'
-
         })}
     } finally {
       setCompleting(false)
     }
   }
-
   const getMantraText = (content: { es?: string; en?: string }) => {
     return content.es || content.en || ''
   }
-
   const getCategoryName = (name: { es?: string; en?: string }) => {
     return name.es || name.en || 'Equilibrio'
   }
-
   const getRitualName = (categoryId: number) => {
     return ritualNames[categoryId]?.es || 'Ritual Diario'
   }
-
   const getRandomAction = (categoryId: number) => {
     const actions = microActions[categoryId] || []
     return actions[Math.floor(Math.random() * actions.length)]
   }
-
   if (loading) {
     return (
       <div className="w-full max-w-2xl mx-auto p-6">
@@ -228,13 +204,10 @@ export default function DailyMantra() {
       </div>
     )
   }
-
   if (error || !mantra) {
     return null // Silently fail if no mantra available
   }
-
   const randomAction = getRandomAction(mantra.category_id)
-
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
       <motion.div
@@ -255,7 +228,6 @@ export default function DailyMantra() {
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45" />
           </div>
-
           {/* Contenido */}
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
@@ -272,7 +244,6 @@ export default function DailyMantra() {
                   <h3 className="text-xl font-bold">{getRitualName(mantra.category_id)}</h3>
                 </div>
               </div>
-
               {/* Status Badge */}
               <motion.div
                 initial={{ scale: 0 }}
@@ -286,7 +257,6 @@ export default function DailyMantra() {
                 {mantra.is_completed ? '✓ Completado' : 'Pendiente'}
               </motion.div>
             </div>
-
             {/* Mantra */}
             <motion.p
               className="text-2xl font-serif italic mb-6 leading-relaxed"
@@ -296,11 +266,9 @@ export default function DailyMantra() {
             >
               &ldquo;{getMantraText(mantra.content)}&rdquo;
             </motion.p>
-
             {mantra.author && (
               <p className="text-sm opacity-80 mb-4">— {mantra.author}</p>
             )}
-
             {/* Microacción sugerida */}
             <AnimatePresence>
               {showMicroAction && (
@@ -319,7 +287,6 @@ export default function DailyMantra() {
                 </motion.div>
               )}
             </AnimatePresence>
-
             {/* Botones de acción */}
             <div className="flex gap-2">
               <motion.button
@@ -330,7 +297,6 @@ export default function DailyMantra() {
               >
                 {showMicroAction ? 'Ocultar acción' : 'Ver microacción'}
               </motion.button>
-
               {!mantra.is_completed && (
                 <motion.button
                   onClick={completeMantra}
@@ -354,7 +320,6 @@ export default function DailyMantra() {
               )}
             </div>
           </div>
-
           {/* Reflection Overlay */}
           <AnimatePresence>
             {showReflection && (

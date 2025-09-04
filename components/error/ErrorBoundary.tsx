@@ -1,24 +1,19 @@
 'use client'
-
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
 import { Component, ReactNode } from 'react'
-
 import { logger } from '@/lib/logger'
 import { reportError } from '@/lib/monitoring/error-tracking'
-
 interface ErrorBoundaryState {
   hasError: boolean
   error: Error | null
   errorId: string
 }
-
 interface ErrorBoundaryProps {
   children: ReactNode
   fallback?: ReactNode
   onError?: (error: Error, errorInfo: any) => void
 }
-
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
@@ -28,22 +23,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       errorId: ''
     }
   }
-
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Generate unique error ID for tracking
     const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-
     return {
       hasError: true,
       error,
       errorId
     }
   }
-
   override componentDidCatch(error: Error, errorInfo: any) {
     // Log error using centralized logger
     logger.error('ErrorBoundary caught an error', error)
-
     // Use enhanced error tracking system
     reportError(error, 'high', {
       component: 'ErrorBoundary',
@@ -56,13 +47,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         componentStack: errorInfo.componentStack,
       },
     })
-
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
   }
-
   private handleReset = () => {
     this.setState({
       hasError: false,
@@ -70,18 +59,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       errorId: ''
     })
   }
-
   private handleReload = () => {
     window.location.reload()
   }
-
   override render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback
       }
-
       // Default error UI
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
@@ -98,7 +84,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 Error ID: {this.state.errorId}
               </code>
             </div>
-
             <div className="space-y-3">
               <button
                 onClick={this.handleReset}
@@ -107,7 +92,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <RefreshCw className="w-4 h-4" />
                 Intentar de nuevo
               </button>
-
               <button
                 onClick={this.handleReload}
                 className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-lg transition-colors"
@@ -115,7 +99,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <RefreshCw className="w-4 h-4" />
                 Recargar página
               </button>
-
               <Link
                 href="/"
                 className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white px-4 py-3 rounded-lg transition-colors"
@@ -124,7 +107,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 Volver al inicio
               </Link>
             </div>
-
             {process.env['NODE_ENV'] === 'development' && this.state.error && (
               <details className="mt-6 text-left">
                 <summary className="cursor-pointer text-sm text-gray-400 hover:text-white">
@@ -139,11 +121,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         </div>
       )
     }
-
     return this.props.children
   }
 }
-
 // Async Error Boundary for handling async errors in components
 export function AsyncErrorBoundary({
   children,
@@ -157,7 +137,6 @@ export function AsyncErrorBoundary({
       onError(error)
     }
   }
-
   return (
     <ErrorBoundary onError={handleError}>
       {children}

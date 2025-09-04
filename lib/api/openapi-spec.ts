@@ -2,7 +2,6 @@
  * OpenAPI Specification for AXIS6 API
  * Auto-generated documentation for all API endpoints
  */
-
 export const openAPISpec = {
   openapi: '3.0.0',
   info: {

@@ -1,20 +1,15 @@
 "use client"
-
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
-
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
   helperText?: string
 }
-
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, helperText, ...props }, ref) => {
     const textareaId = React.useId()
-
     return (
       <div className="space-y-2">
         {label && (
@@ -55,5 +50,4 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   }
 )
 Textarea.displayName = "Textarea"
-
 export { Textarea }

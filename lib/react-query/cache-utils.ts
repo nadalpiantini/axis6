@@ -1,13 +1,10 @@
 import { QueryClient } from '@tanstack/react-query'
-
 import type { CheckIn } from './hooks/useCheckins'
-
 interface CacheUpdateOptions {
   userId: string
   categoryId: number
   completed: boolean
 }
-
 /**
  * Optimistically update the checkins cache
  */
@@ -36,7 +33,6 @@ export function updateCheckinsCache(
     }
   )
 }
-
 /**
  * Optimistically update the streaks cache
  */
@@ -48,7 +44,6 @@ export function updateStreaksCache(
     ['streaks', userId],
     (old: any) => {
       if (!old) return old
-
       return old.map((streak: any) => {
         if (streak.category_id === categoryId) {
           if (completed) {
@@ -56,12 +51,9 @@ export function updateStreaksCache(
             const yesterday = new Date()
             yesterday.setDate(yesterday.getDate() - 1)
             const lastCheckin = new Date(streak.last_checkin_date)
-
             const isConsecutive =
               lastCheckin.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]
-
             const newStreak = isConsecutive ? streak.current_streak + 1 : 1
-
             return {
               ...streak,
               current_streak: newStreak,
@@ -81,7 +73,6 @@ export function updateStreaksCache(
     }
   )
 }
-
 /**
  * Invalidate all dashboard-related queries
  */
@@ -93,7 +84,6 @@ export function invalidateDashboardQueries(queryClient: QueryClient, userId: str
     queryClient.invalidateQueries({ queryKey: ['weekly-stats', userId] })
   ])
 }
-
 /**
  * Prefetch dashboard data for better UX
  */
@@ -108,7 +98,6 @@ export async function prefetchDashboardData(
     staleTime: 30 * 1000 // 30 seconds
   })
 }
-
 /**
  * Smart cache invalidation based on mutation type
  */
@@ -118,7 +107,6 @@ export function smartInvalidate(
   mutationType: 'checkin' | 'streak' | 'profile' | 'all'
 ) {
   const invalidations: Promise<void>[] = []
-
   switch (mutationType) {
     case 'checkin':
       invalidations.push(
@@ -146,10 +134,8 @@ export function smartInvalidate(
       )
       break
   }
-
   return Promise.all(invalidations)
 }
-
 /**
  * Set up background refetching for real-time feel
  */
@@ -161,6 +147,5 @@ export function setupBackgroundRefetch(queryClient: QueryClient, userId: string)
       refetchType: 'active'
     })
   }, 30000)
-
   return () => clearInterval(interval)
 }

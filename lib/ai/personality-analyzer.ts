@@ -1,7 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-
 import { deepseekClient } from './deepseek'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 export interface PersonalityAnalysisInput {
   userId: string
@@ -14,7 +12,6 @@ export interface PersonalityAnalysisInput {
   }>
   language?: 'en' | 'es'
 }
-
 export interface EnhancedPersonalityProfile {
   primary_temperament: string
   secondary_temperament: string
@@ -41,10 +38,8 @@ export interface EnhancedPersonalityProfile {
   ai_confidence_score: number
   analysis_version: string
 }
-
 export class PersonalityAnalyzer {
   private supabase = createClient()
-
   /**
    * Perform enhanced AI-powered personality analysis
    */
@@ -55,26 +50,22 @@ export class PersonalityAnalyzer {
         // Fallback to basic analysis
         return this.performBasicAnalysis(input)
       }
-
       // Prepare responses for AI analysis
       const formattedResponses = input.responses.map(r => ({
         question: r.questionText,
         answer: r.answerText,
         temperament: r.selectedTemperament
       }))
-
       // Get AI analysis
       const aiAnalysis = await deepseekClient.analyzePersonality(
         formattedResponses,
         input.language || 'en'
       )
-
       // Enhance with additional insights
       const enhancedInsights = await this.generateAdditionalInsights(
         aiAnalysis,
         input.language || 'en'
       )
-
       // Combine AI analysis with enhanced insights
       const profile: EnhancedPersonalityProfile = {
         primary_temperament: aiAnalysis.primary_temperament,
@@ -92,22 +83,17 @@ export class PersonalityAnalyzer {
         ai_confidence_score: this.calculateConfidenceScore(aiAnalysis.scores),
         analysis_version: '2.0-ai-enhanced'
       }
-
       // Store the enhanced profile
       await this.storeEnhancedProfile(input.userId, profile)
-
       return profile
     } catch (error) {
       handleError(error, {
       operation: 'ai_operation', component: 'personality-analyzer',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })// Fallback to basic analysis
       return this.performBasicAnalysis(input)
     }
   }
-
   /**
    * Generate additional personality insights using AI
    */
@@ -123,35 +109,27 @@ export class PersonalityAnalyzer {
     learning_style: string
   }> {
     const prompt = `Based on a ${baseAnalysis.primary_temperament} primary and ${baseAnalysis.secondary_temperament} secondary temperament profile, provide detailed insights about:
-
 1. What motivates this person (3-4 specific triggers)
 2. How they typically respond to stress (2-3 patterns)
 3. Key areas for personal growth (3-4 areas)
 4. Their relationship style (1 paragraph)
 5. Their leadership approach (1 paragraph)
 6. Their preferred learning style (1 paragraph)
-
 Consider the blend of temperaments and provide nuanced, actionable insights.
 Language: ${language === 'es' ? 'Spanish' : 'English'}`
-
     try {
       const response = await deepseekClient.generateCompletion(
         prompt,
         'You are an expert psychologist providing deep personality insights based on temperament analysis.',
         { temperature: 0.6 }
       )
-
       // Parse the response into structured format
       return this.parseAdditionalInsights(response)
     } catch (error) {
             handleError(error, {
-
               operation: 'ai_operation',
-
               component: 'personality-analyzer',
-
               userMessage: 'AI operation failed. Please try again.'
-
             })
             // TODO: Replace with proper error handling
     // console.error('AI personality analyzer operation failed:', error);
@@ -160,7 +138,6 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       return this.getDefaultAdditionalInsights(baseAnalysis.primary_temperament)
     }
   }
-
   /**
    * Parse AI response into structured insights
    */
@@ -174,7 +151,6 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
   } {
     // Extract sections from the response
     const sections = response.split(/\d+\.\s+/)
-
     return {
       motivation_triggers: this.extractListItems(sections[1] || ''),
       stress_patterns: this.extractListItems(sections[2] || ''),
@@ -184,16 +160,13 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       learning_style: this.extractParagraph(sections[6] || '')
     }
   }
-
   private extractListItems(text: string): string[] {
     const items = text.match(/[-•]\s*([^-•\n]+)/g) || []
     return items.map(item => item.replace(/[-•]\s*/, '').trim()).filter(Boolean).slice(0, 4)
   }
-
   private extractParagraph(text: string): string {
     return text.split('\n')[0]?.trim() || ''
   }
-
   /**
    * Calculate confidence score based on temperament score distribution
    */
@@ -202,11 +175,9 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
     const max = Math.max(...values)
     const min = Math.min(...values)
     const range = max - min
-
     // Higher range means clearer temperament distinction
     return Math.min(0.95, 0.5 + (range * 0.5))
   }
-
   /**
    * Store enhanced profile in database
    */
@@ -230,12 +201,9 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
     } catch (error) {
       handleError(error, {
       operation: 'ai_operation', component: 'personality-analyzer',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })}
   }
-
   /**
    * Fallback to basic rule-based analysis
    */
@@ -249,13 +217,11 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       melancholic: 0,
       phlegmatic: 0
     }
-
     input.responses.forEach(r => {
       if (r.selectedTemperament) {
         (temperamentCounts as any)[r.selectedTemperament]++
       }
     })
-
     // Calculate scores
     const total = input.responses.length || 1
     const scores = {
@@ -264,12 +230,10 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       melancholic: (temperamentCounts['melancholic'] || 0) / total,
       phlegmatic: (temperamentCounts['phlegmatic'] || 0) / total
     }
-
     // Determine primary and secondary
     const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1])
     const primary = sorted[0]?.[0] || 'sanguine'
     const secondary = sorted[1]?.[0] || 'phlegmatic'
-
     return {
       primary_temperament: primary,
       secondary_temperament: secondary,
@@ -279,7 +243,6 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       analysis_version: '1.0-basic'
     }
   }
-
   /**
    * Get basic insights for fallback
    */
@@ -318,10 +281,8 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
         decision_style: 'Consensus-seeking'
       }
     }
-
     const primaryInsights = insights[primary as keyof typeof insights] || insights.sanguine
     // const secondaryInsights = insights[secondary as keyof typeof insights]
-
     return {
       ...primaryInsights,
       motivation_triggers: ['achievement', 'recognition', 'growth'],
@@ -332,7 +293,6 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
       learning_style: 'Visual and hands-on'
     }
   }
-
   /**
    * Get default additional insights for fallback
    */
@@ -371,10 +331,8 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
         learning_style: 'Steady, methodical pace. Prefers clear structure and repetition.'
       }
     }
-
     return defaults[temperament as keyof typeof defaults] || defaults.sanguine
   }
 }
-
 // Export singleton instance
 export const personalityAnalyzer = new PersonalityAnalyzer()

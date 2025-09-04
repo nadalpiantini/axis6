@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-
 import { createClient } from '@/lib/supabase/client'
 import { handleError } from '@/lib/error/standardErrorHandler'
-
 export interface Category {
   id: number
   slug: string
@@ -13,26 +11,21 @@ export interface Category {
   position: number
   created_at: string
 }
-
 async function fetchCategories(): Promise<Category[]> {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('axis6_categories')
     .select('*')
     .order('position')
-
   if (error) throw error
-
   // 🛡️ SAFEGUARD: Ensure we don't have more than 6 categories
   const rawData = data || []
   if (rawData.length > 6) {
     }
-
   // Transform the data to ensure proper typing for JSONB fields
   const categories = rawData.slice(0, 6).map(category => {
     let parsedName = category.name
     let parsedDescription = category.description
-
     // 🛡️ SAFE JSONB PARSING with error handling
     try {
       if (typeof category.name === 'string') {
@@ -48,7 +41,6 @@ async function fetchCategories(): Promise<Category[]> {
       // Keep original string value as fallback
       parsedName = category.name
     }
-
     try {
       if (typeof category.description === 'string') {
         parsedDescription = JSON.parse(category.description)
@@ -63,17 +55,14 @@ async function fetchCategories(): Promise<Category[]> {
       // Keep original string value as fallback
       parsedDescription = category.description
     }
-
     return {
       ...category,
       name: parsedName,
       description: parsedDescription
     }
   }) as Category[]
-
   return categories
 }
-
 export function useCategories() {
   return useQuery({
     queryKey: ['categories'],

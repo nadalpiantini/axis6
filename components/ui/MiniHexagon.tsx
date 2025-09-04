@@ -1,7 +1,5 @@
 'use client'
-
 import { motion } from 'framer-motion'
-
 interface HexagonData {
   physical: number
   mental: number
@@ -10,14 +8,12 @@ interface HexagonData {
   spiritual: number
   material: number
 }
-
 interface MiniHexagonProps {
   data: HexagonData
   size?: number
   onCategoryClick?: (categoryId: number | null) => void
   selectedCategory?: number | null
 }
-
 const categoryColors = {
   physical: 'var(--physical)',
   mental: 'var(--mental)',
@@ -26,7 +22,6 @@ const categoryColors = {
   spiritual: 'var(--spiritual)',
   material: 'var(--material)'
 }
-
 const categoryLabels = {
   physical: 'Physical',
   mental: 'Mental',
@@ -35,7 +30,6 @@ const categoryLabels = {
   spiritual: 'Spiritual',
   material: 'Material'
 }
-
 const categoryIds = {
   physical: 1,
   mental: 2,
@@ -44,7 +38,6 @@ const categoryIds = {
   spiritual: 5,
   material: 6
 }
-
 export default function MiniHexagon({
   data,
   size = 200,
@@ -54,7 +47,6 @@ export default function MiniHexagon({
   const centerX = size / 2
   const centerY = size / 2
   const radius = size * 0.4
-
   // Create hexagon points
   const createHexagonPath = (scale: number = 1) => {
     const points = []
@@ -66,12 +58,10 @@ export default function MiniHexagon({
     }
     return `M ${points.join(' L ')} Z`
   }
-
   // Create data points for the filled area
   const createDataPath = () => {
     const categories = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'] as const
     const points: string[] = []
-
     categories.forEach((category, i) => {
       const angle = (Math.PI / 3) * i - Math.PI / 2
       const value = data[category] / 100
@@ -79,25 +69,19 @@ export default function MiniHexagon({
       const y = centerY + radius * value * Math.sin(angle)
       points.push(`${x},${y}`)
     })
-
     return `M ${points.join(' L ')} Z`
   }
-
   // Create individual segments for interaction
   const createSegment = (index: number) => {
     const angle1 = (Math.PI / 3) * index - Math.PI / 2
     const angle2 = (Math.PI / 3) * (index + 1) - Math.PI / 2
-
     const x1 = centerX + radius * Math.cos(angle1)
     const y1 = centerY + radius * Math.sin(angle1)
     const x2 = centerX + radius * Math.cos(angle2)
     const y2 = centerY + radius * Math.sin(angle2)
-
     return `M ${centerX},${centerY} L ${x1},${y1} L ${x2},${y2} Z`
   }
-
   const categories = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'] as const
-
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg
@@ -113,7 +97,6 @@ export default function MiniHexagon({
           stroke="rgba(255, 255, 255, 0.1)"
           strokeWidth="2"
         />
-
         {/* Grid lines */}
         {[0.2, 0.4, 0.6, 0.8].map((scale) => (
           <path
@@ -124,7 +107,6 @@ export default function MiniHexagon({
             strokeWidth="1"
           />
         ))}
-
         {/* Radial lines */}
         {categories.map((_, i) => {
           const angle = (Math.PI / 3) * i - Math.PI / 2
@@ -142,13 +124,11 @@ export default function MiniHexagon({
             />
           )
         })}
-
         {/* Interactive segments */}
         {categories.map((category, i) => {
           const categoryId = categoryIds[category]
           const isSelected = selectedCategory === categoryId
           const isCompleted = data[category] > 0
-
           return (
             <g key={category}>
               <path
@@ -171,7 +151,6 @@ export default function MiniHexagon({
             </g>
           )
         })}
-
         {/* Data visualization */}
         <motion.path
           initial={{ opacity: 0, scale: 0 }}
@@ -190,7 +169,6 @@ export default function MiniHexagon({
           strokeWidth="2"
           className="pointer-events-none"
         />
-
         {/* Gradient definition */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -203,7 +181,6 @@ export default function MiniHexagon({
           </linearGradient>
         </defs>
       </svg>
-
       {/* Category labels */}
       {categories.map((category, i) => {
         const angle = (Math.PI / 3) * i - Math.PI / 2
@@ -211,7 +188,6 @@ export default function MiniHexagon({
         const x = centerX + labelRadius * Math.cos(angle)
         const y = centerY + labelRadius * Math.sin(angle)
         const isCompleted = data[category] > 0
-
         return (
           <motion.div
             key={category}
@@ -230,7 +206,6 @@ export default function MiniHexagon({
           </motion.div>
         )
       })}
-
       {/* Center score */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="text-center">

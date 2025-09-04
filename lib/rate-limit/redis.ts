@@ -1,14 +1,11 @@
 import { Redis } from '@upstash/redis'
-
 import { logger } from '@/lib/utils/logger'
-
 // Rate limit configuration
 interface RateLimitConfig {
   maxRequests: number
   windowMs: number
   keyPrefix?: string
 }
-
 // Default rate limit configs for different endpoints
 export const RATE_LIMITS = {
   // Authentication endpoints
@@ -25,11 +22,9 @@ export const RATE_LIMITS = {
   // Global fallback
   global: { maxRequests: 100, windowMs: 60 * 1000 }, // 100 per minute
 } as const
-
 class RedisRateLimiter {
   private redis: Redis | null = null
   private fallbackStore = new Map<string, { count: number; resetTime: number }>()
-
   constructor() {
     // Initialize Redis only if environment variables are available
     if (process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDIS_REST_TOKEN']) {
@@ -47,7 +42,6 @@ class RedisRateLimiter {
       logger.warn('Redis credentials not found, using in-memory rate limiting')
     }
   }
-
   /**
    * Check if request is allowed and update counter
    */
@@ -65,7 +59,6 @@ class RedisRateLimiter {
     const now = Date.now()
     const window = Math.floor(now / config.windowMs)
     const windowKey = `${key}:${window}`
-
     try {
       if (this.redis) {
         // Use Redis for distributed rate limiting
@@ -76,7 +69,6 @@ class RedisRateLimiter {
       }
     } catch (error) {
       logger.error(`Rate limit check failed for ${identifier}`, error as Error)
-
       // Fail open - allow request if rate limiting fails
       return {
         allowed: true,
@@ -86,7 +78,6 @@ class RedisRateLimiter {
       }
     }
   }
-
   private async redisRateLimit(
     key: string,
     config: RateLimitConfig,
@@ -95,14 +86,11 @@ class RedisRateLimiter {
     const pipe = this.redis!.pipeline()
     pipe.incr(key)
     pipe.expire(key, Math.ceil(config.windowMs / 1000))
-
     const results = await pipe.exec()
     const count = results[0] as number
-
     const resetTime = now + config.windowMs
     const remaining = Math.max(0, config.maxRequests - count)
     const allowed = count <= config.maxRequests
-
     return {
       allowed,
       limit: config.maxRequests,
@@ -111,7 +99,6 @@ class RedisRateLimiter {
       retryAfter: allowed ? undefined : Math.ceil(config.windowMs / 1000)
     }
   }
-
   private memoryRateLimit(
     key: string,
     config: RateLimitConfig,
@@ -119,10 +106,8 @@ class RedisRateLimiter {
   ) {
     // Clean up expired entries
     this.cleanupMemoryStore(now)
-
     const existing = this.fallbackStore.get(key)
     const resetTime = now + config.windowMs
-
     if (!existing || now > existing.resetTime) {
       // New window
       this.fallbackStore.set(key, { count: 1, resetTime })
@@ -133,11 +118,9 @@ class RedisRateLimiter {
         resetTime
       }
     }
-
     // Increment counter
     existing.count++
     const allowed = existing.count <= config.maxRequests
-
     return {
       allowed,
       limit: config.maxRequests,
@@ -146,18 +129,15 @@ class RedisRateLimiter {
       retryAfter: allowed ? undefined : Math.ceil((existing.resetTime - now) / 1000)
     }
   }
-
   private cleanupMemoryStore(now: number) {
     // Clean up expired entries every 100 calls
     if (Math.random() > 0.01) return
-
     for (const [key, entry] of this.fallbackStore.entries()) {
       if (now > entry.resetTime) {
         this.fallbackStore.delete(key)
       }
     }
   }
-
   /**
    * Get identifier from request (IP, user ID, etc.)
    */
@@ -167,7 +147,6 @@ class RedisRateLimiter {
     type: 'ip' | 'user' | 'combined' = 'ip'
   ): string {
     const ip = this.getIP(request)
-
     switch (type) {
       case 'user':
         return userId || ip
@@ -177,7 +156,6 @@ class RedisRateLimiter {
         return ip
     }
   }
-
   private getIP(request: Request): string {
     // Try various headers for IP detection
     const headers = [
@@ -189,7 +167,6 @@ class RedisRateLimiter {
       'forwarded-for',
       'forwarded'
     ]
-
     for (const header of headers) {
       const value = request.headers.get(header)
       if (value) {
@@ -200,22 +177,18 @@ class RedisRateLimiter {
         }
       }
     }
-
     return '127.0.0.1' // fallback
   }
-
   private isValidIP(ip: string): boolean {
     const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/
     const ipv6Regex = /^[0-9a-fA-F:]+$/
     return ipv4Regex.test(ip) || ipv6Regex.test(ip)
   }
-
   /**
    * Reset rate limit for a specific identifier
    */
   async reset(identifier: string, keyPrefix?: string): Promise<void> {
     const key = `${keyPrefix || 'ratelimit'}:${identifier}`
-
     if (this.redis) {
       await this.redis.del(key)
     } else {
@@ -228,10 +201,8 @@ class RedisRateLimiter {
     }
   }
 }
-
 // Singleton instance
 export const rateLimiter = new RedisRateLimiter()
-
 /**
  * Middleware helper for rate limiting
  */
@@ -241,10 +212,8 @@ export async function applyRateLimit(
   config: RateLimitConfig
 ): Promise<Response | null> {
   const result = await rateLimiter.checkLimit(identifier, config)
-
   if (!result.allowed) {
     logger.warn(`Rate limit exceeded for ${identifier}: ${result.limit} requests`)
-
     return new Response('Too Many Requests', {
       status: 429,
       headers: {
@@ -256,7 +225,6 @@ export async function applyRateLimit(
       }
     })
   }
-
   // Add rate limit headers to allowed requests
   return new Response(null, {
     headers: {
@@ -266,5 +234,4 @@ export async function applyRateLimit(
     }
   })
 }
-
 export default rateLimiter

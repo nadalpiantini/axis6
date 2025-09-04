@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -29,10 +28,11 @@ import {
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback } from 'react'
-
 import { ProfileErrorBoundary } from '@/components/error/ProfileErrorBoundary'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { ProfileForm } from '@/components/profile/ProfileForm'
+import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload'
+import { PsychologicalHexagon } from '@/components/psychology/PsychologicalHexagon'
 import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
 import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
 import { TemperamentResults } from '@/components/psychology/TemperamentResults'
@@ -40,13 +40,12 @@ import { LogoIcon } from '@/components/ui/Logo'
 import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
 import { createClient } from '@/lib/supabase/client'
 import { handleError, handleDatabaseError } from '@/lib/error/standardErrorHandler'
-
 interface UserProfile {
   email: string
   name: string
   created_at: string
+  profile_image_url?: string | null
 }
-
 interface TemperamentProfile {
   id: string
   primary_temperament: string
@@ -67,7 +66,6 @@ interface TemperamentProfile {
   }
   completed_at: string
 }
-
 interface TemperamentResult {
   primary_temperament: string
   secondary_temperament: string
@@ -79,13 +77,11 @@ interface TemperamentResult {
   }
   total_responses: number
 }
-
 export default function ProfilePage() {
   const router = useRouter()
   const { data: user, isLoading: userLoading } = useUser()
   const { data: streaks = [], isLoading: streaksLoading } = useStreaks(user?.id || '')
   const { data: checkins = [], isLoading: checkinsLoading } = useTodayCheckins(user?.id || '')
-
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [temperamentProfile, setTemperamentProfile] = useState<TemperamentProfile | null>(null)
@@ -101,24 +97,20 @@ export default function ProfilePage() {
     type: 'success' | 'error'
     message: string
   }>({ show: false, type: 'success', message: '' })
-
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user || !user.id) {
         setProfileLoading(false)
         return
       }
-
       try {
         const supabase = createClient()
-
         // Fetch basic profile (use maybeSingle to handle non-existent profiles)
         const { data: profileData, error: profileError } = await supabase
           .from('axis6_profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle()
-
         if (profileError && profileError.code !== 'PGRST116') {
           handleDatabaseError(profileError, {
             table: 'axis6_profiles',
@@ -128,28 +120,27 @@ export default function ProfilePage() {
             userMessage: 'Unable to load your profile. Please try refreshing the page.'
           })
         }
-
         if (profileData) {
           // Profile exists, use it
           const safeName = profileData.name || user.email?.split('@')[0] || 'User'
           setProfile({
             email: user.email || '',
             name: safeName,
-            created_at: user.created_at || new Date().toISOString()
+            created_at: user.created_at || new Date().toISOString(),
+            profile_image_url: profileData.profile_image_url
           })
           setEditedName(safeName)
         } else {
           // Profile doesn't exist, create default profile and auto-save it
           const defaultName = user.email?.split('@')[0] || 'User'
-
           const safeProfile = {
             email: user.email || '',
             name: defaultName,
-            created_at: user.created_at || new Date().toISOString()
+            created_at: user.created_at || new Date().toISOString(),
+            profile_image_url: null
           }
           setProfile(safeProfile)
           setEditedName(defaultName)
-
           // Auto-create profile for new users
           try {
             const { error: createError } = await supabase
@@ -162,7 +153,6 @@ export default function ProfilePage() {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               })
-
             if (createError) {
               } else {
               }
@@ -170,7 +160,6 @@ export default function ProfilePage() {
             // Continue with the default profile even if creation fails
           }
         }
-
         // 🛡️ SAFE: Fetch temperament profile with defensive error handling
         try {
           const { data: temperamentData, error } = await supabase
@@ -178,7 +167,6 @@ export default function ProfilePage() {
             .select('*')
             .eq('user_id', user.id)
             .maybeSingle()
-
           if (!error && temperamentData) {
             // 🛡️ VALIDATE: Ensure temperament data has required structure
             if (temperamentData &&
@@ -208,24 +196,19 @@ export default function ProfilePage() {
         setProfileLoading(false)
       }
     }
-
     if (!userLoading) {
       fetchProfile()
     }
   }, [user, userLoading])
-
   const showNotification = (type: 'success' | 'error', message: string) => {
     if (!type || !message) return
-
     setNotification({ show: true, type, message })
     setTimeout(() => {
       setNotification(prev => ({ ...prev, show: false }))
     }, 4000)
   }
-
   const handleSaveName = async () => {
     if (!user || !editedName || !editedName.trim()) return
-
     setSaving(true)
     try {
       const supabase = createClient()
@@ -238,9 +221,7 @@ export default function ProfilePage() {
         }, {
           onConflict: 'id'
         })
-
       if (error) throw error
-
       setProfile(prev => prev ? { ...prev, name: editedName.trim() || 'User' } : null)
       setIsEditing(false)
       showNotification('success', 'Profile updated successfully!')
@@ -258,20 +239,16 @@ export default function ProfilePage() {
       setSaving(false)
     }
   }
-
   const handleExportData = async () => {
     if (!user || !profile) return
-
     try {
       const supabase = createClient()
-
       // Fetch all user data
       const [checkinsRes, streaksRes, categoriesRes] = await Promise.all([
         supabase.from('axis6_checkins').select('*').eq('user_id', user.id),
         supabase.from('axis6_streaks').select('*').eq('user_id', user.id),
         supabase.from('axis6_categories').select('*')
       ])
-
       const exportData = {
         profile: {
           email: profile?.email || '',
@@ -283,7 +260,6 @@ export default function ProfilePage() {
         categories: categoriesRes.data || [],
         exported_at: new Date().toISOString()
       }
-
       // Create and download JSON file
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
@@ -294,7 +270,6 @@ export default function ProfilePage() {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-
       showNotification('success', 'Data exported successfully!')
     } catch (error) {
       handleError(error, {
@@ -306,25 +281,19 @@ export default function ProfilePage() {
       showNotification('error', 'Failed to export data')
     }
   }
-
   const handleDeleteAccount = async () => {
     if (!confirm('Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.')) {
       return
     }
-
     if (!confirm('This is your last chance to cancel. Do you really want to delete your account?')) {
       return
     }
-
     try {
       const supabase = createClient()
-
       // Sign out first
       await supabase.auth.signOut()
-
       // Note: Actual account deletion would need to be handled by a server-side function
       // for security reasons. This is a simplified version.
-
       showNotification('success', 'Account deletion requested. You will receive an email confirmation.')
       setTimeout(() => {
         router.push('/')
@@ -344,7 +313,6 @@ export default function ProfilePage() {
       }, 2000)
     }
   }
-
   const handleLogout = async () => {
     try {
       const supabase = createClient()
@@ -361,18 +329,14 @@ export default function ProfilePage() {
       router.push('/auth/login')
     }
   }
-
   const handleStartAssessment = useCallback(() => {
     setShowQuestionnaire(true)
   }, [])
-
   const handleAssessmentComplete = (result: TemperamentResult) => {
     if (!result) return
-
     setAssessmentResult(result)
     setShowQuestionnaire(false)
     setShowResults(true)
-
     // Refresh temperament profile
     if (user && user.id) {
       const fetchTemperamentProfile = async () => {
@@ -383,7 +347,6 @@ export default function ProfilePage() {
             .select('*')
             .eq('user_id', user.id)
             .single()
-
           if (temperamentData && !error) {
             setTemperamentProfile(temperamentData)
           }
@@ -402,12 +365,10 @@ export default function ProfilePage() {
       fetchTemperamentProfile()
     }
   }
-
   const handleResultsContinue = () => {
     setShowResults(false)
     showNotification('success', 'Your psychological profile has been updated! You will now receive personalized recommendations.')
   }
-
   // 🛡️ SAFE: Define temperament data with proper type safety
   const temperamentData = {
     sanguine: {
@@ -439,7 +400,6 @@ export default function ProfilePage() {
       bgGradient: 'from-green-500/20 to-emerald-500/20'
     }
   } as const
-
   // Handle loading state
   if (userLoading || profileLoading || streaksLoading || checkinsLoading) {
     return (
@@ -451,7 +411,6 @@ export default function ProfilePage() {
       </div>
     )
   }
-
   // Only redirect after all loading is complete and we know there's no user
   if (!user) {
     // Use setTimeout to avoid navigation during render
@@ -467,7 +426,6 @@ export default function ProfilePage() {
       </div>
     )
   }
-
   // If user exists but profile is still null (shouldn't happen with proper loading)
   if (!profile) {
     return (
@@ -479,18 +437,14 @@ export default function ProfilePage() {
       </div>
     )
   }
-
   // 🛡️ SAFE: Calculate stats with defensive programming
   const currentStreak = streaks && Array.isArray(streaks) && streaks.length > 0
     ? Math.max(...streaks.map(s => s?.current_streak || 0))
     : 0
-
   const longestStreak = streaks && Array.isArray(streaks) && streaks.length > 0
     ? Math.max(...streaks.map(s => s?.longest_streak || 0))
     : 0
-
   const totalCheckins = checkins && Array.isArray(checkins) ? checkins.length : 0
-
   const memberDays = profile?.created_at
     ? (() => {
         try {
@@ -502,7 +456,6 @@ export default function ProfilePage() {
         }
       })()
     : 0
-
   return (
     <ProfileErrorBoundary>
       <div className="min-h-screen text-white">
@@ -517,14 +470,12 @@ export default function ProfilePage() {
           backUrl="/dashboard"
           currentStreak={currentStreak}
         />
-
       <div className="max-w-6xl mx-auto px-4 py-8" data-testid="main-profile-container">
         {/* Page Title */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">My Profile</h1>
           <p className="text-gray-400">Manage your account and view your wellness journey statistics</p>
         </div>
-
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Information */}
           <div className="lg:col-span-2 space-y-6">
@@ -534,132 +485,41 @@ export default function ProfilePage() {
                 <Brain className="w-6 h-6 text-purple-400" />
                 Psychological Profile
               </h2>
-
               {temperamentProfile && temperamentProfile.primary_temperament ? (
-                <div className="space-y-4">
-                  {/* Primary Temperament Display */}
-                  {(() => {
-                    // 🛡️ SAFE: Defensive access to temperament data
-                    if (!temperamentProfile) return null
+                <div className="space-y-6">
+                  {/* Hexagon Visualization */}
+                  <div className="flex justify-center">
+                    <PsychologicalHexagon
+                      temperamentProfile={temperamentProfile}
+                      size={280}
+                      animate={true}
+                      showInsights={true}
+                    />
+                  </div>
 
-                    const primaryTemp = temperamentProfile.primary_temperament
-                    const scores = temperamentProfile.temperament_scores
-
-                    if (!primaryTemp || !scores || typeof scores !== 'object') {
-                      return (
-                        <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
-                          <p className="text-gray-400">Temperament data incomplete</p>
-                        </div>
-                      )
-                    }
-
-                    const tempData = temperamentData[primaryTemp as keyof typeof temperamentData] || temperamentData.melancholic
-                    const tempScore = scores[primaryTemp as keyof typeof scores] || 0
-
-                    if (!tempData) {
-                      return (
-                        <div className="p-4 rounded-xl bg-gray-500/10 border border-gray-500/20">
-                          <p className="text-gray-400">Unknown temperament type: {primaryTemp}</p>
-                        </div>
-                      )
-                    }
-
-                    const TempIcon = tempData.icon || Brain
-                    const iconColor = tempData.color || '#8B5CF6'
-                    const bgGradient = tempData.bgGradient || 'from-gray-500/20 to-gray-600/20'
-                    const percentage = Math.round((tempScore || 0) * 100)
-                    const safePercentage = Math.max(0, Math.min(100, percentage)) // Ensure percentage is between 0-100
-
-                    return (
-                      <div className={`p-4 rounded-xl bg-gradient-to-r ${bgGradient}`}>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-white/20">
-                            {TempIcon && typeof TempIcon === 'function' ? (
-                              <TempIcon
-                                className="w-5 h-5"
-                                style={{ color: iconColor }}
-                              />
-                            ) : (
-                              <Brain className="w-5 h-5" style={{ color: iconColor }} />
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white">
-                              {tempData.name || primaryTemp || 'Unknown'}
-                            </h3>
-                            <p className="text-sm text-gray-200">
-                              {tempData.subtitle || 'Temperament Profile'}
-                            </p>
-                          </div>
-                          <div className="ml-auto">
-                            <div
-                              className="px-3 py-1 rounded-full text-sm font-bold text-white"
-                              style={{ backgroundColor: iconColor }}
-                            >
-                              {safePercentage}%
-                            </div>
-                          </div>
-                        </div>
+                  {/* Assessment Info */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+                    <div className="text-xs text-gray-400">
+                      <div>Assessment v{temperamentProfile.assessment_version || '1.0'}</div>
+                      <div>
+                        {temperamentProfile.completed_at
+                          ? (() => {
+                              try {
+                                const completedDate = new Date(temperamentProfile.completed_at)
+                                if (isNaN(completedDate.getTime())) return 'Assessment completed'
+                                return `Completed ${completedDate.toLocaleDateString()}`
+                              } catch {
+                                return 'Assessment completed'
+                              }
+                            })()
+                          : 'Assessment completed'}
                       </div>
-                    )
-                  })()}
-
-                  {/* Quick Insights */}
-                  {temperamentProfile && temperamentProfile.personality_insights && typeof temperamentProfile.personality_insights === 'object' && (() => {
-                    const insights = temperamentProfile.personality_insights
-                    if (!insights) return null
-
-                    const strengths = Array.isArray(insights.strengths) ? insights.strengths : []
-                    const workStyle = insights.work_style
-                    const socialStyle = insights.social_style
-
-                    const strengthsText = strengths.length > 0 ? strengths.slice(0, 2).join(', ') : 'Not available'
-                    const workStyleText = typeof workStyle === 'string' && workStyle.length > 0
-                      ? workStyle.length > 40 ? `${workStyle.slice(0, 40)}...` : workStyle
-                      : 'Not available'
-                    const socialStyleText = typeof socialStyle === 'string' && socialStyle.length > 0
-                      ? socialStyle.length > 40 ? `${socialStyle.slice(0, 40)}...` : socialStyle
-                      : 'Not available'
-
-                    return (
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                          <h4 className="text-sm font-medium text-green-400 mb-1 flex items-center gap-1">
-                            <Star className="w-3 h-3" />
-                            Strengths
-                          </h4>
-                          <p className="text-xs text-gray-300">{strengthsText}</p>
-                        </div>
-                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                          <h4 className="text-sm font-medium text-blue-400 mb-1">Work Style</h4>
-                          <p className="text-xs text-gray-300">{workStyleText}</p>
-                        </div>
-                        <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                          <h4 className="text-sm font-medium text-purple-400 mb-1">Social Style</h4>
-                          <p className="text-xs text-gray-300">{socialStyleText}</p>
-                        </div>
-                      </div>
-                    )
-                  })()}
-
-                  <div className="flex items-center justify-between pt-2">
-                    <p className="text-xs text-gray-400">
-                      {temperamentProfile && temperamentProfile.completed_at
-                        ? (() => {
-                            try {
-                              const completedDate = new Date(temperamentProfile.completed_at)
-                              if (isNaN(completedDate.getTime())) return 'Assessment completed'
-                              return `Completed on ${completedDate.toLocaleDateString()}`
-                            } catch {
-                              return 'Assessment completed'
-                            }
-                          })()
-                        : 'Assessment completed'}
-                    </p>
+                    </div>
                     <button
                       onClick={handleStartAssessment}
-                      className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                      className="text-xs text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1"
                     >
+                      <Sparkles className="w-3 h-3" />
                       Retake Assessment
                     </button>
                   </div>
@@ -673,7 +533,6 @@ export default function ProfilePage() {
                       Take our psychological assessment to get personalized wellness recommendations based on the four temperaments system.
                     </p>
                   </div>
-
                   <div className="flex flex-col items-center gap-3">
                     <button
                       onClick={handleStartAssessment}
@@ -682,7 +541,6 @@ export default function ProfilePage() {
                       <span>Take Personality Assessment</span>
                       {useAIEnhanced && <Sparkles className="w-4 h-4" />}
                     </button>
-
                     <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
                       <input
                         type="checkbox"
@@ -696,6 +554,24 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
+            </div>
+            {/* Profile Image Section */}
+            <div className="glass rounded-2xl p-6">
+              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                <User className="w-6 h-6 text-purple-400" />
+                Profile Photo
+              </h2>
+              <ProfileImageUpload
+                userId={user.id}
+                currentImageUrl={profile.profile_image_url}
+                onImageUploaded={(imageUrl) => {
+                  setProfile(prev => prev ? { ...prev, profile_image_url: imageUrl } : null)
+                  showNotification('success', 'Profile image updated successfully!')
+                }}
+                onError={(error) => {
+                  showNotification('error', error)
+                }}
+              />
             </div>
 
             {/* Profile Form */}
@@ -722,7 +598,8 @@ export default function ProfilePage() {
                       setProfile({
                         email: user.email || '',
                         name: profileData.name || user.email?.split('@')[0] || 'User',
-                        created_at: user.created_at || new Date().toISOString()
+                        created_at: user.created_at || new Date().toISOString(),
+                        profile_image_url: profileData.profile_image_url
                       })
                     }
                   }
@@ -730,11 +607,9 @@ export default function ProfilePage() {
                 }}
               />
             </div>
-
             {/* User Details */}
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Account Summary</h2>
-
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -783,7 +658,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-blue-500/20">
                     <Mail className="w-5 h-5 text-blue-400" />
@@ -793,7 +667,6 @@ export default function ProfilePage() {
                     <p className="font-medium">{profile.email || 'No email'}</p>
                   </div>
                 </div>
-
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-green-500/20">
                     <Calendar className="w-5 h-5 text-green-400" />
@@ -820,11 +693,9 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-
             {/* Account Actions */}
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Account Actions</h2>
-
               <div className="space-y-3">
                 <button
                   onClick={handleExportData}
@@ -838,7 +709,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </button>
-
                 <button
                   onClick={handleDeleteAccount}
                   className="w-full flex items-center justify-between p-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
@@ -854,12 +724,10 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-
           {/* Statistics */}
           <div className="space-y-6">
             <div className="glass rounded-2xl p-6">
               <h2 className="text-xl font-semibold mb-6">Your Statistics</h2>
-
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
                   <div className="flex items-center justify-between">
@@ -872,7 +740,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-
                 <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -884,7 +751,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-
                 <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -898,7 +764,6 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-
             {/* Quick Links */}
             <div className="glass rounded-2xl p-6">
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
@@ -926,7 +791,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-
       {/* Psychology Modals */}
       {showQuestionnaire && user && user.id && (
         useAIEnhanced ? (
@@ -946,7 +810,6 @@ export default function ProfilePage() {
           />
         )
       )}
-
       {showResults && assessmentResult && assessmentResult.primary_temperament && (
         <TemperamentResults
           result={assessmentResult}
@@ -954,7 +817,6 @@ export default function ProfilePage() {
           onClose={() => setShowResults(false)}
         />
       )}
-
       {/* Notifications */}
       {notification.show && notification.message && (
         <motion.div

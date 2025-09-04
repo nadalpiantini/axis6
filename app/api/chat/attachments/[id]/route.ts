@@ -1,7 +1,5 @@
 import { logger } from '@/lib/utils/logger';
-
 import { NextRequest, NextResponse } from 'next/server'
-
 import { withChatAuth } from '@/lib/middleware/chat-auth'
 
 /**
@@ -11,17 +9,14 @@ import { withChatAuth } from '@/lib/middleware/chat-auth'
 export const GET = withChatAuth(async (_context, _request, { params }) => {
   try {
     const attachmentId = params.id
-
     if (!attachmentId) {
       return NextResponse.json(
         { error: 'Attachment ID is required' },
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     // Get attachment details
     const { data: attachment, error } = await supabase
       .from('axis6_chat_attachments')
@@ -30,24 +25,20 @@ export const GET = withChatAuth(async (_context, _request, { params }) => {
       .eq('upload_status', 'ready')
       .is('deleted_at', null)
       .single()
-
     if (error || !attachment) {
       return NextResponse.json(
         { error: 'Attachment not found' },
         { status: 404 }
       )
     }
-
     // Generate signed URL for download
     const { data: urlData } = await supabase.storage
       .from('chat-files')
       .createSignedUrl(attachment.storage_path, 3600) // 1 hour expiry
-
     return NextResponse.json({
       attachment,
       download_url: urlData?.signedUrl || null
     })
-
   } catch (error) {
     logger.error('Attachment GET error:', error)
     return NextResponse.json(
@@ -56,7 +47,6 @@ export const GET = withChatAuth(async (_context, _request, { params }) => {
     )
   }
 })
-
 /**
  * PUT /api/chat/attachments/[id]
  * Finalize file upload
@@ -66,17 +56,14 @@ export const PUT = withChatAuth(async (_context, request, { params }) => {
     const attachmentId = params.id
     const body = await request.json()
     const { width, height, duration } = body
-
     if (!attachmentId) {
       return NextResponse.json(
         { error: 'Attachment ID is required' },
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     // Finalize upload
     const { data, error } = await supabase.rpc('finalize_file_upload', {
       p_attachment_id: attachmentId,
@@ -84,7 +71,6 @@ export const PUT = withChatAuth(async (_context, request, { params }) => {
       p_height: height,
       p_duration: duration
     })
-
     if (error || !data) {
       logger.error('Failed to finalize upload:', error)
       return NextResponse.json(
@@ -92,16 +78,13 @@ export const PUT = withChatAuth(async (_context, request, { params }) => {
         { status: 500 }
       )
     }
-
     // Get updated attachment
     const { data: attachment } = await supabase
       .from('axis6_chat_attachments')
       .select('*')
       .eq('id', attachmentId)
       .single()
-
     return NextResponse.json({ attachment })
-
   } catch (error) {
     logger.error('Attachment PUT error:', error)
     return NextResponse.json(
@@ -110,7 +93,6 @@ export const PUT = withChatAuth(async (_context, request, { params }) => {
     )
   }
 })
-
 /**
  * DELETE /api/chat/attachments/[id]
  * Delete attachment
@@ -119,17 +101,14 @@ export const DELETE = withChatAuth(async (context, _request, { params }) => {
   try {
     const { user } = context
     const attachmentId = params.id
-
     if (!attachmentId) {
       return NextResponse.json(
         { error: 'Attachment ID is required' },
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     // Get attachment to verify ownership
     const { data: attachment, error: fetchError } = await supabase
       .from('axis6_chat_attachments')
@@ -138,20 +117,17 @@ export const DELETE = withChatAuth(async (context, _request, { params }) => {
       .eq('user_id', user.id)
       .is('deleted_at', null)
       .single()
-
     if (fetchError || !attachment) {
       return NextResponse.json(
         { error: 'Attachment not found or access denied' },
         { status: 404 }
       )
     }
-
     // Soft delete attachment
     const { error: deleteError } = await supabase
       .from('axis6_chat_attachments')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', attachmentId)
-
     if (deleteError) {
       logger.error('Failed to delete attachment:', deleteError)
       return NextResponse.json(
@@ -159,15 +135,12 @@ export const DELETE = withChatAuth(async (context, _request, { params }) => {
         { status: 500 }
       )
     }
-
     // Delete from storage (non-blocking)
     supabase.storage
       .from('chat-files')
       .remove([attachment.storage_path])
       .catch(error => logger.warn('Storage deletion failed:', error))
-
     return NextResponse.json({ success: true })
-
   } catch (error) {
     logger.error('Attachment DELETE error:', error)
     return NextResponse.json(

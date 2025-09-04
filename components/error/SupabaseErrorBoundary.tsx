@@ -1,28 +1,22 @@
 'use client'
-
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { logger } from '@/lib/utils/logger';
-
 interface Props {
   children: ReactNode
   fallback?: ReactNode
 }
-
 interface State {
   hasError: boolean
   error?: Error
   errorInfo?: ErrorInfo
 }
-
 export class SupabaseErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
   }
-
   static getDerivedStateFromError(error: Error): State {
     // Check if this is a Supabase-related error
     const isSupabaseError =
@@ -32,18 +26,14 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
       error.message.includes('database') ||
       error.stack?.includes('supabase') ||
       error.name === 'SupabaseError'
-
     if (isSupabaseError) {
       return { hasError: true, error }
     }
-
     // Let other error boundaries handle non-Supabase errors
     return { hasError: false }
   }
-
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     logger.error('Supabase Error Boundary caught an error:', error)
-
     // Log to external service if available
     if (typeof window !== 'undefined' && 'Sentry' in window) {
       ;(window as any).Sentry.captureException(error, {
@@ -56,11 +46,9 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
       })
     }
   }
-
   handleRetry = () => {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined })
   }
-
   handleClearAuth = async () => {
     try {
       // Clear any Supabase auth data
@@ -69,14 +57,12 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
           key.startsWith('sb-') || key.includes('supabase')
         )
         keysToRemove.forEach(key => localStorage.removeItem(key))
-
         // Clear session storage as well
         const sessionKeysToRemove = Object.keys(sessionStorage).filter(key =>
           key.startsWith('sb-') || key.includes('supabase')
         )
         sessionKeysToRemove.forEach(key => sessionStorage.removeItem(key))
       }
-
       // Reload the page to reset the state
       window.location.reload()
     } catch (error) {
@@ -84,28 +70,23 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
       this.handleRetry()
     }
   }
-
   override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback
       }
-
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
               <AlertTriangle className="w-6 h-6 text-red-600" />
             </div>
-
             <h2 className="text-xl font-semibold text-gray-900 text-center mb-2">
               Connection Error
             </h2>
-
             <p className="text-gray-600 text-center mb-6">
               We're having trouble connecting to our services. This might be a temporary issue.
             </p>
-
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mb-4 p-3 bg-gray-100 rounded text-sm">
                 <summary className="cursor-pointer font-medium">Error Details</summary>
@@ -114,7 +95,6 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
                 </pre>
               </details>
             )}
-
             <div className="space-y-3">
               <Button
                 onClick={this.handleRetry}
@@ -124,7 +104,6 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Try Again
               </Button>
-
               <Button
                 onClick={this.handleClearAuth}
                 className="w-full"
@@ -137,7 +116,6 @@ export class SupabaseErrorBoundary extends Component<Props, State> {
         </div>
       )
     }
-
     return this.props.children
   }
 }

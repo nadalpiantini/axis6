@@ -1,5 +1,4 @@
 'use client'
-
 import React from 'react'
 import { format, parse, addMinutes } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,12 +12,11 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { AxisIcon } from '@/components/icons'
-import { useAxisActivities } from '@/lib/react-query/hooks/useAxisActivities'
+import { useAxisActivities, AxisActivity } from '@/lib/react-query/hooks/useAxisActivities'
 import { useCreateTimeBlock, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
+import { getLocalizedText } from '@/lib/utils/i18n'
 interface TimeBlockSchedulerProps {
   isOpen: boolean
   onClose: () => void
@@ -28,7 +26,6 @@ interface TimeBlockSchedulerProps {
   selectedDate: Date
   editingBlock?: any
 }
-
 export function TimeBlockScheduler({
   isOpen,
   onClose,
@@ -51,46 +48,38 @@ export function TimeBlockScheduler({
   const [duration, setDuration] = useState(editingBlock?.duration_minutes || 30)
   const [notes, setNotes] = useState(editingBlock?.notes || '')
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
-
   const createTimeBlock = useCreateTimeBlock()
   const updateTimeBlock = useUpdateTimeBlock()
-
   // Fetch activities for selected category
   const { data: activities = [] } = useAxisActivities(userId, selectedCategoryId)
-
+  const typedActivities = activities as AxisActivity[]
   // Update activity name when selection changes
   useEffect(() => {
     if (selectedActivityId) {
-      const activity = activities.find((a: any) => a.id === selectedActivityId)
+      const activity = typedActivities.find((a: AxisActivity) => a.id === selectedActivityId)
       if (activity) {
         setActivityName(activity.activity_name)
       }
     }
-  }, [selectedActivityId, activities])
-
+  }, [selectedActivityId, typedActivities])
   // Calculate end time based on start time and duration
   const calculateEndTime = () => {
     const start = parse(startTime, 'HH:mm', new Date())
     const end = addMinutes(start, duration)
     return format(end, 'HH:mm')
   }
-
   const selectedCategoryData = categories.find(c => c.id === selectedCategoryId)
-
   const [error, setError] = useState<string | null>(null)
-
   const handleSave = async () => {
     setError(null)
-
     if (!activityName.trim()) {
       setError('Please enter an activity name')
       return
     }
-
     const timeBlockData = {
       user_id: userId,
       date: format(selectedDate, 'yyyy-MM-dd'),
-      category_id: selectedCategoryId,
+      category_id: selectedCategoryId.toString(), // Convert numeric ID to string
       activity_id: selectedActivityId,
       activity_name: activityName.trim(),
       start_time: startTime,
@@ -98,7 +87,6 @@ export function TimeBlockScheduler({
       notes: notes.trim(),
       status: 'planned' as const
     }
-
     try {
       if (editingBlock) {
         await updateTimeBlock.mutateAsync({
@@ -109,18 +97,33 @@ export function TimeBlockScheduler({
         await createTimeBlock.mutateAsync(timeBlockData)
       }
       onClose()
-            } catch (error: any) {
-          handleError(error, {
-      operation: 'plan_my_day', component: 'TimeBlockScheduler',
-
-            userMessage: 'Failed to plan your day. Please try again.'
-
-          })
-          // Error logged via handleError
-          setError(error?.message || 'Failed to save time block. Please try again.')
+    } catch (error: any) {
+      // Ensure we have a proper error object with details
+      const errorDetails = {
+        message: error?.message || 'Unknown error occurred',
+        details: error?.details || error?.toString() || 'No additional details',
+        code: error?.code || 'UNKNOWN_ERROR',
+        operation: 'plan_my_day',
+        component: 'TimeBlockScheduler',
+        context: {
+          userId,
+          selectedDate: format(selectedDate, 'yyyy-MM-dd'),
+          categoryId: selectedCategoryId,
+          activityId: selectedActivityId,
+          timeBlockData
+        }
+      }
+      
+      handleError(errorDetails, {
+        operation: 'plan_my_day', 
+        component: 'TimeBlockScheduler',
+        userMessage: 'Failed to plan your day. Please try again.'
+      })
+      
+      // Set user-friendly error message
+      setError(errorDetails.message || 'Failed to save time block. Please try again.')
     }
   }
-
   const durationOptions = [
     { value: 15, label: '15 min' },
     { value: 30, label: '30 min' },
@@ -131,9 +134,7 @@ export function TimeBlockScheduler({
     { value: 180, label: '3 hours' },
     { value: 240, label: '4 hours' }
   ]
-
   if (!isOpen) return null
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -146,19 +147,18 @@ export function TimeBlockScheduler({
             onClick={onClose}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
-
-          {/* Modal - Fixed centering and responsive sizing */}
+          {/* Modal - Perfect centering with flexbox */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:w-full md:max-w-lg lg:max-w-xl max-h-[90vh] overflow-y-auto z-50"
+            className="fixed inset-0 flex items-center justify-center p-4 z-50"
           >
-            <div className="glass rounded-2xl">
-              {/* Header */}
-              <div className="p-6 border-b border-white/10">
+            <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                              {/* Header */}
+                <div className="p-4 sm:p-6 border-b border-white/10 bg-gradient-to-r from-purple-900/50 to-pink-900/50">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-purple-400" />
                     {editingBlock ? 'Edit Time Block' : 'Schedule Time Block'}
                   </h2>
@@ -173,9 +173,8 @@ export function TimeBlockScheduler({
                   {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 </p>
               </div>
-
               {/* Content */}
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-4">
                 {/* Error Message */}
                 {error && (
                   <motion.div
@@ -187,7 +186,6 @@ export function TimeBlockScheduler({
                     <span className="text-sm text-red-400">{error}</span>
                   </motion.div>
                 )}
-
                 {/* Category Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -216,7 +214,6 @@ export function TimeBlockScheduler({
                       </div>
                       <ChevronDown className="w-4 h-4 text-gray-400" />
                     </button>
-
                     {showCategoryDropdown && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-10">
                         {categories.map(category => (
@@ -240,7 +237,7 @@ export function TimeBlockScheduler({
                               color={category.color}
                             />
                             <span className="text-white">
-                              {category.name?.en || category.slug}
+                              {getLocalizedText(category.name, 'en', category.slug)}
                             </span>
                           </button>
                         ))}
@@ -248,13 +245,12 @@ export function TimeBlockScheduler({
                     )}
                   </div>
                 </div>
-
                 {/* Activity Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
                     Activity
                   </label>
-                  {activities.length > 0 ? (
+                  {typedActivities.length > 0 ? (
                     <select
                       value={selectedActivityId || ''}
                       onChange={(e) => {
@@ -264,7 +260,7 @@ export function TimeBlockScheduler({
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-400"
                     >
                       <option value="">Custom activity...</option>
-                      {activities.filter((a: any) => a.is_active).map((activity: any) => (
+                      {typedActivities.filter((a: AxisActivity) => a.is_active).map((activity: AxisActivity) => (
                         <option key={activity.id} value={activity.id}>
                           {activity.activity_name}
                         </option>
@@ -275,8 +271,7 @@ export function TimeBlockScheduler({
                       No activities configured for this axis
                     </p>
                   )}
-
-                  {(!selectedActivityId || activities.length === 0) && (
+                  {(!selectedActivityId || typedActivities.length === 0) && (
                     <input
                       type="text"
                       value={activityName}
@@ -286,7 +281,6 @@ export function TimeBlockScheduler({
                     />
                   )}
                 </div>
-
                 {/* Time Settings */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -299,11 +293,10 @@ export function TimeBlockScheduler({
                         type="time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-400"
+                        className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-400 [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:filter-invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:saturate-100 [&::-webkit-calendar-picker-indicator]:hue-rotate-[200deg]"
                       />
                     </div>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">
                       Duration
@@ -321,7 +314,6 @@ export function TimeBlockScheduler({
                     </select>
                   </div>
                 </div>
-
                 {/* End Time Display */}
                 <div className="px-4 py-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
                   <div className="flex items-center justify-between">
@@ -329,7 +321,6 @@ export function TimeBlockScheduler({
                     <span className="text-white font-medium">{calculateEndTime()}</span>
                   </div>
                 </div>
-
                 {/* Notes */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -344,9 +335,8 @@ export function TimeBlockScheduler({
                   />
                 </div>
               </div>
-
               {/* Footer */}
-              <div className="p-6 border-t border-white/10">
+              <div className="p-4 sm:p-6 border-t border-white/10">
                 <div className="flex gap-3">
                   <button
                     onClick={onClose}

@@ -1,25 +1,20 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Languages } from 'lucide-react'
-
 interface LanguageSelectorProps {
   language: 'es' | 'en'
   onLanguageChange: (language: 'es' | 'en') => void
   className?: string
 }
-
 export function LanguageSelector({
   language,
   onLanguageChange,
   className = ''
 }: LanguageSelectorProps) {
-
   const languages = [
     { code: 'es' as const, label: 'Español', flag: '🇪🇸' },
     { code: 'en' as const, label: 'English', flag: '🇺🇸' }
   ]
-
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Languages className="w-4 h-4 text-gray-400" />
@@ -40,7 +35,6 @@ export function LanguageSelector({
           >
             <span className="mr-1">{lang.flag}</span>
             {lang.label}
-
             {language === lang.code && (
               <motion.div
                 layoutId="language-selector"

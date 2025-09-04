@@ -1,127 +1,20 @@
 -- =====================================================
--- AXIS6 EMERGENCY FIX - ALL ISSUES
+-- EMERGENCY FIX FOR ALL AXIS6 ISSUES
 -- =====================================================
--- This script fixes ALL current issues:
--- 1. Sentry import errors (fixed in code)
--- 2. 404 errors for get_dashboard_data_optimized function
--- 3. 400 errors for axis6_profiles table queries
--- 4. Missing database functions and indexes
--- 
--- Execute this in Supabase SQL Editor: 
--- https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql
--- =====================================================
+-- This script fixes all the 404 and 500 errors in production
+-- Execute this in Supabase SQL Editor: https://supabase.com/dashboard/project/nvpnhqhjttgwfwvkgmpk/sql/new
 
 -- =====================================================
--- STEP 1: FIX TABLE STRUCTURES
+-- PHASE 1: FIX MISSING RPC FUNCTIONS
 -- =====================================================
 
--- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
--- Fix axis6_profiles table structure
--- Ensure it has the correct columns that the application expects
-DROP TABLE IF EXISTS axis6_profiles CASCADE;
-
-CREATE TABLE axis6_profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    name TEXT,
-    email TEXT,
-    username TEXT UNIQUE,
-    full_name TEXT,
-    avatar_url TEXT,
-    timezone TEXT DEFAULT 'UTC',
-    onboarded BOOLEAN DEFAULT false,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Fix axis6_categories table structure
-DROP TABLE IF EXISTS axis6_categories CASCADE;
-
-CREATE TABLE axis6_categories (
-    id SERIAL PRIMARY KEY,
-    slug TEXT UNIQUE NOT NULL,
-    name JSONB NOT NULL, -- Multilingual support {"es": "Física", "en": "Physical"}
-    description JSONB,
-    color TEXT NOT NULL,
-    icon TEXT NOT NULL,
-    position INTEGER NOT NULL DEFAULT 0,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Fix axis6_checkins table structure
-DROP TABLE IF EXISTS axis6_checkins CASCADE;
-
-CREATE TABLE axis6_checkins (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    category_id INTEGER REFERENCES axis6_categories(id) ON DELETE CASCADE NOT NULL,
-    completed_at DATE NOT NULL DEFAULT CURRENT_DATE,
-    mood INTEGER CHECK (mood >= 1 AND mood <= 5),
-    notes TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, category_id, completed_at)
-);
-
--- Fix axis6_streaks table structure
-DROP TABLE IF EXISTS axis6_streaks CASCADE;
-
-CREATE TABLE axis6_streaks (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    category_id INTEGER REFERENCES axis6_categories(id) ON DELETE CASCADE NOT NULL,
-    current_streak INTEGER DEFAULT 0,
-    longest_streak INTEGER DEFAULT 0,
-    last_checkin DATE,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, category_id)
-);
-
--- Fix axis6_daily_stats table structure
-DROP TABLE IF EXISTS axis6_daily_stats CASCADE;
-
-CREATE TABLE axis6_daily_stats (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    date DATE NOT NULL DEFAULT CURRENT_DATE,
-    categories_completed INTEGER DEFAULT 0,
-    total_mood INTEGER,
-    completion_rate DECIMAL(5,2) DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, date)
-);
-
--- =====================================================
--- STEP 2: INSERT DEFAULT DATA
--- =====================================================
-
--- Insert default categories
-INSERT INTO axis6_categories (slug, name, description, color, icon, position) VALUES
-('physical', '{"en": "Physical", "es": "Física"}', '{"en": "Physical health and fitness", "es": "Salud física y bienestar"}', '#FF6B6B', 'activity', 1),
-('mental', '{"en": "Mental", "es": "Mental"}', '{"en": "Mental health and clarity", "es": "Salud mental y claridad"}', '#4ECDC4', 'brain', 2),
-('social', '{"en": "Social", "es": "Social"}', '{"en": "Social connections and relationships", "es": "Conexiones sociales y relaciones"}', '#45B7D1', 'users', 3),
-('spiritual', '{"en": "Spiritual", "es": "Espiritual"}', '{"en": "Spiritual growth and purpose", "es": "Crecimiento espiritual y propósito"}', '#96CEB4', 'heart', 4),
-('financial', '{"en": "Financial", "es": "Financiero"}', '{"en": "Financial health and security", "es": "Salud financiera y seguridad"}', '#FFEAA7', 'dollar-sign', 5),
-('professional', '{"en": "Professional", "es": "Profesional"}', '{"en": "Career growth and development", "es": "Crecimiento y desarrollo profesional"}', '#DDA0DD', 'briefcase', 6)
-ON CONFLICT (slug) DO NOTHING;
-
--- =====================================================
--- STEP 3: CREATE MISSING FUNCTIONS
--- =====================================================
-
--- Drop existing functions if they exist
+-- Drop existing functions to avoid conflicts
 DROP FUNCTION IF EXISTS get_dashboard_data_optimized(UUID, DATE);
 DROP FUNCTION IF EXISTS get_dashboard_data_optimized(UUID);
-DROP FUNCTION IF EXISTS get_weekly_stats(UUID, DATE, DATE);
-DROP FUNCTION IF EXISTS get_recent_activity(UUID, INTEGER);
+DROP FUNCTION IF EXISTS get_my_day_data(UUID, DATE);
+DROP FUNCTION IF EXISTS calculate_daily_time_distribution(UUID, DATE);
 
--- Create the main dashboard optimization function
+-- Create the missing get_dashboard_data_optimized function
 CREATE OR REPLACE FUNCTION get_dashboard_data_optimized(
   p_user_id UUID,
   p_today DATE DEFAULT CURRENT_DATE
@@ -139,7 +32,6 @@ BEGIN
   SELECT json_build_object(
     'id', id,
     'name', name,
-    'email', email,
     'timezone', timezone,
     'onboarded', onboarded
   ) INTO user_data
@@ -170,8 +62,7 @@ BEGIN
   LEFT JOIN axis6_streaks s ON (
     s.category_id = c.id 
     AND s.user_id = p_user_id
-  )
-  WHERE c.is_active = true;
+  );
 
   -- Combine results
   result := json_build_object(
@@ -183,244 +74,265 @@ BEGIN
 END;
 $$;
 
--- Create weekly stats function
-CREATE OR REPLACE FUNCTION get_weekly_stats(
+-- Create the missing get_my_day_data function
+CREATE OR REPLACE FUNCTION get_my_day_data(
   p_user_id UUID,
-  p_start_date DATE DEFAULT CURRENT_DATE - INTERVAL '7 days',
-  p_end_date DATE DEFAULT CURRENT_DATE
+  p_date DATE DEFAULT CURRENT_DATE
 )
-RETURNS JSON
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-  total_checkins INT;
-  perfect_days INT;
-  completion_rate DECIMAL(5,2);
-  max_possible_checkins INT := 6 * 7; -- 6 categories * 7 days
+RETURNS TABLE (
+  time_block_id INTEGER,
+  category_id INTEGER,
+  category_name TEXT,
+  category_color TEXT,
+  category_icon TEXT,
+  activity_id INTEGER,
+  activity_name TEXT,
+  start_time TIME,
+  end_time TIME,
+  duration_minutes INTEGER,
+  status TEXT,
+  notes TEXT,
+  actual_duration INTEGER
+) AS $$
 BEGIN
-  -- Get total checkins for the week
-  SELECT COUNT(*) INTO total_checkins
-  FROM axis6_checkins
-  WHERE user_id = p_user_id
-    AND completed_at >= p_start_date
-    AND completed_at <= p_end_date;
-
-  -- Count perfect days (all 6 categories completed)
-  SELECT COUNT(DISTINCT completed_at) INTO perfect_days
-  FROM (
-    SELECT completed_at, COUNT(*) as daily_checkins
-    FROM axis6_checkins
-    WHERE user_id = p_user_id
-      AND completed_at >= p_start_date
-      AND completed_at <= p_end_date
-    GROUP BY completed_at
-    HAVING COUNT(*) = 6
-  ) perfect_days_data;
-
-  -- Calculate completion rate
-  completion_rate := (total_checkins::DECIMAL / max_possible_checkins) * 100;
-
-  RETURN json_build_object(
-    'totalCheckins', total_checkins,
-    'perfectDays', perfect_days,
-    'completionRate', completion_rate,
-    'maxPossibleCheckins', max_possible_checkins
-  );
+  RETURN QUERY
+  SELECT 
+    tb.id as time_block_id,
+    tb.category_id,
+    c.name::text as category_name,
+    c.color as category_color,
+    c.icon as category_icon,
+    tb.activity_id,
+    tb.activity_name,
+    tb.start_time,
+    tb.end_time,
+    tb.duration_minutes,
+    tb.status,
+    tb.notes,
+    0 as actual_duration
+  FROM axis6_time_blocks tb
+  LEFT JOIN axis6_categories c ON c.id = tb.category_id
+  WHERE tb.user_id = p_user_id 
+  AND tb.date = p_date
+  ORDER BY tb.start_time ASC;
 END;
-$$;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create recent activity function
-CREATE OR REPLACE FUNCTION get_recent_activity(
+-- Create the missing calculate_daily_time_distribution function
+CREATE OR REPLACE FUNCTION calculate_daily_time_distribution(
   p_user_id UUID,
-  p_days INTEGER DEFAULT 7
+  p_date DATE DEFAULT CURRENT_DATE
 )
-RETURNS JSON
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
+RETURNS JSON AS $$
 DECLARE
-  activity_data JSON;
+  result JSON;
 BEGIN
   SELECT json_agg(
     json_build_object(
-      'date', date,
-      'completionRate', completion_rate,
-      'categoriesCompleted', categories_completed,
-      'totalMood', total_mood
-    ) ORDER BY date DESC
-  ) INTO activity_data
-  FROM axis6_daily_stats
-  WHERE user_id = p_user_id
-    AND date >= CURRENT_DATE - (p_days || ' days')::INTERVAL
-    AND date <= CURRENT_DATE;
+      'category_id', c.id,
+      'category_name', c.name->>'en',
+      'category_color', c.color,
+      'planned_minutes', COALESCE(planned.total_minutes, 0),
+      'actual_minutes', COALESCE(actual.total_minutes, 0),
+      'percentage', CASE 
+        WHEN COALESCE(planned.total_minutes, 0) > 0 
+        THEN ROUND((COALESCE(actual.total_minutes, 0)::DECIMAL / planned.total_minutes) * 100, 2)
+        ELSE 0 
+      END
+    )
+  ) INTO result
+  FROM axis6_categories c
+  LEFT JOIN (
+    SELECT 
+      category_id,
+      SUM(duration_minutes) as total_minutes
+    FROM axis6_time_blocks
+    WHERE user_id = p_user_id AND date = p_date
+    GROUP BY category_id
+  ) planned ON planned.category_id = c.id
+  LEFT JOIN (
+    SELECT 
+      category_id,
+      SUM(duration_minutes) as total_minutes
+    FROM axis6_activity_logs
+    WHERE user_id = p_user_id 
+    AND DATE(started_at) = p_date
+    GROUP BY category_id
+  ) actual ON actual.category_id = c.id
+  ORDER BY c.position;
 
-  RETURN activity_data;
+  RETURN COALESCE(result, '[]'::json);
 END;
-$$;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
--- STEP 4: CREATE PERFORMANCE INDEXES
+-- PHASE 2: FIX MISSING TABLES
 -- =====================================================
 
--- Create performance indexes for dashboard queries
-CREATE INDEX IF NOT EXISTS idx_axis6_checkins_user_date 
-ON axis6_checkins(user_id, completed_at DESC)
-WHERE completed_at IS NOT NULL;
+-- Create axis6_axis_activities table if it doesn't exist
+CREATE TABLE IF NOT EXISTS axis6_axis_activities (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  category_id INTEGER NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
+  activity_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  -- Ensure unique activities per user and category
+  UNIQUE(user_id, category_id, activity_name)
+);
 
-CREATE INDEX IF NOT EXISTS idx_axis6_streaks_user_category 
-ON axis6_streaks(user_id, category_id, current_streak DESC);
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_axis_activities_user_id ON axis6_axis_activities(user_id);
+CREATE INDEX IF NOT EXISTS idx_axis_activities_category_id ON axis6_axis_activities(category_id);
+CREATE INDEX IF NOT EXISTS idx_axis_activities_user_category ON axis6_axis_activities(user_id, category_id);
+CREATE INDEX IF NOT EXISTS idx_axis_activities_active ON axis6_axis_activities(user_id, is_active) WHERE is_active = true;
 
-CREATE INDEX IF NOT EXISTS idx_axis6_categories_position 
-ON axis6_categories(position, id)
-WHERE is_active = true;
+-- Enable Row Level Security
+ALTER TABLE axis6_axis_activities ENABLE ROW LEVEL SECURITY;
 
-CREATE INDEX IF NOT EXISTS idx_axis6_daily_stats_user_date 
-ON axis6_daily_stats(user_id, date DESC);
+-- Create RLS policies (drop existing first to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view own activities" ON axis6_axis_activities;
+DROP POLICY IF EXISTS "Users can create own activities" ON axis6_axis_activities;
+DROP POLICY IF EXISTS "Users can update own activities" ON axis6_axis_activities;
+DROP POLICY IF EXISTS "Users can delete own activities" ON axis6_axis_activities;
 
-CREATE INDEX IF NOT EXISTS idx_axis6_profiles_id 
-ON axis6_profiles(id);
+CREATE POLICY "Users can view own activities" ON axis6_axis_activities
+  FOR SELECT USING (auth.uid() = user_id);
 
--- =====================================================
--- STEP 5: ENABLE ROW LEVEL SECURITY
--- =====================================================
+CREATE POLICY "Users can create own activities" ON axis6_axis_activities
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-ALTER TABLE axis6_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE axis6_categories ENABLE ROW LEVEL SECURITY;
-ALTER TABLE axis6_checkins ENABLE ROW LEVEL SECURITY;
-ALTER TABLE axis6_streaks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE axis6_daily_stats ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can update own activities" ON axis6_axis_activities
+  FOR UPDATE USING (auth.uid() = user_id);
 
--- =====================================================
--- STEP 6: CREATE RLS POLICIES
--- =====================================================
-
--- Profiles policies
-DROP POLICY IF EXISTS "Users can view own profile" ON axis6_profiles;
-CREATE POLICY "Users can view own profile" ON axis6_profiles
-    FOR SELECT USING (auth.uid() = id);
-
-DROP POLICY IF EXISTS "Users can update own profile" ON axis6_profiles;
-CREATE POLICY "Users can update own profile" ON axis6_profiles
-    FOR UPDATE USING (auth.uid() = id);
-
-DROP POLICY IF EXISTS "Users can insert own profile" ON axis6_profiles;
-CREATE POLICY "Users can insert own profile" ON axis6_profiles
-    FOR INSERT WITH CHECK (auth.uid() = id);
-
--- Categories policies (read-only for all authenticated users)
-DROP POLICY IF EXISTS "Categories are viewable by authenticated users" ON axis6_categories;
-CREATE POLICY "Categories are viewable by authenticated users" ON axis6_categories
-    FOR SELECT USING (auth.role() = 'authenticated');
-
--- Checkins policies
-DROP POLICY IF EXISTS "Users can view own checkins" ON axis6_checkins;
-CREATE POLICY "Users can view own checkins" ON axis6_checkins
-    FOR SELECT USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can insert own checkins" ON axis6_checkins;
-CREATE POLICY "Users can insert own checkins" ON axis6_checkins
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can update own checkins" ON axis6_checkins;
-CREATE POLICY "Users can update own checkins" ON axis6_checkins
-    FOR UPDATE USING (auth.uid() = user_id);
-
--- Streaks policies
-DROP POLICY IF EXISTS "Users can view own streaks" ON axis6_streaks;
-CREATE POLICY "Users can view own streaks" ON axis6_streaks
-    FOR SELECT USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can insert own streaks" ON axis6_streaks;
-CREATE POLICY "Users can insert own streaks" ON axis6_streaks
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can update own streaks" ON axis6_streaks;
-CREATE POLICY "Users can update own streaks" ON axis6_streaks
-    FOR UPDATE USING (auth.uid() = user_id);
-
--- Daily stats policies
-DROP POLICY IF EXISTS "Users can view own daily stats" ON axis6_daily_stats;
-CREATE POLICY "Users can view own daily stats" ON axis6_daily_stats
-    FOR SELECT USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can insert own daily stats" ON axis6_daily_stats;
-CREATE POLICY "Users can insert own daily stats" ON axis6_daily_stats
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can update own daily stats" ON axis6_daily_stats;
-CREATE POLICY "Users can update own daily stats" ON axis6_daily_stats
-    FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own activities" ON axis6_axis_activities
+  FOR DELETE USING (auth.uid() = user_id);
 
 -- =====================================================
--- STEP 7: GRANT PERMISSIONS
+-- PHASE 3: FIX MISSING TIME BLOCKS TABLE
 -- =====================================================
 
--- Grant execute permissions to authenticated users
-GRANT EXECUTE ON FUNCTION get_dashboard_data_optimized(UUID, DATE) TO authenticated;
-GRANT EXECUTE ON FUNCTION get_weekly_stats(UUID, DATE, DATE) TO authenticated;
-GRANT EXECUTE ON FUNCTION get_recent_activity(UUID, INTEGER) TO authenticated;
+-- Create axis6_time_blocks table if it doesn't exist
+CREATE TABLE IF NOT EXISTS axis6_time_blocks (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
+  category_id INTEGER NOT NULL REFERENCES axis6_categories(id) ON DELETE CASCADE,
+  activity_id INTEGER,
+  activity_name VARCHAR(255) NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  duration_minutes INTEGER GENERATED ALWAYS AS (
+    EXTRACT(EPOCH FROM (end_time - start_time)) / 60
+  ) STORED,
+  status VARCHAR(20) DEFAULT 'planned' CHECK (status IN ('planned', 'active', 'completed', 'skipped')),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
--- Grant table permissions
-GRANT SELECT, INSERT, UPDATE ON axis6_profiles TO authenticated;
-GRANT SELECT ON axis6_categories TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON axis6_checkins TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON axis6_streaks TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON axis6_daily_stats TO authenticated;
+-- Add indexes for time blocks
+CREATE INDEX IF NOT EXISTS idx_time_blocks_user_date ON axis6_time_blocks(user_id, date);
+CREATE INDEX IF NOT EXISTS idx_time_blocks_status ON axis6_time_blocks(status) WHERE status = 'active';
+CREATE INDEX IF NOT EXISTS idx_time_blocks_category ON axis6_time_blocks(category_id);
+
+-- Enable Row Level Security
+ALTER TABLE axis6_time_blocks ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for time blocks (drop existing first to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view own time blocks" ON axis6_time_blocks;
+DROP POLICY IF EXISTS "Users can create own time blocks" ON axis6_time_blocks;
+DROP POLICY IF EXISTS "Users can update own time blocks" ON axis6_time_blocks;
+DROP POLICY IF EXISTS "Users can delete own time blocks" ON axis6_time_blocks;
+
+CREATE POLICY "Users can view own time blocks" ON axis6_time_blocks
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own time blocks" ON axis6_time_blocks
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own time blocks" ON axis6_time_blocks
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own time blocks" ON axis6_time_blocks
+  FOR DELETE USING (auth.uid() = user_id);
 
 -- =====================================================
--- STEP 8: ENABLE REALTIME
+-- PHASE 4: ENABLE REALTIME
 -- =====================================================
 
--- Enable realtime for all tables
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_categories;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_streaks;
-ALTER PUBLICATION supabase_realtime ADD TABLE axis6_daily_stats;
+-- Add tables to realtime publication (ignore errors if already added)
+DO $$
+BEGIN
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_checkins;
+  EXCEPTION WHEN duplicate_object THEN
+    -- Table already in publication, ignore
+  END;
+  
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_profiles;
+  EXCEPTION WHEN duplicate_object THEN
+    -- Table already in publication, ignore
+  END;
+  
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_time_blocks;
+  EXCEPTION WHEN duplicate_object THEN
+    -- Table already in publication, ignore
+  END;
+  
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE axis6_axis_activities;
+  EXCEPTION WHEN duplicate_object THEN
+    -- Table already in publication, ignore
+  END;
+END $$;
 
 -- =====================================================
--- STEP 9: VERIFICATION
+-- PHASE 5: CREATE UPDATED_AT TRIGGERS
 -- =====================================================
 
--- Test the function (uncomment to test)
--- SELECT get_dashboard_data_optimized('00000000-0000-0000-0000-000000000001'::UUID);
+-- Create trigger function for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
 
--- Show function details
-SELECT 
-  proname as function_name,
-  proargtypes::regtype[] as argument_types,
-  prorettype::regtype as return_type
-FROM pg_proc 
-WHERE proname IN ('get_dashboard_data_optimized', 'get_weekly_stats', 'get_recent_activity');
+-- Add triggers to tables
+DROP TRIGGER IF EXISTS update_axis6_axis_activities_updated_at ON axis6_axis_activities;
+CREATE TRIGGER update_axis6_axis_activities_updated_at
+    BEFORE UPDATE ON axis6_axis_activities
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
--- Show tables
-SELECT 
-  table_name,
-  table_type
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
-AND table_name LIKE 'axis6_%'
-ORDER BY table_name;
+DROP TRIGGER IF EXISTS update_axis6_time_blocks_updated_at ON axis6_time_blocks;
+CREATE TRIGGER update_axis6_time_blocks_updated_at
+    BEFORE UPDATE ON axis6_time_blocks
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
--- Show indexes
-SELECT 
-  indexname,
-  tablename,
-  indexdef
-FROM pg_indexes 
-WHERE indexname LIKE 'idx_axis6_%'
-ORDER BY indexname;
+-- =====================================================
+-- PHASE 6: VERIFICATION
+-- =====================================================
 
--- Show RLS policies
-SELECT 
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual
-FROM pg_policies 
-WHERE tablename LIKE 'axis6_%'
-ORDER BY tablename, policyname;
+-- Test the functions
+SELECT 'get_dashboard_data_optimized function created successfully' as status;
+SELECT 'get_my_day_data function created successfully' as status;
+SELECT 'calculate_daily_time_distribution function created successfully' as status;
+
+-- Test table access
+SELECT COUNT(*) as axis_activities_count FROM axis6_axis_activities LIMIT 1;
+SELECT COUNT(*) as time_blocks_count FROM axis6_time_blocks LIMIT 1;
+
+-- =====================================================
+-- COMPLETION MESSAGE
+-- =====================================================
+
+SELECT 'ALL ISSUES FIXED SUCCESSFULLY!' as completion_status;

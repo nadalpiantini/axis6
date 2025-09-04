@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles,
@@ -16,28 +15,25 @@ import {
   Award
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAIRecommendations } from '@/lib/hooks/useAIPersonalization'
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
-
+import { getCategoryName } from '@/lib/utils/i18n'
 interface PersonalizedRecommendationsProps {
   className?: string
   categoryId?: number
   showGoals?: boolean
 }
-
 interface ActivityFilters {
   energy_level?: 'low' | 'medium' | 'high'
   social_preference?: 'solo' | 'small_group' | 'large_group'
   time_available?: 'quick' | 'moderate' | 'extended'
   current_mood?: number
 }
-
 export function PersonalizedRecommendations({
   className,
   categoryId,
@@ -54,19 +50,15 @@ export function PersonalizedRecommendations({
     activityError,
     goalError
   } = useAIRecommendations()
-
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryId?.toString() || '')
   const [filters, setFilters] = useState<ActivityFilters>({})
   const [showFilters, setShowFilters] = useState(false)
-
   const categories = categoriesData || []
-
   useEffect(() => {
     if (categoryId && categoryId.toString() !== selectedCategory) {
       setSelectedCategory(categoryId.toString())
     }
   }, [categoryId, selectedCategory])
-
   useEffect(() => {
     // Auto-load recommendations for first category if none selected
     if (!selectedCategory && categories.length > 0) {
@@ -75,29 +67,23 @@ export function PersonalizedRecommendations({
       loadActivityRecommendations(firstCategory.id.toString())
     }
   }, [categories, selectedCategory])
-
   const loadActivityRecommendations = (catId: string) => {
     if (!catId) return
-
     getActivityRecommendations({
       category_id: catId,
       ...filters
     })
   }
-
   const loadGoalRecommendations = (timeframe: 'weekly' | 'monthly' = 'weekly') => {
     getGoalRecommendations({ timeframe })
   }
-
   const handleCategoryChange = (catId: string) => {
     setSelectedCategory(catId)
     loadActivityRecommendations(catId)
   }
-
   const handleFilterChange = (key: keyof ActivityFilters, value: any) => {
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
-
     if (selectedCategory) {
       getActivityRecommendations({
         category_id: selectedCategory,
@@ -105,19 +91,16 @@ export function PersonalizedRecommendations({
       })
     }
   }
-
   const getDifficultyColor = (difficulty: number) => {
     if (difficulty <= 2) return 'text-green-600 bg-green-100'
     if (difficulty <= 4) return 'text-yellow-600 bg-yellow-100'
     return 'text-red-600 bg-red-100'
   }
-
   const getDifficultyLabel = (difficulty: number) => {
     if (difficulty <= 2) return 'Easy'
     if (difficulty <= 4) return 'Medium'
     return 'Hard'
   }
-
   const getEnergyIcon = (level: string) => {
     switch (level) {
       case 'low': return '🌱'
@@ -126,7 +109,6 @@ export function PersonalizedRecommendations({
       default: return '✨'
     }
   }
-
   const getSocialIcon = (social: string) => {
     switch (social) {
       case 'solo': return '🧘'
@@ -135,7 +117,6 @@ export function PersonalizedRecommendations({
       default: return '🤝'
     }
   }
-
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Activity Recommendations */}
@@ -164,16 +145,12 @@ export function PersonalizedRecommendations({
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: category.color }}
                       />
-                      {typeof category.name === 'object'
-                        ? (category.name as any).en || category.slug
-                        : category.name
-                      }
+                      {getCategoryName(category, 'en')}
                     </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-
             <Button
               variant="outline"
               size="sm"
@@ -181,7 +158,6 @@ export function PersonalizedRecommendations({
             >
               Filters {showFilters ? '▼' : '▶'}
             </Button>
-
             <Button
               variant="outline"
               size="sm"
@@ -196,7 +172,6 @@ export function PersonalizedRecommendations({
               Refresh
             </Button>
           </div>
-
           {/* Filters */}
           <AnimatePresence>
             {showFilters && (
@@ -223,7 +198,6 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Social Setting</label>
                   <Select
@@ -241,7 +215,6 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Time Available</label>
                   <Select
@@ -259,7 +232,6 @@ export function PersonalizedRecommendations({
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <label className="text-xs font-medium text-gray-700 mb-2 block">Current Mood (1-5)</label>
                   <Select
@@ -282,7 +254,6 @@ export function PersonalizedRecommendations({
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Activity Results */}
           {isLoadingActivities ? (
             <div className="space-y-4">
@@ -335,7 +306,6 @@ export function PersonalizedRecommendations({
                         {getDifficultyLabel(activity.difficulty)}
                       </Badge>
                     </div>
-
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-gray-500" />
@@ -354,13 +324,11 @@ export function PersonalizedRecommendations({
                         <span>{Math.round(activity.temperament_fit_score * 100)}% fit</span>
                       </div>
                     </div>
-
                     <div className="mb-4">
                       <p className="text-sm text-purple-700 bg-purple-50 p-3 rounded">
                         💡 {activity.personalization_reason}
                       </p>
                     </div>
-
                     {activity.benefits && activity.benefits.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {activity.benefits.map((benefit: string, benefitIndex: number) => (
@@ -370,7 +338,6 @@ export function PersonalizedRecommendations({
                         ))}
                       </div>
                     )}
-
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">Match Score:</span>
@@ -389,7 +356,6 @@ export function PersonalizedRecommendations({
                   </motion.div>
                 ))}
               </AnimatePresence>
-
               {activityData.data.meta && (
                 <div className="text-center text-xs text-gray-500 pt-4 border-t">
                   Generated in {activityData.data.meta.generation_time_ms}ms •
@@ -414,7 +380,6 @@ export function PersonalizedRecommendations({
           ) : null}
         </CardContent>
       </Card>
-
       {/* Goal Recommendations */}
       {showGoals && (
         <Card>
@@ -446,7 +411,6 @@ export function PersonalizedRecommendations({
                 Monthly Goals
               </Button>
             </div>
-
             {isLoadingGoals ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
@@ -489,7 +453,6 @@ export function PersonalizedRecommendations({
                         </Badge>
                       </div>
                     </div>
-
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">Success Probability:</span>

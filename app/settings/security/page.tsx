@@ -1,5 +1,4 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import {
   Lock,
@@ -31,11 +30,9 @@ import {
   Ban
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { SettingsSection, SettingItem, SettingGroup } from '@/components/settings/SettingsSection'
 import { useUser } from '@/lib/react-query/hooks'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface SecuritySettings {
   // Password & Authentication
@@ -44,33 +41,28 @@ interface SecuritySettings {
   two_factor_method: 'sms' | 'email' | 'authenticator'
   biometric_enabled: boolean
   passkey_enabled: boolean
-
   // Session Management
   session_timeout: number // minutes
   concurrent_sessions_limit: number
   auto_logout_inactive: boolean
   remember_device_enabled: boolean
-
   // Security Monitoring
   login_alerts_enabled: boolean
   suspicious_activity_alerts: boolean
   new_device_alerts: boolean
   location_based_alerts: boolean
   failed_login_lockout: boolean
-
   // Account Protection
   account_recovery_email: string
   account_recovery_phone: string
   emergency_contact_enabled: boolean
   backup_codes_generated: boolean
-
   // Advanced Security
   ip_whitelist_enabled: boolean
   api_access_enabled: boolean
   data_breach_monitoring: boolean
   security_key_required: boolean
 }
-
 interface ActiveSession {
   id: string
   device: string
@@ -80,7 +72,6 @@ interface ActiveSession {
   last_active: string
   current: boolean
 }
-
 interface SecurityEvent {
   id: string
   type: 'login' | 'logout' | 'password_change' | 'failed_login' | 'new_device' | 'suspicious'
@@ -91,7 +82,6 @@ interface SecurityEvent {
   device: string
   risk_level: 'low' | 'medium' | 'high'
 }
-
 export default function SecuritySettingsPage() {
   const { data: user } = useUser()
   const [settings, setSettings] = useState<SecuritySettings>({
@@ -101,33 +91,28 @@ export default function SecuritySettingsPage() {
     two_factor_method: 'authenticator',
     biometric_enabled: false,
     passkey_enabled: false,
-
     // Session Management
     session_timeout: 30,
     concurrent_sessions_limit: 3,
     auto_logout_inactive: true,
     remember_device_enabled: true,
-
     // Security Monitoring
     login_alerts_enabled: true,
     suspicious_activity_alerts: true,
     new_device_alerts: true,
     location_based_alerts: false,
     failed_login_lockout: true,
-
     // Account Protection
     account_recovery_email: user?.email || '',
     account_recovery_phone: '',
     emergency_contact_enabled: false,
     backup_codes_generated: true,
-
     // Advanced Security
     ip_whitelist_enabled: false,
     api_access_enabled: false,
     data_breach_monitoring: true,
     security_key_required: false
   })
-
   const [activeSessions] = useState<ActiveSession[]>([
     {
       id: '1',
@@ -157,7 +142,6 @@ export default function SecuritySettingsPage() {
       current: false
     }
   ])
-
   const [securityEvents] = useState<SecurityEvent[]>([
     {
       id: '1',
@@ -190,17 +174,14 @@ export default function SecuritySettingsPage() {
       risk_level: 'low'
     }
   ])
-
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
   const handleSettingChange = (key: keyof SecuritySettings, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }))
     setHasChanges(true)
   }
-
   const handleSave = async () => {
     setIsSaving(true)
     try {
@@ -208,51 +189,38 @@ export default function SecuritySettingsPage() {
       // await updateSecuritySettings(settings)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-
       setHasChanges(false)
     } catch (error) {
       handleError(error, {
       operation: 'settings_operation', component: 'page',
-
         userMessage: 'Settings operation failed. Please try again.'
-
       })
     } finally {
       setIsSaving(false)
     }
   }
-
   const handleReset = () => {
     setHasChanges(false)
   }
-
   const getSecurityScore = () => {
     let score = 0
-
     // Password strength
     if (settings.password_strength === 'strong') score += 25
     else if (settings.password_strength === 'medium') score += 15
     else score += 5
-
     // Two-factor authentication
     if (settings.two_factor_enabled) score += 25
-
     // Biometric/Passkey
     if (settings.biometric_enabled || settings.passkey_enabled) score += 15
-
     // Security monitoring
     if (settings.login_alerts_enabled) score += 10
     if (settings.suspicious_activity_alerts) score += 10
-
     // Account protection
     if (settings.backup_codes_generated) score += 10
     if (settings.account_recovery_email) score += 5
-
     return Math.min(score, 100)
   }
-
   const securityScore = getSecurityScore()
-
   const timeoutOptions = [
     { value: 5, label: '5 minutes' },
     { value: 15, label: '15 minutes' },
@@ -261,7 +229,6 @@ export default function SecuritySettingsPage() {
     { value: 240, label: '4 hours' },
     { value: 0, label: 'Never' }
   ]
-
   const sessionLimitOptions = [
     { value: 1, label: '1 device' },
     { value: 3, label: '3 devices (Recommended)' },
@@ -269,13 +236,11 @@ export default function SecuritySettingsPage() {
     { value: 10, label: '10 devices' },
     { value: 0, label: 'Unlimited' }
   ]
-
   const twoFactorOptions = [
     { value: 'authenticator', label: 'Authenticator App (Recommended)' },
     { value: 'sms', label: 'SMS Text Message' },
     { value: 'email', label: 'Email Code' }
   ]
-
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'low': return 'text-green-400'
@@ -284,7 +249,6 @@ export default function SecuritySettingsPage() {
       default: return 'text-gray-400'
     }
   }
-
   const getRiskBgColor = (level: string) => {
     switch (level) {
       case 'low': return 'bg-green-500/10 border-green-500/20'
@@ -293,7 +257,6 @@ export default function SecuritySettingsPage() {
       default: return 'bg-gray-500/10 border-gray-500/20'
     }
   }
-
   return (
     <SettingsLayout currentSection="security">
       {/* Security Dashboard */}
@@ -339,7 +302,6 @@ export default function SecuritySettingsPage() {
               </div>
             </div>
           </div>
-
           {/* Quick Stats */}
           <div className="md:col-span-2 grid grid-cols-2 gap-4">
             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
@@ -351,7 +313,6 @@ export default function SecuritySettingsPage() {
                 </div>
               </div>
             </div>
-
             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
               <div className="flex items-center gap-3">
                 <Monitor className="w-5 h-5 text-blue-400" />
@@ -361,7 +322,6 @@ export default function SecuritySettingsPage() {
                 </div>
               </div>
             </div>
-
             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
               <div className="flex items-center gap-3">
                 <Activity className="w-5 h-5 text-purple-400" />
@@ -371,7 +331,6 @@ export default function SecuritySettingsPage() {
                 </div>
               </div>
             </div>
-
             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-orange-400" />
@@ -383,7 +342,6 @@ export default function SecuritySettingsPage() {
             </div>
           </div>
         </div>
-
         {/* Security Recommendations */}
         {securityScore < 90 && (
           <div className="mt-6 p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/20">
@@ -403,7 +361,6 @@ export default function SecuritySettingsPage() {
           </div>
         )}
       </SettingsSection>
-
       {/* Password & Authentication */}
       <SettingsSection
         title="Password & Authentication"
@@ -422,7 +379,6 @@ export default function SecuritySettingsPage() {
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-white mb-2">New Password</label>
                 <div className="relative">
@@ -440,7 +396,6 @@ export default function SecuritySettingsPage() {
                   </button>
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-white mb-2">Confirm New Password</label>
                 <div className="relative">
@@ -458,13 +413,11 @@ export default function SecuritySettingsPage() {
                   </button>
                 </div>
               </div>
-
               <button className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium">
                 Update Password
               </button>
             </div>
           </SettingGroup>
-
           <SettingGroup title="Multi-Factor Authentication" description="Add extra layers of security">
             <SettingItem
               label="Two-Factor Authentication"
@@ -473,7 +426,6 @@ export default function SecuritySettingsPage() {
               value={settings.two_factor_enabled}
               onChange={(value) => handleSettingChange('two_factor_enabled', value)}
             />
-
             {settings.two_factor_enabled && (
               <SettingItem
                 label="2FA Method"
@@ -484,7 +436,6 @@ export default function SecuritySettingsPage() {
                 options={twoFactorOptions}
               />
             )}
-
             <SettingItem
               label="Biometric Authentication"
               description="Use fingerprint, Face ID, or Windows Hello for quick access"
@@ -492,7 +443,6 @@ export default function SecuritySettingsPage() {
               value={settings.biometric_enabled}
               onChange={(value) => handleSettingChange('biometric_enabled', value)}
             />
-
             <SettingItem
               label="Passkey Authentication"
               description="Use modern passkey technology for secure, passwordless login"
@@ -500,14 +450,12 @@ export default function SecuritySettingsPage() {
               value={settings.passkey_enabled}
               onChange={(value) => handleSettingChange('passkey_enabled', value)}
             />
-
             {settings.two_factor_enabled && (
               <div className="mt-4 space-y-3">
                 <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 rounded-lg transition-colors">
                   <QrCode className="w-4 h-4" />
                   Setup Authenticator App
                 </button>
-
                 <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 rounded-lg transition-colors">
                   <Download className="w-4 h-4" />
                   Download Backup Codes
@@ -517,7 +465,6 @@ export default function SecuritySettingsPage() {
           </SettingGroup>
         </div>
       </SettingsSection>
-
       {/* Active Sessions */}
       <SettingsSection
         title="Active Sessions"
@@ -534,7 +481,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('session_timeout', parseInt(value))}
             options={timeoutOptions}
           />
-
           <SettingItem
             label="Concurrent Session Limit"
             description="Maximum number of devices that can be logged in simultaneously"
@@ -543,7 +489,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('concurrent_sessions_limit', parseInt(value))}
             options={sessionLimitOptions}
           />
-
           <SettingItem
             label="Remember Device"
             description="Stay logged in on trusted devices for 30 days"
@@ -552,7 +497,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('remember_device_enabled', value)}
           />
         </SettingGroup>
-
         <div className="mt-6">
           <h4 className="font-medium text-white mb-4">Current Sessions ({activeSessions.length})</h4>
           <div className="space-y-3">
@@ -590,14 +534,12 @@ export default function SecuritySettingsPage() {
               </div>
             ))}
           </div>
-
           <button className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 rounded-lg transition-colors">
             <Ban className="w-4 h-4" />
             End All Other Sessions
           </button>
         </div>
       </SettingsSection>
-
       {/* Security Monitoring */}
       <SettingsSection
         title="Security Monitoring"
@@ -614,7 +556,6 @@ export default function SecuritySettingsPage() {
               value={settings.login_alerts_enabled}
               onChange={(value) => handleSettingChange('login_alerts_enabled', value)}
             />
-
             <SettingItem
               label="Suspicious Activity Alerts"
               description="Alert me when unusual activity is detected on my account"
@@ -622,7 +563,6 @@ export default function SecuritySettingsPage() {
               value={settings.suspicious_activity_alerts}
               onChange={(value) => handleSettingChange('suspicious_activity_alerts', value)}
             />
-
             <SettingItem
               label="New Device Alerts"
               description="Notify me when a new device accesses my account"
@@ -630,7 +570,6 @@ export default function SecuritySettingsPage() {
               value={settings.new_device_alerts}
               onChange={(value) => handleSettingChange('new_device_alerts', value)}
             />
-
             <SettingItem
               label="Location-Based Alerts"
               description="Alert me when logins happen from unusual locations"
@@ -639,7 +578,6 @@ export default function SecuritySettingsPage() {
               onChange={(value) => handleSettingChange('location_based_alerts', value)}
             />
           </SettingGroup>
-
           <SettingGroup title="Account Protection" description="Automatic protection measures">
             <SettingItem
               label="Failed Login Lockout"
@@ -648,7 +586,6 @@ export default function SecuritySettingsPage() {
               value={settings.failed_login_lockout}
               onChange={(value) => handleSettingChange('failed_login_lockout', value)}
             />
-
             <SettingItem
               label="Data Breach Monitoring"
               description="Monitor if your email appears in known data breaches"
@@ -658,7 +595,6 @@ export default function SecuritySettingsPage() {
             />
           </SettingGroup>
         </div>
-
         <div className="mt-6">
           <h4 className="font-medium text-white mb-4">Recent Security Events</h4>
           <div className="space-y-3">
@@ -689,14 +625,12 @@ export default function SecuritySettingsPage() {
               </div>
             ))}
           </div>
-
           <button className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 rounded-lg transition-colors">
             <Activity className="w-4 h-4" />
             View Full Security Log
           </button>
         </div>
       </SettingsSection>
-
       {/* Account Recovery */}
       <SettingsSection
         title="Account Recovery"
@@ -715,7 +649,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('account_recovery_email', value)}
             placeholder="recovery@example.com"
           />
-
           <SettingItem
             label="Recovery Phone"
             description="Phone number for SMS-based account recovery"
@@ -724,7 +657,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('account_recovery_phone', value)}
             placeholder="+1 (555) 123-4567"
           />
-
           <SettingItem
             label="Emergency Contact"
             description="Allow a trusted contact to help recover your account"
@@ -733,20 +665,17 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('emergency_contact_enabled', value)}
           />
         </SettingGroup>
-
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <button className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 rounded-lg transition-colors">
             <Download className="w-4 h-4" />
             Generate New Backup Codes
           </button>
-
           <button className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 rounded-lg transition-colors">
             <Mail className="w-4 h-4" />
             Test Recovery Email
           </button>
         </div>
       </SettingsSection>
-
       {/* Advanced Security */}
       <SettingsSection
         title="Advanced Security"
@@ -764,7 +693,6 @@ export default function SecuritySettingsPage() {
             value={settings.ip_whitelist_enabled}
             onChange={(value) => handleSettingChange('ip_whitelist_enabled', value)}
           />
-
           <SettingItem
             label="API Access"
             description="Allow third-party applications to access your data via API"
@@ -772,7 +700,6 @@ export default function SecuritySettingsPage() {
             value={settings.api_access_enabled}
             onChange={(value) => handleSettingChange('api_access_enabled', value)}
           />
-
           <SettingItem
             label="Hardware Security Key Required"
             description="Require a physical security key for the highest level of protection"
@@ -781,7 +708,6 @@ export default function SecuritySettingsPage() {
             onChange={(value) => handleSettingChange('security_key_required', value)}
           />
         </SettingGroup>
-
         <div className="mt-6 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-xl border border-amber-500/20">
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-amber-400 mt-0.5" />

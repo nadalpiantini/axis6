@@ -1,13 +1,9 @@
-
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { smartNotificationService } from '@/lib/ai/smart-notifications'
 import { logger } from '@/lib/utils/logger';
-
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
 /**
  * GET /api/ai/smart-notifications
  * Get pending smart notifications for the current user
@@ -15,7 +11,6 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -24,12 +19,10 @@ export async function GET(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     // Get query parameters
     const { searchParams } = new URL(_request.url)
     const includeDelivered = searchParams.get('include_delivered') === 'true'
     const limit = parseInt(searchParams.get('limit') || '10')
-
     // Fetch notifications from database
     let query = supabase
       .from('axis6_smart_notifications')
@@ -38,17 +31,13 @@ export async function GET(_request: NextRequest) {
       .order('priority', { ascending: false })
       .order('scheduled_for', { ascending: true })
       .limit(limit)
-
     if (!includeDelivered) {
       query = query.eq('delivered', false)
     }
-
     const { data: notifications, error } = await query
-
     if (error) {
       throw error
     }
-
     return NextResponse.json({
       success: true,
       data: {
@@ -58,7 +47,6 @@ export async function GET(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Smart notifications fetch error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to fetch notifications',
@@ -68,7 +56,6 @@ export async function GET(_request: NextRequest) {
     )
   }
 }
-
 /**
  * POST /api/ai/smart-notifications/generate
  * Generate new personalized notifications for the current user
@@ -76,7 +63,6 @@ export async function GET(_request: NextRequest) {
 export async function POST(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -85,18 +71,14 @@ export async function POST(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await _request.json()
     const {
       lookAheadHours = 24,
       force_regenerate: _force_regenerate = false,
       context = null
     } = body
-
     const startTime = Date.now()
-
     let notifications = []
-
     if (context) {
       // Generate contextual notifications
       notifications = await smartNotificationService.generateContextualNotifications(
@@ -110,9 +92,7 @@ export async function POST(_request: NextRequest) {
         lookAheadHours
       )
     }
-
     const responseTime = Date.now() - startTime
-
     // Track usage
     await supabase.rpc('track_ai_feature_usage', {
       target_user_id: user.id,
@@ -123,7 +103,6 @@ export async function POST(_request: NextRequest) {
         ? notifications.reduce((sum, n) => sum + n.personalization_score, 0) / notifications.length
         : null
     })
-
     return NextResponse.json({
       success: true,
       data: {
@@ -140,7 +119,6 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     logger.error('Smart notifications generation error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to generate notifications',
@@ -150,7 +128,6 @@ export async function POST(_request: NextRequest) {
     )
   }
 }
-
 /**
  * PATCH /api/ai/smart-notifications/:id
  * Mark notification as read or delivered
@@ -158,7 +135,6 @@ export async function POST(_request: NextRequest) {
 export async function PATCH(_request: NextRequest) {
   try {
     const supabase = await createClient()
-
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -167,23 +143,19 @@ export async function PATCH(_request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await _request.json()
     const {
       notification_id,
       action, // 'mark_read', 'mark_delivered', 'dismiss'
       feedback = null
     } = body
-
     if (!notification_id || !action) {
       return NextResponse.json(
         { error: 'notification_id and action are required' },
         { status: 400 }
       )
     }
-
     let updateData: any = {}
-
     switch (action) {
       case 'mark_read':
         updateData = { read: true, read_at: new Date().toISOString() }
@@ -200,18 +172,15 @@ export async function PATCH(_request: NextRequest) {
           { status: 400 }
         )
     }
-
     // Update notification
     const { error: updateError } = await supabase
       .from('axis6_smart_notifications')
       .update(updateData)
       .eq('id', notification_id)
       .eq('user_id', user.id)
-
     if (updateError) {
       throw updateError
     }
-
     // Store feedback if provided
     if (feedback) {
       await supabase
@@ -228,14 +197,12 @@ export async function PATCH(_request: NextRequest) {
           time_to_action: feedback.time_to_action
         })
     }
-
     return NextResponse.json({
       success: true,
       message: `Notification ${action} successfully`
     })
   } catch (error) {
     logger.error('Notification update error:', error)
-
     return NextResponse.json(
       {
         error: 'Failed to update notification',

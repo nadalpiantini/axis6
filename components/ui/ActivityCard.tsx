@@ -1,8 +1,6 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Clock, Zap, Target } from 'lucide-react'
-
 interface ActivityCardProps {
   icon: string
   title: string
@@ -12,7 +10,6 @@ interface ActivityCardProps {
   difficulty?: 'easy' | 'medium' | 'hard'
   onClick?: () => void
 }
-
 export default function ActivityCard({
   icon,
   title,
@@ -43,7 +40,6 @@ export default function ActivityCard({
         )
     }
   }
-
   return (
     <motion.div
       whileHover={{ scale: 1.02, y: -2 }}
@@ -58,7 +54,6 @@ export default function ActivityCard({
           background: `linear-gradient(135deg, ${color}40, transparent)`
         }}
       />
-
       <div className="relative p-5">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -71,25 +66,21 @@ export default function ActivityCard({
           >
             <span>{icon}</span>
           </div>
-
           <div className="flex items-center gap-2">
             {/* Duration */}
             <div className="flex items-center gap-1 text-xs text-gray-400">
               <Clock className="w-3 h-3" />
               <span>{duration}</span>
             </div>
-
             {/* Difficulty */}
             <div className="flex items-center gap-0.5" style={{ color }}>
               {getDifficultyIcon()}
             </div>
           </div>
         </div>
-
         {/* Content */}
         <h3 className="text-sm font-semibold text-white mb-1">{title}</h3>
         <p className="text-xs text-gray-400 leading-relaxed">{suggestion}</p>
-
         {/* Action button */}
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -110,7 +101,6 @@ export default function ActivityCard({
           Empezar
         </motion.button>
       </div>
-
       {/* Hover effect line */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-0.5"

@@ -1,25 +1,18 @@
 'use client'
-
 import { ReactNode } from 'react'
-
 import { reportError, initializeErrorTracking } from '@/lib/monitoring/error-tracking'
 import { logger } from '@/lib/utils/logger'
-
 import { ErrorBoundary } from './ErrorBoundary'
-
 interface GlobalErrorBoundaryProps {
   children: ReactNode
 }
-
 export function GlobalErrorBoundary({ children }: GlobalErrorBoundaryProps) {
   // Initialize error tracking on mount
   if (typeof window !== 'undefined') {
     initializeErrorTracking()
   }
-
   const handleGlobalError = (error: Error, errorInfo: any) => {
     logger.error('Global error boundary triggered', error)
-
     reportError(error, 'critical', {
       component: 'GlobalErrorBoundary',
       action: 'global_error',
@@ -35,7 +28,6 @@ export function GlobalErrorBoundary({ children }: GlobalErrorBoundaryProps) {
       },
     })
   }
-
   return (
     <ErrorBoundary onError={handleGlobalError}>
       {children}

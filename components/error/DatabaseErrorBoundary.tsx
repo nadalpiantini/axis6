@@ -1,23 +1,18 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Database, RefreshCw, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import React, { ErrorInfo, ReactNode } from 'react'
-
 import { logger } from '@/lib/utils/logger';
-
 interface Props {
   children: ReactNode
   fallback?: ReactNode
 }
-
 interface State {
   hasError: boolean
   error: Error | null
   errorInfo: ErrorInfo | null
 }
-
 export class DatabaseErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -27,7 +22,6 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
       errorInfo: null
     }
   }
-
   static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
@@ -35,15 +29,12 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
       errorInfo: null
     }
   }
-
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     logger.error('Database error boundary caught an error:', error)
-
     this.setState({
       error,
       errorInfo
     })
-
     // Report database errors
     if (typeof window !== 'undefined' && 'gtag' in window) {
       ;(window as any).gtag('event', 'exception', {
@@ -52,7 +43,6 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
       })
     }
   }
-
   handleRetry = () => {
     this.setState({
       hasError: false,
@@ -62,14 +52,12 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
     // Force a page refresh to retry database connections
     window.location.reload()
   }
-
   override render() {
     if (this.state.hasError) {
       // Use custom fallback if provided
       if (this.props.fallback) {
         return this.props.fallback
       }
-
       return (
         <div className="min-h-screen text-white flex items-center justify-center p-4">
           <div className="max-w-md w-full">
@@ -87,7 +75,6 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
                   We're having trouble connecting to our database. This might be temporary.
                 </p>
               </div>
-
               <div className="space-y-3">
                 <button
                   onClick={this.handleRetry}
@@ -96,7 +83,6 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
                   <RefreshCw className="w-4 h-4" />
                   Try Again
                 </button>
-
                 <Link
                   href="/dashboard"
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 rounded-lg transition-colors text-sm"
@@ -105,7 +91,6 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
                   Back to Dashboard
                 </Link>
               </div>
-
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="mt-4 text-left">
                   <summary className="cursor-pointer text-xs text-gray-400 mb-2">
@@ -126,11 +111,9 @@ export class DatabaseErrorBoundary extends React.Component<Props, State> {
         </div>
       )
     }
-
     return this.props.children
   }
 }
-
 // Lightweight fallback component for inline errors
 export function DatabaseErrorFallback({ error, retry }: { error?: string, retry?: () => void }) {
   return (

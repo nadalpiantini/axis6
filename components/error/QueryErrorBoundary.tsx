@@ -1,18 +1,13 @@
 'use client'
-
 import { QueryErrorResetBoundary, useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { ReactNode } from 'react'
-
 import { logger } from '@/lib/utils/logger';
-
 import { ErrorBoundary } from './ErrorBoundary'
-
 interface QueryErrorBoundaryProps {
   children: ReactNode
   fallback?: (error: Error, reset: () => void) => ReactNode
 }
-
 export function QueryErrorBoundary({ children, fallback }: QueryErrorBoundaryProps) {
   return (
     <QueryErrorResetBoundary>
@@ -38,7 +33,6 @@ export function QueryErrorBoundary({ children, fallback }: QueryErrorBoundaryPro
     </QueryErrorResetBoundary>
   )
 }
-
 function DefaultQueryErrorFallback({ onReset }: { onReset: () => void }) {
   return (
     <div className="flex items-center justify-center p-8">
@@ -63,7 +57,6 @@ function DefaultQueryErrorFallback({ onReset }: { onReset: () => void }) {
     </div>
   )
 }
-
 // Hook for resetting queries manually
 export function useQueryErrorReset() {
   const { reset } = useQueryErrorResetBoundary()

@@ -1,13 +1,11 @@
 'use client'
-
 import { Hash, Users, X, Settings, Phone, Video, Search } from 'lucide-react'
 import React from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
-
+import { getCategoryName } from '@/lib/utils/i18n'
 interface ChatHeaderProps {
   room: ChatRoomWithParticipants
   isConnected: boolean
@@ -17,7 +15,6 @@ interface ChatHeaderProps {
   onClose?: () => void
   className?: string
 }
-
 export function ChatHeader({
   room,
   isConnected,
@@ -41,7 +38,6 @@ export function ChatHeader({
         return <Hash className="h-4 w-4" />
     }
   }
-
   const getRoomTypeColor = () => {
     switch (room.type) {
       case 'category':
@@ -54,14 +50,12 @@ export function ChatHeader({
         return '#8B5CF6'
     }
   }
-
   const getStatusDot = () => {
     if (!isConnected) {
       return <div className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse" />
     }
     return <div className="h-2 w-2 rounded-full bg-green-400" />
   }
-
   return (
     <div
       className={cn(
@@ -75,14 +69,12 @@ export function ChatHeader({
         <div className="flex-shrink-0">
           {getRoomIcon()}
         </div>
-
         {/* Room Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
             <h2 className="text-lg font-semibold text-white truncate">
               {room.name}
             </h2>
-
             {room.category && (
               <Badge
                 variant="secondary"
@@ -93,14 +85,10 @@ export function ChatHeader({
                   borderColor: `${room.category.color}40`
                 }}
               >
-                {typeof room.category.name === 'object'
-                  ? room.category.name.en || room.category.name.es
-                  : room.category.name
-                }
+                {getCategoryName(room.category, 'en')}
               </Badge>
             )}
           </div>
-
           {room.description && (
             <p className="text-sm text-neutral-400 truncate mt-1">
               {room.description}
@@ -108,7 +96,6 @@ export function ChatHeader({
           )}
         </div>
       </div>
-
       {/* Status and Actions */}
       <div className="flex items-center space-x-2 flex-shrink-0">
         {/* Connection Status */}
@@ -118,7 +105,6 @@ export function ChatHeader({
             {onlineCount} online
           </span>
         </div>
-
         {/* Action Buttons */}
         {onToggleSearch && (
           <Button
@@ -131,7 +117,6 @@ export function ChatHeader({
             <Search className="h-4 w-4" />
           </Button>
         )}
-
         {room.type !== 'direct' && (
           <>
             <Button
@@ -152,7 +137,6 @@ export function ChatHeader({
             </Button>
           </>
         )}
-
         <Button
           variant="ghost"
           size="sm"
@@ -161,7 +145,6 @@ export function ChatHeader({
         >
           <Users className="h-4 w-4" />
         </Button>
-
         {onClose && (
           <Button
             variant="ghost"

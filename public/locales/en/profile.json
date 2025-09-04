@@ -1,0 +1,23 @@
+{
+  "edit_profile": "Edit Profile",
+  "personal_info": "Personal Information",
+  "bio": "Bio",
+  "experience": "Experience",
+  "skills": "Skills",
+  "portfolio": "Portfolio",
+  "contact_info": "Contact Information",
+  "phone": "Phone",
+  "website": "Website",
+  "social_media": "Social Media",
+  "instagram": "Instagram",
+  "linkedin": "LinkedIn",
+  "twitter": "Twitter",
+  "update_photo": "Update Photo",
+  "remove_photo": "Remove Photo",
+  "change_password": "Change Password",
+  "current_password": "Current Password",
+  "new_password": "New Password",
+  "confirm_password": "Confirm Password",
+  "save_changes": "Save Changes",
+  "profile_updated": "Profile Updated Successfully"
+}

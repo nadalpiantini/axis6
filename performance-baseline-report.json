@@ -1,0 +1,134 @@
+{
+  "timestamp": "2025-08-30T02:57:35.377Z",
+  "testEnvironment": "Local Development",
+  "bundleAnalysis": {
+    "totalSize": "3.66 MB",
+    "totalSizeBytes": 3834578,
+    "jsSize": "3.33 MB",
+    "jsSizeBytes": 3488530,
+    "cssSize": "92.55 KB",
+    "cssSizeBytes": 94775,
+    "mainChunkSize": "0 Bytes",
+    "mainAppChunkSize": "1.28 KB",
+    "assetCount": 191,
+    "chunkCount": 93
+  },
+  "estimatedMetrics": {
+    "ttfb": {
+      "fast3g": 400,
+      "slow3g": 800,
+      "wifi": 200,
+      "optimal": 100
+    },
+    "fcp": {
+      "fast3g": 1000,
+      "slow3g": 2000,
+      "wifi": 600,
+      "optimal": 400
+    },
+    "lcp": {
+      "fast3g": 2500,
+      "slow3g": 4000,
+      "wifi": 1200,
+      "optimal": 800
+    },
+    "cls": 0.15,
+    "totalBlockingTime": 340.6767578125,
+    "speedIndex": 900
+  },
+  "mobileMetrics": {
+    "jsParseTime": 13627.0703125,
+    "mobileLCP": 1800,
+    "estimatedMemoryUsage": 74.8941015625,
+    "touchTargetsScore": 85
+  },
+  "networkAnalysis": {
+    "totalDependencies": 51,
+    "devDependencies": 25,
+    "heavyDependencies": [
+      "@radix-ui/react-accordion",
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-scroll-area",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-switch",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-toast",
+      "@radix-ui/react-tooltip",
+      "@supabase/auth-helpers-nextjs",
+      "@supabase/ssr",
+      "@supabase/supabase-js",
+      "@tanstack/react-query",
+      "@tanstack/react-query-devtools",
+      "framer-motion",
+      "recharts"
+    ],
+    "estimatedRequests": 11
+  },
+  "optimizationOpportunities": [
+    {
+      "category": "Bundle Size",
+      "priority": "High",
+      "issue": "Bundle size exceeds 1MB",
+      "recommendation": "Implement code splitting and dynamic imports"
+    },
+    {
+      "category": "JavaScript",
+      "priority": "Medium",
+      "issue": "JavaScript bundle exceeds 512KB",
+      "recommendation": "Optimize third-party libraries and implement tree shaking"
+    },
+    {
+      "category": "Dependencies",
+      "priority": "Medium",
+      "issue": "High number of dependencies may impact bundle size",
+      "recommendation": "Audit and remove unused dependencies, consider lighter alternatives"
+    },
+    {
+      "category": "Mobile Performance",
+      "priority": "High",
+      "issue": "High JavaScript parse time on mobile devices",
+      "recommendation": "Reduce bundle size, implement code splitting, use service workers"
+    }
+  ],
+  "recommendations": [
+    {
+      "category": "Immediate Actions",
+      "items": [
+        "Run database performance test with user authentication",
+        "Implement lazy loading for heavy components (charts, modals)",
+        "Optimize bundle size with code splitting",
+        "Add performance monitoring with real user data"
+      ]
+    },
+    {
+      "category": "Short-term (1-2 weeks)",
+      "items": [
+        "Implement service worker for caching",
+        "Optimize critical CSS path",
+        "Add image optimization and lazy loading",
+        "Setup Core Web Vitals monitoring"
+      ]
+    },
+    {
+      "category": "Long-term (1+ months)",
+      "items": [
+        "Implement micro-frontends for large features",
+        "Add performance budget enforcement in CI/CD",
+        "Optimize database queries with monitoring",
+        "Implement advanced caching strategies"
+      ]
+    }
+  ],
+  "performanceScore": {
+    "score": 29,
+    "grade": "F"
+  }
+}

@@ -2,14 +2,12 @@
  * HexagonClock TypeScript Definitions
  * Unified types for both dashboard and time planning modes
  */
-
 // Clock position configuration
 export interface ClockPosition {
   hour: number;
   angle: number;
   timeRange: string;
 }
-
 // Category data for dashboard mode (completion percentages)
 export interface CompletionData {
   physical: number;
@@ -19,7 +17,6 @@ export interface CompletionData {
   spiritual: number;
   material: number;
 }
-
 // Time distribution for planning mode
 export interface TimeDistribution {
   category_id: number;
@@ -29,7 +26,6 @@ export interface TimeDistribution {
   actual_minutes: number;
   percentage: number;
 }
-
 // Time block states for planning mode
 export type TimeBlockState =
   | 'empty'          // Dashed outline at clock position
@@ -37,7 +33,6 @@ export type TimeBlockState =
   | 'active'         // Pulsing animation with progress
   | 'completed'      // Full opacity with checkmark
   | 'overflowing';   // Extended beyond planned time
-
 // Time block interface
 export interface TimeBlock {
   category_id: number;
@@ -49,7 +44,6 @@ export interface TimeBlock {
   clockPosition: ClockPosition;
   progress?: number; // 0-1 for active blocks
 }
-
 // Hexagon category configuration
 export interface HexagonCategory {
   key: 'physical' | 'mental' | 'emotional' | 'social' | 'spiritual' | 'material';
@@ -60,7 +54,6 @@ export interface HexagonCategory {
   mantra: string;
   clockPosition: ClockPosition;
 }
-
 // Resonance data from community
 export interface ResonanceData {
   axisSlug: string;
@@ -68,7 +61,6 @@ export interface ResonanceData {
   userCompleted: boolean;
   hasResonance: boolean;
 }
-
 // Pre-computed SVG paths for performance
 export interface PrecomputedSVG {
   hexagonPath: string;
@@ -77,7 +69,6 @@ export interface PrecomputedSVG {
   center: { x: number; y: number };
   radius: number;
 }
-
 // Responsive sizing configuration
 export interface ResponsiveSizing {
   size: number;
@@ -90,13 +81,11 @@ export interface ResponsiveSizing {
     time: string;
   };
 }
-
 // Hardware acceleration CSS variables
 export interface HardwareAcceleration {
   animationClasses: string;
   cssVariables: Record<string, string>;
 }
-
 // Safe area insets for notched devices
 export interface SafeAreaInsets {
   top: number;
@@ -104,7 +93,6 @@ export interface SafeAreaInsets {
   bottom: number;
   left: number;
 }
-
 // Main component props interface
 export interface HexagonClockProps {
   // Auto-detect mode based on props
@@ -119,7 +107,6 @@ export interface HexagonClockProps {
     title?: string;
     progress?: number;
   }>;
-
   // Display configuration
   size?: number | 'auto';
   showResonance?: boolean;
@@ -129,16 +116,13 @@ export interface HexagonClockProps {
   showCircadianRhythm?: boolean;      // Show circadian peak times
   showTimeBlocks?: boolean;           // Show time blocks on clock
   clockBasedPositioning?: boolean;    // Enable revolutionary positioning mode
-
   // Interaction callbacks
   onToggleAxis?: (id: string | number) => void;
   onCategoryClick?: (category: any) => void;
   onTimeBlockDrag?: (block: TimeBlock, newHour: number) => void;
-
   // Performance options
   mobileOptimized?: boolean;
   hardwareAccelerated?: boolean;
-
   // Backward compatibility
   animate?: boolean;
   isToggling?: boolean;
@@ -152,7 +136,6 @@ export interface HexagonClockProps {
   categories?: any[];
   activeTimer?: any;
 }
-
 // Internal component state
 export interface HexagonState {
   mode: 'dashboard' | 'planning' | 'unified';

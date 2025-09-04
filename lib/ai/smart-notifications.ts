@@ -1,10 +1,7 @@
 import { addMinutes, format, parseISO, isSameDay, isAfter } from 'date-fns'
-
 import { createClient } from '@/lib/supabase/client'
-
 import { behavioralAnalyzer, UserBehaviorProfile } from './behavioral-analyzer'
 import { deepseekClient } from './deepseek'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 export interface SmartNotification {
   id: string
@@ -33,7 +30,6 @@ export interface SmartNotification {
     optimal_time?: boolean
   }
 }
-
 export interface NotificationRule {
   rule_id: string
   rule_type: 'daily_reminder' | 'streak_maintenance' | 'comeback_encouragement' | 'milestone_celebration' | 'habit_reinforcement'
@@ -56,16 +52,13 @@ export interface NotificationRule {
   enabled: boolean
   priority: 'low' | 'medium' | 'high'
 }
-
 export class SmartNotificationService {
   private supabase = createClient()
   private notificationQueue: Map<string, SmartNotification[]> = new Map()
   private defaultRules: NotificationRule[] = []
-
   constructor() {
     this.initializeDefaultRules()
   }
-
   /**
    * Generate personalized notifications for a user
    */
@@ -76,53 +69,40 @@ export class SmartNotificationService {
     try {
       // Get user behavior profile
       const profile = await behavioralAnalyzer.analyzeBehavior(userId)
-
       // Get user's temperament for message personalization
       const temperament = await this.getUserTemperament(userId)
-
       // Get recent activity context
       const context = await this.getRecentActivityContext(userId)
-
       // Generate time-based notifications
       const timeBasedNotifications = await this.generateTimeBasedNotifications(
         userId, profile, temperament, lookAheadHours
       )
-
       // Generate behavior-based notifications
       const behaviorBasedNotifications = await this.generateBehaviorBasedNotifications(
         userId, profile, context, temperament
       )
-
       // Generate milestone notifications
       const milestoneNotifications = await this.generateMilestoneNotifications(
         userId, context, temperament
       )
-
       // Combine and prioritize
       const allNotifications = [
         ...timeBasedNotifications,
         ...behaviorBasedNotifications,
         ...milestoneNotifications
       ]
-
       // Apply intelligent filtering and scheduling
       const optimizedNotifications = await this.optimizeNotificationSchedule(
         allNotifications, profile
       )
-
       // Store notifications for delivery
       await this.storeNotifications(optimizedNotifications)
-
       return optimizedNotifications
     } catch (error) {
             handleError(error, {
-
               operation: 'ai_operation',
-
               component: 'smart-notifications',
-
               userMessage: 'AI operation failed. Please try again.'
-
             })
             // TODO: Replace with proper error handling
     // console.error('AI smart notifications operation failed:', error);
@@ -131,7 +111,6 @@ export class SmartNotificationService {
       return this.generateFallbackNotifications(userId)
     }
   }
-
   /**
    * Generate AI-powered contextual notifications
    */
@@ -149,66 +128,50 @@ export class SmartNotificationService {
     if (!deepseekClient.isAIEnabled()) {
       return this.generateBasicContextualNotifications(userId, context)
     }
-
     try {
       const temperament = await this.getUserTemperament(userId)
       const profile = await behavioralAnalyzer.analyzeBehavior(userId)
-
       // Build AI prompt for contextual notifications
       const prompt = this.buildContextualNotificationPrompt(context, temperament, profile)
-
       const response = await deepseekClient.generateCompletion(
         prompt,
         'You are an expert wellness coach creating personalized, contextually-aware notifications that motivate and guide users.',
         { temperature: 0.8 }
       )
-
       return this.parseAINotificationResponse(userId, response, context)
     } catch (error) {
       handleError(error, {
-
         operation: 'ai_operation',
-
         component: 'smart-notifications',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })
     // // TODO: Replace with proper error handling
     // console.error('AI smart notifications operation failed:', error);
       return this.generateBasicContextualNotifications(userId, context)
     }
   }
-
   /**
    * Generate adaptive reminders based on user patterns
    */
   async generateAdaptiveReminders(userId: string): Promise<SmartNotification[]> {
     const profile = await behavioralAnalyzer.analyzeBehavior(userId)
     const optimalTimes = await behavioralAnalyzer.predictOptimalTimes(userId)
-
     const reminders: SmartNotification[] = []
-
     // Generate reminders for optimal times
     for (const timeSlot of optimalTimes.best_times.slice(0, 3)) {
       const scheduledTime = new Date()
       scheduledTime.setHours(timeSlot.hour, 0, 0, 0)
-
       // If time has passed today, schedule for tomorrow
       if (scheduledTime <= new Date()) {
         scheduledTime.setDate(scheduledTime.getDate() + 1)
       }
-
       const reminder = await this.createAdaptiveReminder(
         userId, profile, timeSlot, scheduledTime
       )
-
       reminders.push(reminder)
     }
-
     return reminders
   }
-
   /**
    * Generate time-based notifications
    */
@@ -221,17 +184,14 @@ export class SmartNotificationService {
     const notifications: SmartNotification[] = []
     const now = new Date()
     const lookAheadUntil = addMinutes(now, lookAheadHours * 60)
-
     // Generate notifications for peak activity hours
     for (const activeHour of profile.active_hours.filter(ah => ah.frequency > 0.25)) {
       const notificationTime = new Date()
       notificationTime.setHours(activeHour.hour, 0, 0, 0)
-
       // Schedule for next occurrence
       if (notificationTime <= now) {
         notificationTime.setDate(notificationTime.getDate() + 1)
       }
-
       if (notificationTime <= lookAheadUntil) {
         const notification = await this.createTimeBasedNotification(
           userId, activeHour, notificationTime, temperament, profile
@@ -239,10 +199,8 @@ export class SmartNotificationService {
         notifications.push(notification)
       }
     }
-
     return notifications
   }
-
   /**
    * Generate behavior-based notifications
    */
@@ -253,7 +211,6 @@ export class SmartNotificationService {
     temperament: any
   ): Promise<SmartNotification[]> {
     const notifications: SmartNotification[] = []
-
     // Streak maintenance notifications
     if (context.activeStreaks?.length > 0) {
       const streakNotification = await this.createStreakMaintenanceNotification(
@@ -261,7 +218,6 @@ export class SmartNotificationService {
       )
       notifications.push(streakNotification)
     }
-
     // Low activity recovery notifications
     if (context.daysSinceLastActivity > 1) {
       const recoveryNotification = await this.createRecoveryNotification(
@@ -269,7 +225,6 @@ export class SmartNotificationService {
       )
       notifications.push(recoveryNotification)
     }
-
     // Category balance notifications
     const imbalancedCategories = this.detectCategoryImbalance(profile, context)
     if (imbalancedCategories.length > 0) {
@@ -278,10 +233,8 @@ export class SmartNotificationService {
       )
       notifications.push(balanceNotification)
     }
-
     return notifications
   }
-
   /**
    * Generate milestone notifications
    */
@@ -291,24 +244,20 @@ export class SmartNotificationService {
     temperament: any
   ): Promise<SmartNotification[]> {
     const notifications: SmartNotification[] = []
-
     // Streak milestones (every 7 days)
     if (context.longestStreak && context.longestStreak % 7 === 0 && context.longestStreak > 0) {
       notifications.push(await this.createMilestoneNotification(
         userId, 'streak', context.longestStreak, temperament
       ))
     }
-
     // Completion rate milestones
     if (context.weeklyCompletionRate && context.weeklyCompletionRate >= 0.8) {
       notifications.push(await this.createMilestoneNotification(
         userId, 'completion', Math.round(context.weeklyCompletionRate * 100), temperament
       ))
     }
-
     return notifications
   }
-
   /**
    * Create adaptive reminder based on user patterns
    */
@@ -320,7 +269,6 @@ export class SmartNotificationService {
   ): Promise<SmartNotification> {
     const message = this.generateAdaptiveMessage(profile, timeSlot)
     const topCategories = profile.preferred_categories.slice(0, 2).map(cat => cat.category_id)
-
     return {
       id: `adaptive-${Date.now()}-${Math.random()}`,
       user_id: userId,
@@ -342,7 +290,6 @@ export class SmartNotificationService {
       }
     }
   }
-
   /**
    * Create time-based notification
    */
@@ -362,7 +309,6 @@ export class SmartNotificationService {
         consistency: profile.completion_patterns.consistency_score
       }
     )
-
     return {
       id: `time-${Date.now()}-${activeHour.hour}`,
       user_id: userId,
@@ -376,7 +322,6 @@ export class SmartNotificationService {
       delivery_channels: ['push', 'in_app']
     }
   }
-
   /**
    * Create streak maintenance notification
    */
@@ -392,7 +337,6 @@ export class SmartNotificationService {
       temperament?.primary_temperament || 'balanced',
       { streak: longestStreak, count: activeStreaks.length }
     )
-
     return {
       id: `streak-${Date.now()}`,
       user_id: userId,
@@ -407,7 +351,6 @@ export class SmartNotificationService {
       metadata: { streak_day: longestStreak }
     }
   }
-
   /**
    * Create recovery notification for inactive users
    */
@@ -422,7 +365,6 @@ export class SmartNotificationService {
       temperament?.primary_temperament || 'balanced',
       { days: daysSince, bestTime: profile.active_hours[0]?.hour || 9 }
     )
-
     return {
       id: `recovery-${Date.now()}`,
       user_id: userId,
@@ -436,7 +378,6 @@ export class SmartNotificationService {
       delivery_channels: ['push', 'in_app', 'email']
     }
   }
-
   /**
    * Create category balance notification
    */
@@ -451,7 +392,6 @@ export class SmartNotificationService {
       temperament?.primary_temperament || 'balanced',
       { categories: imbalancedCategories, strong: profile.preferred_categories[0]?.category_id }
     )
-
     return {
       id: `balance-${Date.now()}`,
       user_id: userId,
@@ -466,7 +406,6 @@ export class SmartNotificationService {
       delivery_channels: ['in_app']
     }
   }
-
   /**
    * Create milestone celebration notification
    */
@@ -481,7 +420,6 @@ export class SmartNotificationService {
       temperament?.primary_temperament || 'balanced',
       { type, value }
     )
-
     return {
       id: `milestone-${type}-${Date.now()}`,
       user_id: userId,
@@ -495,7 +433,6 @@ export class SmartNotificationService {
       delivery_channels: ['push', 'in_app']
     }
   }
-
   /**
    * Generate personalized message based on temperament and context
    */
@@ -577,34 +514,27 @@ export class SmartNotificationService {
         ]
       }
     }
-
     const temperamentTemplates = templates[messageType as keyof typeof templates]?.[temperament as keyof typeof templates.time_reminder] ||
                                 templates[messageType as keyof typeof templates]?.balanced || []
-
     const template = temperamentTemplates[Math.floor(Math.random() * temperamentTemplates.length)]
     return template || "Time for your wellness check-in! 🌟"
   }
-
   /**
    * Generate adaptive message for optimal timing
    */
   private generateAdaptiveMessage(profile: UserBehaviorProfile, timeSlot: any): string {
     const hour = timeSlot.hour
     const probability = timeSlot.probability
-
     let timeContext = ''
     if (hour < 10) timeContext = 'morning energy'
     else if (hour < 14) timeContext = 'midday focus'
     else if (hour < 18) timeContext = 'afternoon momentum'
     else timeContext = 'evening reflection'
-
     const confidence = probability > 0.8 ? 'This is your absolute peak time!'
                      : probability > 0.6 ? 'This is one of your stronger times.'
                      : 'This time works well for you.'
-
     return `Your ${timeContext} is perfect for wellness! ${confidence} Based on your patterns, you're ${Math.round(probability * 100)}% more likely to follow through now. 🎯`
   }
-
   /**
    * Detect category imbalance
    */
@@ -614,7 +544,6 @@ export class SmartNotificationService {
       .filter(cat => cat.preference_score < threshold)
       .map(cat => cat.category_id)
   }
-
   /**
    * Get time-based title for notifications
    */
@@ -624,41 +553,33 @@ export class SmartNotificationService {
     if (hour < 18) return '🌤️ Afternoon Boost'
     return '🌙 Evening Reflection'
   }
-
   /**
    * Build contextual notification prompt for AI
    */
   private buildContextualNotificationPrompt(context: any, temperament: any, profile: UserBehaviorProfile): string {
     return `
     Create 2-3 personalized wellness notifications based on this user context:
-
     **User Context:**
     - Current streak: ${context.current_streak || 0} days
     - Last activity: ${context.last_activity || 'unknown'}
     - 7-day completion rate: ${Math.round((context.completion_rate_7d || 0.5) * 100)}%
     - Mood trend: ${context.mood_trend || 'stable'}
     - Time: ${context.time_of_day || 'day'} on ${context.day_of_week || 'weekday'}
-
     **Personality:**
     - Primary temperament: ${temperament?.primary_temperament || 'balanced'}
     - Motivation style: ${profile.behavioral_traits.motivation_type}
     - Goal orientation: ${profile.behavioral_traits.goal_orientation}
-
     **Behavioral Patterns:**
     - Most active hours: ${profile.active_hours.slice(0, 3).map(ah => ah.hour).join(', ')}
     - Consistency score: ${Math.round(profile.completion_patterns.consistency_score * 100)}%
-
     Generate notifications in this format:
-
     **Notification 1:**
     Type: [reminder/encouragement/tip/challenge]
     Title: [Engaging title with emoji]
     Message: [Personalized message 1-2 sentences]
     Priority: [low/medium/high]
-
     **Notification 2:**
     [Same format]
-
     Guidelines:
     - Match the temperament's communication style
     - Reference specific context elements
@@ -667,7 +588,6 @@ export class SmartNotificationService {
     - Use appropriate emojis
     `
   }
-
   /**
    * Parse AI response into notifications
    */
@@ -678,15 +598,12 @@ export class SmartNotificationService {
   ): SmartNotification[] {
     const notifications: SmartNotification[] = []
     const sections = response.split(/\*\*Notification \d+:\*\*/)
-
     sections.slice(1).forEach((section, index) => {
       const lines = section.split('\n').filter(line => line.trim())
-
       let type: any = 'reminder'
       let title = `Wellness Reminder ${index + 1}`
       let message = 'Time for your wellness check-in!'
       let priority: any = 'medium'
-
       lines.forEach(line => {
         const trimmedLine = line.trim()
         if (trimmedLine.startsWith('Type:')) {
@@ -699,7 +616,6 @@ export class SmartNotificationService {
           priority = trimmedLine.replace('Priority:', '').trim().toLowerCase()
         }
       })
-
       notifications.push({
         id: `ai-${Date.now()}-${index}`,
         user_id: userId,
@@ -713,10 +629,8 @@ export class SmartNotificationService {
         delivery_channels: ['push', 'in_app']
       })
     })
-
     return notifications
   }
-
   /**
    * Generate basic contextual notifications when AI is unavailable
    */
@@ -726,7 +640,6 @@ export class SmartNotificationService {
   ): SmartNotification[] {
     const notifications: SmartNotification[] = []
     const now = new Date()
-
     // Streak-based notification
     if (context.current_streak && context.current_streak > 0) {
       notifications.push({
@@ -742,7 +655,6 @@ export class SmartNotificationService {
         delivery_channels: ['push', 'in_app']
       })
     }
-
     // Low completion rate encouragement
     if (context.completion_rate_7d && context.completion_rate_7d < 0.5) {
       notifications.push({
@@ -758,10 +670,8 @@ export class SmartNotificationService {
         delivery_channels: ['in_app']
       })
     }
-
     return notifications
   }
-
   /**
    * Optimize notification schedule to avoid notification fatigue
    */
@@ -776,27 +686,22 @@ export class SmartNotificationService {
       const scoreB = priorityWeight[b.priority] * 0.3 + b.personalization_score * 0.7
       return scoreB - scoreA
     })
-
     // Limit notifications per day based on user behavior
     const maxDaily = profile.completion_patterns.consistency_score > 0.8 ? 4 : 2
     const optimized = sorted.slice(0, maxDaily)
-
     // Spread notifications throughout optimal hours
     const optimalHours = profile.active_hours
       .filter(ah => ah.frequency > 0.2)
       .map(ah => ah.hour)
       .slice(0, optimized.length)
-
     optimized.forEach((notification, index) => {
       if (optimalHours[index] !== undefined) {
         const scheduledTime = parseISO(notification.scheduled_for)
         scheduledTime.setHours(optimalHours[index], 0, 0, 0)
-
         // Ensure future time
         if (scheduledTime <= new Date()) {
           scheduledTime.setDate(scheduledTime.getDate() + 1)
         }
-
         notification.scheduled_for = scheduledTime.toISOString()
         notification.metadata = {
           ...notification.metadata,
@@ -804,16 +709,13 @@ export class SmartNotificationService {
         }
       }
     })
-
     return optimized
   }
-
   /**
    * Generate fallback notifications when main system fails
    */
   private generateFallbackNotifications(userId: string): SmartNotification[] {
     const now = new Date()
-
     return [{
       id: `fallback-${Date.now()}`,
       user_id: userId,
@@ -827,7 +729,6 @@ export class SmartNotificationService {
       delivery_channels: ['in_app']
     }]
   }
-
   /**
    * Store notifications in database for delivery
    */
@@ -849,19 +750,15 @@ export class SmartNotificationService {
         created_at: new Date().toISOString(),
         delivered: false
       }))
-
       await this.supabase
         .from('axis6_smart_notifications')
         .insert(notificationRows)
     } catch (error) {
       handleError(error, {
       operation: 'ai_operation', component: 'smart-notifications',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })}
   }
-
   /**
    * Get user's temperament profile
    */
@@ -872,43 +769,36 @@ export class SmartNotificationService {
         .select('*')
         .eq('user_id', userId)
         .single()
-
       return data
     } catch (error) {
       return null
     }
   }
-
   /**
    * Get recent activity context for notifications
    */
   private async getRecentActivityContext(userId: string) {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
     const [checkins, streaks, dailyStats] = await Promise.all([
       this.supabase
         .from('axis6_checkins')
         .select('*')
         .eq('user_id', userId)
         .gte('completed_at', format(sevenDaysAgo, 'yyyy-MM-dd')),
-
       this.supabase
         .from('axis6_streaks')
         .select('*')
         .eq('user_id', userId),
-
       this.supabase
         .from('axis6_daily_stats')
         .select('*')
         .eq('user_id', userId)
         .gte('date', format(sevenDaysAgo, 'yyyy-MM-dd'))
     ])
-
     const recentCheckins = checkins.data || []
     const allStreaks = streaks.data || []
     const recentStats = dailyStats.data || []
-
     // Calculate context metrics
     const activeStreaks = allStreaks.filter(s => s.current_streak > 0)
     const longestStreak = Math.max(...allStreaks.map(s => s.longest_streak), 0)
@@ -916,7 +806,6 @@ export class SmartNotificationService {
     const weeklyCompletionRate = recentStats.length > 0
       ? recentStats.reduce((sum, stat) => sum + (stat.completion_rate || 0), 0) / recentStats.length
       : 0
-
     return {
       recentCheckins,
       activeStreaks,
@@ -925,7 +814,6 @@ export class SmartNotificationService {
       weeklyCompletionRate
     }
   }
-
   /**
    * Calculate days since last activity
    */
@@ -937,18 +825,14 @@ export class SmartNotificationService {
         .eq('user_id', userId)
         .order('completed_at', { ascending: false })
         .limit(1)
-
       if (!data || data.length === 0) return 30 // Default for new users
-
       const lastActivity = parseISO(data[0].completed_at)
       const daysDiff = Math.floor((new Date().getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24))
-
       return daysDiff
     } catch (error) {
       return 30
     }
   }
-
   /**
    * Initialize default notification rules
    */
@@ -985,6 +869,5 @@ export class SmartNotificationService {
     ]
   }
 }
-
 // Export singleton instance
 export const smartNotificationService = new SmartNotificationService()

@@ -1,18 +1,15 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useMemo, memo } from 'react'
-
 import { BalanceWhisper } from '@/components/ui/BalanceWhisper'
 import { useConstellation } from '@/hooks/useConstellation'
-
+import { getCategoryName } from '@/lib/utils/i18n'
 interface RitualConstellationProps {
   date?: string
   size?: number
   showMetrics?: boolean
   className?: string
 }
-
 // Community constellation visualization - abstract representation of collective balance
 const RitualConstellation = memo(function RitualConstellation({
   date,
@@ -22,10 +19,8 @@ const RitualConstellation = memo(function RitualConstellation({
 }: RitualConstellationProps) {
   const [hoveredAxis, setHoveredAxis] = useState<string | null>(null)
   const { data: constellationData, isLoading, error } = useConstellation(date)
-
   const constellation = constellationData?.constellation
   const center = size / 2
-
   // Memoize mood colors for different activity levels
   const moodColors = useMemo(() => ({
     quiet: { primary: '#E8EDF4', secondary: '#D4E6F1' },
@@ -34,15 +29,11 @@ const RitualConstellation = memo(function RitualConstellation({
     vibrant: { primary: '#FDEAA7', secondary: '#F9E79F' },
     energetic: { primary: '#FFE4E1', secondary: '#FFCCCB' }
   }), [])
-
   const currentMoodColors = constellation ? moodColors[constellation.metrics.mood] : moodColors.quiet
-
   // Memoize constellation points with scaled positions
   const scaledPoints = useMemo(() => {
     if (!constellation) return []
-
     const scale = size / constellation.visualHints.recommendedSize
-
     return constellation.points.map(point => ({
       ...point,
       scaledPosition: {
@@ -52,7 +43,6 @@ const RitualConstellation = memo(function RitualConstellation({
       }
     }))
   }, [constellation, size])
-
   if (isLoading) {
     return (
       <div
@@ -66,7 +56,6 @@ const RitualConstellation = memo(function RitualConstellation({
       </div>
     )
   }
-
   if (error || !constellation) {
     return (
       <div
@@ -79,7 +68,6 @@ const RitualConstellation = memo(function RitualConstellation({
       </div>
     )
   }
-
   return (
     <div className={`relative ${className}`}>
       {/* Main constellation visualization */}
@@ -101,7 +89,6 @@ const RitualConstellation = memo(function RitualConstellation({
               <stop offset="100%" stopColor="transparent" stopOpacity="0" />
             </radialGradient>
           </defs>
-
           {/* Energy field background */}
           <motion.circle
             cx={center}
@@ -112,7 +99,6 @@ const RitualConstellation = memo(function RitualConstellation({
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
           />
-
           {/* Connecting lines between active axes */}
           {scaledPoints
             .filter(point => point.completionCount > 0)
@@ -139,7 +125,6 @@ const RitualConstellation = memo(function RitualConstellation({
                 )
               }).filter(Boolean)
             ))}
-
           {/* Constellation points */}
           {scaledPoints.map((point, index) => {
             const isHovered = hoveredAxis === point.axisSlug
@@ -147,7 +132,6 @@ const RitualConstellation = memo(function RitualConstellation({
             const pointSize = isActive
               ? Math.min(8 + point.resonanceIntensity * 4, 16)
               : 4
-
             return (
               <motion.g key={point.axisSlug}>
                 {/* Glow effect for active points */}
@@ -170,7 +154,6 @@ const RitualConstellation = memo(function RitualConstellation({
                     }}
                   />
                 )}
-
                 {/* Main constellation point */}
                 <motion.circle
                   cx={point.scaledPosition.x}
@@ -199,7 +182,6 @@ const RitualConstellation = memo(function RitualConstellation({
                       : 'drop-shadow(0 1px 3px rgba(0,0,0,0.2))'
                   }}
                 />
-
                 {/* Subtle axis label */}
                 <motion.text
                   x={point.scaledPosition.x}
@@ -217,7 +199,6 @@ const RitualConstellation = memo(function RitualConstellation({
               </motion.g>
             )
           })}
-
           {/* Central balance indicator */}
           <motion.circle
             cx={center}
@@ -242,7 +223,6 @@ const RitualConstellation = memo(function RitualConstellation({
             }}
           />
         </svg>
-
         {/* Constellation mood indicator */}
         <motion.div
           className="absolute bottom-4 left-4 flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1"
@@ -259,7 +239,6 @@ const RitualConstellation = memo(function RitualConstellation({
           </span>
         </motion.div>
       </div>
-
       {/* Community metrics panel */}
       <AnimatePresence>
         {showMetrics && (
@@ -296,7 +275,6 @@ const RitualConstellation = memo(function RitualConstellation({
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Tooltip for hovered axis */}
       <AnimatePresence>
         {hoveredAxis && (
@@ -310,11 +288,10 @@ const RitualConstellation = memo(function RitualConstellation({
             {(() => {
               const point = scaledPoints.find(p => p.axisSlug === hoveredAxis)
               if (!point) return null
-
               return (
                 <div className="text-center">
                   <p className="text-sm font-medium" style={{ color: point.color }}>
-                    {typeof point.name === 'object' ? point.name.en || point.name.es : point.axisSlug}
+                    {getCategoryName({ name: point.name }, 'en') || point.axisSlug}
                   </p>
                   <p className="text-xs text-gray-600 mt-1">
                     {point.completionCount === 0
@@ -331,7 +308,5 @@ const RitualConstellation = memo(function RitualConstellation({
     </div>
   )
 })
-
 RitualConstellation.displayName = 'RitualConstellation'
-
 export default RitualConstellation

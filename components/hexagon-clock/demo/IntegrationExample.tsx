@@ -2,13 +2,10 @@
  * HexagonClock Integration Examples
  * Demonstrates how to replace existing components with the unified HexagonClock
  */
-
 'use client'
-
 import React, { useState } from 'react';
 import { HexagonClock } from '../HexagonClock';
 import type { CompletionData, TimeDistribution } from '../types/HexagonTypes';
-
 // Mock data for demonstration
 const mockCompletionData: CompletionData = {
   physical: 85,
@@ -18,7 +15,6 @@ const mockCompletionData: CompletionData = {
   spiritual: 68,
   material: 78
 };
-
 const mockTimeDistribution: TimeDistribution[] = [
   {
     category_id: 1,
@@ -69,14 +65,12 @@ const mockTimeDistribution: TimeDistribution[] = [
     percentage: 80
   }
 ];
-
 /**
  * Dashboard Integration Example
  * Replaces: HexagonChartWithResonance
  */
 export function DashboardExample() {
   const [selectedAxis, setSelectedAxis] = useState<string | null>(null);
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -87,7 +81,6 @@ export function DashboardExample() {
           Replaces HexagonChartWithResonance.tsx - Completion percentages with community resonance
         </p>
       </div>
-
       <div className="bg-white rounded-2xl p-6 shadow-lg">
         <HexagonClock
           data={mockCompletionData}
@@ -99,7 +92,6 @@ export function DashboardExample() {
           onCategoryClick={(category) => {
             }}
         />
-
         {selectedAxis && (
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
@@ -111,22 +103,18 @@ export function DashboardExample() {
     </div>
   );
 }
-
 /**
  * Planning Integration Example
  * Replaces: TimeBlockHexagon
  */
 export function PlanningExample() {
   const [distribution, setDistribution] = useState(mockTimeDistribution);
-
   const handleTimeBlockDrag = (block: any, newHour: number) => {
     // Update distribution logic would go here
   };
-
   const handleCategoryClick = (category: any) => {
     // Open time planning modal/panel
   };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -137,7 +125,6 @@ export function PlanningExample() {
           Replaces TimeBlockHexagon.tsx - Time distribution with 12-hour clock positioning
         </p>
       </div>
-
       <div className="bg-white rounded-2xl p-6 shadow-lg">
         <HexagonClock
           distribution={distribution}
@@ -147,7 +134,6 @@ export function PlanningExample() {
           onTimeBlockDrag={handleTimeBlockDrag}
           onCategoryClick={handleCategoryClick}
         />
-
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Time Summary</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -174,7 +160,6 @@ export function PlanningExample() {
     </div>
   );
 }
-
 /**
  * Unified Mode Example
  * Shows both completion data and time distribution
@@ -190,7 +175,6 @@ export function UnifiedExample() {
           Revolutionary combination of completion percentages and time planning
         </p>
       </div>
-
       <div className="bg-white rounded-2xl p-6 shadow-lg">
         <HexagonClock
           data={mockCompletionData}
@@ -200,26 +184,23 @@ export function UnifiedExample() {
           showCurrentTime={true}
           animate={true}
           size={420}
-          onToggleAxis={(id) => }
-          onTimeBlockDrag={(block, hour) => }
-          onCategoryClick={(category) => }
+          onToggleAxis={(id) => console.log('Toggle axis:', id)}
+          onTimeBlockDrag={(block, hour) => console.log('Time block drag:', block, hour)}
+          onCategoryClick={(category) => console.log('Category click:', category)}
         />
       </div>
     </div>
   );
 }
-
 /**
  * Performance Comparison Example
  */
 export function PerformanceExample() {
   const [renderTime, setRenderTime] = useState<number | null>(null);
   const [isRendering, setIsRendering] = useState(false);
-
   const measurePerformance = () => {
     setIsRendering(true);
     const startTime = performance.now();
-
     // Simulate component re-render
     setTimeout(() => {
       const endTime = performance.now();
@@ -227,7 +208,6 @@ export function PerformanceExample() {
       setIsRendering(false);
     }, 100);
   };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -238,7 +218,6 @@ export function PerformanceExample() {
           Hardware-accelerated rendering with 60fps animations
         </p>
       </div>
-
       <div className="bg-white rounded-2xl p-6 shadow-lg">
         <div className="mb-6 text-center">
           <button
@@ -248,7 +227,6 @@ export function PerformanceExample() {
           >
             {isRendering ? 'Measuring...' : 'Measure Render Time'}
           </button>
-
           {renderTime && (
             <div className="mt-4 p-4 bg-green-50 rounded-lg">
               <p className="text-green-800">
@@ -260,7 +238,6 @@ export function PerformanceExample() {
             </div>
           )}
         </div>
-
         <HexagonClock
           data={mockCompletionData}
           showResonance={true}
@@ -274,7 +251,6 @@ export function PerformanceExample() {
     </div>
   );
 }
-
 /**
  * Mobile Optimization Example
  */
@@ -289,7 +265,6 @@ export function MobileExample() {
           Perfect centering and safe area support for all devices
         </p>
       </div>
-
       {/* Simulate mobile viewport */}
       <div className="max-w-sm mx-auto bg-gray-900 rounded-[2.5rem] p-2">
         <div className="bg-white rounded-[2rem] overflow-hidden">
@@ -297,7 +272,6 @@ export function MobileExample() {
           <div className="h-8 bg-gray-100 flex items-center justify-center">
             <div className="text-xs text-gray-600">9:41 AM</div>
           </div>
-
           {/* Component in mobile container */}
           <div className="p-4">
             <HexagonClock
@@ -308,7 +282,6 @@ export function MobileExample() {
               size="auto"
             />
           </div>
-
           {/* Simulated home indicator */}
           <div className="h-8 flex items-center justify-center">
             <div className="w-32 h-1 bg-gray-400 rounded-full"></div>
@@ -318,13 +291,11 @@ export function MobileExample() {
     </div>
   );
 }
-
 /**
  * Complete Demo Page
  */
 export default function HexagonClockDemo() {
   const [activeDemo, setActiveDemo] = useState('dashboard');
-
   const demos = [
     { id: 'dashboard', label: 'Dashboard', component: DashboardExample },
     { id: 'planning', label: 'Planning', component: PlanningExample },
@@ -332,9 +303,7 @@ export default function HexagonClockDemo() {
     { id: 'performance', label: 'Performance', component: PerformanceExample },
     { id: 'mobile', label: 'Mobile', component: MobileExample }
   ];
-
   const ActiveComponent = demos.find(d => d.id === activeDemo)?.component || DashboardExample;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
       <div className="max-w-4xl mx-auto px-4">
@@ -349,7 +318,6 @@ export default function HexagonClockDemo() {
             with <strong>60% performance improvement</strong> and perfect mobile centering.
           </p>
         </div>
-
         {/* Navigation */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {demos.map(demo => (
@@ -366,10 +334,8 @@ export default function HexagonClockDemo() {
             </button>
           ))}
         </div>
-
         {/* Active Demo */}
         <ActiveComponent />
-
         {/* Footer */}
         <div className="mt-16 text-center text-gray-600">
           <p>

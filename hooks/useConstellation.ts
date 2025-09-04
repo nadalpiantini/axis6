@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-
 export interface ConstellationPoint {
   axisSlug: string
   completionCount: number
@@ -13,14 +12,12 @@ export interface ConstellationPoint {
     angle: number
   }
 }
-
 export interface ConstellationMetrics {
   totalCompletions: number
   averageIntensity: number
   activeAxes: number
   mood: 'quiet' | 'peaceful' | 'active' | 'vibrant' | 'energetic'
 }
-
 export interface ConstellationData {
   points: ConstellationPoint[]
   metrics: ConstellationMetrics
@@ -31,20 +28,17 @@ export interface ConstellationData {
     recommendedSize: number
   }
 }
-
 export interface ConstellationResponse {
   success: boolean
   date: string
   constellation: ConstellationData
 }
-
 // Hook to fetch constellation data for community visualization
 export function useConstellation(date?: string) {
   return useQuery<ConstellationResponse>({
     queryKey: ['constellation', date],
     queryFn: async () => {
       const supabase = createClient()
-
       const dateParam = date || new Date().toISOString().split('T')[0]
       const response = await fetch(`/api/constellation?date=${dateParam}`, {
         method: 'GET',
@@ -52,11 +46,9 @@ export function useConstellation(date?: string) {
           'Content-Type': 'application/json'
         }
       })
-
       if (!response.ok) {
         throw new Error(`Failed to fetch constellation data: ${response.statusText}`)
       }
-
       return response.json()
     },
     staleTime: 10 * 60 * 1000, // 10 minutes

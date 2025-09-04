@@ -1,19 +1,15 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Bell, BellOff, Volume2, VolumeX, Settings, TestTube } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { notificationService, NotificationPermissionResult } from '@/lib/services/notification-service'
 import { cn } from '@/lib/utils'
-
 interface NotificationSettingsProps {
   className?: string
   onClose?: () => void
 }
-
 export function NotificationSettings({
   className,
   onClose
@@ -24,30 +20,24 @@ export function NotificationSettings({
     prompt: false,
     supported: false
   })
-
   const [preferences, setPreferences] = useState({
     enabled: true,
     soundEnabled: true,
     mentionsOnly: false,
     mutedRooms: [] as string[]
   })
-
   const [isRequestingPermission, setIsRequestingPermission] = useState(false)
   const [isTestingNotification, setIsTestingNotification] = useState(false)
-
   // Load initial state
   useEffect(() => {
     setPermission(notificationService.getPermissionStatus())
     setPreferences(notificationService.getNotificationPreferences())
   }, [])
-
   const handleRequestPermission = async () => {
     setIsRequestingPermission(true)
-
     try {
       const result = await notificationService.requestPermission()
       setPermission(result)
-
       if (result.granted) {
         // Enable notifications by default when permission is granted
         const newPrefs = { ...preferences, enabled: true }
@@ -58,16 +48,13 @@ export function NotificationSettings({
       setIsRequestingPermission(false)
     }
   }
-
   const handlePreferenceChange = (key: keyof typeof preferences, value: any) => {
     const newPrefs = { ...preferences, [key]: value }
     setPreferences(newPrefs)
     notificationService.saveNotificationPreferences(newPrefs)
   }
-
   const handleTestNotification = async () => {
     setIsTestingNotification(true)
-
     try {
       const success = await notificationService.testNotification()
       if (!success) {
@@ -76,7 +63,6 @@ export function NotificationSettings({
       setTimeout(() => setIsTestingNotification(false), 1000)
     }
   }
-
   const getPermissionBadge = () => {
     if (permission.denied) {
       return (
@@ -85,7 +71,6 @@ export function NotificationSettings({
         </Badge>
       )
     }
-
     if (permission.granted) {
       return (
         <Badge variant="default" className="text-xs bg-green-600">
@@ -93,14 +78,12 @@ export function NotificationSettings({
         </Badge>
       )
     }
-
     return (
       <Badge variant="secondary" className="text-xs">
         Not Set
       </Badge>
     )
   }
-
   const getPermissionMessage = () => {
     if (!permission.supported) {
       return {
@@ -109,7 +92,6 @@ export function NotificationSettings({
         color: 'text-neutral-400'
       }
     }
-
     if (permission.denied) {
       return {
         title: 'Notifications Blocked',
@@ -117,7 +99,6 @@ export function NotificationSettings({
         color: 'text-red-400'
       }
     }
-
     if (permission.granted) {
       return {
         title: 'Notifications Enabled',
@@ -125,16 +106,13 @@ export function NotificationSettings({
         color: 'text-green-400'
       }
     }
-
     return {
       title: 'Enable Notifications',
       message: 'Allow notifications to stay updated on new messages and mentions.',
       color: 'text-yellow-400'
     }
   }
-
   const permissionInfo = getPermissionMessage()
-
   return (
     <div className={cn(
       "bg-neutral-800 rounded-lg border border-neutral-700",
@@ -160,7 +138,6 @@ export function NotificationSettings({
           </Button>
         )}
       </div>
-
       {/* Permission Status */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -169,7 +146,6 @@ export function NotificationSettings({
           </span>
           {getPermissionBadge()}
         </div>
-
         <div className="p-3 bg-neutral-900 rounded-lg">
           <h4 className={cn("text-sm font-medium", permissionInfo.color)}>
             {permissionInfo.title}
@@ -178,7 +154,6 @@ export function NotificationSettings({
             {permissionInfo.message}
           </p>
         </div>
-
         {/* Permission Action */}
         {permission.supported && !permission.granted && !permission.denied && (
           <Button
@@ -199,7 +174,6 @@ export function NotificationSettings({
             )}
           </Button>
         )}
-
         {/* Test Notification */}
         {permission.granted && (
           <Button
@@ -222,14 +196,12 @@ export function NotificationSettings({
           </Button>
         )}
       </div>
-
       {/* Notification Preferences */}
       {permission.granted && (
         <div className="space-y-4">
           <h4 className="text-sm font-medium text-neutral-300">
             Preferences
           </h4>
-
           {/* Enable/Disable */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -247,7 +219,6 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-
             <button
               onClick={() => handlePreferenceChange('enabled', !preferences.enabled)}
               className={cn(
@@ -263,7 +234,6 @@ export function NotificationSettings({
               />
             </button>
           </div>
-
           {/* Sound */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -281,7 +251,6 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-
             <button
               onClick={() => handlePreferenceChange('soundEnabled', !preferences.soundEnabled)}
               className={cn(
@@ -298,7 +267,6 @@ export function NotificationSettings({
               />
             </button>
           </div>
-
           {/* Mentions Only */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -314,7 +282,6 @@ export function NotificationSettings({
                 </p>
               </div>
             </div>
-
             <button
               onClick={() => handlePreferenceChange('mentionsOnly', !preferences.mentionsOnly)}
               className={cn(
@@ -333,7 +300,6 @@ export function NotificationSettings({
           </div>
         </div>
       )}
-
       {/* Browser Instructions */}
       {permission.denied && (
         <div className="p-3 bg-red-900/20 border border-red-700/30 rounded-lg">
@@ -347,7 +313,6 @@ export function NotificationSettings({
           </ol>
         </div>
       )}
-
       {/* Footer */}
       <div className="pt-3 border-t border-neutral-700">
         <p className="text-xs text-neutral-500 text-center">

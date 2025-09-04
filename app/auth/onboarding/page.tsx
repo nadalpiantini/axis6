@@ -1,12 +1,9 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, AlertCircle, Loader2, CheckCircle } from 'lucide-react'
-
 import { CategoryCard } from '@/components/onboarding/CategoryCard'
 import { LogoFull } from '@/components/ui/Logo'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
-
 export default function OnboardingPage() {
   const {
     categories,
@@ -22,7 +19,6 @@ export default function OnboardingPage() {
     selectedCount,
     remainingCount
   } = useOnboarding()
-
   // English content only
   const content = {
     title: 'Customize Your AXIS6',
@@ -35,7 +31,6 @@ export default function OnboardingPage() {
     loadingCategories: 'Loading dimensions...',
     errorTitle: 'Error loading categories'
   }
-
   // Loading state
   if (categoriesLoading) {
     return (
@@ -48,7 +43,6 @@ export default function OnboardingPage() {
       </div>
     )
   }
-
   // Error state
   if (categoriesError) {
     return (
@@ -68,7 +62,6 @@ export default function OnboardingPage() {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-5xl">
@@ -81,21 +74,18 @@ export default function OnboardingPage() {
           <div className="flex justify-center mb-6">
             <LogoFull size="lg" priority />
           </div>
-
           <h1 className="text-4xl font-bold text-white mb-2">
             {content.title}
           </h1>
           <p className="text-gray-400 mb-6">
             {content.subtitle}
           </p>
-
           {/* Progress Indicator */}
           <div className="flex items-center justify-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-white">{selectedCount}</span>
               <span className="text-gray-400">/ 6 {content.selected}</span>
             </div>
-
             {/* Progress Bar */}
             <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
               <motion.div
@@ -105,7 +95,6 @@ export default function OnboardingPage() {
                 transition={{ duration: 0.3, ease: "easeOut" }}
               />
             </div>
-
             {remainingCount > 0 && (
               <span className="text-sm text-yellow-400">
                 {content.remaining}
@@ -113,7 +102,6 @@ export default function OnboardingPage() {
             )}
           </div>
         </motion.div>
-
         {/* Categories Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {categories.map((category, index) => (
@@ -127,7 +115,6 @@ export default function OnboardingPage() {
             />
           ))}
         </div>
-
         {/* Error Display */}
         <AnimatePresence>
           {error && (
@@ -142,7 +129,6 @@ export default function OnboardingPage() {
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* Action Button */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -175,7 +161,6 @@ export default function OnboardingPage() {
             )}
           </button>
         </motion.div>
-
         {/* Success Message */}
         <AnimatePresence>
           {canComplete && !loading && (

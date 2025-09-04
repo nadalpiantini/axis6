@@ -1,77 +1,76 @@
 {
-  "timestamp": "2025-08-30T01:26:57.330Z",
+  "timestamp": "2025-08-30T02:49:55.336Z",
   "baseUrl": "https://axis6.app",
   "summary": {
     "totalChecks": 10,
-    "passed": 10,
-    "failed": 0,
-    "warnings": 4
+    "passed": 9,
+    "failed": 1,
+    "warnings": 3
   },
   "results": [
     {
       "name": "Website Accessibility",
       "status": "PASS",
-      "duration": "1025ms",
-      "timestamp": "2025-08-30T01:26:54.330Z"
-    },
-    {
-      "name": "API Health Check",
-      "status": "PASS",
-      "duration": "799ms",
-      "timestamp": "2025-08-30T01:26:55.131Z"
+      "duration": "1054ms",
+      "timestamp": "2025-08-30T02:49:53.098Z"
     },
     {
       "name": "Database Connectivity",
       "status": "PASS",
-      "duration": "208ms",
-      "timestamp": "2025-08-30T01:26:55.339Z"
+      "duration": "214ms",
+      "timestamp": "2025-08-30T02:49:53.875Z"
     },
     {
       "name": "SSL Certificate",
       "status": "PASS",
-      "duration": "138ms",
-      "timestamp": "2025-08-30T01:26:55.478Z"
+      "duration": "203ms",
+      "timestamp": "2025-08-30T02:49:54.078Z"
     },
     {
       "name": "Performance Metrics",
       "status": "PASS",
-      "duration": "299ms",
-      "timestamp": "2025-08-30T01:26:55.777Z"
+      "duration": "315ms",
+      "timestamp": "2025-08-30T02:49:54.393Z"
     },
     {
       "name": "Security Headers",
       "status": "PASS",
-      "duration": "158ms",
-      "timestamp": "2025-08-30T01:26:55.935Z"
+      "duration": "160ms",
+      "timestamp": "2025-08-30T02:49:54.553Z"
     },
     {
       "name": "CDN & Caching",
       "status": "PASS",
-      "duration": "64ms",
-      "timestamp": "2025-08-30T01:26:55.999Z"
+      "duration": "63ms",
+      "timestamp": "2025-08-30T02:49:54.615Z"
     },
     {
       "name": "Circuit Breakers",
       "status": "PASS",
-      "duration": "330ms",
-      "timestamp": "2025-08-30T01:26:56.329Z"
+      "duration": "317ms",
+      "timestamp": "2025-08-30T02:49:54.932Z"
     },
     {
       "name": "Monitoring Systems",
       "status": "PASS",
-      "duration": "386ms",
-      "timestamp": "2025-08-30T01:26:56.715Z"
+      "duration": "274ms",
+      "timestamp": "2025-08-30T02:49:55.208Z"
     },
     {
       "name": "Error Rates",
       "status": "PASS",
-      "duration": "614ms",
-      "timestamp": "2025-08-30T01:26:57.329Z"
+      "duration": "127ms",
+      "timestamp": "2025-08-30T02:49:55.335Z"
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "check": "API Health Check",
+      "error": "API health check failed: API health endpoint returned 503",
+      "duration": "561ms"
+    }
+  ],
   "warnings": [
-    "System health is degraded: [{\"service\":\"database\",\"status\":\"healthy\",\"responseTime\":284,\"details\":\"Query returned 1 records\",\"timestamp\":\"2025-08-30T01:26:55.166Z\"},{\"service\":\"redis\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"Redis not configured (optional service)\",\"timestamp\":\"2025-08-30T01:26:54.884Z\"},{\"service\":\"email\",\"status\":\"healthy\",\"responseTime\":197,\"details\":\"API connectivity verified\",\"timestamp\":\"2025-08-30T01:26:55.082Z\"},{\"service\":\"external\",\"status\":\"healthy\",\"responseTime\":311,\"details\":\"2/2 services responding\",\"timestamp\":\"2025-08-30T01:26:55.198Z\"},{\"service\":\"memory\",\"status\":\"degraded\",\"responseTime\":0,\"details\":\"21MB/22MB (95.5%)\",\"timestamp\":\"2025-08-30T01:26:54.963Z\"}]",
     "Response not compressed (no content-encoding header)",
     "Invalid x-frame-options: DENY",
     "Analytics endpoint requires authentication (expected)"

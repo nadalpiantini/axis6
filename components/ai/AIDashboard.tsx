@@ -1,5 +1,4 @@
 'use client'
-
 import { format } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -20,23 +19,19 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
-
 import { AIInsightsCard } from './AIInsightsCard'
 import { PersonalizedRecommendations } from './PersonalizedRecommendations'
 import { SmartNotificationPanel, NotificationSummary } from './SmartNotificationPanel'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 interface AIDashboardProps {
   className?: string
   defaultTab?: string
 }
-
 export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardProps) {
   const {
     behaviorProfile,
@@ -55,10 +50,8 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
     getActiveInsights,
     getInsightsByType
   } = useAIPersonalization()
-
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [isRefreshing, setIsRefreshing] = useState(false)
-
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
@@ -66,18 +59,14 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
     } catch (error) {
       handleError(error, {
       operation: 'ai_operation', component: 'AIDashboard',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })} finally {
       setIsRefreshing(false)
     }
   }
-
   const generateQuickInsights = () => {
     generateNotifications({ lookAheadHours: 48, force_regenerate: true })
   }
-
   if (error && !behaviorProfile) {
     return (
       <Card className={className}>
@@ -99,7 +88,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
       </Card>
     )
   }
-
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header with Status and Actions */}
@@ -114,7 +102,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             Your personalized wellness intelligence system
           </p>
         </div>
-
         <div className="flex items-center gap-3">
           {behaviorProfile && (
             <div className="text-right text-sm text-gray-500">
@@ -122,7 +109,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
               <div>Confidence: {Math.round((optimalTimeScore || 0) * 100)}%</div>
             </div>
           )}
-
           <Button
             variant="outline"
             size="sm"
@@ -136,7 +122,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             )}
             Refresh
           </Button>
-
           <Button
             variant="default"
             size="sm"
@@ -148,10 +133,8 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
           </Button>
         </div>
       </div>
-
       {/* Active Notifications Summary */}
       <NotificationSummary />
-
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
@@ -182,7 +165,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             Recommendations
           </TabsTrigger>
         </TabsList>
-
         <TabsContent value="overview" className="space-y-6">
           <OverviewTab
             behaviorProfile={behaviorProfile}
@@ -192,15 +174,12 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
             isLoading={isLoading}
           />
         </TabsContent>
-
         <TabsContent value="insights" className="space-y-6">
           <AIInsightsCard showAll maxInsights={10} />
         </TabsContent>
-
         <TabsContent value="notifications" className="space-y-6">
           <SmartNotificationPanel maxNotifications={10} showActions />
         </TabsContent>
-
         <TabsContent value="recommendations" className="space-y-6">
           <PersonalizedRecommendations showGoals />
         </TabsContent>
@@ -208,7 +187,6 @@ export function AIDashboard({ className, defaultTab = 'overview' }: AIDashboardP
     </div>
   )
 }
-
 function OverviewTab({
   behaviorProfile,
   insights,
@@ -230,11 +208,9 @@ function OverviewTab({
       </div>
     )
   }
-
   const activeInsights = insights?.filter((i: any) => !i.expires_at || new Date(i.expires_at) > new Date()) || []
   const activeNotifications = notifications?.filter((n: any) => !n.delivered) || []
   const highPriorityNotifications = activeNotifications.filter((n: any) => n.priority === 'high' || n.priority === 'urgent')
-
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -268,7 +244,6 @@ function OverviewTab({
           color="green"
         />
       </div>
-
       {/* Behavioral Profile Summary */}
       {behaviorProfile && (
         <Card>
@@ -292,7 +267,6 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Goal Orientation</h4>
                 <div className="flex items-center gap-2">
@@ -302,7 +276,6 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Peak Hours</h4>
                 <div className="flex items-center gap-2">
@@ -312,7 +285,6 @@ function OverviewTab({
                   </span>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <h4 className="font-medium text-gray-900">Consistency</h4>
                 <div className="flex items-center gap-2">
@@ -323,7 +295,6 @@ function OverviewTab({
                 </div>
               </div>
             </div>
-
             <div className="mt-6 pt-4 border-t">
               <h4 className="font-medium text-gray-900 mb-3">Recent Patterns Detected</h4>
               <div className="space-y-2">
@@ -343,14 +314,12 @@ function OverviewTab({
           </CardContent>
         </Card>
       )}
-
       {/* Quick Actions and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Insights */}
         <div className="lg:col-span-2">
           <AIInsightsCard maxInsights={3} />
         </div>
-
         {/* Quick Actions */}
         <Card>
           <CardHeader>
@@ -379,7 +348,6 @@ function OverviewTab({
               <Bell className="w-4 h-4 mr-3" />
               Setup Smart Reminders
             </Button>
-
             <div className="pt-4 border-t">
               <h4 className="text-sm font-medium text-gray-700 mb-2">Next Optimal Time</h4>
               {optimalTimes && optimalTimes.length > 0 ? (
@@ -408,7 +376,6 @@ function OverviewTab({
     </div>
   )
 }
-
 function MetricCard({
   icon: Icon,
   title,
@@ -429,7 +396,6 @@ function MetricCard({
     red: 'text-red-600 bg-red-50',
     purple: 'text-purple-600 bg-purple-50'
   }
-
   return (
     <Card>
       <CardContent className="p-6">

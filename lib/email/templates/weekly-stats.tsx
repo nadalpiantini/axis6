@@ -11,7 +11,6 @@ import {
   Text,
   Tailwind
 } from '@react-email/components'
-
 interface WeeklyStatsEmailProps {
   name?: string
   stats: {
@@ -26,13 +25,11 @@ interface WeeklyStatsEmailProps {
     weeklyProgress: number
   }
 }
-
 export const WeeklyStatsEmail = ({
   name = 'Usuario',
   stats
 }: WeeklyStatsEmailProps) => {
   const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
-
   const getEncouragementMessage = (completionRate: number) => {
     if (completionRate >= 90) return "¡Increíble! Estás en fuego 🔥"
     if (completionRate >= 70) return "¡Excelente progreso! Sigue así 💪"
@@ -40,14 +37,12 @@ export const WeeklyStatsEmail = ({
     if (completionRate >= 30) return "Cada paso cuenta, sigue adelante 🌱"
     return "Un nuevo día es una nueva oportunidad ✨"
   }
-
   const getProgressColor = (rate: number) => {
     if (rate >= 80) return 'bg-green-500'
     if (rate >= 60) return 'bg-blue-500'
     if (rate >= 40) return 'bg-yellow-500'
     return 'bg-gray-400'
   }
-
   return (
     <Html>
       <Head />
@@ -64,7 +59,6 @@ export const WeeklyStatsEmail = ({
                 Tu resumen semanal está listo
               </Text>
             </Section>
-
             {/* Greeting */}
             <Section className="text-center mb-6">
               <div className="text-4xl mb-3">📊</div>
@@ -75,13 +69,11 @@ export const WeeklyStatsEmail = ({
                 {getEncouragementMessage(stats.completionRate)}
               </Text>
             </Section>
-
             {/* Main Stats */}
             <Section className="bg-white rounded-2xl p-8 mb-6 border border-slate-200">
               <Heading className="text-xl font-semibold text-slate-900 mb-6 text-center">
                 Tu semana en números
               </Heading>
-
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600 mb-2">
@@ -91,7 +83,6 @@ export const WeeklyStatsEmail = ({
                     Check-ins totales
                   </Text>
                 </div>
-
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">
                     {Math.round(stats.completionRate)}%
@@ -101,7 +92,6 @@ export const WeeklyStatsEmail = ({
                   </Text>
                 </div>
               </div>
-
               {/* Progress Bar */}
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
@@ -116,14 +106,12 @@ export const WeeklyStatsEmail = ({
                 </div>
               </div>
             </Section>
-
             {/* Current Streaks */}
             {stats.currentStreaks.length > 0 && (
               <Section className="bg-white rounded-2xl p-8 mb-6 border border-slate-200">
                 <Heading className="text-xl font-semibold text-slate-900 mb-4">
                   🔥 Rachas activas
                 </Heading>
-
                 <div className="space-y-3">
                   {stats.currentStreaks.map((streak, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
@@ -149,7 +137,6 @@ export const WeeklyStatsEmail = ({
                 </div>
               </Section>
             )}
-
             {/* Best Category */}
             {stats.bestCategory && (
               <Section className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 mb-6 border border-purple-100">
@@ -167,13 +154,11 @@ export const WeeklyStatsEmail = ({
                 </div>
               </Section>
             )}
-
             {/* Motivational Section */}
             <Section className="bg-white rounded-2xl p-8 mb-6 border border-slate-200">
               <Heading className="text-xl font-semibold text-slate-900 mb-4">
                 💡 Para la próxima semana
               </Heading>
-
               <div className="space-y-3 text-slate-700 text-sm">
                 {stats.completionRate >= 80 ? (
                   <>
@@ -196,7 +181,6 @@ export const WeeklyStatsEmail = ({
                 )}
               </div>
             </Section>
-
             {/* Call to Action */}
             <Section className="text-center mb-6">
               <Button
@@ -206,7 +190,6 @@ export const WeeklyStatsEmail = ({
                 Ver mi dashboard
               </Button>
             </Section>
-
             {/* Weekly Quote/Tip */}
             <Section className="bg-slate-100 rounded-xl p-6 mb-6">
               <div className="text-center">
@@ -219,7 +202,6 @@ export const WeeklyStatsEmail = ({
                 </Text>
               </div>
             </Section>
-
             {/* Footer */}
             <Section className="text-center pt-6 border-t border-slate-200">
               <Text className="text-slate-600 text-sm mb-4">
@@ -244,5 +226,4 @@ export const WeeklyStatsEmail = ({
     </Html>
   )
 }
-
 export default WeeklyStatsEmail

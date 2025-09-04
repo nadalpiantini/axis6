@@ -1,0 +1,287 @@
+{
+  "timestamp": "2025-08-30T02:49:31.476Z",
+  "results": {
+    "tables": {
+      "axis6_profiles": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_categories": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_checkins": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_streaks": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_daily_stats": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_mantras": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_user_mantras": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_chat_rooms": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_chat_messages": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_chat_participants": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_hex_reactions": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_time_blocks": {
+        "exists": true,
+        "accessible": true
+      },
+      "axis6_micro_wins": {
+        "exists": false,
+        "error": "Could not find the table 'public.axis6_micro_wins' in the schema cache"
+      },
+      "axis6_activity_timers": {
+        "exists": false,
+        "error": "Could not find the table 'public.axis6_activity_timers' in the schema cache"
+      }
+    },
+    "constraints": {
+      "unique_user_category_date": {
+        "exists": "unknown",
+        "table": "axis6_checkins",
+        "columns": [
+          "user_id",
+          "category_id",
+          "completed_at"
+        ],
+        "description": "Required for daily checkin upserts",
+        "check_method": "indirect"
+      },
+      "unique_user_category_streak": {
+        "exists": "unknown",
+        "table": "axis6_streaks",
+        "columns": [
+          "user_id",
+          "category_id"
+        ],
+        "description": "Required for streak upserts",
+        "check_method": "indirect"
+      },
+      "unique_user_mantra_date": {
+        "exists": "unknown",
+        "table": "axis6_user_mantras",
+        "columns": [
+          "user_id",
+          "mantra_id",
+          "completed_at"
+        ],
+        "description": "Required for mantra completion upserts",
+        "check_method": "indirect"
+      },
+      "unique_user_time_slot": {
+        "exists": "unknown",
+        "table": "axis6_time_blocks",
+        "columns": [
+          "user_id",
+          "date",
+          "start_time"
+        ],
+        "description": "Prevents overlapping time blocks",
+        "check_method": "indirect"
+      }
+    },
+    "rls_policies": {
+      "axis6_profiles": {
+        "enabled": false,
+        "working": false
+      },
+      "axis6_checkins": {
+        "enabled": false,
+        "working": false
+      },
+      "axis6_streaks": {
+        "enabled": false,
+        "working": false
+      },
+      "axis6_daily_stats": {
+        "enabled": false,
+        "working": false
+      },
+      "axis6_chat_rooms": {
+        "enabled": false,
+        "working": false
+      },
+      "axis6_chat_messages": {
+        "enabled": false,
+        "working": false
+      }
+    },
+    "indexes": {
+      "idx_checkins_today_lookup": {
+        "queryTime": 154,
+        "table": "axis6_checkins",
+        "columns": [
+          "user_id",
+          "category_id",
+          "completed_at"
+        ],
+        "description": "95% performance improvement for today's checkins"
+      },
+      "idx_streaks_user_lookup": {
+        "queryTime": 143,
+        "table": "axis6_streaks",
+        "columns": [
+          "user_id"
+        ],
+        "description": "Fast user streak lookups"
+      },
+      "idx_profiles_user_id": {
+        "queryTime": 153,
+        "table": "axis6_profiles",
+        "columns": [
+          "id"
+        ],
+        "description": "Primary key for profile lookups"
+      }
+    },
+    "critical_issues": [
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_profiles",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_profiles ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_checkins",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_checkins ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_streaks",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_streaks ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_daily_stats",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_daily_stats ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_chat_rooms",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_chat_rooms ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "type": "RLS_DISABLED",
+        "severity": "HIGH",
+        "table": "axis6_chat_messages",
+        "impact": "Users can access other users' data",
+        "fix": "ALTER TABLE axis6_chat_messages ENABLE ROW LEVEL SECURITY;"
+      }
+    ],
+    "performance_issues": [
+      {
+        "type": "SLOW_QUERY",
+        "severity": "MEDIUM",
+        "table": "axis6_checkins",
+        "queryTime": 154,
+        "recommendation": "Consider adding index: idx_checkins_today_lookup",
+        "columns": [
+          "user_id",
+          "category_id",
+          "completed_at"
+        ]
+      },
+      {
+        "type": "SLOW_QUERY",
+        "severity": "MEDIUM",
+        "table": "axis6_streaks",
+        "queryTime": 143,
+        "recommendation": "Consider adding index: idx_streaks_user_lookup",
+        "columns": [
+          "user_id"
+        ]
+      },
+      {
+        "type": "SLOW_QUERY",
+        "severity": "MEDIUM",
+        "table": "axis6_profiles",
+        "queryTime": 153,
+        "recommendation": "Consider adding index: idx_profiles_user_id",
+        "columns": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "fixes": [
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_profiles ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_profiles"
+    },
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_checkins ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_checkins"
+    },
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_streaks ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_streaks"
+    },
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_daily_stats ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_daily_stats"
+    },
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_chat_rooms ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_chat_rooms"
+    },
+    {
+      "priority": "HIGH",
+      "sql": "ALTER TABLE axis6_chat_messages ENABLE ROW LEVEL SECURITY;",
+      "description": "Enable RLS on axis6_chat_messages"
+    },
+    {
+      "priority": "MEDIUM",
+      "sql": "CREATE INDEX CONCURRENTLY idx_checkins_today_lookup ON axis6_checkins(user_id, category_id, completed_at);",
+      "description": "Add performance index for axis6_checkins"
+    },
+    {
+      "priority": "MEDIUM",
+      "sql": "CREATE INDEX CONCURRENTLY idx_streaks_user_lookup ON axis6_streaks(user_id);",
+      "description": "Add performance index for axis6_streaks"
+    },
+    {
+      "priority": "MEDIUM",
+      "sql": "CREATE INDEX CONCURRENTLY idx_profiles_user_id ON axis6_profiles(id);",
+      "description": "Add performance index for axis6_profiles"
+    }
+  ]
+}

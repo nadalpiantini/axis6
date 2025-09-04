@@ -1,35 +1,28 @@
 'use client'
-
 import dynamic from 'next/dynamic'
 import React, { Suspense, useMemo } from 'react'
-
 import { performanceUtils } from '@/lib/production/performance-optimizer'
-
 // Dynamic imports with loading states for better performance
 const LineChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.LineChart })), {
   loading: () => <ChartSkeleton type="line" />,
   ssr: false
 })
-
 const BarChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.BarChart })), {
   loading: () => <ChartSkeleton type="bar" />,
   ssr: false
 })
-
 const PieChart = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.PieChart })), {
   loading: () => <ChartSkeleton type="pie" />,
   ssr: false
 })
-
 const ResponsiveContainer = dynamic(() =>
   import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), {
   loading: () => <div className="w-full h-full animate-pulse bg-white/5 rounded" />,
   ssr: false
 })
-
 // Import other Recharts components dynamically
 const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis })), { ssr: false })
 const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false })
@@ -40,13 +33,11 @@ const Line = dynamic(() => import('recharts').then(mod => ({ default: mod.Line }
 const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar })), { ssr: false })
 const Cell = dynamic(() => import('recharts').then(mod => ({ default: mod.Cell })), { ssr: false })
 const Pie = dynamic(() => import('recharts').then(mod => ({ default: mod.Pie })), { ssr: false })
-
 // Chart skeleton for loading states
 interface ChartSkeletonProps {
   type: 'line' | 'bar' | 'pie'
   height?: number
 }
-
 function ChartSkeleton({ type, height = 300 }: ChartSkeletonProps) {
   return (
     <div
@@ -67,18 +58,15 @@ function ChartSkeleton({ type, height = 300 }: ChartSkeletonProps) {
     </div>
   )
 }
-
 // Optimized chart data processing
 export const useOptimizedChartData = (data: any[], maxDataPoints = 50) => {
   return useMemo(() => {
     if (!data || data.length <= maxDataPoints) return data
-
     // Sample data to reduce chart rendering complexity
     const step = Math.ceil(data.length / maxDataPoints)
     return data.filter((_, index) => index % step === 0)
   }, [data, maxDataPoints])
 }
-
 // Performance-optimized chart wrapper
 interface OptimizedChartProps {
   children: React.ReactNode
@@ -87,7 +75,6 @@ interface OptimizedChartProps {
   'data-testid'?: string
   priority?: 'high' | 'medium' | 'low'
 }
-
 export function OptimizedChart({
   children,
   height = 300,
@@ -97,11 +84,9 @@ export function OptimizedChart({
 }: OptimizedChartProps) {
   const [isInView, setIsInView] = React.useState(priority === 'high')
   const chartRef = React.useRef<HTMLDivElement>(null)
-
   // Intersection Observer for lazy loading
   React.useEffect(() => {
     if (priority === 'high') return // High priority charts render immediately
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -114,14 +99,11 @@ export function OptimizedChart({
         threshold: 0.1
       }
     )
-
     if (chartRef.current) {
       observer.observe(chartRef.current)
     }
-
     return () => observer.disconnect()
   }, [priority])
-
   return (
     <div
       ref={chartRef}
@@ -140,7 +122,6 @@ export function OptimizedChart({
     </div>
   )
 }
-
 // Optimized Completion Rate Chart
 interface CompletionRateChartProps {
   data: Array<{
@@ -150,24 +131,20 @@ interface CompletionRateChartProps {
   }>
   height?: number
 }
-
 export const CompletionRateChart = React.memo(function CompletionRateChart({
   data,
   height = 300
 }: CompletionRateChartProps) {
   const optimizedData = useOptimizedChartData(data, 30) // Limit to 30 data points
-
   const formatDate = React.useCallback((date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
     })
   }, [])
-
   const formatPercentage = React.useCallback((value: number) => {
     return `${Math.round(value * 100)}%`
   }, [])
-
   return (
     <OptimizedChart height={height} data-testid="chart-5" priority="high">
       <ResponsiveContainer width="100%" height="100%">
@@ -206,7 +183,6 @@ export const CompletionRateChart = React.memo(function CompletionRateChart({
     </OptimizedChart>
   )
 })
-
 // Optimized Category Performance Chart
 interface CategoryPerformanceChartProps {
   data: Record<string, {
@@ -216,7 +192,6 @@ interface CategoryPerformanceChartProps {
   }>
   height?: number
 }
-
 export const CategoryPerformanceChart = React.memo(function CategoryPerformanceChart({
   data,
   height = 300
@@ -228,7 +203,6 @@ export const CategoryPerformanceChart = React.memo(function CategoryPerformanceC
       color: stats.color
     })), [data]
   )
-
   return (
     <OptimizedChart height={height} data-testid="chart-7" priority="medium">
       <ResponsiveContainer width="100%" height="100%">
@@ -261,7 +235,6 @@ export const CategoryPerformanceChart = React.memo(function CategoryPerformanceC
     </OptimizedChart>
   )
 })
-
 // Optimized Daily Activity Chart
 interface DailyActivityChartProps {
   data: Array<{
@@ -270,17 +243,14 @@ interface DailyActivityChartProps {
   }>
   height?: number
 }
-
 export const DailyActivityChart = React.memo(function DailyActivityChart({
   data,
   height = 200
 }: DailyActivityChartProps) {
   const optimizedData = useOptimizedChartData(data, 14) // Last 2 weeks
-
   const formatDate = React.useCallback((date: string) => {
     return new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
   }, [])
-
   return (
     <OptimizedChart height={height} data-testid="chart-10" priority="low">
       <ResponsiveContainer width="100%" height="100%">
@@ -307,7 +277,6 @@ export const DailyActivityChart = React.memo(function DailyActivityChart({
     </OptimizedChart>
   )
 })
-
 // Optimized Mood Trend Chart
 interface MoodTrendChartProps {
   data: Array<{
@@ -316,17 +285,14 @@ interface MoodTrendChartProps {
   }>
   height?: number
 }
-
 export const MoodTrendChart = React.memo(function MoodTrendChart({
   data,
   height = 200
 }: MoodTrendChartProps) {
   const optimizedData = useOptimizedChartData(data, 14)
-
   const formatDate = React.useCallback((date: string) => {
     return new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
   }, [])
-
   return (
     <OptimizedChart height={height} data-testid="chart-11" priority="low">
       <ResponsiveContainer width="100%" height="100%">
@@ -360,7 +326,6 @@ export const MoodTrendChart = React.memo(function MoodTrendChart({
     </OptimizedChart>
   )
 })
-
 // Optimized Weekly Progress Chart
 interface WeeklyProgressChartProps {
   data: Array<{
@@ -369,21 +334,17 @@ interface WeeklyProgressChartProps {
   }>
   height?: number
 }
-
 export const WeeklyProgressChart = React.memo(function WeeklyProgressChart({
   data,
   height = 200
 }: WeeklyProgressChartProps) {
   const optimizedData = useOptimizedChartData(data, 7)
-
   const formatDate = React.useCallback((date: string) => {
     return new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
   }, [])
-
   const formatPercentage = React.useCallback((value: number) => {
     return `${Math.round(value * 100)}%`
   }, [])
-
   return (
     <OptimizedChart height={height} data-testid="chart-12" priority="low">
       <ResponsiveContainer width="100%" height="100%">
@@ -414,7 +375,6 @@ export const WeeklyProgressChart = React.memo(function WeeklyProgressChart({
     </OptimizedChart>
   )
 })
-
 // Performance measurement wrapper
 export const withChartPerformance = <T extends object>(
   WrappedComponent: React.ComponentType<T>,
@@ -428,7 +388,6 @@ export const withChartPerformance = <T extends object>(
       ),
       [props]
     )
-
     return MeasuredComponent()
   })
 }

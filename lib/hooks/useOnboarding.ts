@@ -1,28 +1,22 @@
 'use client'
-
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
 import { useCategories } from '@/lib/react-query/hooks/useCategories'
 import { createClient } from '@/lib/supabase/client'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 export interface OnboardingState {
   selectedCategories: number[]
   loading: boolean
   error: string | null
 }
-
 export function useOnboarding() {
   const router = useRouter()
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories()
-
   const [state, setState] = useState<OnboardingState>({
     selectedCategories: [],
     loading: false,
     error: null
   })
-
   const toggleCategory = (categoryId: number) => {
     setState(prev => {
       const newSelected = prev.selectedCategories.includes(categoryId)
@@ -30,7 +24,6 @@ export function useOnboarding() {
         : prev.selectedCategories.length < 6
           ? [...prev.selectedCategories, categoryId]
           : prev.selectedCategories
-
       return {
         ...prev,
         selectedCategories: newSelected,
@@ -38,7 +31,6 @@ export function useOnboarding() {
       }
     })
   }
-
   const completeOnboarding = async () => {
     if (state.selectedCategories.length !== 6) {
       setState(prev => ({
@@ -47,19 +39,14 @@ export function useOnboarding() {
       }))
       return
     }
-
     setState(prev => ({ ...prev, loading: true, error: null }))
-
     try {
       const supabase = createClient()
-
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser()
-
       if (userError || !user) {
         throw new Error('User not authenticated')
       }
-
       // Create or update user profile
       const { error: profileError } = await supabase
         .from('axis6_profiles')
@@ -69,11 +56,9 @@ export function useOnboarding() {
           onboarded: true,
           updated_at: new Date().toISOString()
         })
-
       if (profileError) {
         throw new Error('Error creating user profile')
       }
-
       // Initialize streaks for selected categories
       const { error: streaksError } = await supabase
         .from('axis6_streaks')
@@ -86,23 +71,16 @@ export function useOnboarding() {
             updated_at: new Date().toISOString()
           }))
         )
-
       if (streaksError) {
         // Don't block onboarding for streak initialization failures
       }
-
       // Redirect to dashboard
       router.push('/dashboard')
-
     } catch (error) {
       handleError(error, {
-
         operation: 'unknown_operation',
-
         component: 'useOnboarding',
-
         userMessage: 'Something went wrong. Please try again.'
-
       })
     // // Handled by standardErrorHandler;
       setState(prev => ({
@@ -112,29 +90,23 @@ export function useOnboarding() {
       }))
     }
   }
-
   // Helper functions
   const isSelected = (categoryId: number) => state.selectedCategories.includes(categoryId)
   const canComplete = state.selectedCategories.length === 6
   const progress = (state.selectedCategories.length / 6) * 100
-
   return {
     // Data
     categories: categories || [],
-
     // State
     selectedCategories: state.selectedCategories,
     loading: state.loading,
     error: state.error,
-
     // Loading states
     categoriesLoading,
     categoriesError: categoriesError as Error | null,
-
     // Actions
     toggleCategory,
     completeOnboarding,
-
     // Helpers
     isSelected,
     canComplete,

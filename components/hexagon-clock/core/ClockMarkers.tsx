@@ -2,9 +2,7 @@
  * Clock Markers Component
  * 12-hour clock indicators and time management UI
  */
-
 'use client'
-
 import React, { memo, useState, useEffect } from 'react';
 import type { PrecomputedSVG, ResponsiveSizing } from '../types/HexagonTypes';
 import {
@@ -14,7 +12,6 @@ import {
   CLOCK_POSITIONS,
   HEXAGON_CATEGORIES
 } from '../utils/clockPositions';
-
 interface ClockMarkersProps {
   precomputedSVG: PrecomputedSVG;
   responsiveSizing: ResponsiveSizing;
@@ -25,7 +22,6 @@ interface ClockMarkersProps {
   animate?: boolean;
   onCategoryClick?: (category: any) => void;
 }
-
 /**
  * Revolutionary 12-hour clock markers with sun at 12 o'clock
  */
@@ -40,7 +36,6 @@ const RevolutionaryHourMarkers = memo(function RevolutionaryHourMarkers({
 }) {
   const { center, radius } = precomputedSVG;
   const markers = generateRevolutionaryClockMarkers(center, radius * 1.15);
-
   return (
     <g className="revolutionary-clock-markers">
       {markers.map(marker => (
@@ -79,7 +74,6 @@ const RevolutionaryHourMarkers = memo(function RevolutionaryHourMarkers({
                 const y1 = rayStart * Math.sin(rayAngleRad);
                 const x2 = rayEnd * Math.cos(rayAngleRad);
                 const y2 = rayEnd * Math.sin(rayAngleRad);
-
                 return (
                   <line
                     key={`ray-${idx}`}
@@ -128,7 +122,6 @@ const RevolutionaryHourMarkers = memo(function RevolutionaryHourMarkers({
                   animationDuration: '0.5s'
                 }}
               />
-
               {/* Hour numbers for quarter hours */}
               {marker.isQuarter && (
                 <text
@@ -152,7 +145,6 @@ const RevolutionaryHourMarkers = memo(function RevolutionaryHourMarkers({
     </g>
   );
 });
-
 /**
  * Revolutionary current time indicator (moving sun)
  */
@@ -166,27 +158,21 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
   const { center, radius } = precomputedSVG;
   const [currentTime, setCurrentTime] = useState(new Date());
   const [sunRotation, setSunRotation] = useState(0);
-
   // Update current time every minute for precise positioning
   useEffect(() => {
     const updateTime = () => setCurrentTime(new Date());
     updateTime(); // Initial call
-
     const interval = setInterval(updateTime, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
-
   // Animate sun rotation for living effect
   useEffect(() => {
     const interval = setInterval(() => {
       setSunRotation(prev => (prev + 1) % 360);
     }, 100); // Slow rotation
-
     return () => clearInterval(interval);
   }, []);
-
   const sunPosition = getCurrentTimeSunPosition(center, radius * 0.9);
-
   return (
     <g className="revolutionary-current-time-sun">
       {/* Sun trajectory path (faint circle showing 12-hour path) */}
@@ -204,7 +190,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
           animationDuration: '3s'
         }}
       />
-
       {/* Moving sun at current time position */}
       <g
         transform={`translate(${sunPosition.x}, ${sunPosition.y})`}
@@ -223,7 +208,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
           fill="rgba(255, 215, 0, 0.15)"
           className="animate-pulse"
         />
-
         {/* Sun center */}
         <circle
           cx="0"
@@ -237,7 +221,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
             filter: 'drop-shadow(0 0 12px #FFD700)'
           }}
         />
-
         {/* Rotating sun rays */}
         <g
           transform={`rotate(${sunRotation})`}
@@ -251,7 +234,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
             const y1 = rayStart * Math.sin(rayAngleRad);
             const x2 = rayEnd * Math.cos(rayAngleRad);
             const y2 = rayEnd * Math.sin(rayAngleRad);
-
             return (
               <line
                 key={`ray-${idx}`}
@@ -268,7 +250,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
             );
           })}
         </g>
-
         {/* Minute indicator (small dot) */}
         <circle
           cx="0"
@@ -279,7 +260,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
           className="animate-pulse"
         />
       </g>
-
       {/* Current time display */}
       <g transform={`translate(${sunPosition.x}, ${sunPosition.y + 40})`}>
         <rect
@@ -306,7 +286,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
           {sunPosition.timeString}
         </text>
       </g>
-
       {/* NOW indicator */}
       <text
         x={sunPosition.x}
@@ -324,7 +303,6 @@ const RevolutionaryCurrentTimeSun = memo(function RevolutionaryCurrentTimeSun({
     </g>
   );
 });
-
 /**
  * Revolutionary category positioning at clock hours
  */
@@ -340,13 +318,11 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
   onCategoryClick?: (category: any) => void;
 }) {
   const { center, radius } = precomputedSVG;
-
   return (
     <g className="category-clock-positions">
       {HEXAGON_CATEGORIES.map((category, idx) => {
         const clockPos = getCategoryClockPosition(category.key, center, radius * 0.85);
         const labelPos = getCategoryClockPosition(category.key, center, radius * 1.2);
-
         return (
           <g key={`category-${category.key}`} className={`category-${category.key}`}>
             {/* Category indicator on hexagon edge */}
@@ -371,7 +347,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
                   filter: `drop-shadow(0 2px 8px ${category.color}40)`
                 }}
               />
-
               {/* Category icon */}
               <text
                 x={clockPos.x}
@@ -384,7 +359,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
               >
                 {clockPos.icon}
               </text>
-
               {/* Hour indicator */}
               <text
                 x={clockPos.x}
@@ -397,7 +371,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
                 {clockPos.hour === 12 ? '12' : clockPos.hour}
               </text>
             </g>
-
             {/* Category label with time range */}
             <g
               className="category-label-group cursor-pointer"
@@ -419,7 +392,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
                 strokeWidth="1"
                 strokeOpacity="0.3"
               />
-
               {/* Category name */}
               <text
                 x={labelPos.x}
@@ -430,7 +402,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
               >
                 {category.shortLabel}
               </text>
-
               {/* Time range */}
               <text
                 x={labelPos.x}
@@ -442,7 +413,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
                 {clockPos.timeRange}
               </text>
             </g>
-
             {/* Connecting line from center to category */}
             <line
               x1={center.x}
@@ -465,7 +435,6 @@ const CategoryClockPositions = memo(function CategoryClockPositions({
     </g>
   );
 });
-
 /**
  * Circadian rhythm indicators
  */
@@ -477,12 +446,10 @@ const CircadianRhythmIndicators = memo(function CircadianRhythmIndicators({
   animate?: boolean;
 }) {
   const { center, radius } = precomputedSVG;
-
   return (
     <g className="circadian-rhythm-indicators">
       {HEXAGON_CATEGORIES.map((category, idx) => {
         const clockPos = getCategoryClockPosition(category.key, center, radius * 1.4);
-
         return (
           <g key={`circadian-${category.key}`}>
             {/* Circadian peak indicator */}
@@ -499,7 +466,6 @@ const CircadianRhythmIndicators = memo(function CircadianRhythmIndicators({
             >
               {CLOCK_POSITIONS[category.key].circadianPeak}
             </text>
-
             {/* Symbolism tooltip area */}
             <text
               x={clockPos.x}
@@ -520,7 +486,6 @@ const CircadianRhythmIndicators = memo(function CircadianRhythmIndicators({
     </g>
   );
 });
-
 /**
  * Clock face background
  */
@@ -532,7 +497,6 @@ const ClockFace = memo(function ClockFace({
   animate?: boolean;
 }) {
   const { center, radius } = precomputedSVG;
-
   return (
     <g className="clock-face">
       {/* Outer clock circle */}
@@ -551,7 +515,6 @@ const ClockFace = memo(function ClockFace({
           strokeDashoffset: animate ? '628' : '0' // 2π * radius
         }}
       />
-
       {/* Inner clock circle */}
       <circle
         cx={center.x}
@@ -569,7 +532,6 @@ const ClockFace = memo(function ClockFace({
     </g>
   );
 });
-
 /**
  * Revolutionary main clock markers component
  */
@@ -592,7 +554,6 @@ export const ClockMarkers = memo(function ClockMarkers({
           animate={animate}
         />
       )}
-
       {/* Revolutionary hour markers with sun at 12 */}
       {showClockMarkers && (
         <RevolutionaryHourMarkers
@@ -601,7 +562,6 @@ export const ClockMarkers = memo(function ClockMarkers({
           animate={animate}
         />
       )}
-
       {/* Categories positioned at optimal clock hours */}
       {showCategoryPositions && (
         <CategoryClockPositions
@@ -611,7 +571,6 @@ export const ClockMarkers = memo(function ClockMarkers({
           onCategoryClick={onCategoryClick}
         />
       )}
-
       {/* Circadian rhythm indicators */}
       {showCircadianRhythm && (
         <CircadianRhythmIndicators
@@ -619,7 +578,6 @@ export const ClockMarkers = memo(function ClockMarkers({
           animate={animate}
         />
       )}
-
       {/* Revolutionary current time sun with movement */}
       {showCurrentTime && (
         <RevolutionaryCurrentTimeSun
@@ -630,5 +588,4 @@ export const ClockMarkers = memo(function ClockMarkers({
     </g>
   );
 });
-
 ClockMarkers.displayName = 'ClockMarkers';

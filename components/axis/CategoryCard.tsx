@@ -1,9 +1,7 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { Heart, Brain, Palette, Users, Sun, Briefcase, CheckCircle2, Circle } from 'lucide-react'
 import { useState, useCallback, memo } from 'react'
-
 interface CategoryCardProps {
   category: {
     key: string
@@ -21,7 +19,6 @@ interface CategoryCardProps {
   streakCount?: number
   onToggle?: () => void
 }
-
 const iconMap = {
   heart: Heart,
   brain: Brain,
@@ -30,7 +27,6 @@ const iconMap = {
   sun: Sun,
   briefcase: Briefcase
 }
-
 const movementAnimations = {
   latido: {
     rest: { scale: 1 },
@@ -101,22 +97,17 @@ const movementAnimations = {
     }
   }
 }
-
 const CategoryCard = memo(function CategoryCard({ category, isCompleted = false, streakCount = 0, onToggle }: CategoryCardProps) {
   const [showActions, setShowActions] = useState(false)
   const [selectedAction, setSelectedAction] = useState<number | null>(null)
-
   const handleToggleActions = useCallback(() => {
     setShowActions(prev => !prev)
   }, [])
-
   const handleSelectAction = useCallback((index: number) => {
     setSelectedAction(prev => prev === index ? null : index)
   }, [])
-
   const Icon = iconMap[category.icon as keyof typeof iconMap]
   const animation = movementAnimations[category.movement as keyof typeof movementAnimations]
-
   return (
     <motion.div
       className="relative group"
@@ -146,11 +137,9 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
              style={{
                background: `radial-gradient(ellipse 80% 120% at 30% 70%, ${category.color}40, transparent 70%)`
              }} />
-
         {/* Flowing accent */}
         <div className="absolute bottom-0 left-0 w-full h-2 organic-wave opacity-30"
              style={{ backgroundColor: `${category.color}20` }} />
-
         {/* Header */}
         <div className="flex items-start justify-between mb-4 relative z-10">
           <div className="flex items-center gap-3">
@@ -182,7 +171,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
                 style={{ color: isCompleted ? category.color : category.darkColor }}
               />
             </motion.div>
-
             <div>
               <h3
                 className="font-serif font-bold text-lg leading-tight"
@@ -193,7 +181,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
               <p className="text-sm text-gray-600/80 font-medium">{category.label}</p>
             </div>
           </div>
-
           {/* Botón de completado - THE RITUAL OS style */}
           <motion.button
             onClick={onToggle}
@@ -228,7 +215,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             )}
           </motion.button>
         </div>
-
         {/* Mantra - THE RITUAL OS style */}
         <motion.p
           className="text-sm italic text-gray-700/90 mb-5 font-serif leading-relaxed relative z-10"
@@ -240,7 +226,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
           {category.mantra}
           <span className="text-2xl font-serif" style={{ color: `${category.color}60` }}>&rdquo;</span>
         </motion.p>
-
         {/* Streak indicator - THE RITUAL OS style */}
         {streakCount > 0 && (
           <motion.div
@@ -278,7 +263,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             </motion.span>
           </motion.div>
         )}
-
         {/* Microacciones expandibles */}
         <motion.div
           className="mt-4"
@@ -314,7 +298,6 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
             ))}
           </div>
         </motion.div>
-
         {/* Botón expandir/colapsar - THE RITUAL OS style */}
         <motion.button
           onClick={handleToggleActions}
@@ -344,7 +327,5 @@ const CategoryCard = memo(function CategoryCard({ category, isCompleted = false,
     </motion.div>
   )
 })
-
 CategoryCard.displayName = 'CategoryCard'
-
 export default CategoryCard

@@ -1,6 +1,5 @@
 'use client'
-
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -9,72 +8,43 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Activity, Brain, Heart, Users, Sparkles, Briefcase, Clock, Globe, Lock, UserCheck } from 'lucide-react'
 import { toast } from 'sonner'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
+import { useCSRF } from '@/lib/hooks/useCSRF'
+import { AXIS_OPTIONS } from '@/lib/constants/axis-options'
+import { MINUTE_OPTIONS } from '@/lib/constants/minute-options'
+import { PRIVACY_OPTIONS } from '@/lib/constants/privacy-options'
+import { MICRO_SUGGESTIONS } from '@/lib/constants/micro-suggestions'
+
 interface QuickActionComposerProps {
   isOpen: boolean
   onClose: () => void
   isMorningWindow?: boolean
   onSuccess?: () => void
 }
-
-const AXIS_OPTIONS = [
-  { value: 'physical', label: 'Physical', icon: Activity, color: 'bg-green-500' },
-  { value: 'mental', label: 'Mental', icon: Brain, color: 'bg-purple-500' },
-  { value: 'emotional', label: 'Emotional', icon: Heart, color: 'bg-red-500' },
-  { value: 'social', label: 'Social', icon: Users, color: 'bg-blue-500' },
-  { value: 'spiritual', label: 'Spiritual', icon: Sparkles, color: 'bg-teal-500' },
-  { value: 'material', label: 'Material', icon: Briefcase, color: 'bg-yellow-500' }
-]
-
-const MINUTE_OPTIONS = [5, 10, 15, 25, 45]
-
-const PRIVACY_OPTIONS = [
-  { value: 'public', label: 'Public', icon: Globe },
-  { value: 'followers', label: 'Followers', icon: UserCheck },
-  { value: 'private', label: 'Private', icon: Lock }
-]
-
-const MICRO_SUGGESTIONS = [
-  'Read 10 pages',
-  'Stretch for 5 minutes',
-  'Call a friend',
-  'Meditate 3 minutes',
-  'Sketch something',
-  'Write in journal',
-  'Take a walk',
-  'Drink water',
-  'Practice gratitude',
-  'Organize workspace'
-]
-
 export function QuickActionComposer({
   isOpen,
   onClose,
   isMorningWindow = false,
   onSuccess
 }: QuickActionComposerProps) {
+  const { secureFetch } = useCSRF()
   const [selectedAxis, setSelectedAxis] = useState<string>('')
   const [winText, setWinText] = useState('')
   const [minutes, setMinutes] = useState<number | null>(null)
   const [privacy, setPrivacy] = useState('public')
   const [isSubmitting, setIsSubmitting] = useState(false)
-
   const handleSubmit = async () => {
     if (!selectedAxis || !winText.trim()) {
       toast.error('Please select an axis and describe your micro win')
       return
     }
-
     if (winText.length > 140) {
       toast.error('Micro win must be 140 characters or less')
       return
     }
-
     setIsSubmitting(true)
-
     try {
-      const response = await fetch('/api/micro-wins', {
+      const response = await secureFetch('/api/micro-wins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -85,39 +55,30 @@ export function QuickActionComposer({
           isMorning: isMorningWindow
         })
       })
-
       const data = await response.json()
-
       if (!response.ok) {
         throw new Error(data.error || 'Failed to record micro win')
       }
-
       toast.success(data.message || 'Micro win recorded!')
-
       // Reset form
       setSelectedAxis('')
       setWinText('')
       setMinutes(null)
       setPrivacy('public')
-
       onSuccess?.()
     } catch (error) {
       handleError(error, {
       operation: 'general_operation', component: 'QuickActionComposer',
-
         userMessage: 'Operation failed. Please try again.'
-
       })
       toast.error(error instanceof Error ? error.message : 'Failed to record micro win')
     } finally {
       setIsSubmitting(false)
     }
   }
-
   const handleSuggestionClick = (suggestion: string) => {
     setWinText(suggestion)
   }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-navy-800 border-navy-700">
@@ -126,7 +87,6 @@ export function QuickActionComposer({
             {isMorningWindow ? '🌅 Morning Micro Win' : '✨ Quick Micro Win'}
           </DialogTitle>
         </DialogHeader>
-
         <div className="space-y-6">
           {/* Axis Selection */}
           <div>
@@ -161,7 +121,6 @@ export function QuickActionComposer({
               })}
             </div>
           </div>
-
           {/* Win Text */}
           <div>
             <Label className="text-sm font-medium text-navy-200 mb-2 block">
@@ -182,7 +141,6 @@ export function QuickActionComposer({
                 <p className="text-xs text-yellow-400">Almost at limit</p>
               )}
             </div>
-
             {/* Suggestions */}
             <div className="mt-3 flex flex-wrap gap-2">
               {MICRO_SUGGESTIONS.slice(0, 4).map((suggestion, idx) => (
@@ -196,7 +154,6 @@ export function QuickActionComposer({
               ))}
             </div>
           </div>
-
           {/* Minutes (Optional) */}
           <div>
             <Label className="text-sm font-medium text-navy-200 mb-2 block">
@@ -220,7 +177,6 @@ export function QuickActionComposer({
               ))}
             </div>
           </div>
-
           {/* Privacy */}
           <div>
             <Label className="text-sm font-medium text-navy-200 mb-2 block">
@@ -250,7 +206,6 @@ export function QuickActionComposer({
               </div>
             </RadioGroup>
           </div>
-
           {/* Submit Button */}
           <Button
             onClick={handleSubmit}

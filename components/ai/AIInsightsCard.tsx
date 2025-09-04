@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain,
@@ -16,21 +15,18 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { useState } from 'react'
-
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Progress } from '@/components/ui/progress'
 import { PersonalizedInsight } from '@/lib/ai/behavioral-analyzer'
 import { useAIPersonalization } from '@/lib/hooks/useAIPersonalization'
-
 interface AIInsightsCardProps {
   className?: string
   showAll?: boolean
   maxInsights?: number
 }
-
 export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: AIInsightsCardProps) {
   const {
     insights,
@@ -40,9 +36,7 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
     getActiveInsights,
     getInsightsByType
   } = useAIPersonalization()
-
   const [expandedInsights, setExpandedInsights] = useState<Set<string>>(new Set())
-
   if (isLoading) {
     return (
       <Card className={className}>
@@ -66,7 +60,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
       </Card>
     )
   }
-
   if (error) {
     return (
       <Card className={className}>
@@ -84,10 +77,8 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
       </Card>
     )
   }
-
   const activeInsights = getActiveInsights()
   const displayedInsights = showAll ? activeInsights : activeInsights.slice(0, maxInsights)
-
   const toggleInsightExpansion = (insightId: string) => {
     const newExpanded = new Set(expandedInsights)
     if (newExpanded.has(insightId)) {
@@ -97,7 +88,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
     }
     setExpandedInsights(newExpanded)
   }
-
   const getInsightIcon = (type: string) => {
     switch (type) {
       case 'daily': return <Clock className="w-4 h-4" />
@@ -107,7 +97,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
       default: return <Brain className="w-4 h-4" />
     }
   }
-
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'destructive'
@@ -116,7 +105,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
       default: return 'default'
     }
   }
-
   return (
     <Card className={className}>
       <CardHeader>
@@ -164,9 +152,7 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                           </Badge>
                         </div>
                       </div>
-
                       <p className="text-sm text-gray-600">{insight.content}</p>
-
                       {insight.action_items && insight.action_items.length > 0 && (
                         <Collapsible
                           open={expandedInsights.has(insight.id)}
@@ -204,7 +190,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                           </CollapsibleContent>
                         </Collapsible>
                       )}
-
                       {insight.personalization_score && (
                         <div className="flex items-center gap-2 mt-3">
                           <span className="text-xs text-gray-500">Relevance:</span>
@@ -224,7 +209,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
                 </motion.div>
               ))}
             </AnimatePresence>
-
             {activeInsights.length > maxInsights && !showAll && (
               <div className="text-center pt-4">
                 <Button variant="outline" size="sm">
@@ -234,7 +218,6 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
             )}
           </div>
         )}
-
         {behaviorProfile && (
           <div className="mt-6 pt-4 border-t">
             <div className="flex items-center gap-2 mb-3">
@@ -271,11 +254,9 @@ export function AIInsightsCard({ className, showAll = false, maxInsights = 3 }: 
     </Card>
   )
 }
-
 export function InsightTypeFilter() {
   const { getInsightsByType } = useAIPersonalization()
   const [selectedType, setSelectedType] = useState<string>('all')
-
   const insightTypes = [
     { value: 'all', label: 'All Insights', icon: Brain },
     { value: 'daily', label: 'Daily', icon: Clock },
@@ -283,13 +264,11 @@ export function InsightTypeFilter() {
     { value: 'coaching', label: 'Coaching', icon: Lightbulb },
     { value: 'recommendation', label: 'Tips', icon: Target }
   ]
-
   return (
     <div className="flex gap-2 mb-4 overflow-x-auto">
       {insightTypes.map(type => {
         const Icon = type.icon
         const count = type.value === 'all' ? 0 : getInsightsByType(type.value as any).length
-
         return (
           <Button
             key={type.value}

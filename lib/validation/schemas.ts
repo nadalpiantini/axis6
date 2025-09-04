@@ -1,7 +1,5 @@
 import { z } from 'zod'
-
 import { sanitizeEmail, sanitizeInput } from '@/lib/security/sanitize'
-
 // Common schemas
 export const emailSchema = z
   .string()
@@ -10,7 +8,6 @@ export const emailSchema = z
   .toLowerCase()
   .trim()
   .transform((email) => sanitizeEmail(email))
-
 export const passwordSchema = z
   .string()
   .min(8, 'La contraseña debe tener al menos 8 caracteres')
@@ -19,7 +16,6 @@ export const passwordSchema = z
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
     'La contraseña debe contener mayúsculas, minúsculas y números'
   )
-
 export const nameSchema = z
   .string()
   .min(2, 'El nombre debe tener al menos 2 caracteres')
@@ -27,13 +23,11 @@ export const nameSchema = z
   .trim()
   .transform((name) => sanitizeInput(name))
   .refine((name) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name), 'El nombre solo puede contener letras y espacios')
-
 // Auth schemas
 export const loginSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, 'Contraseña es requerida')
 })
-
 export const registerSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -43,17 +37,14 @@ export const registerSchema = z.object({
   message: 'Las contraseñas no coinciden',
   path: ['confirmPassword']
 })
-
 export const forgotPasswordSchema = z.object({
   email: emailSchema
 })
-
 export const resetPasswordSchema = z.object({
   password: passwordSchema,
   accessToken: z.string().min(1, 'Token de acceso es requerido'),
   refreshToken: z.string().min(1, 'Token de actualización es requerido')
 })
-
 // Mantra schemas
 export const completeMantraSchema = z.object({
   action: z.enum(['complete', 'skip'], {
@@ -61,25 +52,21 @@ export const completeMantraSchema = z.object({
   }),
   timestamp: z.string().datetime().optional()
 })
-
 // Check-in schemas
 export const checkInSchema = z.object({
   categoryId: z.string().uuid('ID de categoría inválido'),
   completed: z.boolean(),
   date: z.string().datetime().optional()
 })
-
 export const bulkCheckInSchema = z.object({
   checkIns: z.array(checkInSchema).min(1).max(10)
 })
-
 // Streak schemas
 export const streakQuerySchema = z.object({
   categoryId: z.string().uuid().optional(),
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional()
 })
-
 // Profile schemas
 export const updateProfileSchema = z.object({
   name: nameSchema.optional(),
@@ -90,7 +77,6 @@ export const updateProfileSchema = z.object({
     notifications: z.boolean().optional()
   }).optional()
 })
-
 // Helper function for validating request body
 export async function validateRequest<T>(
   request: Request,
@@ -108,7 +94,6 @@ export async function validateRequest<T>(
     return { error: 'Datos inválidos' }
   }
 }
-
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>
 export type RegisterInput = z.infer<typeof registerSchema>

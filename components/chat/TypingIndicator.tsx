@@ -1,18 +1,13 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import React from 'react'
-
 import { cn } from '@/lib/utils'
-
 interface TypingIndicatorProps {
   users: string[]
   className?: string
 }
-
 export function TypingIndicator({ users, className }: TypingIndicatorProps) {
   if (users.length === 0) return null
-
   const getTypingText = () => {
     if (users.length === 1) {
       return `${users[0]} is typing...`
@@ -22,7 +17,6 @@ export function TypingIndicator({ users, className }: TypingIndicatorProps) {
       return `${users[0]} and ${users.length - 1} others are typing...`
     }
   }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -52,7 +46,6 @@ export function TypingIndicator({ users, className }: TypingIndicatorProps) {
           />
         ))}
       </div>
-
       {/* Typing Text */}
       <span className="text-sm text-neutral-400">
         {getTypingText()}

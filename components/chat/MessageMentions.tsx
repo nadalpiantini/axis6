@@ -1,17 +1,13 @@
 'use client'
-
 import { AtSign } from 'lucide-react'
 import React from 'react'
-
 import { MentionMatch } from '@/lib/services/mentions-service'
 import { cn } from '@/lib/utils'
-
 interface MessageMentionsProps {
   text: string
   mentions: MentionMatch[]
   className?: string
 }
-
 /**
  * Component to render message text with highlighted mentions
  */
@@ -27,13 +23,10 @@ export function MessageMentions({
       </span>
     )
   }
-
   // Sort mentions by position to process them in order
   const sortedMentions = [...mentions].sort((a, b) => a.start - b.start)
-
   const parts: React.ReactNode[] = []
   let lastIndex = 0
-
   sortedMentions.forEach((mention, index) => {
     // Add text before mention
     if (mention.start > lastIndex) {
@@ -43,7 +36,6 @@ export function MessageMentions({
         </span>
       )
     }
-
     // Add mention component
     if (mention.user) {
       parts.push(
@@ -64,10 +56,8 @@ export function MessageMentions({
         </span>
       )
     }
-
     lastIndex = mention.end
   })
-
   // Add remaining text
   if (lastIndex < text.length) {
     parts.push(
@@ -76,14 +66,12 @@ export function MessageMentions({
       </span>
     )
   }
-
   return (
     <span className={className}>
       {parts}
     </span>
   )
 }
-
 /**
  * Individual mention badge component
  */
@@ -97,7 +85,6 @@ interface MentionBadgeProps {
   onClick?: () => void
   className?: string
 }
-
 export function MentionBadge({
   user,
   username,
@@ -109,7 +96,6 @@ export function MentionBadge({
     e.stopPropagation()
     onClick?.()
   }
-
   return (
     <span
       className={cn(
@@ -130,7 +116,6 @@ export function MentionBadge({
     </span>
   )
 }
-
 /**
  * Parse and render message with mentions
  */
@@ -140,7 +125,6 @@ interface ParsedMessageProps {
   onMentionClick?: (userId: string) => void
   className?: string
 }
-
 export function ParsedMessage({
   content,
   mentions = [],

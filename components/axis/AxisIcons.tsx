@@ -1,14 +1,11 @@
 'use client'
-
 import { motion } from 'framer-motion'
-
 interface AxisIconProps {
   axis: string
   size?: number
   animated?: boolean
   color?: string
 }
-
 // SVG personalizado para cada eje siguiendo el sistema ritualizado
 const icons = {
   physical: {
@@ -197,14 +194,11 @@ const icons = {
     viewBox: "0 0 24 24"
   }
 }
-
-export default function AxisIcon({ axis, size = 24, animated = true, color = "currentColor" }: AxisIconProps) {
+export default function AnimatedAxisIcon({ axis, size = 24, animated = true, color = "currentColor" }: AxisIconProps) {
   const icon = icons[axis as keyof typeof icons]
-
   if (!icon) {
     return null
   }
-
   return (
     <svg
       width={size}
@@ -221,7 +215,6 @@ export default function AxisIcon({ axis, size = 24, animated = true, color = "cu
     </svg>
   )
 }
-
 // Componente para mostrar todos los iconos en una grilla
 export function AxisIconGrid() {
   const axes = [
@@ -232,7 +225,6 @@ export function AxisIconGrid() {
     { key: 'spiritual', label: 'Presencia Elevada', color: '#4C1D95' },
     { key: 'material', label: 'Sustento Terrenal', color: '#B45309' }
   ]
-
   return (
     <div className="grid grid-cols-3 gap-6">
       {axes.map((axis) => (
@@ -242,7 +234,7 @@ export function AxisIconGrid() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <AxisIcon
+          <AnimatedAxisIcon
             axis={axis.key}
             size={48}
             color={axis.color}

@@ -12,7 +12,6 @@ import {
   Text,
 } from '@react-email/components'
 import * as React from 'react'
-
 interface NotificationEmailProps {
   name: string
   type: 'streak-milestone' | 'weekly-reminder' | 'goal-completed' | 'system-update'
@@ -22,9 +21,7 @@ interface NotificationEmailProps {
   actionUrl?: string
   data?: Record<string, any>
 }
-
 const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
-
 export const NotificationEmail = ({
   name = 'Usuario',
   type = 'weekly-reminder',
@@ -36,7 +33,6 @@ export const NotificationEmail = ({
 }: NotificationEmailProps) => {
   const previewText = getPreviewText(type, title)
   const { emoji, color, bgColor } = getNotificationStyle(type)
-
   return (
     <Html>
       <Head />
@@ -55,13 +51,11 @@ export const NotificationEmail = ({
             <Text style={brandText}>AXIS6</Text>
             <Text style={tagline}>Seis ejes. Un solo tú.</Text>
           </Section>
-
           {/* Main Content */}
           <Section style={{ ...notificationBox, backgroundColor: bgColor }}>
             <Text style={notificationEmoji}>{emoji}</Text>
             <Text style={{ ...heading, color }}>{title}</Text>
             <Text style={paragraph}>{message}</Text>
-
             {/* Dynamic content based on notification type */}
             {type === 'streak-milestone' && data.streak && (
               <Section style={statsSection}>
@@ -73,7 +67,6 @@ export const NotificationEmail = ({
                 </Text>
               </Section>
             )}
-
             {type === 'weekly-reminder' && data.completionRate && (
               <Section style={statsSection}>
                 <Text style={statsText}>
@@ -87,7 +80,6 @@ export const NotificationEmail = ({
                 </Text>
               </Section>
             )}
-
             {/* Action Button */}
             {actionText && actionUrl && (
               <Section style={buttonContainer}>
@@ -100,13 +92,11 @@ export const NotificationEmail = ({
               </Section>
             )}
           </Section>
-
           {/* Weekly Progress (if available) */}
           {data.weeklyProgress && (
             <Section style={progressSection}>
               <Text style={sectionTitle}>Tu progreso esta semana</Text>
               <Hr style={divider} />
-
               {data.weeklyProgress.map((item: any, index: number) => (
                 <div key={index} style={progressItem}>
                   <Text style={progressCategory}>{item.category}</Text>
@@ -124,7 +114,6 @@ export const NotificationEmail = ({
               ))}
             </Section>
           )}
-
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
@@ -146,7 +135,6 @@ export const NotificationEmail = ({
     </Html>
   )
 }
-
 // Helper functions
 function getPreviewText(type: string, title: string): string {
   const previews = {
@@ -157,7 +145,6 @@ function getPreviewText(type: string, title: string): string {
   }
   return previews[type as keyof typeof previews] || title
 }
-
 function getNotificationStyle(type: string) {
   const styles = {
     'streak-milestone': { emoji: '🔥', color: '#dc2626', bgColor: '#fef2f2' },
@@ -167,13 +154,11 @@ function getNotificationStyle(type: string) {
   }
   return styles[type as keyof typeof styles] || styles['weekly-reminder']
 }
-
 // Styles
 const main = {
   backgroundColor: '#f6f9fc',
   fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 }
-
 const container = {
   backgroundColor: '#ffffff',
   margin: '0 auto',
@@ -182,17 +167,14 @@ const container = {
   borderRadius: '8px',
   boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
 }
-
 const header = {
   padding: '32px 32px 16px',
   textAlign: 'center' as const,
 }
-
 const logo = {
   margin: '0 auto 8px',
   borderRadius: '8px',
 }
-
 const brandText = {
   fontSize: '28px',
   fontWeight: 'bold',
@@ -200,13 +182,11 @@ const brandText = {
   margin: '0',
   lineHeight: '1.2',
 }
-
 const tagline = {
   fontSize: '14px',
   color: '#64748b',
   margin: '4px 0 0 0',
 }
-
 const notificationBox = {
   padding: '32px',
   margin: '0 32px',
@@ -214,34 +194,29 @@ const notificationBox = {
   textAlign: 'center' as const,
   border: '1px solid #e2e8f0',
 }
-
 const notificationEmoji = {
   fontSize: '48px',
   margin: '0 0 16px 0',
   lineHeight: '1',
 }
-
 const heading = {
   fontSize: '24px',
   fontWeight: 'bold',
   margin: '0 0 16px 0',
   lineHeight: '1.3',
 }
-
 const paragraph = {
   fontSize: '16px',
   lineHeight: '1.6',
   color: '#374151',
   margin: '0 0 24px 0',
 }
-
 const statsSection = {
   backgroundColor: 'rgba(255, 255, 255, 0.8)',
   padding: '20px',
   borderRadius: '8px',
   margin: '20px 0',
 }
-
 const statsText = {
   fontSize: '20px',
   fontWeight: 'bold',
@@ -249,19 +224,16 @@ const statsText = {
   margin: '0 0 8px 0',
   textAlign: 'center' as const,
 }
-
 const statsSubtext = {
   fontSize: '14px',
   color: '#6b7280',
   margin: '0',
   textAlign: 'center' as const,
 }
-
 const buttonContainer = {
   textAlign: 'center' as const,
   margin: '32px 0 0 0',
 }
-
 const button = {
   fontSize: '16px',
   fontWeight: '600',
@@ -274,37 +246,31 @@ const button = {
   borderRadius: '8px',
   margin: '0 auto',
 }
-
 const progressSection = {
   padding: '32px',
   margin: '0 32px',
   backgroundColor: '#f8fafc',
   borderRadius: '8px',
 }
-
 const sectionTitle = {
   fontSize: '18px',
   fontWeight: 'bold',
   color: '#1e293b',
   margin: '0 0 16px 0',
 }
-
 const divider = {
   borderColor: '#e2e8f0',
   margin: '16px 0 24px 0',
 }
-
 const progressItem = {
   marginBottom: '16px',
 }
-
 const progressCategory = {
   fontSize: '14px',
   fontWeight: '600',
   color: '#374151',
   margin: '0 0 4px 0',
 }
-
 const progressBarContainer = {
   height: '8px',
   backgroundColor: '#e5e7eb',
@@ -312,43 +278,36 @@ const progressBarContainer = {
   overflow: 'hidden',
   margin: '0 0 4px 0',
 }
-
 const progressBar = {
   height: '100%',
   borderRadius: '4px',
   transition: 'width 0.3s ease',
 }
-
 const progressText = {
   fontSize: '12px',
   color: '#6b7280',
   margin: '0',
   textAlign: 'right' as const,
 }
-
 const footer = {
   padding: '32px',
   textAlign: 'center' as const,
 }
-
 const footerText = {
   fontSize: '14px',
   color: '#6b7280',
   margin: '0 0 8px 0',
   lineHeight: '1.5',
 }
-
 const footerSubtext = {
   fontSize: '12px',
   color: '#9ca3af',
   margin: '0',
   lineHeight: '1.5',
 }
-
 const footerLink = {
   color: '#8b5cf6',
   textDecoration: 'none',
   fontWeight: '500',
 }
-
 export default NotificationEmail

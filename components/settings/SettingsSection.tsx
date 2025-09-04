@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronDown,
@@ -12,7 +11,6 @@ import {
   HelpCircle
 } from 'lucide-react'
 import { useState } from 'react'
-
 interface SettingsSectionProps {
   title: string
   description?: string
@@ -28,7 +26,6 @@ interface SettingsSectionProps {
   onSave?: () => void
   onReset?: () => void
 }
-
 export function SettingsSection({
   title,
   description,
@@ -46,7 +43,6 @@ export function SettingsSection({
 }: SettingsSectionProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
   const [showHelp, setShowHelp] = useState(false)
-
   return (
     <div className={`glass rounded-2xl border border-white/10 ${className}`}>
       {/* Section Header */}
@@ -83,7 +79,6 @@ export function SettingsSection({
               {description && (
                 <p className="text-gray-400 text-sm mt-1">{description}</p>
               )}
-
               {/* Help text */}
               <AnimatePresence>
                 {showHelp && helpText && (
@@ -104,7 +99,6 @@ export function SettingsSection({
               </AnimatePresence>
             </div>
           </div>
-
           <div className="flex items-center gap-2">
             {/* Save/Reset Actions */}
             {hasChanges && (onSave || onReset) && (
@@ -135,14 +129,12 @@ export function SettingsSection({
                 )}
               </div>
             )}
-
             {/* Custom Actions */}
             {actions && (
               <div onClick={(e) => e.stopPropagation()}>
                 {actions}
               </div>
             )}
-
             {/* Collapse Toggle */}
             {collapsible && (
               <motion.div
@@ -155,7 +147,6 @@ export function SettingsSection({
           </div>
         </div>
       </div>
-
       {/* Section Content */}
       <AnimatePresence>
         {(!collapsible || isExpanded) && (
@@ -175,7 +166,6 @@ export function SettingsSection({
     </div>
   )
 }
-
 // Reusable setting item components
 export function SettingItem({
   label,
@@ -205,7 +195,6 @@ export function SettingItem({
   className?: string
 }) {
   const inputId = `setting-${label.toLowerCase().replace(/\s+/g, '-')}`
-
   return (
     <div className={`space-y-3 ${className}`}>
       <div className="flex items-start justify-between">
@@ -218,7 +207,6 @@ export function SettingItem({
             <p className="text-sm text-gray-400 mt-1">{description}</p>
           )}
         </div>
-
         <div className="w-64">
           {type === 'toggle' && (
             <button
@@ -238,7 +226,6 @@ export function SettingItem({
               />
             </button>
           )}
-
           {type === 'select' && (
             <select
               id={inputId}
@@ -259,7 +246,6 @@ export function SettingItem({
               ))}
             </select>
           )}
-
           {type === 'textarea' && (
             <textarea
               id={inputId}
@@ -271,7 +257,6 @@ export function SettingItem({
               className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none disabled:opacity-50"
             />
           )}
-
           {['text', 'number', 'email', 'password'].includes(type) && (
             <input
               id={inputId}
@@ -285,7 +270,6 @@ export function SettingItem({
           )}
         </div>
       </div>
-
       {/* Status Messages */}
       {error && (
         <div className="flex items-center gap-2 text-red-400 text-sm">
@@ -302,7 +286,6 @@ export function SettingItem({
     </div>
   )
 }
-
 // Reusable setting group
 export function SettingGroup({
   title,

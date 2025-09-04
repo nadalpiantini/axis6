@@ -1,5 +1,4 @@
 'use client'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react'
@@ -7,19 +6,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-
 import { useAuthStore, useUIStore } from '@/lib/stores/useAppStore'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validation/schemas'
-
 export function LoginForm() {
   const router = useRouter()
   const supabase = createClient()
   const { setUser } = useAuthStore()
   const { addNotification } = useUIStore()
-
   const [showPassword, setShowPassword] = useState(false)
-
   const {
     register,
     handleSubmit,
@@ -30,16 +25,13 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
     mode: 'onBlur'
   })
-
   const onSubmit = async (data: LoginInput) => {
     try {
       clearErrors()
-
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
       })
-
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
           setError('root', {
@@ -52,7 +44,6 @@ export function LoginForm() {
         }
         return
       }
-
       if (authData.user) {
         setUser(authData.user)
         addNotification({
@@ -67,7 +58,6 @@ export function LoginForm() {
       })
     }
   }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Root Error */}
@@ -84,7 +74,6 @@ export function LoginForm() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Email Field */}
       <div className="space-y-2">
         <label htmlFor="email" className="block text-sm font-medium text-gray-300">
@@ -119,7 +108,6 @@ export function LoginForm() {
           )}
         </AnimatePresence>
       </div>
-
       {/* Password Field */}
       <div className="space-y-2">
         <label htmlFor="password" className="block text-sm font-medium text-gray-300">
@@ -166,7 +154,6 @@ export function LoginForm() {
           )}
         </AnimatePresence>
       </div>
-
       {/* Remember & Forgot */}
       <div className="flex items-center justify-between">
         <label className="flex items-center">
@@ -183,7 +170,6 @@ export function LoginForm() {
           ¿Olvidaste tu contraseña?
         </Link>
       </div>
-
       {/* Submit Button */}
       <motion.button
         type="submit"
@@ -201,7 +187,6 @@ export function LoginForm() {
           'Iniciar sesión'
         )}
       </motion.button>
-
       {/* Sign Up Link */}
       <p className="text-center text-sm text-gray-400">
         ¿No tienes cuenta?{' '}

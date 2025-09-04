@@ -1,8 +1,6 @@
 'use client'
-
 import { motion } from 'framer-motion'
 import { TrendingUp, Award, Zap, Target } from 'lucide-react'
-
 interface WellnessScoreProps {
   score: number
   currentStreak: number
@@ -10,7 +8,6 @@ interface WellnessScoreProps {
   completedToday: number
   totalCategories: number
 }
-
 export default function WellnessScore({
   score,
   currentStreak,
@@ -26,12 +23,9 @@ export default function WellnessScore({
     if (score >= 30) return { level: 'Regular', color: '#FDE047', emoji: '💭' }
     return { level: 'Mejorable', color: '#FDA4AF', emoji: '🌱' }
   }
-
   const wellness = getWellnessLevel()
-
   // Calculate trend (simplified for demo)
   const trend = currentStreak > 0 ? 'up' : 'neutral'
-
   return (
     <div className="h-full flex flex-col">
       {/* Main Score Display */}
@@ -67,7 +61,6 @@ export default function WellnessScore({
               strokeDashoffset={`${2 * Math.PI * 54 * (1 - score / 100)}`}
             />
           </svg>
-
           {/* Score Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <motion.div
@@ -88,7 +81,6 @@ export default function WellnessScore({
             </motion.div>
           </div>
         </motion.div>
-
         {/* Wellness Level */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -107,7 +99,6 @@ export default function WellnessScore({
           </span>
         </motion.div>
       </div>
-
       {/* Quick Stats */}
       <div className="space-y-3 flex-1">
         {/* Daily Progress */}
@@ -130,7 +121,6 @@ export default function WellnessScore({
             </p>
           </div>
         </motion.div>
-
         {/* Current Streak */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -145,16 +135,15 @@ export default function WellnessScore({
             <Zap className="w-4 h-4" style={{ color: '#C084FC' }} />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gray-400">Racha Actual</p>
+                            <p className="text-xs text-gray-400">Current Streak</p>
             <p className="text-sm font-semibold text-white">
-              {currentStreak} {currentStreak === 1 ? 'día' : 'días'}
+                              {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
             </p>
           </div>
           {trend === 'up' && (
             <TrendingUp className="w-3 h-3 text-green-400" />
           )}
         </motion.div>
-
         {/* Best Streak */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -176,7 +165,6 @@ export default function WellnessScore({
           </div>
         </motion.div>
       </div>
-
       {/* Motivational Message */}
       <motion.div
         initial={{ opacity: 0 }}

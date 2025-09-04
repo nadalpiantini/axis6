@@ -1,7 +1,5 @@
 import { logger } from '@/lib/utils/logger';
-
 import { NextRequest, NextResponse } from 'next/server'
-
 import { withChatAuth } from '@/lib/middleware/chat-auth'
 
 /**
@@ -12,17 +10,14 @@ export const GET = withChatAuth(async (_context, request) => {
   try {
     const { searchParams } = new URL(request.url)
     const messageId = searchParams.get('message_id')
-
     if (!messageId) {
       return NextResponse.json(
         { error: 'Message ID is required' },
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     // Get attachments for the message
     const { data: attachments, error } = await supabase
       .from('axis6_chat_attachments')
@@ -31,7 +26,6 @@ export const GET = withChatAuth(async (_context, request) => {
       .eq('upload_status', 'ready')
       .is('deleted_at', null)
       .order('created_at', { ascending: true })
-
     if (error) {
       logger.error('Failed to get attachments:', error)
       return NextResponse.json(
@@ -39,9 +33,7 @@ export const GET = withChatAuth(async (_context, request) => {
         { status: 500 }
       )
     }
-
     return NextResponse.json({ attachments: attachments || [] })
-
   } catch (error) {
     logger.error('Attachments API error:', error)
     return NextResponse.json(
@@ -50,7 +42,6 @@ export const GET = withChatAuth(async (_context, request) => {
     )
   }
 })
-
 /**
  * POST /api/chat/attachments
  * Initialize file upload
@@ -60,14 +51,12 @@ export const POST = withChatAuth(async (context, request) => {
     const { user: _user } = context
     const body = await request.json()
     const { message_id, file_name, file_size, mime_type } = body
-
     if (!message_id || !file_name || !file_size || !mime_type) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
-
     // Validate file size (50MB limit)
     if (file_size > 50 * 1024 * 1024) {
       return NextResponse.json(
@@ -75,10 +64,8 @@ export const POST = withChatAuth(async (context, request) => {
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
-
+    const supabase = await createClient() // Uses service role for internal operations
     // Initialize upload
     const { data, error } = await supabase.rpc('initialize_file_upload', {
       p_message_id: message_id,
@@ -86,7 +73,6 @@ export const POST = withChatAuth(async (context, request) => {
       p_file_size: file_size,
       p_mime_type: mime_type
     })
-
     if (error) {
       logger.error('Failed to initialize file upload:', error)
       return NextResponse.json(
@@ -94,9 +80,7 @@ export const POST = withChatAuth(async (context, request) => {
         { status: 500 }
       )
     }
-
     return NextResponse.json(data)
-
   } catch (error) {
     logger.error('File upload initialization error:', error)
     return NextResponse.json(

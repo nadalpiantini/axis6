@@ -1,0 +1,1472 @@
+{
+  "timestamp": "2025-08-30T03:02:06.645Z",
+  "summary": {
+    "totalEndpoints": 53,
+    "withAuth": 38,
+    "withValidation": 8,
+    "withErrorHandling": 53,
+    "withRateLimit": 3,
+    "totalIssues": 43,
+    "highSeverityIssues": 10,
+    "securityScore": 0,
+    "reliabilityScore": 83,
+    "methodCounts": {
+      "POST": 35,
+      "GET": 32,
+      "PUT": 12,
+      "DELETE": 10,
+      "PATCH": 2
+    }
+  },
+  "endpoints": [
+    {
+      "path": "/app/api/activity-timer/route.ts",
+      "size": 2659,
+      "lines": 96,
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/admin/rate-limit-stats/route.ts",
+      "size": 3972,
+      "lines": 152,
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": true,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Uses service role key without admin check"
+        },
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/analyze-personality/route.ts",
+      "size": 1751,
+      "lines": 66,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/behavior-analysis/route.ts",
+      "size": 3956,
+      "lines": 141,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/generate-questions/route.ts",
+      "size": 1777,
+      "lines": 70,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/optimal-times/route.ts",
+      "size": 5953,
+      "lines": 190,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/recommend-activities/route.ts",
+      "size": 3016,
+      "lines": 98,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/recommendations/route.ts",
+      "size": 7391,
+      "lines": 243,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/ai/smart-notifications/route.ts",
+      "size": 6660,
+      "lines": 248,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/analytics/route.ts",
+      "size": 8461,
+      "lines": 281,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/auth/login/route.ts",
+      "size": 2242,
+      "lines": 88,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/auth/logout/route.ts",
+      "size": 1307,
+      "lines": 53,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/auth/register/route.ts",
+      "size": 3598,
+      "lines": 141,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/auth/test/route.ts",
+      "size": 1027,
+      "lines": 38,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/auth/user/route.ts",
+      "size": 2095,
+      "lines": 81,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/categories/route.ts",
+      "size": 7624,
+      "lines": 222,
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/analytics/route.ts",
+      "size": 4909,
+      "lines": 153,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/attachments/[id]/route.ts",
+      "size": 4588,
+      "lines": 179,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/attachments/route.ts",
+      "size": 2820,
+      "lines": 108,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/mentions/route.ts",
+      "size": 3840,
+      "lines": 152,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/messages/[messageId]/reactions/route.ts",
+      "size": 4209,
+      "lines": 139,
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/messages/[messageId]/route.ts",
+      "size": 4766,
+      "lines": 161,
+      "methods": [
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/messages/route.ts",
+      "size": 6423,
+      "lines": 227,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/participants/[userId]/route.ts",
+      "size": 6218,
+      "lines": 183,
+      "methods": [
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/participants/route.ts",
+      "size": 5152,
+      "lines": 172,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/[roomId]/route.ts",
+      "size": 6041,
+      "lines": 199,
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/rooms/route.ts",
+      "size": 5637,
+      "lines": 203,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/search/analytics/route.ts",
+      "size": 1210,
+      "lines": 45,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/chat/search/route.ts",
+      "size": 3511,
+      "lines": 128,
+      "methods": [],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/checkins/route.ts",
+      "size": 7815,
+      "lines": 266,
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/constellation/route.ts",
+      "size": 3537,
+      "lines": 103,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/csp-report/route.ts",
+      "size": 1572,
+      "lines": 52,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/email/route.ts",
+      "size": 4842,
+      "lines": 168,
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/email/test/route.ts",
+      "size": 964,
+      "lines": 42,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/health/route.ts",
+      "size": 7135,
+      "lines": 271,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/hex-reactions/route.ts",
+      "size": 5857,
+      "lines": 195,
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/mantras/complete/route.ts",
+      "size": 1555,
+      "lines": 64,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/mantras/daily/route.ts",
+      "size": 3177,
+      "lines": 123,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/micro-posts/route.ts",
+      "size": 6006,
+      "lines": 220,
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/micro-wins/route.ts",
+      "size": 7569,
+      "lines": 248,
+      "methods": [
+        "POST",
+        "GET",
+        "PATCH"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/monitoring/logs/route.ts",
+      "size": 2341,
+      "lines": 79,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": true,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        },
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/monitoring/report/route.ts",
+      "size": 1399,
+      "lines": 48,
+      "methods": [
+        "POST"
+      ],
+      "hasAuth": false,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        },
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": false,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/monitoring/route.ts",
+      "size": 13676,
+      "lines": 537,
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": true,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/my-day/stats/route.ts",
+      "size": 3165,
+      "lines": 89,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/resonance/hexagon/route.ts",
+      "size": 3445,
+      "lines": 105,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/resonance/streaks/route.ts",
+      "size": 4451,
+      "lines": 148,
+      "methods": [
+        "GET"
+      ],
+      "hasAuth": true,
+      "hasValidation": true,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": true,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/settings/axis-customization/route.ts",
+      "size": 4855,
+      "lines": 180,
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/settings/notifications/route.ts",
+      "size": 6419,
+      "lines": 217,
+      "methods": [
+        "GET",
+        "PUT",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/settings/privacy/route.ts",
+      "size": 6100,
+      "lines": 223,
+      "methods": [
+        "GET",
+        "PUT",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/settings/security/route.ts",
+      "size": 6888,
+      "lines": 242,
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": true,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/settings/user-preferences/route.ts",
+      "size": 4004,
+      "lines": 159,
+      "methods": [
+        "GET",
+        "PUT",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/streaks/route.ts",
+      "size": 3586,
+      "lines": 118,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    },
+    {
+      "path": "/app/api/time-blocks/route.ts",
+      "size": 6182,
+      "lines": 206,
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "hasAuth": true,
+      "hasValidation": false,
+      "hasErrorHandling": true,
+      "hasRateLimit": false,
+      "hasTypes": false,
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "MEDIUM",
+          "message": "Missing input validation on write operations"
+        }
+      ],
+      "security": {
+        "hasAuthCheck": true,
+        "hasInputValidation": false,
+        "hasOutputSanitization": false,
+        "hasRLS": false
+      }
+    }
+  ],
+  "criticalIssues": [
+    {
+      "path": "/app/api/admin/rate-limit-stats/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Uses service role key without admin check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/analytics/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/attachments/[id]/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/attachments/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/mentions/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/search/analytics/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/chat/search/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/constellation/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/monitoring/logs/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    },
+    {
+      "path": "/app/api/monitoring/report/route.ts",
+      "issues": [
+        {
+          "type": "SECURITY",
+          "severity": "HIGH",
+          "message": "Missing authentication check"
+        }
+      ]
+    }
+  ]
+}

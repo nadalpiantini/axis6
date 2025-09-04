@@ -1,7 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-
 import { deepseekClient } from './deepseek'
-
 import { handleError } from '@/lib/error/standardErrorHandler'
 export interface ActivityRecommendationInput {
   userId: string
@@ -23,7 +21,6 @@ export interface ActivityRecommendationInput {
   currentMood?: number // 1-5
   language?: 'en' | 'es'
 }
-
 export interface PersonalizedActivity {
   id: string
   name: string
@@ -44,11 +41,9 @@ export interface PersonalizedActivity {
     frequency: string
   }
 }
-
 export class ActivityRecommender {
   private supabase = createClient()
   private activityCache: Map<string, PersonalizedActivity[]> = new Map()
-
   /**
    * Generate personalized activity recommendations using AI
    */
@@ -62,45 +57,34 @@ export class ActivityRecommender {
       if (cached && this.isCacheValid(cacheKey)) {
         return cached
       }
-
       // Check if AI features are enabled
       if (!deepseekClient.isAIEnabled()) {
         return this.getDefaultActivities(input)
       }
-
       // Generate AI recommendations
       const activities = await this.generateAIRecommendations(input)
-
       // Enhance with temperament-specific modifications
       const enhancedActivities = await this.enhanceForTemperament(
         activities,
         input.temperament,
         input.secondaryTemperament
       )
-
       // Store in cache
       this.activityCache.set(cacheKey, enhancedActivities)
-
       // Store in database for future reference
       await this.storeRecommendations(input.userId, enhancedActivities)
-
       return enhancedActivities
     } catch (error) {
             handleError(error, {
-
               operation: 'ai_operation',
-
               component: 'activity-recommender',
-
               userMessage: 'AI operation failed. Please try again.'
-
             })
             // TODO: Replace with proper error handling
     // console.error('AI activity recommender operation failed:', error);
       return this.getDefaultActivities(input)
     }
   }
-
   /**
    * Generate AI-powered activity recommendations
    */
@@ -108,21 +92,17 @@ export class ActivityRecommender {
     input: ActivityRecommendationInput
   ): Promise<PersonalizedActivity[]> {
     const { categoryName, temperament, preferences, currentMood: _currentMood, language } = input
-
     // Build context for AI
     // const context = this.buildRecommendationContext(input)
-
     // Note: prompt construction logic commented out but preserved for reference
     // The prompt would include user profile, context, and requirements
     // Currently using the deepseekClient's internal prompt generation
-
     const activities = await deepseekClient.generateActivityRecommendations(
       temperament,
       categoryName,
       preferences || {},
       language || 'en'
     )
-
     // Convert to our format
     return activities.map((activity, index) => ({
       id: `ai-${Date.now()}-${index}`,
@@ -140,18 +120,15 @@ export class ActivityRecommender {
       alternative_options: this.generateAlternatives(activity)
     }))
   }
-
   /**
    * Build context from user's past activities and preferences
    * Currently not used, but preserved for future implementation
    */
   // private _buildRecommendationContext(input: ActivityRecommendationInput): string {
   //   let context = ''
-
   //   if (input.pastActivities && input.pastActivities.length > 0) {
   //     const completed = input.pastActivities.filter(a => a.completed)
   //     const highRated = input.pastActivities.filter(a => (a.rating || 0) >= 4)
-
   //     context += '\nPast Activity Insights:\n'
   //     if (completed.length > 0) {
   //       context += `- Previously completed: ${completed.slice(0, 3).map(a => a.name).join(', ')}\n`
@@ -160,10 +137,8 @@ export class ActivityRecommender {
   //       context += `- Highly rated: ${highRated.slice(0, 3).map(a => a.name).join(', ')}\n`
   //     }
   //   }
-
   //   return context
   // }
-
   /**
    * Enhance activities with temperament-specific modifications
    */
@@ -190,11 +165,9 @@ export class ActivityRecommender {
         motivators: ['peace', 'stability', 'support']
       }
     }
-
     const primary = enhancements[primaryTemperament as keyof typeof enhancements]
     const secondary = secondaryTemperament ?
       enhancements[secondaryTemperament as keyof typeof enhancements] : null
-
     return activities.map(activity => {
       // Add progress tracking for choleric types
       if (primaryTemperament === 'choleric' || secondaryTemperament === 'choleric') {
@@ -204,17 +177,14 @@ export class ActivityRecommender {
           frequency: 'daily'
         }
       }
-
       // Modify descriptions based on temperament
       activity.personalization_reason = this.combineReasons(
         primary?.motivators || [],
         secondary?.motivators || []
       )
-
       return activity
     })
   }
-
   /**
    * Generate instructions for an activity
    */
@@ -225,10 +195,8 @@ export class ActivityRecommender {
       'Track your progress and feelings',
       'Adjust intensity based on your energy'
     ]
-
     return baseInstructions
   }
-
   /**
    * Calculate how well an activity fits a temperament
    */
@@ -259,21 +227,16 @@ export class ActivityRecommender {
         support: 0.2
       }
     }
-
     // Calculate based on activity characteristics
     const factors = fitFactors[temperament as keyof typeof fitFactors]
     if (!factors) return 0.7
-
     let score = 0.7 // Base score
-
     // Adjust based on difficulty
     if (temperament === 'choleric' && activity.difficulty >= 4) score += 0.1
     if (temperament === 'phlegmatic' && activity.difficulty <= 2) score += 0.1
-
     // Cap at 0.95
     return Math.min(0.95, score)
   }
-
   /**
    * Generate personalization reason
    */
@@ -284,28 +247,21 @@ export class ActivityRecommender {
       melancholic: `Structured to allow for depth and mastery. You can perfect your technique and see quality improvements over time.`,
       phlegmatic: `A comfortable, low-pressure activity that fits into your routine. You'll find it peaceful and sustainable.`
     }
-
     return reasons[temperament as keyof typeof reasons] || 'Tailored to your unique personality.'
   }
-
   /**
    * Generate alternative options for an activity
    */
   private generateAlternatives(activity: any): string[] {
     const alternatives = []
-
     // Easier version
     alternatives.push(`Easier: ${activity.name} (modified for beginners)`)
-
     // Harder version
     alternatives.push(`Harder: Advanced ${activity.name}`)
-
     // Different setting
     alternatives.push(`Alternative: ${activity.name} (group version)`)
-
     return alternatives
   }
-
   /**
    * Map difficulty to energy level
    */
@@ -314,38 +270,30 @@ export class ActivityRecommender {
     if (difficulty <= 4) return 'medium'
     return 'high'
   }
-
   /**
    * Infer social aspect from activity name and description
    */
   private inferSocialAspect(name: string, description: string): 'solo' | 'small_group' | 'large_group' | 'any' {
     const text = `${name} ${description}`.toLowerCase()
-
     if (text.includes('group') || text.includes('team') || text.includes('class')) {
       return text.includes('small') ? 'small_group' : 'large_group'
     }
-
     if (text.includes('solo') || text.includes('alone') || text.includes('personal')) {
       return 'solo'
     }
-
     return 'any'
   }
-
   /**
    * Generate a tracking metric for an activity
    */
   private generateMetric(activityName: string): string {
     const name = activityName.toLowerCase()
-
     if (name.includes('walk') || name.includes('run')) return 'steps'
     if (name.includes('meditat')) return 'minutes'
     if (name.includes('read')) return 'pages'
     if (name.includes('write')) return 'words'
-
     return 'completions'
   }
-
   /**
    * Generate a target based on difficulty
    */
@@ -357,10 +305,8 @@ export class ActivityRecommender {
       4: '30 minutes daily',
       5: '45 minutes daily'
     }
-
     return targets[difficulty as keyof typeof targets] || '15 minutes daily'
   }
-
   /**
    * Combine motivators from primary and secondary temperaments
    */
@@ -368,14 +314,12 @@ export class ActivityRecommender {
     const combined = [...new Set([...primary, ...secondary.slice(0, 1)])]
     return `This activity aligns with your need for ${combined.join(', ')}.`
   }
-
   /**
    * Get cache key for recommendations
    */
   private getCacheKey(input: ActivityRecommendationInput): string {
     return `${input.userId}-${input.categoryId}-${input.temperament}-${input.currentMood || 'neutral'}`
   }
-
   /**
    * Check if cache is still valid (1 hour TTL)
    */
@@ -384,7 +328,6 @@ export class ActivityRecommender {
     // In production, track timestamps
     return true
   }
-
   /**
    * Store recommendations in database
    */
@@ -405,12 +348,9 @@ export class ActivityRecommender {
       // Silent fail - not critical
       handleError(error, {
       operation: 'ai_operation', component: 'activity-recommender',
-
         userMessage: 'AI operation failed. Please try again.'
-
       })}
   }
-
   /**
    * Get default activities when AI is unavailable
    */
@@ -451,10 +391,8 @@ export class ActivityRecommender {
         }
       ]
     }
-
     return defaults[input.categoryName as keyof typeof defaults] || defaults.Physical
   }
 }
-
 // Export singleton instance
 export const activityRecommender = new ActivityRecommender()

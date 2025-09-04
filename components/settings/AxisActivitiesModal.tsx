@@ -1,5 +1,4 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -13,7 +12,6 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
-
 import { AxisIcon } from '@/components/icons'
 import {
   useAxisActivities,
@@ -22,47 +20,45 @@ import {
   useDeleteActivity
 } from '@/lib/react-query/hooks/useAxisActivities'
 import { handleError, handleMutationError } from '@/lib/error/standardErrorHandler'
-
-// Predefined activity suggestions for each axis
-const ACTIVITY_SUGGESTIONS: Record<string, string[]> = {
+// Personal activity suggestions for each axis - Real life activities
+const PERSONAL_ACTIVITY_SUGGESTIONS: Record<string, string[]> = {
   physical: [
-    'Running', 'Yoga', 'Swimming', 'Cycling', 'Gym workout',
-    'Tennis', 'Padel', 'Basketball', 'Soccer', 'Walking',
-    'Hiking', 'Dancing', 'Boxing', 'Pilates', 'CrossFit',
-    'Rock climbing', 'Martial arts', 'Stretching', 'Jump rope', 'Rowing'
+    'Caminar 20 minutos', 'Ir al gimnasio', 'Hacer yoga en casa', 'Salir a correr', 'Subir escaleras',
+    'Ir a nadar', 'Jugar tenis con amigo', 'Pasear al perro', 'Lavar el carro', 'Bailar en casa',
+    'Hacer ejercicios en casa', 'Ir en bicicleta', 'Estiramientos matutinos', 'Caminar después de almorzar', 'Limpiar la casa',
+    'Jardinería', 'Jugar fútbol con niños', 'Subir montaña', 'Ir a parque', 'Hacer abdominales'
   ],
   mental: [
-    'Reading', 'Meditation', 'Journaling', 'Learning new skill', 'Puzzle solving',
-    'Study session', 'Online course', 'Documentary', 'Podcast', 'Chess',
-    'Coding', 'Writing', 'Research', 'Language learning', 'Memory exercises',
-    'Brain training', 'Creative writing', 'Mind mapping', 'Planning', 'Reviewing notes'
+    'Leer 30 páginas libro', 'Estudiar curso online', 'Resolver sudoku', 'Escuchar podcast', 'Ver documental',
+    'Escribir en diario', 'Planificar semana', 'Aprender idioma', 'Practicar ajedrez', 'Investigar tema nuevo',
+    'Revisar finanzas', 'Organizar archivos', 'Leer noticias', 'Hacer curso Duolingo', 'Memorizar poema',
+    'Calcular presupuesto', 'Revisar emails', 'Estudiar para examen', 'Leer artículos técnicos', 'Hacer lista tareas'
   ],
   emotional: [
-    'Deep breathing', 'Gratitude practice', 'Self-reflection', 'Music therapy', 'Art therapy',
-    'Emotional check-in', 'Mindfulness', 'Positive affirmations', 'Therapy session', 'Support group',
-    'Stress relief', 'Mood tracking', 'Self-care ritual', 'Relaxation', 'Expressing feelings',
-    'Boundary setting', 'Self-compassion', 'Emotional release', 'Visualization', 'Progressive relaxation'
+    'Meditar 10 minutos', 'Llamar a un amigo', 'Escribir gratitudes', 'Escuchar música relajante', 'Hacer respiraciones',
+    'Llorar si necesito', 'Abrazar a alguien', 'Hablar con terapeuta', 'Expresar sentimientos', 'Hacer autoterapia',
+    'Tomar baño relajante', 'Ver película divertida', 'Reír con videos', 'Cuidar plantas', 'Practicar perdón',
+    'Hacer automasaje', 'Cantar canciones', 'Dibujar emociones', 'Hacer ritual personal', 'Conectar conmigo'
   ],
   social: [
-    'Call a friend', 'Family dinner', 'Team meeting', 'Social event', 'Date night',
-    'Coffee with colleague', 'Group activity', 'Networking', 'Video call', 'Send thank you note',
-    'Join community', 'Volunteer work', 'Game night', 'Book club', 'Support someone',
-    'Make new connection', 'Reconnect with old friend', 'Team building', 'Social media detox', 'Active listening'
+    'Llamar a mamá', 'Buscar niños al colegio', 'Almorzar con amigo', 'Reunión familiar', 'Visitar abuela',
+    'Salir con pareja', 'Jugar con hijos', 'Llamar hermano/a', 'Ir a fiesta', 'Conocer vecinos',
+    'Organizar reunión', 'Ayudar a alguien', 'Enviar mensaje cariñoso', 'Hacer videollamada', 'Ir a cena',
+    'Participar en grupo', 'Hacer favor a amigo', 'Escribir carta', 'Invitar a tomar café', 'Compartir comida'
   ],
   spiritual: [
-    'Prayer', 'Meditation', 'Nature walk', 'Gratitude journal', 'Volunteer service',
-    'Reading scripture', 'Spiritual study', 'Contemplation', 'Forgiveness practice', 'Acts of kindness',
-    'Mindful breathing', 'Yoga practice', 'Sunset watching', 'Sacred ritual', 'Chanting',
-    'Energy healing', 'Crystal meditation', 'Intention setting', 'Moon gazing', 'Sound bath'
+    'Orar 15 minutos', 'Leer biblia/textos espirituales', 'Ir a iglesia/templo', 'Meditar en naturaleza', 'Hacer gratitudes',
+    'Ayudar persona necesitada', 'Reflexionar sobre propósito', 'Contemplar paisaje', 'Practicar perdón', 'Leer sabiduría',
+    'Conectar con lo divino', 'Hacer ritual espiritual', 'Bendecir comida', 'Agradecer día', 'Pedir por otros',
+    'Meditar con mantras', 'Ver amanecer/atardecer', 'Caminar descalzo', 'Hacer ofrenda', 'Silencio contemplativo'
   ],
-  purpose: [
-    'Goal setting', 'Vision boarding', 'Career planning', 'Skill development', 'Project work',
-    'Mentoring', 'Teaching', 'Creating content', 'Business planning', 'Innovation session',
-    'Strategic thinking', 'Impact assessment', 'Legacy planning', 'Contribution review', 'Mission alignment',
-    'Value clarification', 'Purpose meditation', 'Achievement tracking', 'Milestone celebration', 'Future visioning'
+  material: [
+    'Revisar gastos del mes', 'Ahorrar para meta', 'Buscar trabajo nuevo', 'Actualizar currículum', 'Vender algo usado',
+    'Comprar cosas necesarias', 'Organizar documentos', 'Pagar facturas', 'Investigar inversiones', 'Limpiar garage',
+    'Reparar algo roto', 'Buscar casa nueva', 'Negociar sueldo', 'Vender productos', 'Hacer presupuesto',
+    'Comprar regalo familia', 'Arreglar carro', 'Organizar closet', 'Buscar ofertas', 'Planificar vacaciones'
   ]
 }
-
 interface AxisActivitiesModalProps {
   isOpen: boolean
   onClose: () => void
@@ -74,13 +70,11 @@ interface AxisActivitiesModalProps {
     icon: string
   }
 }
-
 interface ActivityForm {
   id?: number
   activity_name: string
   description: string
 }
-
 export function AxisActivitiesModal({
   isOpen,
   onClose,
@@ -91,7 +85,6 @@ export function AxisActivitiesModal({
   const createActivity = useCreateActivity()
   const updateActivity = useUpdateActivity()
   const deleteActivity = useDeleteActivity()
-
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [formData, setFormData] = useState<ActivityForm>({
@@ -103,11 +96,9 @@ export function AxisActivitiesModal({
     type: 'success' | 'error'
     message: string
   }>({ show: false, type: 'success', message: '' })
-
   // Track used suggestions to avoid immediate repeats
   const [usedSuggestions, setUsedSuggestions] = useState<Set<string>>(new Set())
   const [displayedSuggestions, setDisplayedSuggestions] = useState<string[]>([])
-
   // Get the axis type from the icon name
   const axisType = useMemo(() => {
     const iconToType: Record<string, string> = {
@@ -120,17 +111,14 @@ export function AxisActivitiesModal({
     }
     return iconToType[axis.icon] || 'physical'
   }, [axis.icon])
-
   // Get random suggestions that haven't been used recently
   const getRandomSuggestions = (count: number = 6) => {
-    const availableSuggestions = ACTIVITY_SUGGESTIONS[axisType]
+    const availableSuggestions = PERSONAL_ACTIVITY_SUGGESTIONS[axisType]
     if (!availableSuggestions) return []
     const unused = availableSuggestions.filter(s => !usedSuggestions.has(s))
     const pool = unused.length >= count ? unused : availableSuggestions
-
     const selected: string[] = []
     const tempSet = new Set(selected)
-
     while (selected.length < count && selected.length < pool.length) {
       const randomIndex = Math.floor(Math.random() * pool.length)
       const suggestion = pool[randomIndex]
@@ -139,30 +127,25 @@ export function AxisActivitiesModal({
         tempSet.add(suggestion)
       }
     }
-
     return selected
   }
-
   // Initialize suggestions when adding new activity
   useEffect(() => {
     if (isAddingNew) {
       setDisplayedSuggestions(getRandomSuggestions())
     }
   }, [isAddingNew, axisType])
-
   // Handle suggestion click
   const handleSuggestionClick = (suggestion: string, index: number) => {
     setFormData(prev => ({ ...prev, activity_name: suggestion }))
     setUsedSuggestions(prev => new Set(prev).add(suggestion))
-
     // Replace the clicked suggestion with a new one
     const newSuggestions = [...displayedSuggestions]
-    const suggestions = ACTIVITY_SUGGESTIONS[axisType]
+    const suggestions = PERSONAL_ACTIVITY_SUGGESTIONS[axisType]
     if (!suggestions) return
     const availableSuggestions = suggestions.filter(
       s => !displayedSuggestions.includes(s) && s !== suggestion
     )
-
     if (availableSuggestions.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableSuggestions.length)
       const newSuggestion = availableSuggestions[randomIndex]
@@ -172,20 +155,17 @@ export function AxisActivitiesModal({
       }
     }
   }
-
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ show: true, type, message })
     setTimeout(() => {
       setNotification(prev => ({ ...prev, show: false }))
     }, 3000)
   }
-
   const handleAddNew = () => {
     setIsAddingNew(true)
     setEditingId(null)
     setFormData({ activity_name: '', description: '' })
   }
-
   const handleEdit = (activity: any) => {
     setEditingId(activity.id)
     setIsAddingNew(false)
@@ -195,19 +175,16 @@ export function AxisActivitiesModal({
       description: activity.description || ''
     })
   }
-
   const handleCancel = () => {
     setIsAddingNew(false)
     setEditingId(null)
     setFormData({ activity_name: '', description: '' })
   }
-
   const handleSave = async () => {
     if (!formData.activity_name.trim()) {
       showNotification('error', 'Activity name is required')
       return
     }
-
     try {
       if (isAddingNew) {
         await createActivity.mutateAsync({
@@ -225,7 +202,6 @@ export function AxisActivitiesModal({
         })
         showNotification('success', 'Activity updated successfully!')
       }
-
       handleCancel()
       refetch()
     } catch (error) {
@@ -241,12 +217,10 @@ export function AxisActivitiesModal({
       showNotification('error', 'Failed to save activity')
     }
   }
-
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this activity?')) {
       return
     }
-
     try {
       await deleteActivity.mutateAsync(id)
       showNotification('success', 'Activity deleted successfully!')
@@ -261,7 +235,6 @@ export function AxisActivitiesModal({
       showNotification('error', 'Failed to delete activity')
     }
   }
-
   const handleToggleActive = async (activity: any) => {
     try {
       await updateActivity.mutateAsync({
@@ -282,9 +255,7 @@ export function AxisActivitiesModal({
       })
     }
   }
-
   if (!isOpen) return null
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -297,21 +268,14 @@ export function AxisActivitiesModal({
             onClick={onClose}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
-
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 lg:p-6"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] md:max-w-lg lg:max-w-xl max-h-[85vh] overflow-y-auto z-50"
           >
-            <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-2xl max-h-[95vh] sm:max-h-[90vh] glass rounded-2xl overflow-hidden flex flex-col"
-                 style={{
-                   paddingTop: 'env(safe-area-inset-top, 0px)',
-                   paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-                   paddingLeft: 'env(safe-area-inset-left, 0px)',
-                   paddingRight: 'env(safe-area-inset-right, 0px)'
-                 }}>
+            <div className="glass rounded-2xl overflow-hidden flex flex-col">
               {/* Header */}
               <div className="flex-shrink-0 p-4 sm:p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
@@ -344,7 +308,6 @@ export function AxisActivitiesModal({
                   </button>
                 </div>
               </div>
-
               {/* Content */}
               <div className="flex-1 overflow-hidden">
                 <div className="p-4 sm:p-6 h-full overflow-y-auto overscroll-contain"
@@ -370,7 +333,6 @@ export function AxisActivitiesModal({
                         <span className="text-sm sm:text-base">Add New Activity</span>
                       </button>
                     )}
-
                     {/* Add/Edit Form */}
                     {(isAddingNew || editingId) && (
                       <motion.div
@@ -406,7 +368,6 @@ export function AxisActivitiesModal({
                               </div>
                             </div>
                           )}
-
                           <input
                             type="text"
                             value={formData.activity_name}
@@ -455,7 +416,6 @@ export function AxisActivitiesModal({
                         </div>
                       </motion.div>
                     )}
-
                     {/* Activities List */}
                     {activities.map((activity) => (
                       <motion.div
@@ -514,7 +474,6 @@ export function AxisActivitiesModal({
                         </div>
                       </motion.div>
                     ))}
-
                     {activities.length === 0 && !isAddingNew && (
                       <div className="text-center py-8">
                         <p className="text-gray-400 mb-4 text-sm sm:text-base">No activities yet</p>
@@ -531,7 +490,6 @@ export function AxisActivitiesModal({
                 )}
               </div>
               </div>
-
               {/* Footer */}
               <div className="flex-shrink-0 p-4 sm:p-6 border-t border-white/10">
                 <button
@@ -543,7 +501,6 @@ export function AxisActivitiesModal({
                 </button>
               </div>
             </div>
-
             {/* Notification */}
             <AnimatePresence>
               {notification.show && (

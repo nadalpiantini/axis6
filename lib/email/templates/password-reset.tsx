@@ -11,18 +11,15 @@ import {
   Text,
   Tailwind
 } from '@react-email/components'
-
 interface PasswordResetEmailProps {
   name?: string
   resetUrl: string
 }
-
 export const PasswordResetEmail = ({
   name = 'Usuario',
   resetUrl
 }: PasswordResetEmailProps) => {
   const baseUrl = process.env['NEXT_PUBLIC_APP_URL'] || 'https://axis6.app'
-
   return (
     <Html>
       <Head />
@@ -39,7 +36,6 @@ export const PasswordResetEmail = ({
                 Seguridad de tu cuenta
               </Text>
             </Section>
-
             {/* Main Content */}
             <Section className="bg-white rounded-2xl p-8 mb-6 border border-slate-200">
               <div className="text-center mb-6">
@@ -53,12 +49,10 @@ export const PasswordResetEmail = ({
                   Hola {name}
                 </Text>
               </div>
-
               <Text className="text-slate-700 mb-6 leading-relaxed">
                 Recibimos una solicitud para restablecer la contraseña de tu cuenta AXIS6.
                 Si fuiste tú quien solicitó este cambio, puedes crear una nueva contraseña haciendo clic en el botón de abajo.
               </Text>
-
               {/* Call to Action */}
               <div className="text-center mb-6">
                 <Button
@@ -68,7 +62,6 @@ export const PasswordResetEmail = ({
                   Restablecer mi contraseña
                 </Button>
               </div>
-
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
                 <Text className="text-amber-800 text-sm mb-2 font-medium">
                   ⚠️ Información importante:
@@ -80,7 +73,6 @@ export const PasswordResetEmail = ({
                 </ul>
               </div>
             </Section>
-
             {/* Security Notice */}
             <Section className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
               <Heading className="text-lg font-semibold text-red-900 mb-3">
@@ -97,7 +89,6 @@ export const PasswordResetEmail = ({
                 <li>Contacta a nuestro soporte si necesitas ayuda</li>
               </ul>
             </Section>
-
             {/* Alternative Access */}
             <Section className="text-center mb-6">
               <Text className="text-slate-600 text-sm mb-2">
@@ -109,7 +100,6 @@ export const PasswordResetEmail = ({
                 </Link>
               </div>
             </Section>
-
             {/* Support Information */}
             <Section className="bg-slate-100 rounded-xl p-6 mb-6">
               <Heading className="text-lg font-semibold text-slate-900 mb-3">
@@ -123,7 +113,6 @@ export const PasswordResetEmail = ({
                 Contactar Soporte →
               </Link>
             </Section>
-
             {/* Footer */}
             <Section className="text-center pt-6 border-t border-slate-200">
               <Text className="text-slate-600 text-sm mb-2">
@@ -139,5 +128,4 @@ export const PasswordResetEmail = ({
     </Html>
   )
 }
-
 export default PasswordResetEmail

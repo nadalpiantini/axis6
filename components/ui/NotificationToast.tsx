@@ -1,28 +1,22 @@
 'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
 import { useEffect } from 'react'
-
 import { useUIStore } from '@/lib/stores/useAppStore'
-
 const icons = {
   success: CheckCircle,
   error: AlertCircle,
   info: Info,
   warning: AlertTriangle,
 }
-
 const colors = {
   success: 'bg-green-500/10 border-green-500/20 text-green-400',
   error: 'bg-red-500/10 border-red-500/20 text-red-400',
   info: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
   warning: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400',
 }
-
 export function NotificationToast() {
   const { notifications, removeNotification } = useUIStore()
-
   useEffect(() => {
     // Auto-remove notifications after 2.5 seconds
     const timers = notifications.map(notification =>
@@ -30,19 +24,16 @@ export function NotificationToast() {
         removeNotification(notification.id)
       }, 2500)
     )
-
     return () => {
       timers.forEach(clearTimeout)
     }
   }, [notifications, removeNotification])
-
   return (
     <div className="fixed top-4 right-4 z-50 pointer-events-none">
       <AnimatePresence>
         {notifications.map((notification) => {
           const Icon = icons[notification.type]
           const colorClass = colors[notification.type]
-
           return (
             <motion.div
               key={notification.id}
