@@ -267,7 +267,13 @@ export function EnhancedTemperamentQuestionnaire({
     setAiAnalyzing(useAI)
 
     try {
-      console.log('🔄 Starting assessment submission...', { useAI, sessionId, responsesCount: Object.keys(responses).length })
+      const responsesCount = Object.keys(responses).length
+      console.log('🔄 Starting assessment submission...', { useAI, sessionId, responsesCount })
+
+      // Validate minimum responses
+      if (responsesCount < 3) {
+        throw new Error('Please answer at least 3 questions before completing the assessment')
+      }
 
       if (useAI) {
         // Use AI-enhanced analysis
