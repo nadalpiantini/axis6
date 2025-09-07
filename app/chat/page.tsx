@@ -26,6 +26,7 @@ export default function ChatPage() {
             userMessage: 'Something went wrong. Please try again.'
           })
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Auth error:', error);
           router.push('/auth/login')
           return
@@ -37,6 +38,7 @@ export default function ChatPage() {
           component: 'page',
           userMessage: 'Something went wrong. Please try again.'
         })
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to get session:', error);
         router.push('/auth/login')
@@ -59,6 +61,7 @@ export default function ChatPage() {
           component: 'page',
           userMessage: 'Something went wrong. Please try again.'
         })
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Too many errors, forcing page reload to prevent infinite loops');
         window.location.reload()
@@ -96,6 +99,7 @@ export default function ChatPage() {
       component: 'page',
       userMessage: 'Something went wrong. Please try again.'
     })
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Chat error:', error);
     // Check if it's a database table missing error

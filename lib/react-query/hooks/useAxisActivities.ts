@@ -1,231 +1,171 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { Database } from '@/types/supabase'
+import { logger } from '@/lib/logger'
 
-export interface AxisActivity {
-  id: number
-  user_id: string
-  category_id: number // INTEGER from axis6_categories
-  activity_name: string
-  description?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
+type Activity = Database['public']['Tables']['axis6_checkins']['Row']
+type NewActivity = Database['public']['Tables']['axis6_checkins']['Insert']
+type UpdateActivity = Database['public']['Tables']['axis6_checkins']['Update']
 
-export interface CreateActivityInput {
-  user_id: string
-  category_id: number // INTEGER from axis6_categories
-  activity_name: string
-  description?: string
-}
+const supabase = createClient()
 
-export interface UpdateActivityInput {
-  id: number
-  activity_name?: string
-  description?: string
-  is_active?: boolean
-}
+/**
+ * Fetch activities for a specific user and category
+ */
+async function fetchActivities(userId: string, categoryId?: string): Promise<Activity[]> {
+  let query = supabase
+    .from('axis6_checkins')
+    .select(`
+      *,
+      axis6_categories:category_id (
+        id,
+        name,
+        icon,
+        color
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
 
-// Fetch activities for a specific user and category
-async function fetchActivities(userId?: string, categoryId?: number): Promise<AxisActivity[]> {
-  if (!userId) return []
-  
-  try {
-    const supabase = createClient()
-    let query = supabase
-      .from('axis6_axis_activities')
-      .select('*')
-      .eq('user_id', userId)
-      .order('activity_name')
-    
-    if (categoryId) {
-      query = query.eq('category_id', categoryId)
-    }
-    
-    const { data, error } = await query
-    
-    if (error) {
-      console.error('Error fetching activities:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        userId,
-        categoryId
-      })
-      throw error
-    }
-    
-    return data || []
-  } catch (error) {
-    console.error('Exception in fetchActivities:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId,
-      categoryId,
-      stack: error instanceof Error ? error.stack : undefined
-    })
+  if (categoryId) {
+    query = query.eq('category_id', categoryId)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    // TODO: Replace with proper error handling
+    // Error details available for debugging
     throw error
   }
+
+  return data || []
 }
 
-// Create a new activity
-async function createActivity(input: CreateActivityInput): Promise<AxisActivity> {
-  try {
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('axis6_axis_activities')
-      .insert(input)
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error creating activity:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        input
-      })
-      throw error
-    }
-    
-    return data
-  } catch (error) {
-    console.error('Exception in createActivity:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      input,
-      stack: error instanceof Error ? error.stack : undefined
-    })
-    throw error
-  }
-}
-
-// Update an existing activity
-async function updateActivity(input: UpdateActivityInput): Promise<AxisActivity> {
-  try {
-    const { id, ...updates } = input
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('axis6_axis_activities')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error updating activity:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        input
-      })
-      throw error
-    }
-    
-    return data
-  } catch (error) {
-    console.error('Exception in updateActivity:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      input,
-      stack: error instanceof Error ? error.stack : undefined
-    })
-    throw error
-  }
-}
-
-// Delete an activity
-async function deleteActivity(id: number): Promise<void> {
-  try {
-    const supabase = createClient()
-    const { error } = await supabase
-      .from('axis6_axis_activities')
-      .delete()
-      .eq('id', id)
-    
-    if (error) {
-      console.error('Error deleting activity:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        id
-      })
-      throw error
-    }
-  } catch (error) {
-    console.error('Exception in deleteActivity:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      id,
-      stack: error instanceof Error ? error.stack : undefined
-    })
-    throw error
-  }
-}
-
-// Hook to fetch activities
-export function useAxisActivities(userId: string, categoryId: string) {  // Changed from number to string (UUID)
+/**
+ * Hook to fetch user activities
+ */
+export function useAxisActivities(userId: string, categoryId?: string) {
   return useQuery({
-    queryKey: ['axis-activities', userId, categoryId],
-    queryFn: async () => {
-      if (!userId || !categoryId) return []
-      
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('axis6_axis_activities')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('category_id', categoryId)  // Changed from number to string (UUID)
-        .order('created_at', { ascending: false })
-      
-      if (error) throw error
-      return data || []
-    },
-    enabled: !!userId && !!categoryId
+    queryKey: ['activities', userId, categoryId],
+    queryFn: () => fetchActivities(userId, categoryId),
+    enabled: !!userId,
+    staleTime: 30000, // Consider data stale after 30 seconds
+    cacheTime: 300000, // Keep in cache for 5 minutes
   })
 }
 
-// Hook to create an activity
+/**
+ * Create a new activity
+ */
+async function createActivity(activity: NewActivity): Promise<Activity> {
+  const { data, error } = await supabase
+    .from('axis6_checkins')
+    .insert([activity])
+    .select()
+    .single()
+
+  if (error) {
+    logger.error('Failed to create activity:', { error: error.message, activity })
+    throw error
+  }
+
+  return data
+}
+
+/**
+ * Update an existing activity
+ */
+async function updateActivity(id: string, updates: UpdateActivity): Promise<Activity> {
+  const { data, error } = await supabase
+    .from('axis6_checkins')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    logger.error('Failed to update activity:', { error: error.message, id, updates })
+    throw error
+  }
+
+  return data
+}
+
+/**
+ * Delete an activity
+ */
+async function deleteActivity(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('axis6_checkins')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    logger.error('Failed to delete activity:', { error: error.message, id })
+    throw error
+  }
+}
+
+/**
+ * Hook to create new activities
+ */
 export function useCreateActivity() {
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: createActivity,
     onSuccess: (data) => {
       // Invalidate and refetch activities
-      queryClient.invalidateQueries({
-        queryKey: ['axis-activities', data.user_id]
-      })
+      queryClient.invalidateQueries({ queryKey: ['activities', data.user_id] })
+      // Invalidate dashboard data
+      queryClient.invalidateQueries({ queryKey: ['dashboard', data.user_id] })
+      // Invalidate streaks data
+      queryClient.invalidateQueries({ queryKey: ['streaks', data.user_id] })
     },
+    onError: (error) => {
+      logger.error('Activity creation failed:', error)
+    }
   })
 }
 
-// Hook to update an activity
+/**
+ * Hook to update activities
+ */
 export function useUpdateActivity() {
   const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: updateActivity,
+    mutationFn: ({ id, updates }: { id: string; updates: UpdateActivity }) =>
+      updateActivity(id, updates),
     onSuccess: (data) => {
       // Invalidate and refetch activities
-      queryClient.invalidateQueries({
-        queryKey: ['axis-activities', data.user_id]
-      })
+      queryClient.invalidateQueries({ queryKey: ['activities', data.user_id] })
+      // Invalidate dashboard data
+      queryClient.invalidateQueries({ queryKey: ['dashboard', data.user_id] })
     },
+    onError: (error) => {
+      logger.error('Activity update failed:', error)
+    }
   })
 }
 
-// Hook to delete an activity
+/**
+ * Hook to delete activities
+ */
 export function useDeleteActivity() {
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: deleteActivity,
-    onSuccess: () => {
-      // Invalidate all activities queries since we don't have user_id here
-      queryClient.invalidateQueries({
-        queryKey: ['axis-activities']
-      })
+    onSuccess: (_, id) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ['activities'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      logger.info('Activity deleted successfully:', { id })
     },
+    onError: (error) => {
+      logger.error('Activity deletion failed:', error)
+    }
   })
 }

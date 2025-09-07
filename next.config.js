@@ -225,11 +225,11 @@ const nextConfig = {
       // Fallback CSP if module fails to load
       cspHeader = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.vercel-scripts.com https://vercel.live https://*.sentry.io https://*.ingest.sentry.io",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "img-src 'self' data: blob: https://*.supabase.co",
         "font-src 'self' https://fonts.gstatic.com",
-        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
+        "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com https://*.sentry.io https://*.ingest.sentry.io",
         "frame-src 'self' https://*.supabase.co",
         "worker-src 'self' blob:",
         "child-src 'self' blob:",

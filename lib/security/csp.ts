@@ -34,6 +34,9 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
       // Supabase
       "https://nvpnhqhjttgwfwvkgmpk.supabase.co",
       "https://*.supabase.co",
+      // Sentry
+      "https://*.sentry.io",
+      "https://*.ingest.sentry.io",
       // Add nonce if provided
       ...(nonce ? [`'nonce-${nonce}'`] : []),
       // Development only
@@ -75,6 +78,9 @@ export function buildCSP(nonce?: string, isDevelopment = false): string {
       "wss://*.supabase.co", // WebSocket for realtime
       // Vercel analytics
       "https://vitals.vercel-insights.com",
+      // Sentry
+      "https://*.sentry.io",
+      "https://*.ingest.sentry.io",
       // Development
       ...(isDevelopment ? [
         "ws://localhost:*",

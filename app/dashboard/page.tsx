@@ -128,6 +128,7 @@ const HexagonVisualization = memo(({
               fill="url(#gradient)"
               stroke="url(#gradient)"
               strokeWidth="2"
+              style={{ transformOrigin: 'center' }}
             />
           )}
         </AnimatePresence>

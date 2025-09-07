@@ -1,0 +1,19 @@
+
+> axis6-mvp@2.0.0 dev
+> next dev -p 3000
+
+ ⚠ Warning: Found multiple lockfiles. Selecting /Users/nadalpiantini/Dev/axis6-mvp/package-lock.json.
+   Consider removing the lockfiles at:
+   * /Users/nadalpiantini/Dev/axis6-mvp/axis6/package-lock.json
+
+ ⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+    at new Promise (<anonymous>) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+[?25h

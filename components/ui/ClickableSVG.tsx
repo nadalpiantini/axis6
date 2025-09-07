@@ -98,10 +98,10 @@ export function ClickableSVG({
       element.removeEventListener('keydown', handleKeyDown)
     }
   }, [onClick, disabled])
-  // Animation variants
+  // Animation variants - more subtle to avoid conflicts with hexagon animation
   const variants = showAnimation ? {
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
-    pressed: { scale: 0.95, transition: { duration: 0.1 } },
+    hover: { scale: 1.02, transition: { duration: 0.2 } },
+    pressed: { scale: 0.98, transition: { duration: 0.1 } },
     disabled: { opacity: 0.5 },
     default: { scale: 1, opacity: 1 }
   } : undefined

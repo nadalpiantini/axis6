@@ -132,7 +132,9 @@ Language: ${language === 'es' ? 'Spanish' : 'English'}`
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI personality analyzer operation failed:', error);
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI personality analyzer operation failed:', error);
       return this.getDefaultAdditionalInsights(baseAnalysis.primary_temperament)

@@ -258,8 +258,14 @@ export function AxisIcon({ axis, custom = false, animated, ...props }: AxisIconW
   const IconComponent = getAxisIcon(axis, custom)
   
   if (custom) {
-    // For custom icons, only pass animated when it's true, otherwise omit it
-    const customProps = animated ? { ...props, animated } : props
+    // For custom icons, extract only valid props and explicitly pass animated
+    const { size, color, className } = props
+    const customProps = {
+      size,
+      color,
+      className,
+      ...(animated !== undefined && { animated })
+    }
     return <IconComponent {...customProps} />
   }
   

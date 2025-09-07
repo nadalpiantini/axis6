@@ -53,6 +53,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
               // Log errors in development
               if (process.env.NODE_ENV === 'development') {
                 // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Mutation failed:', error, { variables, context });
               }
             },

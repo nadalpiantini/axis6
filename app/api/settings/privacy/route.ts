@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -55,7 +57,7 @@ export async function GET() {
     }
     return NextResponse.json({ settings: data })
   } catch (error) {
-    console.error('Privacy settings fetch error:', error)
+    logger.error('Privacy settings fetch error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch privacy settings' },
       { status: 500 }

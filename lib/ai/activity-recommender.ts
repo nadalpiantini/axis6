@@ -81,6 +81,7 @@ export class ActivityRecommender {
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI activity recommender operation failed:', error);
       return this.getDefaultActivities(input)
     }

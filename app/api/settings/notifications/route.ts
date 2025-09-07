@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -72,7 +74,7 @@ export async function GET() {
     }
     return NextResponse.json({ preferences })
   } catch (error) {
-    console.error('Notification preferences fetch error:', error)
+    logger.error('Notification preferences fetch error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch notification preferences' },
       { status: 500 }

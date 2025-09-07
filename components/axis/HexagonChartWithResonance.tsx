@@ -294,6 +294,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
                 <motion.span
                   className="ml-1 inline-block w-1 h-1 rounded-full"
                   style={{ backgroundColor: cat.color }}
+                  initial={{ scale: 1, opacity: 0.6 }}
                   animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.6, 1, 0.6]

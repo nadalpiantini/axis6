@@ -130,7 +130,9 @@ export class DeepSeekClient {
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI deepseek operation failed:', error);
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI deepseek operation failed:', error);
       throw error
@@ -187,7 +189,9 @@ Important: Return ONLY the JSON object, no additional text or formatting.`
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI deepseek operation failed:', error);
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI deepseek operation failed:', error);
       throw new Error('Failed to generate valid structured output')

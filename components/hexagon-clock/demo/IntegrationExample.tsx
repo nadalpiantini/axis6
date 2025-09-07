@@ -1,348 +1,285 @@
-/**
- * HexagonClock Integration Examples
- * Demonstrates how to replace existing components with the unified HexagonClock
- */
 'use client'
-import React, { useState } from 'react';
-import { HexagonClock } from '../HexagonClock';
-import type { CompletionData, TimeDistribution } from '../types/HexagonTypes';
-// Mock data for demonstration
-const mockCompletionData: CompletionData = {
-  physical: 85,
-  mental: 72,
-  emotional: 90,
-  social: 45,
-  spiritual: 68,
-  material: 78
-};
-const mockTimeDistribution: TimeDistribution[] = [
+
+import React, { useState, useCallback } from 'react'
+import { HexagonClock } from '../HexagonClock'
+import { DashboardCard } from '@/components/ui/dashboard-card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { RefreshCcw, Play, Pause } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+// Mock data types
+interface ActivityCompletion {
+  id: string;
+  category: string;
+  axis: string;
+  completed: boolean;
+  completedAt: Date;
+  mood?: number;
+  notes?: string;
+}
+
+interface TimeDistribution {
+  [hour: number]: {
+    Physical?: number;
+    Emotional?: number;
+    Mental?: number;
+    Social?: number;
+    Spiritual?: number;
+    Creative?: number;
+  };
+}
+
+interface TimeBlock {
+  id: string;
+  hour: number;
+  category: string;
+  axis: string;
+  duration: number;
+  color: string;
+}
+
+// Mock data
+const mockCompletionData: ActivityCompletion[] = [
   {
-    category_id: 1,
-    category_name: 'Physical',
-    category_color: '#D4845C',
-    planned_minutes: 120,
-    actual_minutes: 90,
-    percentage: 75
+    id: '1',
+    category: 'Workout',
+    axis: 'Physical',
+    completed: true,
+    completedAt: new Date('2024-01-15T07:30:00'),
+    mood: 4,
+    notes: 'Great morning run'
   },
   {
-    category_id: 2,
-    category_name: 'Mental',
-    category_color: '#8B9DC3',
-    planned_minutes: 180,
-    actual_minutes: 165,
-    percentage: 92
+    id: '2',
+    category: 'Meditation',
+    axis: 'Spiritual',
+    completed: true,
+    completedAt: new Date('2024-01-15T06:00:00'),
+    mood: 5
   },
   {
-    category_id: 3,
-    category_name: 'Emotional',
-    category_color: '#B8A4C9',
-    planned_minutes: 60,
-    actual_minutes: 75,
-    percentage: 125
+    id: '3',
+    category: 'Team Meeting',
+    axis: 'Social',
+    completed: true,
+    completedAt: new Date('2024-01-15T10:00:00'),
+    mood: 3
   },
   {
-    category_id: 4,
-    category_name: 'Social',
-    category_color: '#A8C8B8',
-    planned_minutes: 90,
-    actual_minutes: 45,
-    percentage: 50
+    id: '4',
+    category: 'Creative Writing',
+    axis: 'Creative',
+    completed: false,
+    completedAt: new Date('2024-01-15T16:00:00')
   },
   {
-    category_id: 5,
-    category_name: 'Spiritual',
-    category_color: '#7B6C8D',
-    planned_minutes: 45,
-    actual_minutes: 45,
-    percentage: 100
-  },
-  {
-    category_id: 6,
-    category_name: 'Material',
-    category_color: '#C19A6B',
-    planned_minutes: 150,
-    actual_minutes: 120,
-    percentage: 80
+    id: '5',
+    category: 'Learning',
+    axis: 'Mental',
+    completed: true,
+    completedAt: new Date('2024-01-15T14:30:00'),
+    mood: 4
   }
 ];
-/**
- * Dashboard Integration Example
- * Replaces: HexagonChartWithResonance
- */
-export function DashboardExample() {
+
+const mockTimeDistribution: TimeDistribution = {
+  6: { Spiritual: 1 },
+  7: { Physical: 1 },
+  8: { Physical: 0.5, Mental: 0.5 },
+  9: { Mental: 1 },
+  10: { Social: 1 },
+  11: { Social: 0.5, Mental: 0.5 },
+  14: { Mental: 1 },
+  15: { Mental: 0.5, Creative: 0.5 },
+  16: { Creative: 1 },
+  18: { Physical: 1 },
+  19: { Emotional: 1 },
+  20: { Social: 1 }
+};
+
+const mockTimeBlocks: TimeBlock[] = [
+  {
+    id: 'tb1',
+    hour: 7,
+    category: 'Morning Workout',
+    axis: 'Physical',
+    duration: 60,
+    color: '#ef4444'
+  },
+  {
+    id: 'tb2',
+    hour: 14,
+    category: 'Study Session',
+    axis: 'Mental',
+    duration: 120,
+    color: '#3b82f6'
+  },
+  {
+    id: 'tb3',
+    hour: 18,
+    category: 'Social Hour',
+    axis: 'Social',
+    duration: 90,
+    color: '#eab308'
+  }
+];
+
+export function IntegrationExample() {
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isAnimating, setIsAnimating] = useState(true);
   const [selectedAxis, setSelectedAxis] = useState<string | null>(null);
+
+  // Simulate real-time updates
+  const updateTime = useCallback(() => {
+    setCurrentTime(new Date());
+  }, []);
+
+  const toggleAnimation = useCallback(() => {
+    setIsAnimating(!isAnimating);
+  }, [isAnimating]);
+
+  const refreshData = useCallback(() => {
+    // Simulate data refresh
+    updateTime();
+    // In real app, this would trigger data refetch
+  }, [updateTime]);
+
+  const handleAxisToggle = useCallback((axisId: string) => {
+    setSelectedAxis(selectedAxis === axisId ? null : axisId);
+  }, [selectedAxis]);
+
+  const handleTimeBlockDrag = useCallback((block: TimeBlock, newHour: number) => {
+    // In real app, this would update the database
+  }, []);
+
+  const handleCategoryClick = useCallback((category: string) => {
+    // In real app, this would navigate to category details
+  }, []);
+
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Dashboard Mode
-        </h2>
-        <p className="text-gray-600">
-          Replaces HexagonChartWithResonance.tsx - Completion percentages with community resonance
-        </p>
-      </div>
-      <div className="bg-white rounded-2xl p-6 shadow-lg">
-        <HexagonClock
-          data={mockCompletionData}
-          showResonance={true}
-          animate={true}
-          onToggleAxis={(id) => {
-            setSelectedAxis(String(id));
-          }}
-          onCategoryClick={(category) => {
-            }}
-        />
-        {selectedAxis && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
-              Selected axis: <strong>{selectedAxis}</strong>
-            </p>
+      {/* Header Controls */}
+      <DashboardCard title="Hexagon Clock Integration" className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs">
+              Live Demo
+            </Badge>
+            <Badge 
+              variant={selectedAxis ? "default" : "secondary"}
+              className="text-xs"
+            >
+              {selectedAxis || 'All Axes'}
+            </Badge>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
-/**
- * Planning Integration Example
- * Replaces: TimeBlockHexagon
- */
-export function PlanningExample() {
-  const [distribution, setDistribution] = useState(mockTimeDistribution);
-  const handleTimeBlockDrag = (block: any, newHour: number) => {
-    // Update distribution logic would go here
-  };
-  const handleCategoryClick = (category: any) => {
-    // Open time planning modal/panel
-  };
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Planning Mode
-        </h2>
-        <p className="text-gray-600">
-          Replaces TimeBlockHexagon.tsx - Time distribution with 12-hour clock positioning
-        </p>
-      </div>
-      <div className="bg-white rounded-2xl p-6 shadow-lg">
-        <HexagonClock
-          distribution={distribution}
-          showClockMarkers={true}
-          showCurrentTime={true}
-          animate={true}
-          onTimeBlockDrag={handleTimeBlockDrag}
-          onCategoryClick={handleCategoryClick}
-        />
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">Time Summary</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {distribution.map(item => (
-              <div key={item.category_id} className="bg-gray-50 p-3 rounded-lg">
-                <div
-                  className="w-3 h-3 rounded-full mb-2"
-                  style={{ backgroundColor: item.category_color }}
-                />
-                <p className="font-medium text-sm">{item.category_name}</p>
-                <p className="text-xs text-gray-600">
-                  {Math.floor(item.actual_minutes / 60)}h {item.actual_minutes % 60}m
-                  {item.planned_minutes > 0 && (
-                    <span className="ml-1">
-                      ({Math.round(item.percentage)}%)
-                    </span>
-                  )}
-                </p>
-              </div>
-            ))}
+          
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={toggleAnimation}
+            >
+              {isAnimating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {isAnimating ? 'Pause' : 'Play'}
+            </Button>
+            
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={refreshData}
+            >
+              <RefreshCcw className="h-4 w-4" />
+              Refresh
+            </Button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-/**
- * Unified Mode Example
- * Shows both completion data and time distribution
- */
-export function UnifiedExample() {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Unified Mode
-        </h2>
-        <p className="text-gray-600">
-          Revolutionary combination of completion percentages and time planning
-        </p>
-      </div>
-      <div className="bg-white rounded-2xl p-6 shadow-lg">
-        <HexagonClock
-          data={mockCompletionData}
-          distribution={mockTimeDistribution}
-          showResonance={true}
-          showClockMarkers={true}
-          showCurrentTime={true}
-          animate={true}
-          size={420}
-          onToggleAxis={(id) => console.log('Toggle axis:', id)}
-          onTimeBlockDrag={(block, hour) => console.log('Time block drag:', block, hour)}
-          onCategoryClick={(category) => console.log('Category click:', category)}
-        />
-      </div>
-    </div>
-  );
-}
-/**
- * Performance Comparison Example
- */
-export function PerformanceExample() {
-  const [renderTime, setRenderTime] = useState<number | null>(null);
-  const [isRendering, setIsRendering] = useState(false);
-  const measurePerformance = () => {
-    setIsRendering(true);
-    const startTime = performance.now();
-    // Simulate component re-render
-    setTimeout(() => {
-      const endTime = performance.now();
-      setRenderTime(endTime - startTime);
-      setIsRendering(false);
-    }, 100);
-  };
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Performance Showcase
-        </h2>
-        <p className="text-gray-600">
-          Hardware-accelerated rendering with 60fps animations
-        </p>
-      </div>
-      <div className="bg-white rounded-2xl p-6 shadow-lg">
-        <div className="mb-6 text-center">
-          <button
-            onClick={measurePerformance}
-            disabled={isRendering}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isRendering ? 'Measuring...' : 'Measure Render Time'}
-          </button>
-          {renderTime && (
-            <div className="mt-4 p-4 bg-green-50 rounded-lg">
-              <p className="text-green-800">
-                <strong>Render time: {renderTime.toFixed(2)}ms</strong>
-                {renderTime < 100 && <span className="ml-2">🚀 Excellent!</span>}
-                {renderTime >= 100 && renderTime < 200 && <span className="ml-2">✅ Good</span>}
-                {renderTime >= 200 && <span className="ml-2">⚠️ Needs optimization</span>}
-              </p>
+
+        {/* Integration Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">
+              {mockCompletionData.filter(d => d.completed).length}
             </div>
-          )}
-        </div>
-        <HexagonClock
-          data={mockCompletionData}
-          showResonance={true}
-          showClockMarkers={true}
-          showCurrentTime={true}
-          hardwareAccelerated={true}
-          mobileOptimized={true}
-          animate={true}
-        />
-      </div>
-    </div>
-  );
-}
-/**
- * Mobile Optimization Example
- */
-export function MobileExample() {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Mobile Optimization
-        </h2>
-        <p className="text-gray-600">
-          Perfect centering and safe area support for all devices
-        </p>
-      </div>
-      {/* Simulate mobile viewport */}
-      <div className="max-w-sm mx-auto bg-gray-900 rounded-[2.5rem] p-2">
-        <div className="bg-white rounded-[2rem] overflow-hidden">
-          {/* Simulated status bar */}
-          <div className="h-8 bg-gray-100 flex items-center justify-center">
-            <div className="text-xs text-gray-600">9:41 AM</div>
+            <div className="text-sm text-muted-foreground">Completed</div>
           </div>
-          {/* Component in mobile container */}
-          <div className="p-4">
-            <HexagonClock
-              data={mockCompletionData}
-              showResonance={true}
-              mobileOptimized={true}
-              animate={true}
-              size="auto"
-            />
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">
+              {Object.keys(mockTimeDistribution).length}
+            </div>
+            <div className="text-sm text-muted-foreground">Active Hours</div>
           </div>
-          {/* Simulated home indicator */}
-          <div className="h-8 flex items-center justify-center">
-            <div className="w-32 h-1 bg-gray-400 rounded-full"></div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">
+              {mockTimeBlocks.length}
+            </div>
+            <div className="text-sm text-muted-foreground">Time Blocks</div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-/**
- * Complete Demo Page
- */
-export default function HexagonClockDemo() {
-  const [activeDemo, setActiveDemo] = useState('dashboard');
-  const demos = [
-    { id: 'dashboard', label: 'Dashboard', component: DashboardExample },
-    { id: 'planning', label: 'Planning', component: PlanningExample },
-    { id: 'unified', label: 'Unified', component: UnifiedExample },
-    { id: 'performance', label: 'Performance', component: PerformanceExample },
-    { id: 'mobile', label: 'Mobile', component: MobileExample }
-  ];
-  const ActiveComponent = demos.find(d => d.id === activeDemo)?.component || DashboardExample;
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🕒 HexagonClock Demo
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Revolutionary 12-hour clock-based hexagon visualization system.
-            Unified replacement for HexagonChartWithResonance and TimeBlockHexagon
-            with <strong>60% performance improvement</strong> and perfect mobile centering.
-          </p>
-        </div>
-        {/* Navigation */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
-          {demos.map(demo => (
-            <button
-              key={demo.id}
-              onClick={() => setActiveDemo(demo.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeDemo === demo.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+      </DashboardCard>
+
+      {/* Hexagon Clock Display */}
+      <DashboardCard className="p-8">
+        <motion.div 
+          className="flex justify-center"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <HexagonClock
+            data={mockCompletionData}
+            distribution={mockTimeDistribution}
+            showResonance={true}
+            showClockMarkers={true}
+            showCurrentTime={true}
+            animate={isAnimating}
+            size={420}
+            onToggleAxis={handleAxisToggle}
+            onTimeBlockDrag={handleTimeBlockDrag}
+            onCategoryClick={handleCategoryClick}
+          />
+        </motion.div>
+      </DashboardCard>
+
+      {/* Activity Summary */}
+      <DashboardCard title="Today's Activities" className="p-4">
+        <div className="space-y-2">
+          {mockCompletionData.map((activity, index) => (
+            <motion.div
+              key={activity.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className={`flex items-center justify-between p-3 rounded-lg ${
+                activity.completed 
+                  ? 'bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800'
+                  : 'bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700'
               }`}
             >
-              {demo.label}
-            </button>
+              <div className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full ${
+                  activity.completed ? 'bg-green-500' : 'bg-gray-400'
+                }`} />
+                <div>
+                  <div className="font-medium">{activity.category}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {activity.axis} • {activity.completedAt.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                </div>
+              </div>
+              
+              {activity.mood && (
+                <Badge variant="outline" className="text-xs">
+                  Mood: {activity.mood}/5
+                </Badge>
+              )}
+            </motion.div>
           ))}
         </div>
-        {/* Active Demo */}
-        <ActiveComponent />
-        {/* Footer */}
-        <div className="mt-16 text-center text-gray-600">
-          <p>
-            Created for AXIS6 MVP • Revolutionary time-based wellness visualization • August 2025
-          </p>
-        </div>
-      </div>
+      </DashboardCard>
     </div>
   );
 }

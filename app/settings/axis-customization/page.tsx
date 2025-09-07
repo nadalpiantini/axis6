@@ -114,7 +114,8 @@ export default function AxisCustomizationPage() {
       setHasChanges(false)
       showNotification('success', 'Settings saved successfully!')
     } catch (error) {
-      console.error('Failed to save settings:', error)
+      // TODO: Replace with proper error handling
+    // console.error('Failed to save settings:', error);
       showNotification('error', 'Failed to save settings. Please try again.')
     }
   }

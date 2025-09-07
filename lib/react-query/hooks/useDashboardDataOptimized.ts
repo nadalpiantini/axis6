@@ -280,6 +280,7 @@ export function useBatchCheckInMutation(userId: string | undefined) {
                // Log error for debugging (development only)
          if (process.env.NODE_ENV === 'development') {
            // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Batch check-in failed:', err);
          }
     },
@@ -351,6 +352,7 @@ export function useRealtimeDashboardOptimized(userId: string | undefined) {
                              // Log error for debugging (development only)
                if (process.env.NODE_ENV === 'development') {
                  // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Max dashboard realtime reconnection attempts reached');
                }
             }

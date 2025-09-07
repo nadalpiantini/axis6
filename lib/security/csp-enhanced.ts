@@ -84,8 +84,6 @@ export function buildSecureCSP(nonce?: string, isDevelopment = false): string {
       "'self'",
       "'unsafe-inline'", // Required for Tailwind CSS and styled-components
       "https://fonts.googleapis.com",
-      // Allow inline styles for critical CSS
-      "'sha256-hash-for-critical-css'",
     ],
     'img-src': [
       "'self'",

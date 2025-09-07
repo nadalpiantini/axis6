@@ -121,7 +121,8 @@ export function AxisActivityMenu({
         try {
           setCustomActivities(JSON.parse(saved))
         } catch (error) {
-          console.error('Error loading custom activities:', error)
+          // TODO: Replace with proper error handling
+    // console.error('Error loading custom activities:', error);
         }
       }
     }

@@ -1,14 +1,14 @@
 {
   "summary": {
-    "score": 43,
+    "score": 83,
     "status": "CRITICAL",
-    "totalTests": 15,
-    "passed": 1,
+    "totalTests": 24,
+    "passed": 19,
     "failed": 3,
-    "warnings": 11,
+    "warnings": 2,
     "critical": 3,
-    "duration": 23,
-    "timestamp": "2025-08-30T11:28:51.603Z"
+    "duration": 3624,
+    "timestamp": "2025-09-07T18:50:24.416Z"
   },
   "tests": [
     {
@@ -16,105 +16,168 @@
       "status": "FAIL",
       "message": "Database security test failed: supabaseUrl is required.",
       "severity": "critical",
-      "timestamp": "2025-08-30T11:28:51.580Z"
+      "timestamp": "2025-09-07T18:50:20.792Z"
     },
     {
       "name": "Auth Required: /api/checkins",
-      "status": "WARN",
-      "message": "Cannot test endpoint: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Endpoint properly requires authentication",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.590Z"
+      "timestamp": "2025-09-07T18:50:21.222Z"
     },
     {
       "name": "Auth Required: /api/analytics",
-      "status": "WARN",
-      "message": "Cannot test endpoint: request to http://localhost:3000/api/analytics failed, reason: ",
+      "status": "PASS",
+      "message": "Endpoint properly requires authentication",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.591Z"
+      "timestamp": "2025-09-07T18:50:21.469Z"
     },
     {
       "name": "Auth Required: /api/streaks",
-      "status": "WARN",
-      "message": "Cannot test endpoint: request to http://localhost:3000/api/streaks failed, reason: ",
+      "status": "PASS",
+      "message": "Endpoint properly requires authentication",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.592Z"
+      "timestamp": "2025-09-07T18:50:21.647Z"
     },
     {
       "name": "Auth Required: /api/settings/user-preferences",
-      "status": "WARN",
-      "message": "Cannot test endpoint: request to http://localhost:3000/api/settings/user-preferences failed, reason: ",
+      "status": "PASS",
+      "message": "Endpoint properly requires authentication",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.593Z"
+      "timestamp": "2025-09-07T18:50:22.164Z"
     },
     {
       "name": "CSRF Protection",
-      "status": "WARN",
-      "message": "Cannot test CSRF: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "POST requests require proper authentication/CSRF",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.594Z"
+      "timestamp": "2025-09-07T18:50:22.286Z"
     },
     {
       "name": "Rate Limiting",
       "status": "WARN",
-      "message": "Cannot test rate limiting: request to http://localhost:3000/api/health failed, reason: ",
+      "message": "Rate limiting may not be configured or limits are high",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.598Z"
+      "timestamp": "2025-09-07T18:50:23.675Z"
     },
     {
-      "name": "Security Headers",
-      "status": "FAIL",
-      "message": "Cannot test headers: request to http://localhost:3000/ failed, reason: ",
-      "severity": "critical",
-      "timestamp": "2025-08-30T11:28:51.599Z"
+      "name": "Header: content-security-policy",
+      "status": "PASS",
+      "message": "Present: default-src 'self'; script-src 'self' 'unsafe-inli...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Header: x-frame-options",
+      "status": "PASS",
+      "message": "Present: DENY...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Header: x-content-type-options",
+      "status": "PASS",
+      "message": "Present: nosniff...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Header: x-xss-protection",
+      "status": "PASS",
+      "message": "Present: 1; mode=block...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Header: referrer-policy",
+      "status": "PASS",
+      "message": "Present: strict-origin-when-cross-origin...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Header: permissions-policy",
+      "status": "PASS",
+      "message": "Present: camera=(), microphone=(), geolocation=(), interest...",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "HSTS Header",
+      "status": "PASS",
+      "message": "HSTS properly configured",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "CSP Security",
+      "status": "WARN",
+      "message": "CSP allows unsafe-eval in production",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
     },
     {
       "name": "Environment Secrets",
       "status": "PASS",
       "message": "No obviously weak secrets detected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.599Z"
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "Production Environment",
+      "status": "FAIL",
+      "message": "Missing production variables: CSRF_SECRET, SUPABASE_SERVICE_ROLE_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN",
+      "severity": "critical",
+      "timestamp": "2025-09-07T18:50:23.806Z"
+    },
+    {
+      "name": "URL Configuration",
+      "status": "PASS",
+      "message": "App URL properly configured",
+      "severity": "normal",
+      "timestamp": "2025-09-07T18:50:23.806Z"
     },
     {
       "name": "Authentication Security",
       "status": "FAIL",
       "message": "Auth security test failed: supabaseUrl is required.",
       "severity": "critical",
-      "timestamp": "2025-08-30T11:28:51.599Z"
+      "timestamp": "2025-09-07T18:50:23.806Z"
     },
     {
       "name": "Input Validation: XSS Script",
-      "status": "WARN",
-      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Malicious input properly rejected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.600Z"
+      "timestamp": "2025-09-07T18:50:23.948Z"
     },
     {
       "name": "Input Validation: SQL Injection",
-      "status": "WARN",
-      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Malicious input properly rejected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.601Z"
+      "timestamp": "2025-09-07T18:50:24.067Z"
     },
     {
       "name": "Input Validation: Path Traversal",
-      "status": "WARN",
-      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Malicious input properly rejected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.602Z"
+      "timestamp": "2025-09-07T18:50:24.183Z"
     },
     {
       "name": "Input Validation: Null Byte",
-      "status": "WARN",
-      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Malicious input properly rejected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.603Z"
+      "timestamp": "2025-09-07T18:50:24.297Z"
     },
     {
       "name": "Input Validation: Unicode Attack",
-      "status": "WARN",
-      "message": "Cannot test input validation: request to http://localhost:3000/api/checkins failed, reason: ",
+      "status": "PASS",
+      "message": "Malicious input properly rejected",
       "severity": "normal",
-      "timestamp": "2025-08-30T11:28:51.603Z"
+      "timestamp": "2025-09-07T18:50:24.416Z"
     }
   ],
   "recommendations": [
@@ -122,11 +185,6 @@
       "priority": "CRITICAL",
       "action": "Fix critical security issues immediately",
       "description": "Deploy RLS policies, add authentication to unprotected endpoints"
-    },
-    {
-      "priority": "HIGH",
-      "action": "Address security warnings",
-      "description": "Review and implement security best practices"
     },
     {
       "priority": "MEDIUM",

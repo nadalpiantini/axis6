@@ -22,7 +22,6 @@ export function useChatRooms(userId?: string) {
   
   // EMERGENCY FIX: Return empty data if no userId to prevent infinite loops
   if (!userId || !supabase || userId === 'undefined' || userId === 'null') {
-    console.log('EMERGENCY FIX: useChatRooms disabled - invalid userId:', userId)
     return {
       data: [],
       isLoading: false,
@@ -61,6 +60,7 @@ export function useChatRooms(userId?: string) {
             userMessage: 'Something went wrong. Please try again.'
           })
     // // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('Failed to fetch user participations:', participantError);
           throw participantError
         }
@@ -81,6 +81,7 @@ export function useChatRooms(userId?: string) {
             component: 'useChat',
             userMessage: 'Something went wrong. Please try again.'
           })
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
           throw error
@@ -156,6 +157,7 @@ export function useChatRooms(userId?: string) {
           component: 'useChat',
           userMessage: 'Something went wrong. Please try again.'
         })
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('Failed to fetch chat rooms:', error);
         throw error

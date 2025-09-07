@@ -61,7 +61,7 @@ export { HexagonClock as TimeBlockHexagon } from './HexagonClock';
  * <HexagonClock
  *   data={{ physical: 80, mental: 60, emotional: 90, social: 40, spiritual: 70, material: 85 }}
  *   showResonance={true}
- *   onToggleAxis={(id) => console.log('Toggle:', id)}
+ *   onToggleAxis={(id) => }
  * />
  * ```
  *
@@ -75,7 +75,7 @@ export { HexagonClock as TimeBlockHexagon } from './HexagonClock';
  *   ]}
  *   showClockMarkers={true}
  *   showCurrentTime={true}
- *   onTimeBlockDrag={(block, hour) => console.log('Drag:', block, hour)}
+ *   onTimeBlockDrag={(block, hour) => }
  * />
  * ```
  *

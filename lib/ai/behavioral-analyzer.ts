@@ -73,7 +73,9 @@ export class BehavioralAnalyzer {
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
       return this.getDefaultProfile(userId)
@@ -106,7 +108,9 @@ export class BehavioralAnalyzer {
               userMessage: 'AI operation failed. Please try again.'
             })
             // TODO: Replace with proper error handling
+    // // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
+    // // TODO: Replace with proper error handling
     // // TODO: Replace with proper error handling
     // console.error('AI behavioral analyzer operation failed:', error);
       return this.generateBasicInsights(profile || await this.getDefaultProfile(userId))
@@ -867,7 +871,8 @@ export class BehavioralAnalyzer {
         })
     } catch (error) {
       // TODO: Replace with proper error handling
-      // console.error('AI behavioral analyzer operation failed:', error);
+      // // TODO: Replace with proper error handling
+    // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
   private async storeInsights(userId: string, insights: PersonalizedInsight[]): Promise<void> {
@@ -889,7 +894,8 @@ export class BehavioralAnalyzer {
         .insert(insightRows)
     } catch (error) {
       // TODO: Replace with proper error handling
-      // console.error('AI behavioral analyzer operation failed:', error);
+      // // TODO: Replace with proper error handling
+    // console.error('AI behavioral analyzer operation failed:', error);
     }
   }
   private getDefaultProfile(userId: string): UserBehaviorProfile {

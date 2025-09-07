@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
@@ -68,7 +70,7 @@ export async function GET() {
     }
     return NextResponse.json({ preferences })
   } catch (error) {
-    console.error('Axis customization fetch error:', error)
+    logger.error('Axis customization fetch error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch axis customization settings' },
       { status: 500 }
