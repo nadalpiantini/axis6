@@ -88,7 +88,7 @@ const InteractionFeedback = memo(function InteractionFeedback({
         transform: 'translate(-50%, -50%)',
         zIndex: 1000
       }}
-      initial={{ scale: config.scale[0], opacity: config.opacity[0] }}
+      initial={{ scale: config.scale?.[0] ?? 1, opacity: config.opacity?.[0] ?? 0 }}
       animate={{
         scale: config.scale,
         opacity: config.opacity

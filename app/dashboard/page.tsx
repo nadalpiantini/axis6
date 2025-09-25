@@ -110,58 +110,109 @@ const HexagonVisualization = memo(({
           strokeWidth="2"
         />
         
-        {/* Progress hexagon */}
+        {/* Enhanced progress hexagon that fills based on completion */}
         <AnimatePresence>
           {completionPercentage > 0 && (
             <motion.polygon
               initial={{ scale: 0, opacity: 0 }}
               animate={{ 
-                scale: completionPercentage / 100, 
-                opacity: 0.3 
+                scale: (completionPercentage || 0) / 100, 
+                opacity: completionPercentage === 100 ? 0.5 : 0.25
               }}
               exit={{ scale: 0, opacity: 0 }}
               transition={{ 
-                duration: showAnimations ? 0.5 : 0,
-                ease: "easeInOut" 
+                duration: showAnimations ? 0.8 : 0,
+                ease: "easeInOut",
+                scale: { type: "spring", stiffness: 100, damping: 15 }
               }}
               points={hexagonPath}
               fill="url(#gradient)"
-              stroke="url(#gradient)"
+              stroke="url(#gradientStroke)"
               strokeWidth="2"
-              style={{ transformOrigin: 'center' }}
+              style={{ 
+                transformOrigin: 'center',
+                filter: completionPercentage === 100 ? 'drop-shadow(0 0 20px rgba(155, 138, 230, 0.4))' : 'none'
+              }}
             />
           )}
         </AnimatePresence>
         
-        {/* Gradient definition */}
+        {/* Enhanced connecting lines between circles */}
+        {axisPositions.map((axis, index) => {
+          const nextAxis = axisPositions[(index + 1) % axisPositions.length]
+          const bothCompleted = axis.completed && nextAxis.completed
+          const oneCompleted = axis.completed || nextAxis.completed
+          
+          return (
+            <line
+              key={`line-${axis.id}-${nextAxis.id}`}
+              x1={axis.x}
+              y1={axis.y}
+              x2={nextAxis.x}
+              y2={nextAxis.y}
+              stroke={bothCompleted ? 'rgba(255,255,255,0.4)' : oneCompleted ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)'}
+              strokeWidth={bothCompleted ? "3" : oneCompleted ? "2" : "1"}
+              strokeDasharray={bothCompleted ? "none" : "4 4"}
+              className="transition-all duration-500 ease-out"
+              style={{
+                filter: bothCompleted ? 'drop-shadow(0 0 4px rgba(255,255,255,0.2))' : 'none'
+              }}
+            />
+          )
+        })}
+        
+        {/* Enhanced gradient definitions */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#9B8AE6" />
+            <stop offset="50%" stopColor="#6AA6FF" />
             <stop offset="100%" stopColor="#FF8B7D" />
+          </linearGradient>
+          <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#9B8AE6" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#6AA6FF" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#FF8B7D" stopOpacity="0.8" />
           </linearGradient>
         </defs>
         
-        {/* Axis points */}
+        {/* Axis points with expanded click targets */}
         {axisPositions.map((axis) => (
-          <ClickableSVG
+          <g 
             key={axis.id}
-            onClick={() => onToggleAxis(axis.id)}
-            disabled={isToggling}
-            aria-label={`Toggle ${axis.name}: currently ${axis.completed ? 'completed' : 'not completed'}`}
+            style={{ cursor: isToggling ? 'wait' : 'pointer' }}
             data-testid={`hexagon-${axis.name.toLowerCase()}`}
-            showAnimation={true}
-            className="focus:outline-none"
           >
+            {/* Invisible larger click target */}
+            <circle
+              cx={axis.x}
+              cy={axis.y}
+              r="45"
+              fill="transparent"
+              style={{ pointerEvents: 'auto', cursor: isToggling ? 'wait' : 'pointer' }}
+              onClick={(e) => {
+                if (isToggling) return
+                e.preventDefault()
+                e.stopPropagation()
+                onToggleAxis(axis.id)
+              }}
+            />
+            {/* Visual circle (no click events - handled by invisible target above) */}
             <circle
               cx={axis.x}
               cy={axis.y}
               r="30"
-              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.05)'}
-              fillOpacity={axis.completed ? 1.0 : 0.3}
-              stroke={axis.completed ? axis.color : 'rgba(255,255,255,0.2)'}
-              strokeWidth={axis.completed ? "3" : "1"}
-              className="transition-all duration-300 hover:stroke-white hover:stroke-[3] hover:fill-opacity-90"
-              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.08)'}
+              fillOpacity={axis.completed ? 0.9 : 0.4}
+              stroke={axis.completed ? axis.color : 'rgba(255,255,255,0.15)'}
+              strokeWidth={axis.completed ? "4" : "2"}
+              className={`transition-all duration-500 ease-out ${
+                isToggling ? 'animate-pulse' : ''
+              }`}
+              style={{ 
+                pointerEvents: 'none',
+                filter: axis.completed ? `drop-shadow(0 0 12px ${axis.color}60)` : 'none',
+                transformOrigin: 'center'
+              }}
             />
             <foreignObject 
               x={axis.x - 14} 
@@ -169,16 +220,16 @@ const HexagonVisualization = memo(({
               width="28" 
               height="28"
               style={{ pointerEvents: 'none' }}
+              className={`transition-all duration-500 ${axis.completed ? 'scale-110' : 'scale-100'}`}
             >
               <AxisIcon 
                 axis={axis.icon}
                 size={28}
                 color={axis.completed ? 'white' : '#9ca3af'}
                 custom
-                {...(showAnimations && axis.completed ? { animated: true } : {})}
               />
             </foreignObject>
-          </ClickableSVG>
+          </g>
         ))}
       </svg>
     </div>
@@ -291,20 +342,24 @@ const MemoizedCategoryCard = memo(({
           axis.completed 
             ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30' 
             : 'bg-white/5 hover:bg-white/10 border-white/10'
-        } border cursor-pointer`}
+        } border`}
         data-testid={`category-card-${axis.name.toLowerCase()}`}
         data-checked={axis.completed}
       >
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className={`p-1.5 sm:p-2 rounded-lg ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}>
-                        <AxisIcon
+          <button
+            onClick={onToggle}
+            disabled={isToggling}
+            className={`p-1.5 sm:p-2 rounded-lg transition-colors cursor-pointer hover:bg-white/20 ${axis.completed ? 'bg-white/10' : 'bg-white/5'}`}
+            aria-label={`Toggle ${axis.name}`}
+          >
+            <AxisIcon
               axis={axis.icon}
               size={18}
               color={axis.color}
               custom
-              {...(showAnimations && axis.completed ? { animated: true } : {})}
             />
-          </div>
+          </button>
           <span className={`flex-1 text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
             {axis.name}
             {axis.completed && <Check className="inline-block ml-2 w-4 h-4 text-green-400" />}
@@ -450,40 +505,50 @@ export default function DashboardPageV2() {
     return new Map(axes.map(axis => [axis.id, axis]))
   }, [axes])
 
-  // Handler with useCallback for optimization and immediate UI updates
+  // Debounced handler to prevent double clicks and race conditions
+  const [isToggling, setIsToggling] = useState(false)
+  
   const handleToggleAxis = useCallback((axisId: string | number) => {
-    if (toggleCheckIn.isPending) return // Prevent multiple clicks
+    // Prevent multiple rapid clicks
+    if (toggleCheckIn.isPending || isToggling) return
     
     const axis = axisMap.get(axisId)
-    if (axis) {
-      toggleCheckIn.mutate(
-        {
-          categoryId: axisId,
-          completed: !axis.completed
-        },
-        {
-          onSuccess: (data) => {
-            const message = axis.completed 
-              ? `${axis.name} unchecked` 
-              : `${axis.name} completed! 🎉`
-            
-            // Use only one toast system (centered)
-            showToast(message, 'success', 2500)
-            
-            // Force immediate refetch of related queries
+    if (!axis) return
+    
+    // Set local toggling state to prevent immediate re-clicks
+    setIsToggling(true)
+    
+    toggleCheckIn.mutate(
+      {
+        categoryId: axisId,
+        completed: !axis.completed
+      },
+      {
+        onSuccess: (data) => {
+          const message = axis.completed 
+            ? `${axis.name} unchecked` 
+            : `${axis.name} completed! 🎉`
+          
+          showToast(message, 'success', 2500)
+          
+          // Delayed invalidation to prevent race conditions
+          setTimeout(() => {
             queryClient.invalidateQueries({ queryKey: ['checkins', 'today', user?.id] })
             queryClient.invalidateQueries({ queryKey: ['streaks', user?.id] })
-          },
-          onError: (error) => {
-            const errorMessage = 'Failed to update. Please try again.'
-            
-            // Use only one toast system (centered)
-            showToast(errorMessage, 'error', 4000)
-          }
+            setIsToggling(false)
+          }, 300)
+        },
+        onError: (error) => {
+          showToast('Failed to update. Please try again.', 'error', 4000)
+          setIsToggling(false)
+        },
+        onSettled: () => {
+          // Ensure we reset the toggling state even if the request fails
+          setTimeout(() => setIsToggling(false), 500)
         }
-      )
-    }
-  }, [axisMap, toggleCheckIn, queryClient, user?.id, showToast])
+      }
+    )
+  }, [axisMap, toggleCheckIn, queryClient, user?.id, showToast, isToggling])
 
   // Handler for dropdown option selections
   const handleOptionSelect = useCallback((option: { id: string, label: string, emoji: string }) => {
@@ -610,7 +675,7 @@ export default function DashboardPageV2() {
                     key={hexagonKey}
                     axes={axes}
                     onToggleAxis={handleToggleAxis}
-                    isToggling={toggleCheckIn.isPending}
+                    isToggling={toggleCheckIn.isPending || isToggling}
                   />
 
                   {/* Axes List */}
@@ -621,7 +686,7 @@ export default function DashboardPageV2() {
                         axis={axis}
                         onToggle={() => handleToggleAxis(axis.id)}
                         onOptionSelect={handleOptionSelect}
-                        isToggling={toggleCheckIn.isPending}
+                        isToggling={toggleCheckIn.isPending || isToggling}
                       />
                     ))}
                   </div>

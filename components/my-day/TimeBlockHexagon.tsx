@@ -244,7 +244,6 @@ export function TimeBlockHexagon({
                       axis={category.icon}
                       size={16}
                       color={actualMinutes > 0 ? "#2D1B69" : "rgba(255, 255, 255, 0.8)"}
-                      animated={false}
                     />
                   </div>
                 </foreignObject>

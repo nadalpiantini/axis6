@@ -210,7 +210,7 @@ export default function AxisCustomizationPage() {
                           borderColor: `${axis.color}40`
                         }}
                       >
-                        <AxisIcon axis={axis.slug} className="w-4 h-4" color={axis.color} animated={false} />
+                        <AxisIcon axis={axis.slug} className="w-4 h-4" color={axis.color} />
                       </div>
                       <div>
                         <h3 className="font-medium text-white">{axis.name}</h3>

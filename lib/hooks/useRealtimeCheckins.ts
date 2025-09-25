@@ -1,7 +1,20 @@
 import { RealtimeChannel, RealtimeChannelSendResponse } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+
+// Debounce utility for realtime updates
+function useDebounce<T extends (...args: any[]) => void>(
+  callback: T,
+  delay: number
+): T {
+  const timeoutRef = useRef<NodeJS.Timeout>()
+  
+  return useCallback((...args: Parameters<T>) => {
+    clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => callback(...args), delay)
+  }, [callback, delay]) as T
+}
 interface RealtimeState {
   isConnected: boolean
   error: string | null
@@ -10,6 +23,14 @@ interface RealtimeState {
 export function useRealtimeCheckins(userId: string | undefined) {
   const queryClient = useQueryClient()
   const supabase = createClient()
+  
+  // Debounced invalidation to prevent rapid updates
+  const debouncedInvalidation = useDebounce(() => {
+    if (userId) {
+      queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
+      queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
+    }
+  }, 500) // Wait 500ms before invalidating
   const [realtimeState, setRealtimeState] = useState<RealtimeState>({
     isConnected: false,
     error: null,
@@ -71,11 +92,8 @@ export function useRealtimeCheckins(userId: string | undefined) {
               filter: `user_id=eq.${userId}`
             },
             (payload) => {
-              // Invalidate and refetch checkins data
-              queryClient.invalidateQueries({ queryKey: ['checkins', 'today', userId] })
-              // Also invalidate streaks as they depend on checkins
-              queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
-              // Log successful realtime update for debugging
+              // Use debounced invalidation to prevent rapid fire updates
+              debouncedInvalidation()
               }
           )
           .subscribe((status, error) => {
@@ -197,8 +215,8 @@ export function useRealtimeStreaks(userId: string | undefined) {
               filter: `user_id=eq.${userId}`
             },
             (payload) => {
-              // Invalidate and refetch streaks data
-              queryClient.invalidateQueries({ queryKey: ['streaks', userId] })
+              // Use debounced invalidation for streaks too
+              debouncedInvalidation()
               // Show achievement notification for milestone streaks
               if (payload.eventType === 'UPDATE' && payload.new) {
                 const newStreak = payload.new as any

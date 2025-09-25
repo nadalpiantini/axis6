@@ -60,6 +60,7 @@ export const PhysicalIcon = ({ size = 24, color = 'currentColor', className = ''
   if (animated) {
     return (
       <motion.div
+        initial={{ y: 0 }}
         animate={{ y: [0, -2, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -96,6 +97,7 @@ export const MentalIcon = ({ size = 24, color = 'currentColor', className = '', 
   if (animated) {
     return (
       <motion.div
+        initial={{ rotate: 0 }}
         animate={{ rotate: [0, 5, -5, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -127,6 +129,7 @@ export const EmotionalIcon = ({ size = 24, color = 'currentColor', className = '
   if (animated) {
     return (
       <motion.div
+        initial={{ scale: 1 }}
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -159,6 +162,7 @@ export const SocialIcon = ({ size = 24, color = 'currentColor', className = '', 
   if (animated) {
     return (
       <motion.div
+        initial={{ rotate: 0 }}
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
@@ -189,6 +193,7 @@ export const SpiritualIcon = ({ size = 24, color = 'currentColor', className = '
   if (animated) {
     return (
       <motion.div
+        initial={{ opacity: 0.7, scale: 0.95 }}
         animate={{
           opacity: [0.7, 1, 0.7],
           scale: [0.95, 1, 0.95]
@@ -223,6 +228,7 @@ export const MaterialIcon = ({ size = 24, color = 'currentColor', className = ''
   if (animated) {
     return (
       <motion.div
+        initial={{ y: 0 }}
         animate={{ y: [0, -1, 0] }}
         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
       >

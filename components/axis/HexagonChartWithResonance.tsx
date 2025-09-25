@@ -71,10 +71,12 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
     return { center, radius, labelDistance, resonanceRadius }
   }, [responsiveSize, windowWidth])
   // Calculate center percentage value
-  const centerPercentage = useMemo(() =>
-    Math.round(Object.values(data).reduce((acc, val) => acc + val, 0) / 6),
-    [data]
-  )
+  const centerPercentage = useMemo(() => {
+    if (!data || typeof data !== 'object') return 0
+    const values = Object.values(data)
+    if (values.length === 0) return 0
+    return Math.round(values.reduce((acc, val) => acc + (val || 0), 0) / 6)
+  }, [data])
   useEffect(() => {
     setIsClient(true)
     setWindowWidth(window.innerWidth)
@@ -223,7 +225,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
           fillOpacity="0.3"
           stroke="url(#gradientStroke)"
           strokeWidth="2"
-          initial={animate ? { scale: 0 } : { scale: 1 }}
+          initial={{ scale: animate === true ? 0 : 1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         />
@@ -237,7 +239,7 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
             fill={HEXAGON_CATEGORIES[idx]?.color || '#666'}
             stroke="white"
             strokeWidth="2"
-            initial={animate ? { scale: 0 } : { scale: 1 }}
+            initial={{ scale: animate === true ? 0 : 1 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.1 * idx, duration: 0.3 }}
             className="cursor-pointer"
@@ -279,8 +281,8 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
               top: y,
               transform: 'translate(-50%, -50%)'
             }}
-            initial={animate ? { opacity: 0 } : { opacity: 1 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: animate === true ? 0 : 1 }}
+            animate={animate === true ? { opacity: 1 } : undefined}
             transition={{ delay: 0.3 + 0.1 * idx }}
             title={whisperText}
           >
@@ -316,14 +318,16 @@ const HexagonChartWithResonance = memo(function HexagonChartWithResonance({
       {/* Center score */}
       <motion.div
         className="absolute inset-0 flex flex-col items-center justify-center"
-        initial={animate ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: animate === true ? 0 : 1, scale: animate === true ? 0.8 : 1 }}
+        animate={animate === true ? { opacity: 1, scale: 1 } : undefined}
         transition={{ delay: 0.5 }}
       >
         <div className="text-3xl font-bold text-white">
-          {Math.round(
-            Object.values(data).reduce((acc, val) => acc + val, 0) / 6
-          )}%
+          {data && typeof data === 'object' && Object.keys(data).length > 0
+            ? Math.round(
+                Object.values(data).reduce((acc, val) => acc + (val || 0), 0) / 6
+              )
+            : 0}%
         </div>
         <div className="text-xs text-gray-400">
           Balance Total

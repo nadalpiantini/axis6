@@ -174,7 +174,7 @@ const HexagonVisualization = memo(({
                 size={28}
                 color={axis.completed ? 'white' : '#9ca3af'}
                 custom
-                {...(showAnimations && axis.completed ? { animated: true } : {})}
+                {...(showAnimations && axis.completed ? { animated: "true" } : {})}
               />
             </foreignObject>
           </ClickableSVG>
@@ -224,7 +224,7 @@ const MemoizedCategoryCard = memo(({
             size={18}
             color={axis.color}
             custom
-                          {...(showAnimations && axis.completed ? { animated: true } : {})}
+                          {...(showAnimations && axis.completed ? { animated: "true" } : {})}
           />
         </div>
         <span className={`text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>

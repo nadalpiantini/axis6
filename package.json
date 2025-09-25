@@ -2,6 +2,7 @@
   "name": "axis6-mvp",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "packageManager": "npm@10.9.3",
   "engines": {
     "node": "20.x"

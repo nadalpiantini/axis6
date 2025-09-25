@@ -119,7 +119,7 @@ export default function HexagonChart({
           fillOpacity="0.3"
           stroke="url(#gradientStroke)"
           strokeWidth="2"
-          initial={animate ? { scale: 0 } : { scale: 1 }}
+          initial={{ scale: animate === true ? 0 : 1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         />
@@ -134,7 +134,7 @@ export default function HexagonChart({
             fill={categories[idx].color}
             stroke="white"
             strokeWidth="2"
-            initial={animate ? { scale: 0 } : { scale: 1 }}
+            initial={{ scale: animate === true ? 0 : 1 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.1 * idx, duration: 0.3 }}
           />
@@ -171,8 +171,8 @@ export default function HexagonChart({
               top: y,
               transform: 'translate(-50%, -50%)'
             }}
-            initial={animate ? { opacity: 0 } : { opacity: 1 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: animate === true ? 0 : 1 }}
+            animate={animate === true ? { opacity: 1 } : undefined}
             transition={{ delay: 0.3 + 0.1 * idx }}
           >
             <span 
@@ -191,8 +191,8 @@ export default function HexagonChart({
       {/* Center score */}
       <motion.div
         className="absolute inset-0 flex flex-col items-center justify-center"
-        initial={animate ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: animate === true ? 0 : 1, scale: animate === true ? 0.8 : 1 }}
+        animate={animate === true ? { opacity: 1, scale: 1 } : undefined}
         transition={{ delay: 0.5 }}
       >
         <div className="text-3xl font-bold text-white">

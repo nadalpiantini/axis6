@@ -67,7 +67,6 @@ export function Logo({
         className
       )}
       style={{ 
-        width: 'auto',
         maxWidth: '100%',
         maxHeight: '100%'
       }}
