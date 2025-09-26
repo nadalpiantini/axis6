@@ -248,225 +248,378 @@ export default function MyDayPage() {
             </div>
           </motion.div>
 
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-            {/* Hexagon Chart with Resonance */}
+          {/* Main Grid - 3 columnas optimizadas */}
+          <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr_320px] gap-4 sm:gap-6 lg:gap-8">
+            
+            {/* COLUMNA IZQUIERDA - Timeline Schedule */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 text-white overflow-hidden"
+              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6"
             >
               <h2 className="text-sm sm:text-base lg:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
-                Day Overview
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
+                Schedule
               </h2>
               
-              {/* Modern Hexagon Visualization - Same as Dashboard */}
-              <div className="flex justify-center mb-4 sm:mb-8">
-                <svg 
-                  className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" 
-                  viewBox="0 0 400 400" 
-                  role="img" 
-                  aria-label={`My Day progress overview`}
-                  style={{ pointerEvents: 'auto' }}
-                >
-                  {/* Background hexagon */}
-                  <polygon
-                    points="200,40 340,120 340,280 200,360 60,280 60,120"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth="2"
-                  />
+              <div className="space-y-1 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20">
+                {Array.from({ length: 18 }, (_, i) => i + 5).map(hour => {
+                  const hourStr = hour.toString().padStart(2, '0')
+                  const hourBlocks = myDayData?.filter((block: any) => 
+                    block.start_time?.startsWith(hourStr + ':')
+                  ) || []
                   
-                  {/* Enhanced gradient definitions */}
+                  return (
+                    <div key={hour} className="group hover:bg-white/5 rounded transition-colors">
+                      <div className="flex items-center gap-2 p-1">
+                        <span className="text-xs text-gray-500 w-14 text-right">
+                          {hour <= 12 ? `${hour}:00` : `${hour - 12}:00`}
+                          <span className="text-[10px] ml-1">
+                            {hour < 12 ? 'AM' : 'PM'}
+                          </span>
+                        </span>
+                        
+                        <div className="flex-1 grid grid-cols-4 gap-0.5 h-7">
+                          {[0, 15, 30, 45].map(min => {
+                            const timeSlot = `${hourStr}:${min.toString().padStart(2, '0')}`
+                            const activity = hourBlocks.find((b: any) => 
+                              b.start_time === timeSlot
+                            )
+                            
+                            return (
+                              <div
+                                key={min}
+                                className={`
+                                  border border-white/10 rounded-sm transition-all
+                                  ${activity ? 'cursor-default' : 'cursor-pointer hover:bg-white/10'}
+                                `}
+                                style={activity ? {
+                                  backgroundColor: `${activity.category_color}30`,
+                                  borderLeftWidth: '2px',
+                                  borderLeftColor: activity.category_color
+                                } : {}}
+                                onClick={() => !activity && handleAddTimeBlock()}
+                                title={activity ? 
+                                  `${activity.category_name}: ${activity.activity_name}` : 
+                                  'Click to schedule'
+                                }
+                              >
+                                {activity && (
+                                  <div className="px-1 truncate">
+                                    <span className="text-[9px] text-white/80">
+                                      {activity.activity_name.substring(0, 6)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              {/* Footer info */}
+              <div className="mt-3 pt-3 border-t border-white/10 flex justify-between text-[10px] text-gray-500">
+                <span>Each block = 15 min</span>
+                <span>{myDayData?.length || 0} activities</span>
+              </div>
+            </motion.div>
+
+            {/* COLUMNA CENTRO - Hexagon Balance */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 flex flex-col items-center justify-center text-white"
+            >
+              <h2 className="text-sm sm:text-base lg:text-xl font-semibold text-white mb-4 text-center">
+                Balance Overview
+              </h2>
+              
+              {/* Hexágono con líneas de progreso (estilo HexagonChart) */}
+              <div className="relative">
+                <svg 
+                  className="w-full h-auto max-w-[350px]" 
+                  viewBox="0 0 400 400"
+                >
+                  {/* Gradients */}
                   <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#9B8AE6" />
-                      <stop offset="50%" stopColor="#6AA6FF" />
+                    <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#65D39A" />
+                      <stop offset="33%" stopColor="#9B8AE6" />
+                      <stop offset="66%" stopColor="#4ECDC4" />
                       <stop offset="100%" stopColor="#FF8B7D" />
                     </linearGradient>
-                    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#9B8AE6" stopOpacity="0.8" />
-                      <stop offset="50%" stopColor="#6AA6FF" stopOpacity="0.6" />
+                    <linearGradient id="hexGradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#65D39A" stopOpacity="0.8" />
+                      <stop offset="33%" stopColor="#9B8AE6" stopOpacity="0.8" />
+                      <stop offset="66%" stopColor="#4ECDC4" stopOpacity="0.8" />
                       <stop offset="100%" stopColor="#FF8B7D" stopOpacity="0.8" />
                     </linearGradient>
                   </defs>
                   
-                  {/* Axis points with labels inside SVG for better mobile performance */}
+                  {/* Grid lines (concentric hexagons) */}
+                  {[0.2, 0.4, 0.6, 0.8, 1].map((level, idx) => {
+                    const categoryOrder = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']
+                    const angles = [0, 60, 120, 180, 240, 300]
+                    const radius = 130 * level
+                    const points = categoryOrder.map((cat, i) => {
+                      const angle = angles[i] * Math.PI / 180
+                      const x = 200 + radius * Math.cos(angle)
+                      const y = 200 + radius * Math.sin(angle)
+                      return `${x},${y}`
+                    }).join(' ')
+                    
+                    return (
+                      <polygon
+                        key={idx}
+                        points={points}
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.1)"
+                        strokeWidth="1"
+                      />
+                    )
+                  })}
+
+                  {/* Axis lines */}
+                  {['physical', 'mental', 'emotional', 'social', 'spiritual', 'material'].map((cat, idx) => {
+                    const angles = [0, 60, 120, 180, 240, 300]
+                    const angle = angles[idx] * Math.PI / 180
+                    const x2 = 200 + 130 * Math.cos(angle)
+                    const y2 = 200 + 130 * Math.sin(angle)
+                    
+                    return (
+                      <line
+                        key={idx}
+                        x1="200"
+                        y1="200"
+                        x2={x2}
+                        y2={y2}
+                        stroke="rgba(255, 255, 255, 0.15)"
+                        strokeWidth="1"
+                      />
+                    )
+                  })}
+
+                  {/* Main hexagon outline */}
+                  {(() => {
+                    const categoryOrder = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']
+                    const angles = [0, 60, 120, 180, 240, 300]
+                    const points = categoryOrder.map((cat, i) => {
+                      const angle = angles[i] * Math.PI / 180
+                      const x = 200 + 130 * Math.cos(angle)
+                      const y = 200 + 130 * Math.sin(angle)
+                      return `${x},${y}`
+                    }).join(' ')
+                    
+                    return (
+                      <polygon
+                        points={points}
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        strokeWidth="2"
+                      />
+                    )
+                  })()}
+                  
+                  {/* Data polygon - líneas de progreso dinámicas */}
+                  {(() => {
+                    // Calcular minutos por categoría
+                    const categoryMinutes: Record<string, number> = {}
+                    categories.forEach(cat => {
+                      const catBlocks = myDayData?.filter((b: any) => 
+                        b.category_id === cat.id
+                      ) || []
+                      categoryMinutes[cat.slug] = catBlocks.reduce((sum: number, b: any) => 
+                        sum + (b.actual_duration || b.duration_minutes || 0), 0
+                      )
+                    })
+                    
+                    // Generar puntos del polígono de progreso
+                    const maxMinutes = 120 // Máximo para visualización
+                    const categoryOrder = ['physical', 'mental', 'emotional', 'social', 'spiritual', 'material']
+                    const angles = [0, 60, 120, 180, 240, 300]
+                    
+                    const dataPoints = categoryOrder.map((cat, i) => {
+                      const minutes = categoryMinutes[cat] || 0
+                      const value = Math.min(minutes / maxMinutes, 1)
+                      const angle = angles[i] * Math.PI / 180
+                      const x = 200 + 130 * value * Math.cos(angle)
+                      const y = 200 + 130 * value * Math.sin(angle)
+                      return { x, y, value, minutes }
+                    })
+                    
+                    const points = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
+                    
+                    return (
+                      <>
+                        {/* Progress polygon */}
+                        <polygon
+                          points={points}
+                          fill="url(#hexGradient)"
+                          fillOpacity="0.25"
+                          stroke="url(#hexGradientStroke)"
+                          strokeWidth="2"
+                        />
+                        {/* Data points */}
+                        {dataPoints.map((point, idx) => (
+                          <circle
+                            key={idx}
+                            cx={point.x}
+                            cy={point.y}
+                            r="4"
+                            fill={categories[idx].color}
+                            stroke="white"
+                            strokeWidth="2"
+                          />
+                        ))}
+                      </>
+                    )
+                  })()}
+                  
+                  {/* Labels de categorías */}
                   {categories.slice(0, 6).map((category, index) => {
-                    const angle = (Math.PI / 3) * index - Math.PI / 2
-                    const x = 200 + 160 * Math.cos(angle)
-                    const y = 200 + 160 * Math.sin(angle)
+                    const angles = [0, 60, 120, 180, 240, 300]
+                    const angle = angles[index] * Math.PI / 180
+                    const x = 200 + 150 * Math.cos(angle)
+                    const y = 200 + 150 * Math.sin(angle)
                     
                     return (
                       <g key={category.id}>
-                        {/* Click target */}
                         <circle
                           cx={x}
                           cy={y}
-                          r="45"
-                          fill="transparent"
+                          r="25"
+                          fill="rgba(255,255,255,0.05)"
+                          stroke={category.color}
+                          strokeWidth="1"
+                          strokeOpacity="0.3"
                           style={{ cursor: 'pointer' }}
                           onClick={(e) => handleAxisClick(category, e)}
                         />
-                        {/* Visual circle */}
-                        <circle
-                          cx={x}
-                          cy={y}
-                          r="30"
-                          fill="rgba(255,255,255,0.08)"
-                          stroke="rgba(255,255,255,0.15)"
-                          strokeWidth="2"
-                          className="transition-all duration-500 ease-out"
-                        />
-                        {/* Icon */}
-                        <foreignObject 
-                          x={x - 14} 
-                          y={y - 14} 
-                          width="28" 
-                          height="28"
-                          style={{ pointerEvents: 'none' }}
-                        >
+                        <foreignObject x={x - 12} y={y - 12} width="24" height="24">
                           <AxisIcon 
                             axis={category.icon}
-                            size={28}
-                            color="#9ca3af"
+                            size={24}
+                            color={category.color}
                             custom
                           />
                         </foreignObject>
                       </g>
                     )
                   })}
-                  
-                  {/* Center text */}
-                  <text 
-                    x="200" 
-                    y="200" 
-                    textAnchor="middle" 
-                    dy="0.35em" 
-                    className="text-2xl font-bold fill-white"
-                    fontSize="24"
-                  >
-                    My Day
-                  </text>
                 </svg>
               </div>
-
-              {/* Category Labels */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6">
-                {categories.slice(0, 6).map((category, index) => (
-                  <motion.button
-                    key={category.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 + index * 0.05 }}
-                    onClick={(e) => handleAxisClick(category, e)}
-                    className="flex items-center gap-2 p-2 sm:p-3 glass rounded-lg hover:bg-white/10 transition-colors touch-manipulation"
-                  >
+              
+              {/* Mini stats de balance */}
+              <div className="grid grid-cols-3 gap-2 mt-4 w-full max-w-[300px]">
+                {categories.slice(0, 6).map(cat => {
+                  const catMinutes = myDayData?.filter((b: any) => 
+                    b.category_id === cat.id
+                  ).reduce((sum: number, b: any) => 
+                    sum + (b.actual_duration || b.duration_minutes || 0), 0
+                  ) || 0
+                  
+                  return (
                     <div 
-                      className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: category.color }}
-                    />
-                    <span className="text-xs sm:text-sm text-white truncate">
-                      {getLocalizedText(category.name, 'en', category.slug)}
-                    </span>
-                  </motion.button>
-                ))}
+                      key={cat.id}
+                      className="text-center p-2 rounded-lg bg-white/5"
+                    >
+                      <div 
+                        className="w-2 h-2 rounded-full mx-auto mb-1"
+                        style={{ backgroundColor: cat.color }}
+                      />
+                      <div className="text-xs text-gray-400">
+                        {getLocalizedText(cat.name, 'en', cat.slug).substring(0, 4)}
+                      </div>
+                      <div className="text-sm font-semibold text-white">
+                        {catMinutes}m
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </motion.div>
 
-            {/* Time Blocks List */}
+            {/* COLUMNA DERECHA - Stats & Actions */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="glass rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 text-white"
-              data-testid="time-blocks-list"
+              transition={{ delay: 0.6 }}
+              className="space-y-4"
             >
-              <h2 className="text-sm sm:text-base lg:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                Time Blocks
-              </h2>
-              {loadingData ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mb-2"></div>
-                  <p className="text-gray-400">Loading schedule...</p>
+              {/* Daily Stats */}
+              <div className="glass rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-3 text-white">Today's Progress</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Active Time</span>
+                    <span className="text-lg font-bold text-green-400">
+                      {Math.floor(totalActualMinutes / 60)}h {totalActualMinutes % 60}m
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Planned</span>
+                    <span className="text-sm text-white">
+                      {Math.floor(totalPlannedMinutes / 60)}h {totalPlannedMinutes % 60}m
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Efficiency</span>
+                    <span className="text-sm font-semibold text-purple-400">
+                      {totalPlannedMinutes > 0 
+                        ? Math.round((totalActualMinutes / totalPlannedMinutes) * 100)
+                        : 0}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Axes Active</span>
+                    <span className="text-sm text-white">
+                      {new Set(myDayData?.map((b: any) => b.category_id)).size}/6
+                    </span>
+                  </div>
                 </div>
-              ) : myDayData && myDayData.length > 0 ? (
-                <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-                  {myDayData.map((block: any) => (
-                    <motion.div
-                      key={block.time_block_id}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border transition-all touch-manipulation ${
-                        block.status === 'active'
-                          ? 'bg-green-500/10 border-green-500/30'
-                          : block.status === 'completed'
-                          ? 'bg-blue-500/10 border-blue-500/30'
-                          : 'bg-white/5 border-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2 gap-2">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div
-                            className="w-3 h-3 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: block.category_color }}
-                          />
-                          <span className="text-xs sm:text-sm font-medium text-white truncate">
-                            {block.category_name}
-                          </span>
-                        </div>
-                        <span className="text-xs text-gray-400 flex-shrink-0 tabular-nums">
-                          {format(new Date(`2024-01-01 ${block.start_time}`), 'HH:mm')}-{format(new Date(`2024-01-01 ${block.end_time}`), 'HH:mm')}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm lg:text-base text-white mb-1 line-clamp-2">{block.activity_name}</p>
-                      {block.actual_duration > 0 && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-green-400 to-blue-400 transition-all"
-                              style={{
-                                width: `${Math.min((block.actual_duration / block.duration_minutes) * 100, 100)}%`
-                              }}
-                            />
-                          </div>
-                          <span className="text-xs text-gray-400 tabular-nums flex-shrink-0">
-                            {block.actual_duration}m/{block.duration_minutes}m
-                          </span>
-                        </div>
-                      )}
-                      {block.status === 'planned' && isToday(selectedDate) && (
-                        <button
-                          onClick={() => {
-                            setActiveTimer(block)
-                            handleStartTimer()
-                          }}
-                          className="mt-2 text-xs text-green-400 hover:text-green-300 flex items-center gap-1 min-h-[32px] touch-manipulation active:scale-95 transition-transform"
-                          aria-label={`Start ${block.activity_name}`}
-                        >
-                          <Play className="w-3 h-3" />
-                          Start
-                        </button>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-4">No time blocks scheduled</p>
-                  <button
-                    onClick={() => handleAddTimeBlock()}
-                    className="px-4 py-2 min-h-[44px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors touch-manipulation active:scale-95"
-                    aria-label="Schedule your day"
-                  >
-                    Schedule Your Day
-                  </button>
-                </div>
-              )}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="glass rounded-xl p-4 space-y-2">
+                <button
+                  onClick={() => handleAddTimeBlock()}
+                  className="w-full py-3 bg-purple-500/20 hover:bg-purple-500/30 
+                             text-purple-300 rounded-lg transition-colors flex items-center 
+                             justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm font-medium">Quick Add Activity</span>
+                </button>
+                
+                <button
+                  onClick={() => setShowTimer(true)}
+                  className="w-full py-3 bg-green-500/20 hover:bg-green-500/30 
+                             text-green-300 rounded-lg transition-colors flex items-center 
+                             justify-center gap-2"
+                >
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm font-medium">Start Focus Timer</span>
+                </button>
+              </div>
+
+              {/* Daily Reflection */}
+              <div className="glass rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-2 text-white">Daily Reflection</h3>
+                <textarea 
+                  className="w-full h-20 bg-white/5 rounded-lg p-2 text-xs text-white 
+                             placeholder-gray-500 resize-none border border-white/10"
+                  placeholder="What are you grateful for today?"
+                />
+                <button className="mt-2 text-xs text-purple-400 hover:text-purple-300">
+                  Save reflection
+                </button>
+              </div>
             </motion.div>
           </div>
         </div>
