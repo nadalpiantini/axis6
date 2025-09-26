@@ -61,25 +61,8 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
                 </Link>
               </div>
             </div>
-            {/* Center Progress Indicator - Desktop Only */}
-            <div className="hidden md:flex items-center gap-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                <Sparkles className="w-3 h-3 text-yellow-400" />
-                <span className="text-xs text-gray-300">Balance del día:</span>
-                <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{
-                      background: 'var(--gradient-wellness)',
-                      width: `${completionPercentage}%`
-                    }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${completionPercentage}%` }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-textPrimary">{completionPercentage}%</span>
-              </div>
-            </div>
+            {/* Center area - Clean, no balance line */}
+            <div className="hidden md:block"></div>
             {/* Right Section - More Compact */}
             <div className="flex items-center gap-2">
               {/* Notifications - Smaller */}
@@ -143,22 +126,6 @@ export default function Header({ user, onLogout, completionPercentage = 0 }: Hea
                 )}
               </div>
             </div>
-          </div>
-        </div>
-        {/* Mobile Progress Bar - Bottom of Header */}
-        <div className="md:hidden px-4 pb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">Balance:</span>
-            <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full rounded-full"
-                style={{
-                  background: `linear-gradient(90deg, var(--physical), var(--emotional))`,
-                  width: `${completionPercentage}%`
-                }}
-              />
-            </div>
-            <span className="text-xs font-semibold text-white">{completionPercentage}%</span>
           </div>
         </div>
       </motion.header>

@@ -22,7 +22,7 @@ import { PlanMyDay } from '@/components/my-day/PlanMyDay'
 import { TimeBlockScheduler } from '@/components/my-day/TimeBlockScheduler'
 import { AxisActivityMenu } from '@/components/my-day/AxisActivityMenu'
 import { LogoFull } from '@/components/ui/Logo'
-import HexagonChartWithResonance from '@/components/axis/HexagonChartWithResonance'
+import { AxisIcon } from '@/components/icons'
 import { useUser } from '@/lib/react-query/hooks'
 import { useDashboardSlice } from '@/lib/react-query/hooks/useDashboardDataOptimized'
 import { useMyDayData, useTimeDistribution, useUpdateTimeBlock } from '@/lib/react-query/hooks/useMyDay'
@@ -262,18 +262,95 @@ export default function MyDayPage() {
                 Day Overview
               </h2>
               
-              <div className="flex justify-center mb-4 sm:mb-8 overflow-hidden">
-                <div className="w-full max-w-[95vw] sm:max-w-none flex justify-center">
-                  <HexagonChartWithResonance
-                    axes={categories}
-                    onAxisClick={handleAxisClick}
-                    size="mobile"
-                    showResonance={true}
-                    enableInteractions={true}
-                    centerText="My Day"
-                    className="max-w-full"
+              {/* Modern Hexagon Visualization - Same as Dashboard */}
+              <div className="flex justify-center mb-4 sm:mb-8">
+                <svg 
+                  className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" 
+                  viewBox="0 0 400 400" 
+                  role="img" 
+                  aria-label={`My Day progress overview`}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  {/* Background hexagon */}
+                  <polygon
+                    points="200,40 340,120 340,280 200,360 60,280 60,120"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="2"
                   />
-                </div>
+                  
+                  {/* Enhanced gradient definitions */}
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#9B8AE6" />
+                      <stop offset="50%" stopColor="#6AA6FF" />
+                      <stop offset="100%" stopColor="#FF8B7D" />
+                    </linearGradient>
+                    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#9B8AE6" stopOpacity="0.8" />
+                      <stop offset="50%" stopColor="#6AA6FF" stopOpacity="0.6" />
+                      <stop offset="100%" stopColor="#FF8B7D" stopOpacity="0.8" />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Axis points with labels inside SVG for better mobile performance */}
+                  {categories.slice(0, 6).map((category, index) => {
+                    const angle = (Math.PI / 3) * index - Math.PI / 2
+                    const x = 200 + 160 * Math.cos(angle)
+                    const y = 200 + 160 * Math.sin(angle)
+                    
+                    return (
+                      <g key={category.id}>
+                        {/* Click target */}
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="45"
+                          fill="transparent"
+                          style={{ cursor: 'pointer' }}
+                          onClick={(e) => handleAxisClick(category, e)}
+                        />
+                        {/* Visual circle */}
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="30"
+                          fill="rgba(255,255,255,0.08)"
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth="2"
+                          className="transition-all duration-500 ease-out"
+                        />
+                        {/* Icon */}
+                        <foreignObject 
+                          x={x - 14} 
+                          y={y - 14} 
+                          width="28" 
+                          height="28"
+                          style={{ pointerEvents: 'none' }}
+                        >
+                          <AxisIcon 
+                            axis={category.icon}
+                            size={28}
+                            color="#9ca3af"
+                            custom
+                          />
+                        </foreignObject>
+                      </g>
+                    )
+                  })}
+                  
+                  {/* Center text */}
+                  <text 
+                    x="200" 
+                    y="200" 
+                    textAnchor="middle" 
+                    dy="0.35em" 
+                    className="text-2xl font-bold fill-white"
+                    fontSize="24"
+                  >
+                    My Day
+                  </text>
+                </svg>
               </div>
 
               {/* Category Labels */}

@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { forwardRef, ButtonHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
+
 const buttonVariants = cva(
   'inline-flex items-center justify-center rounded-lg font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 disabled:pointer-events-none disabled:opacity-50',
   {
@@ -32,11 +33,13 @@ const buttonVariants = cva(
     },
   }
 )
+
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, fullWidth, asChild = false, ...props }, ref) => {
     return (
@@ -49,4 +52,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 )
 Button.displayName = 'Button'
+
 export { Button, buttonVariants }
