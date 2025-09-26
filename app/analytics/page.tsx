@@ -32,6 +32,7 @@ import {
 
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useUser } from '@/lib/react-query/hooks'
+import { motion } from 'framer-motion'
 
 // Types
 interface AnalyticsData {
@@ -87,6 +88,161 @@ const ChartSkeleton = () => (
     <div className="text-gray-500">Loading chart...</div>
   </div>
 )
+
+// Hexagon-style pie chart component
+const HexagonStylePieChart = ({ data }: { data: Record<string, { count: number; averageMood: number; color: string }> }) => {
+  const size = 300
+  const center = size / 2
+  const radius = size * 0.35
+
+  // Convert data to array and calculate total
+  const dataArray = Object.entries(data).map(([name, stats]) => ({
+    name,
+    value: stats.count,
+    color: stats.color
+  }))
+  
+  const total = dataArray.reduce((sum, item) => sum + item.value, 0)
+  
+  // Calculate angles for each slice
+  let currentAngle = -Math.PI / 2 // Start at top
+  const slices = dataArray.map((item) => {
+    const sliceAngle = (item.value / total) * 2 * Math.PI
+    const startAngle = currentAngle
+    const endAngle = currentAngle + sliceAngle
+    const midAngle = startAngle + sliceAngle / 2
+    
+    // Calculate path for the slice
+    const x1 = center + radius * Math.cos(startAngle)
+    const y1 = center + radius * Math.sin(startAngle)
+    const x2 = center + radius * Math.cos(endAngle)
+    const y2 = center + radius * Math.sin(endAngle)
+    
+    const largeArcFlag = sliceAngle > Math.PI ? 1 : 0
+    
+    const pathData = [
+      `M ${center} ${center}`,
+      `L ${x1} ${y1}`,
+      `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+      'Z'
+    ].join(' ')
+    
+    // Calculate label position
+    const labelRadius = radius * 1.3
+    const labelX = center + labelRadius * Math.cos(midAngle)
+    const labelY = center + labelRadius * Math.sin(midAngle)
+    
+    currentAngle = endAngle
+    
+    return {
+      ...item,
+      pathData,
+      labelX,
+      labelY,
+      percentage: ((item.value / total) * 100).toFixed(1)
+    }
+  })
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="transform"
+      >
+        {/* Background circle */}
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.1)"
+          strokeWidth="2"
+        />
+        
+        {/* Pie slices */}
+        {slices.map((slice, idx) => (
+          <motion.path
+            key={slice.name}
+            d={slice.pathData}
+            fill={`url(#pieGradient${idx})`}
+            fillOpacity="0.8"
+            stroke="rgba(255, 255, 255, 0.2)"
+            strokeWidth="1"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1 * idx, duration: 0.5, ease: "easeOut" }}
+            className="hover:opacity-90 cursor-pointer"
+          />
+        ))}
+        
+        {/* Center circle for spacing */}
+        <circle
+          cx={center}
+          cy={center}
+          r={30}
+          fill="rgba(15, 23, 42, 0.9)"
+          stroke="rgba(255, 255, 255, 0.2)"
+          strokeWidth="1"
+        />
+        
+        {/* Gradient definitions */}
+        <defs>
+          {slices.map((slice, idx) => (
+            <radialGradient key={idx} id={`pieGradient${idx}`} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor={slice.color} stopOpacity="0.9" />
+              <stop offset="70%" stopColor={slice.color} stopOpacity="0.7" />
+              <stop offset="100%" stopColor={slice.color} stopOpacity="0.5" />
+            </radialGradient>
+          ))}
+        </defs>
+      </svg>
+
+      {/* Labels */}
+      {slices.map((slice, idx) => (
+        <motion.div
+          key={slice.name}
+          className="absolute flex flex-col items-center"
+          style={{
+            left: slice.labelX,
+            top: slice.labelY,
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 + 0.1 * idx }}
+        >
+          <span 
+            className="text-xs font-medium"
+            style={{ color: slice.color }}
+          >
+            {slice.name}
+          </span>
+          <span className="text-xs text-gray-400">
+            {slice.percentage}%
+          </span>
+          <span className="text-xs text-gray-500">
+            {slice.value} check-ins
+          </span>
+        </motion.div>
+      ))}
+
+      {/* Center total */}
+      <motion.div
+        className="absolute inset-0 flex flex-col items-center justify-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="text-2xl font-bold text-white">
+          {total}
+        </div>
+        <div className="text-xs text-gray-400">Total</div>
+      </motion.div>
+    </div>
+  )
+}
 
 export default function AnalyticsPage() {
   const router = useRouter()
@@ -370,35 +526,8 @@ export default function AnalyticsPage() {
                 <PieChart className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
                 Category Performance
               </h3>
-              <div className="recharts-wrapper">
-                <div className="chart-container">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RechartsPieChart>
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-                        formatter={(value) => [`${value}`, 'Check-ins']}
-                      />
-                      <Legend />
-                      <Pie
-                          data={Object.entries(analytics.categoryStats).map(([name, stats]) => ({
-                            name,
-                            value: stats.count,
-                            color: stats.color
-                          }))}
-                          cx="50%"
-                          cy="50%"
-                          label={({name, percent}: any) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {Object.entries(analytics.categoryStats).map(([_name, stats], index) => (
-                            <Cell key={`cell-${index}`} fill={stats.color} />
-                          ))}
-                      </Pie>
-                    </RechartsPieChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="flex items-center justify-center">
+                <HexagonStylePieChart data={analytics.categoryStats} />
               </div>
             </div>
           </div>

@@ -38,9 +38,7 @@ import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
 
-// 🚀 REVOLUTIONARY HEXAGON - Rescued from HexagonClock component
-import HexagonClock from '@/components/hexagon-clock/HexagonClock'
-
+// ✨ SIMPLE GOOD HEXAGON - From My Day page (the one you like!)
 const HexagonVisualization = memo(({ 
   axes, 
   onToggleAxis,
@@ -56,52 +54,101 @@ const HexagonVisualization = memo(({
   onToggleAxis: (id: string | number) => void
   isToggling: boolean
 }) => {
-  // Transform axes data to HexagonClock data format
-  const completionData = useMemo(() => {
-    const data: any = {}
-    const categoryMap: { [key: string]: string } = {
-      'Physical': 'physical',
-      'Mental': 'mental', 
-      'Emotional': 'emotional',
-      'Social': 'social',
-      'Spiritual': 'spiritual',
-      'Material': 'material'
-    }
-    
-    axes.forEach(axis => {
-      const key = categoryMap[axis.name] || axis.name.toLowerCase()
-      data[key] = axis.completed ? 100 : 0
-    })
-    
-    return data
-  }, [axes])
+  const handleAxisClick = (axis: any, event: React.MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    onToggleAxis(axis.id)
+  }
 
   return (
     <div className="flex justify-center mb-4 sm:mb-8" data-testid="hexagon-chart">
-      <HexagonClock
-        data={completionData}
-        showResonance={true}
-        animate={true}
-        mobileOptimized={true}
-        hardwareAccelerated={true}
-        onCategoryClick={(category) => {
-          // Find matching axis and trigger toggle
-          const matchingAxis = axes.find(axis => {
-            const categoryMap: { [key: string]: string } = {
-              'physical': 'Physical',
-              'mental': 'Mental',
-              'emotional': 'Emotional', 
-              'social': 'Social',
-              'spiritual': 'Spiritual',
-              'material': 'Material'
-            }
-            return categoryMap[category.key] === axis.name
-          })
-          if (matchingAxis) {
-            onToggleAxis(matchingAxis.id)
-          }
-        }}
-      />
+      <svg 
+        className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" 
+        viewBox="0 0 400 400" 
+        role="img" 
+        aria-label="Daily progress overview"
+        style={{ pointerEvents: 'auto' }}
+      >
+        {/* Background hexagon */}
+        <polygon
+          points="200,40 340,120 340,280 200,360 60,280 60,120"
+          fill="none"
+          stroke="rgba(255,255,255,0.1)"
+          strokeWidth="2"
+        />
+        
+        {/* Enhanced gradient definitions */}
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#9B8AE6" />
+            <stop offset="50%" stopColor="#6AA6FF" />
+            <stop offset="100%" stopColor="#FF8B7D" />
+          </linearGradient>
+          <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#9B8AE6" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#6AA6FF" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#FF8B7D" stopOpacity="0.8" />
+          </linearGradient>
+        </defs>
+        
+        {/* Axis points with labels inside SVG for better mobile performance */}
+        {axes.slice(0, 6).map((axis, index) => {
+          const angle = (Math.PI / 3) * index - Math.PI / 2
+          const x = 200 + 160 * Math.cos(angle)
+          const y = 200 + 160 * Math.sin(angle)
+          
+          return (
+            <g key={axis.id}>
+              {/* Click target */}
+              <circle
+                cx={x}
+                cy={y}
+                r="45"
+                fill="transparent"
+                style={{ cursor: 'pointer' }}
+                onClick={(e) => handleAxisClick(axis, e)}
+              />
+              {/* Visual circle */}
+              <circle
+                cx={x}
+                cy={y}
+                r="30"
+                fill={axis.completed ? "rgba(255, 255, 255, 0.15)" : "rgba(255,255,255,0.08)"}
+                stroke={axis.completed ? "rgba(255, 255, 255, 0.4)" : "rgba(255,255,255,0.15)"}
+                strokeWidth="2"
+                className="transition-all duration-500 ease-out"
+              />
+              {/* Icon */}
+              <foreignObject 
+                x={x - 14} 
+                y={y - 14} 
+                width="28" 
+                height="28"
+                style={{ pointerEvents: 'none' }}
+              >
+                <AxisIcon 
+                  axis={axis.icon}
+                  size={28}
+                  color={axis.completed ? "#ffffff" : "#9ca3af"}
+                  custom
+                />
+              </foreignObject>
+            </g>
+          )
+        })}
+        
+        {/* Center text */}
+        <text 
+          x="200" 
+          y="200" 
+          textAnchor="middle" 
+          dy="0.35em" 
+          className="text-2xl font-bold fill-white"
+          fontSize="24"
+        >
+          Today
+        </text>
+      </svg>
     </div>
   )
 })
@@ -231,7 +278,7 @@ const MemoizedCategoryCard = memo(({
           </button>
           <span className={`flex-1 text-sm sm:text-base font-medium ${axis.completed ? 'text-white' : 'text-gray-300'}`}>
             {axis.name}
-            {axis.completed && <Check className="inline-block ml-2 w-4 h-4 text-green-400" />}
+            {axis.completed && <Check className="inline-block ml-2 w-4 h-4 text-white" />}
           </span>
           <button
             onClick={(e) => {

@@ -12,6 +12,21 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Webpack configuration to fix chunk loading issues
+  webpack: (config, { isServer }) => {
+    // Fix for dynamic imports
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
+    }
+
+    return config
+  },
+
   // Image optimization
   images: {
     remotePatterns: [

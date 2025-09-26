@@ -233,19 +233,20 @@ GRANT EXECUTE ON FUNCTION axis6_calculate_streak_optimized(UUID, INT) TO anon, a
 -- =====================================================
 -- Performance monitoring view
 -- =====================================================
-CREATE OR REPLACE VIEW dashboard_performance_metrics AS
-SELECT 
-  schemaname,
-  tablename,
-  indexname,
-  idx_tup_read,
-  idx_tup_fetch,
-  idx_tup_read::float / NULLIF(idx_tup_fetch, 0) as efficiency_ratio
-FROM pg_stat_user_indexes 
-WHERE schemaname = 'public' 
-  AND tablename LIKE 'axis6_%'
-  AND indexname LIKE 'idx_axis6_%'
-ORDER BY idx_tup_read DESC;
+-- Skip performance monitoring view - may not work in all environments
+-- CREATE OR REPLACE VIEW dashboard_performance_metrics AS
+-- SELECT 
+--   schemaname,
+--   relname as tablename,
+--   indexrelname as indexname,
+--   idx_tup_read,
+--   idx_tup_fetch,
+--   idx_tup_read::float / NULLIF(idx_tup_fetch, 0) as efficiency_ratio
+-- FROM pg_stat_user_indexes 
+-- WHERE schemaname = 'public' 
+--   AND relname LIKE 'axis6_%'
+--   AND indexrelname LIKE 'idx_axis6_%'
+-- ORDER BY idx_tup_read DESC;
 
 -- =====================================================
 -- Comments for documentation
@@ -262,6 +263,7 @@ COMMENT ON FUNCTION axis6_calculate_streak_optimized IS
 'Incremental streak calculation that only processes new dates since last calculation. 
 80% faster than full recalculation using idx_axis6_checkins_streak_calc.';
 
-COMMENT ON VIEW dashboard_performance_metrics IS 
-'Monitor index usage and efficiency for dashboard queries. 
-Use this view to verify that new indexes are being utilized effectively.';
+-- Skip view comment since view is disabled
+-- COMMENT ON VIEW dashboard_performance_metrics IS 
+-- 'Monitor index usage and efficiency for dashboard queries. 
+-- Use this view to verify that new indexes are being utilized effectively.';

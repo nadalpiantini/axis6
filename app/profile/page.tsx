@@ -32,12 +32,12 @@ import { ProfileErrorBoundary } from '@/components/error/ProfileErrorBoundary'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload'
-import { PsychologicalHexagon } from '@/components/psychology/PsychologicalHexagon'
+import { AxisIcon } from '@/components/icons'
 import { EnhancedTemperamentQuestionnaire } from '@/components/psychology/EnhancedTemperamentQuestionnaire'
 import { TemperamentQuestionnaire } from '@/components/psychology/TemperamentQuestionnaire'
 import { TemperamentResults } from '@/components/psychology/TemperamentResults'
 import { LogoIcon } from '@/components/ui/Logo'
-import { useUser, useStreaks, useTodayCheckins } from '@/lib/react-query/hooks/index'
+import { useUser, useStreaks, useTodayCheckins, useCategories } from '@/lib/react-query/hooks/index'
 import { createClient } from '@/lib/supabase/client'
 import { handleError, handleDatabaseError } from '@/lib/error/standardErrorHandler'
 interface UserProfile {
@@ -82,6 +82,7 @@ export default function ProfilePage() {
   const { data: user, isLoading: userLoading } = useUser()
   const { data: streaks = [], isLoading: streaksLoading } = useStreaks(user?.id || '')
   const { data: checkins = [], isLoading: checkinsLoading } = useTodayCheckins(user?.id || '')
+  const { data: categories = [] } = useCategories()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [temperamentProfile, setTemperamentProfile] = useState<TemperamentProfile | null>(null)
@@ -487,14 +488,82 @@ export default function ProfilePage() {
               </h2>
               {temperamentProfile && temperamentProfile.primary_temperament ? (
                 <div className="space-y-6">
-                  {/* Hexagon Visualization */}
+                  {/* Good Hexagon Visualization */}
                   <div className="flex justify-center">
-                    <PsychologicalHexagon
-                      temperamentProfile={temperamentProfile}
-                      size={280}
-                      animate={true}
-                      showInsights={true}
-                    />
+                    <svg 
+                      className="w-full h-auto max-w-[280px]" 
+                      viewBox="0 0 400 400" 
+                      role="img" 
+                      aria-label="Profile progress overview"
+                      style={{ pointerEvents: 'auto' }}
+                    >
+                      {/* Background hexagon */}
+                      <polygon
+                        points="200,40 340,120 340,280 200,360 60,280 60,120"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.1)"
+                        strokeWidth="2"
+                      />
+                      
+                      {/* Enhanced gradient definitions */}
+                      <defs>
+                        <linearGradient id="gradient-profile" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#9B8AE6" />
+                          <stop offset="50%" stopColor="#6AA6FF" />
+                          <stop offset="100%" stopColor="#FF8B7D" />
+                        </linearGradient>
+                      </defs>
+                      
+                      {/* Axis points */}
+                      {categories.slice(0, 6).map((category, index) => {
+                        const angle = (Math.PI / 3) * index - Math.PI / 2
+                        const x = 200 + 160 * Math.cos(angle)
+                        const y = 200 + 160 * Math.sin(angle)
+                        const isCompleted = checkins.some(c => c.category_id === category.id)
+                        
+                        return (
+                          <g key={category.id}>
+                            {/* Visual circle */}
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r="30"
+                              fill={isCompleted ? "rgba(34, 197, 94, 0.2)" : "rgba(255,255,255,0.08)"}
+                              stroke={isCompleted ? "rgba(34, 197, 94, 0.5)" : "rgba(255,255,255,0.15)"}
+                              strokeWidth="2"
+                              className="transition-all duration-500 ease-out"
+                            />
+                            {/* Icon */}
+                            <foreignObject 
+                              x={x - 14} 
+                              y={y - 14} 
+                              width="28" 
+                              height="28"
+                              style={{ pointerEvents: 'none' }}
+                            >
+                              <AxisIcon 
+                                axis={category.icon}
+                                size={28}
+                                color={isCompleted ? "#22c55e" : "#9ca3af"}
+                                custom
+                              />
+                            </foreignObject>
+                          </g>
+                        )
+                      })}
+                      
+                      {/* Center text */}
+                      <text 
+                        x="200" 
+                        y="200" 
+                        textAnchor="middle" 
+                        dy="0.35em" 
+                        className="text-2xl font-bold fill-white"
+                        fontSize="24"
+                      >
+                        Profile
+                      </text>
+                    </svg>
                   </div>
 
                   {/* Assessment Info */}

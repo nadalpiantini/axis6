@@ -7,12 +7,12 @@
 
 -- Composite index for user's checkins by category and date (if not exists)
 CREATE INDEX IF NOT EXISTS idx_axis6_checkins_user_category_date 
-ON axis6_checkins(user_id, category_id, checkin_date DESC);
+ON axis6_checkins(user_id, category_id, completed_at DESC);
 
--- Index for completed checkins (for statistics)
-CREATE INDEX IF NOT EXISTS idx_axis6_checkins_completed 
-ON axis6_checkins(completed) 
-WHERE completed = true;
+-- Skip completed index - column may not exist
+-- CREATE INDEX IF NOT EXISTS idx_axis6_checkins_completed 
+-- ON axis6_checkins(completed) 
+-- WHERE completed = true;
 
 -- =====================================================
 -- STREAK OPTIMIZATION INDEXES
@@ -30,52 +30,51 @@ WHERE longest_streak > 0;
 
 -- Index for streak calculations
 CREATE INDEX IF NOT EXISTS idx_axis6_streaks_calculation 
-ON axis6_streaks(user_id, last_checkin_date DESC);
+ON axis6_streaks(user_id, last_checkin DESC);
 
 -- =====================================================
 -- DAILY STATS PERFORMANCE INDEXES
 -- =====================================================
 
--- Index for completion percentage queries
+-- Index for completion rate queries
 CREATE INDEX IF NOT EXISTS idx_axis6_daily_stats_completion 
-ON axis6_daily_stats(completion_percentage DESC) 
-WHERE completion_percentage > 0;
+ON axis6_daily_stats(completion_rate DESC) 
+WHERE completion_rate > 0;
 
 -- Index for analytics date range queries
 CREATE INDEX IF NOT EXISTS idx_axis6_daily_stats_date_range 
-ON axis6_daily_stats(stat_date DESC, user_id);
+ON axis6_daily_stats(date DESC, user_id);
 
 -- =====================================================
 -- MANTRAS TABLE INDEXES (if table exists)
 -- =====================================================
 
--- Index for finding user's daily mantras
-CREATE INDEX IF NOT EXISTS idx_axis6_mantras_user_date 
-ON axis6_mantras(user_id, assigned_date DESC);
+-- Skip mantras table indexes - table may not exist
+-- CREATE INDEX IF NOT EXISTS idx_axis6_mantras_user_date 
+-- ON axis6_mantras(user_id, assigned_date DESC);
 
--- Index for incomplete mantras
-CREATE INDEX IF NOT EXISTS idx_axis6_mantras_incomplete 
-ON axis6_mantras(user_id, completed) 
-WHERE completed = false;
+-- CREATE INDEX IF NOT EXISTS idx_axis6_mantras_incomplete 
+-- ON axis6_mantras(user_id, completed) 
+-- WHERE completed = false;
 
 -- =====================================================
 -- PARTIAL INDEXES FOR COMMON FILTERS
 -- =====================================================
 
--- Today's checkins (most frequent query)
-CREATE INDEX IF NOT EXISTS idx_axis6_checkins_today 
-ON axis6_checkins(user_id, category_id) 
-WHERE checkin_date = CURRENT_DATE;
+-- Today's checkins (most frequent query) - DISABLED: CURRENT_DATE not IMMUTABLE
+-- CREATE INDEX IF NOT EXISTS idx_axis6_checkins_today 
+-- ON axis6_checkins(user_id, category_id) 
+-- WHERE completed_at = CURRENT_DATE;
 
--- This week's checkins
-CREATE INDEX IF NOT EXISTS idx_axis6_checkins_week 
-ON axis6_checkins(user_id, checkin_date DESC) 
-WHERE checkin_date >= CURRENT_DATE - INTERVAL '7 days';
+-- This week's checkins - DISABLED: CURRENT_DATE not IMMUTABLE
+-- CREATE INDEX IF NOT EXISTS idx_axis6_checkins_week 
+-- ON axis6_checkins(user_id, completed_at DESC) 
+-- WHERE completed_at >= CURRENT_DATE - INTERVAL '7 days';
 
--- This month's stats
-CREATE INDEX IF NOT EXISTS idx_axis6_daily_stats_month 
-ON axis6_daily_stats(user_id, stat_date DESC) 
-WHERE stat_date >= DATE_TRUNC('month', CURRENT_DATE);
+-- This month's stats - DISABLED: DATE_TRUNC not IMMUTABLE  
+-- CREATE INDEX IF NOT EXISTS idx_axis6_daily_stats_month 
+-- ON axis6_daily_stats(user_id, stat_date DESC) 
+-- WHERE stat_date >= DATE_TRUNC('month', CURRENT_DATE);
 
 -- =====================================================
 -- ANALYZE TABLES FOR QUERY PLANNER
