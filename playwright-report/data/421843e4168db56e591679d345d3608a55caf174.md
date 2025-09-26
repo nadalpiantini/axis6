@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - img "AXIS6 - Balance Across 6 Life Dimensions" [ref=e7]
+      - heading "Create Your Account" [level=1] [ref=e8]
+      - paragraph [ref=e9]: Begin your journey toward balance
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Name
+        - generic [ref=e13]:
+          - img [ref=e14]
+          - textbox "Name" [ref=e17]
+      - generic [ref=e18]:
+        - generic [ref=e19]: Email
+        - generic [ref=e20]:
+          - img [ref=e21]
+          - textbox "Email" [ref=e24]
+      - generic [ref=e25]:
+        - generic [ref=e26]: Password
+        - generic [ref=e27]:
+          - img [ref=e28]
+          - textbox "Password" [ref=e31]
+          - button "Show password" [ref=e32] [cursor=pointer]:
+            - img [ref=e33] [cursor=pointer]
+      - generic [ref=e36]:
+        - generic [ref=e37]: Confirm Password
+        - generic [ref=e38]:
+          - img [ref=e39]
+          - textbox "Confirm Password" [ref=e42]
+          - button "Show password" [ref=e43] [cursor=pointer]:
+            - img [ref=e44] [cursor=pointer]
+      - generic [ref=e47]:
+        - generic [ref=e48] [cursor=pointer]:
+          - checkbox "I accept the terms and conditions and privacy policy" [ref=e49]
+          - generic [ref=e50] [cursor=pointer]:
+            - text: I accept the
+            - link "terms and conditions" [ref=e51] [cursor=pointer]:
+              - /url: /terms
+            - text: and
+            - link "privacy policy" [ref=e52] [cursor=pointer]:
+              - /url: /privacy
+        - generic [ref=e53] [cursor=pointer]:
+          - checkbox "Send me tips and updates to help me maintain balance (optional)" [ref=e54]
+          - generic [ref=e55] [cursor=pointer]: Send me tips and updates to help me maintain balance (optional)
+      - button "Create Free Account" [ref=e56] [cursor=pointer]:
+        - text: Create Free Account
+        - img [ref=e57] [cursor=pointer]
+    - generic [ref=e59]:
+      - text: Already have an account?
+      - link "Sign in" [ref=e60] [cursor=pointer]:
+        - /url: /auth/login
+  - button "Open Next.js Dev Tools" [ref=e66] [cursor=pointer]:
+    - img [ref=e67] [cursor=pointer]
+  - alert [ref=e70]
+  - generic [ref=e71]:
+    - img [ref=e73]
+    - button "Open Tanstack query devtools" [ref=e121] [cursor=pointer]:
+      - img [ref=e122] [cursor=pointer]
+```

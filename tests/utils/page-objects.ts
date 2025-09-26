@@ -1,5 +1,4 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { ProfilePage } from './page-objects/ProfilePage';
 
 /**
  * Base Page Object for common functionality
@@ -330,5 +329,58 @@ export class TestUtils {
     });
 
     return performanceMetrics;
+  }
+}
+
+/**
+ * Profile Page Object
+ */
+export class ProfilePage extends BasePage {
+  readonly nameInput: Locator;
+  readonly emailInput: Locator;
+  readonly saveButton: Locator;
+  readonly avatarUpload: Locator;
+  readonly profileForm: Locator;
+
+  constructor(page: Page) {
+    super(page);
+    this.profileForm = page.locator('form, [role="form"]').first();
+    this.nameInput = page.locator('input[name="name"], input[placeholder*="name" i]').first();
+    this.emailInput = page.locator('input[name="email"], input[type="email"]').first();
+    this.saveButton = page.getByRole('button', { name: /save|update|submit/i });
+    this.avatarUpload = page.locator('input[type="file"]').first();
+  }
+
+  async goto() {
+    await super.goto('/profile');
+  }
+
+  async updateProfile(name?: string, email?: string) {
+    if (name && await this.nameInput.isVisible()) {
+      await this.nameInput.clear();
+      await this.nameInput.fill(name);
+    }
+    
+    if (email && await this.emailInput.isVisible()) {
+      await this.emailInput.clear();
+      await this.emailInput.fill(email);
+    }
+    
+    if (await this.saveButton.isVisible()) {
+      await this.saveButton.click();
+    }
+  }
+
+  async verifyProfileLoaded() {
+    await this.page.waitForLoadState('networkidle');
+    
+    // Check if profile page elements are visible
+    const hasForm = await this.profileForm.isVisible().catch(() => false);
+    const hasNameInput = await this.nameInput.isVisible().catch(() => false);
+    const hasSaveButton = await this.saveButton.isVisible().catch(() => false);
+    
+    if (!hasForm && !hasNameInput && !hasSaveButton) {
+      throw new Error('Profile page not loaded properly');
+    }
   }
 }

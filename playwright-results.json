@@ -11,7 +11,7 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 1
+      "actualWorkers": 4
     },
     "preserveOutput": "always",
     "reporter": [
@@ -49,7 +49,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "chromium",
         "name": "chromium",
@@ -58,14 +58,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "firefox",
         "name": "firefox",
@@ -74,14 +74,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "webkit",
         "name": "webkit",
@@ -90,14 +90,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Mobile Chrome",
         "name": "Mobile Chrome",
@@ -106,14 +106,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Mobile Safari",
         "name": "Mobile Safari",
@@ -122,14 +122,14 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "iPad",
         "name": "iPad",
@@ -138,7 +138,7 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 180000
+        "timeout": 30000
       }
     ],
     "shard": null,
@@ -150,25 +150,25 @@
   },
   "suites": [
     {
-      "title": "dashboard-final-bug-report.spec.ts",
-      "file": "dashboard-final-bug-report.spec.ts",
+      "title": "comprehensive-production-surfing.spec.ts",
+      "file": "comprehensive-production-surfing.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Dashboard Final Bug Report",
-          "file": "dashboard-final-bug-report.spec.ts",
-          "line": 7,
+          "title": "🚀 AXIS6 MVP - Complete Production Surfing Audit",
+          "file": "comprehensive-production-surfing.spec.ts",
+          "line": 14,
           "column": 6,
           "specs": [
             {
-              "title": "complete dashboard functionality test with proper registration",
+              "title": "🏠 FASE 1.1 - Landing Page Navigation & Visual Consistency",
               "ok": true,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 180000,
+                  "timeout": 30000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium",
@@ -178,97 +178,22 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 25097,
+                      "duration": 5291,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "\n🎯 AXIS6 DASHBOARD FINAL BUG REPORT\n"
+                          "text": "🔍 Surfeando Landing Page...\n"
                         },
                         {
-                          "text": "====================================================================================\n\n"
+                          "text": "✅ Found 1 sign-in buttons, 1 register buttons\n"
                         },
                         {
-                          "text": "📍 PHASE 1: AUTHENTICATION TESTING\n"
-                        },
-                        {
-                          "text": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                        },
-                        {
-                          "text": "\n🔍 Testing landing page...\n"
-                        },
-                        {
-                          "text": "  ✅ Landing page loads\n"
-                        },
-                        {
-                          "text": "\n🔍 Testing registration process...\n"
-                        },
-                        {
-                          "text": "  ✅ Name field filled\n"
-                        },
-                        {
-                          "text": "  ✅ Email field filled\n"
-                        },
-                        {
-                          "text": "  ✅ Password field filled\n"
-                        },
-                        {
-                          "text": "  ✅ Confirm password field filled\n"
-                        },
-                        {
-                          "text": "  ✅ Terms checkbox checked\n"
-                        },
-                        {
-                          "text": "  ✅ Registration button enabled after validation\n"
-                        },
-                        {
-                          "text": "  🔄 Registration submitted...\n"
-                        },
-                        {
-                          "text": "  ❌ Unexpected redirect: http://localhost:3000/auth/register\n"
-                        },
-                        {
-                          "text": "\n⚠️  Dashboard not accessible - testing what we can reach...\n"
-                        },
-                        {
-                          "text": "\n📋 ACCESSIBLE PAGES TEST SUMMARY:\n"
-                        },
-                        {
-                          "text": "  - Working functionality: 8 items\n"
-                        },
-                        {
-                          "text": "  - Issues found: 1 items\n"
-                        },
-                        {
-                          "text": "    ✅ Landing page loads successfully\n"
-                        },
-                        {
-                          "text": "    ✅ Name input works\n"
-                        },
-                        {
-                          "text": "    ✅ Email input works\n"
-                        },
-                        {
-                          "text": "    ✅ Password input works\n"
-                        },
-                        {
-                          "text": "    ✅ Confirm password input works\n"
-                        },
-                        {
-                          "text": "    ✅ Terms checkbox works\n"
-                        },
-                        {
-                          "text": "    ✅ Registration form validation works\n"
-                        },
-                        {
-                          "text": "    ✅ 2 navigation links found\n"
-                        },
-                        {
-                          "text": "    ❌ Unexpected redirect after registration\n"
+                          "text": "✅ Found 1 hexagon elements\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-03T18:46:58.919Z",
+                      "startTime": "2025-09-26T12:03:11.053Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -276,10 +201,710 @@
                   "status": "expected"
                 }
               ],
-              "id": "f96b360c1558763d0a70-ae724947bf6b955aad72",
-              "file": "dashboard-final-bug-report.spec.ts",
-              "line": 9,
-              "column": 7
+              "id": "ae7616b056ddf59f6e79-eec56519e7d85d564668",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "🏠 FASE 1.2 - Landing Page Interactions & Links",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3206,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/auth\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/auth\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:126:24",
+                        "location": {
+                          "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                          "column": 24,
+                          "line": 126
+                        },
+                        "snippet": "  124 |     \n  125 |     // Verificar que navegamos correctamente\n> 126 |     expect(page.url()).toContain('/auth');\n      |                        ^\n  127 |   });\n  128 |\n  129 |   // ==================================="
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                            "column": 24,
+                            "line": 126
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/auth\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m\n\n  124 |     \n  125 |     // Verificar que navegamos correctamente\n> 126 |     expect(page.url()).toContain('/auth');\n      |                        ^\n  127 |   });\n  128 |\n  129 |   // ===================================\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:126:24"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔗 Testing 3 links...\n"
+                        },
+                        {
+                          "text": "✅ Login Link found and clickable\n"
+                        },
+                        {
+                          "text": "✅ Register Link found and clickable\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:18.405Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-30dba-ing-Page-Interactions-Links-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-30dba-ing-Page-Interactions-Links-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                        "column": 24,
+                        "line": 126
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-128bd9ef4dc579f15e19",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 96,
+              "column": 3
+            },
+            {
+              "title": "🔐 FASE 2.1 - Login Page Complete Surfing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2309,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Surfeando Login Page...\n"
+                        },
+                        {
+                          "text": "✅ Forgot password link found\n"
+                        },
+                        {
+                          "text": "✅ Register link found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:23.188Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-84d0db925197bfd8d2ee",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 133,
+              "column": 3
+            },
+            {
+              "title": "🔐 FASE 2.2 - Register Page Complete Surfing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5111,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Surfeando Register Page...\n"
+                        },
+                        {
+                          "text": "✅ Registration form fields present\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:11.042Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-800df4d36d2183d8aa6b",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 165,
+              "column": 3
+            },
+            {
+              "title": "🎯 FASE 3.1 - Dashboard Complete Surfing (Mock Auth)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2479,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Surfeando Dashboard (attempting access)...\n"
+                        },
+                        {
+                          "text": "✅ Middleware redirect working - user redirected to auth\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:18.225Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-11e313b5b3efdaa8be99",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 196,
+              "column": 3
+            },
+            {
+              "title": "⚙️ FASE 3.2 - Settings Pages Surfing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 16065,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Surfeando Settings Pages...\n"
+                        },
+                        {
+                          "text": "Testing /settings...\n"
+                        },
+                        {
+                          "text": "✅ /settings - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/account...\n"
+                        },
+                        {
+                          "text": "✅ /settings/account - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/privacy...\n"
+                        },
+                        {
+                          "text": "✅ /settings/privacy - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/security...\n"
+                        },
+                        {
+                          "text": "✅ /settings/security - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/notifications...\n"
+                        },
+                        {
+                          "text": "✅ /settings/notifications - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/focus...\n"
+                        },
+                        {
+                          "text": "✅ /settings/focus - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /settings/axis-customization...\n"
+                        },
+                        {
+                          "text": "✅ /settings/axis-customization - Auth protection working\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:20.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-4501d0d6d5a64331c468",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 225,
+              "column": 3
+            },
+            {
+              "title": "📊 FASE 4.1 - Analytics & My Day Surfing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 15846,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Surfeando Analytics & Advanced Features...\n"
+                        },
+                        {
+                          "text": "Testing /analytics...\n"
+                        },
+                        {
+                          "text": "✅ /analytics - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /my-day...\n"
+                        },
+                        {
+                          "text": "✅ /my-day - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /achievements...\n"
+                        },
+                        {
+                          "text": "✅ /achievements - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /chat...\n"
+                        },
+                        {
+                          "text": "✅ /chat - Auth protection working\n"
+                        },
+                        {
+                          "text": "Testing /profile...\n"
+                        },
+                        {
+                          "text": "✅ /profile - Auth protection working\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:11.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-60c3ea66cb113e309b80",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 274,
+              "column": 3
+            },
+            {
+              "title": "🔌 FASE 5.1 - API Endpoints Health Check",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3897,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Testing API Endpoints...\n"
+                        },
+                        {
+                          "text": "Testing /api/health...\n"
+                        },
+                        {
+                          "text": "❌ /api/health - Status: 503\n"
+                        },
+                        {
+                          "text": "Testing /api/categories...\n"
+                        },
+                        {
+                          "text": "✅ /api/categories - Status: 200\n"
+                        },
+                        {
+                          "text": "Testing /api/checkins...\n"
+                        },
+                        {
+                          "text": "✅ /api/checkins - Status: 200\n"
+                        },
+                        {
+                          "text": "Testing /api/auth/user...\n"
+                        },
+                        {
+                          "text": "✅ /api/auth/user - Status: 200\n"
+                        },
+                        {
+                          "text": "Testing /api/analytics...\n"
+                        },
+                        {
+                          "text": "✅ /api/analytics - Status: 200\n"
+                        },
+                        {
+                          "text": "Testing /api/settings...\n"
+                        },
+                        {
+                          "text": "✅ /api/settings - Status: 200\n"
+                        },
+                        {
+                          "text": "\n📊 API Summary: 5/6 endpoints responding correctly\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:28.857Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-3c9fb88ba88986b4022b",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 326,
+              "column": 3
+            },
+            {
+              "title": "📱 FASE 6.1 - Mobile Responsive Testing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 4606,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Testing Mobile Responsiveness...\n"
+                        },
+                        {
+                          "text": "Testing iPhone SE (375x667)...\n"
+                        },
+                        {
+                          "text": "✅ iPhone SE - Layout fits viewport\n"
+                        },
+                        {
+                          "text": "Testing iPhone 12 (390x844)...\n"
+                        },
+                        {
+                          "text": "✅ iPhone 12 - Layout fits viewport\n"
+                        },
+                        {
+                          "text": "Testing Android (360x800)...\n"
+                        },
+                        {
+                          "text": "✅ Android - Layout fits viewport\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:32.771Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-2f330cfa1bac7fc97d90",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 381,
+              "column": 3
+            },
+            {
+              "title": "⚡ FASE 6.2 - Performance Metrics",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 5082,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m3186\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m3186\u001b[39m\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:443:53",
+                        "location": {
+                          "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                          "column": 53,
+                          "line": 443
+                        },
+                        "snippet": "  441 |     \n  442 |     // Verificar que los tiempos no sean excesivos\n> 443 |     expect(performanceMetrics.firstContentfulPaint).toBeLessThan(3000);\n      |                                                     ^\n  444 |     expect(performanceMetrics.domContentLoaded).toBeLessThan(2000);\n  445 |   });\n  446 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                            "column": 53,
+                            "line": 443
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m3186\u001b[39m\n\n  441 |     \n  442 |     // Verificar que los tiempos no sean excesivos\n> 443 |     expect(performanceMetrics.firstContentfulPaint).toBeLessThan(3000);\n      |                                                     ^\n  444 |     expect(performanceMetrics.domContentLoaded).toBeLessThan(2000);\n  445 |   });\n  446 |\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:443:53"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔍 Measuring Performance Metrics...\n"
+                        },
+                        {
+                          "text": "📊 Performance Metrics:\n"
+                        },
+                        {
+                          "text": "  DOM Content Loaded: 0ms\n"
+                        },
+                        {
+                          "text": "  Load Complete: 0ms\n"
+                        },
+                        {
+                          "text": "  First Paint: 3186ms\n"
+                        },
+                        {
+                          "text": "  First Contentful Paint: 3186ms\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:11.056Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-05028-E-6-2---Performance-Metrics-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-05028-E-6-2---Performance-Metrics-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                        "column": 53,
+                        "line": 443
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-c4cec314c46916b7d2ee",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 417,
+              "column": 3
+            },
+            {
+              "title": "🎨 FASE 7.1 - Visual Design Consistency",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 5458,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔍 Checking Visual Design Consistency...\n"
+                        },
+                        {
+                          "text": "✅ landing - Found 10 colors\n"
+                        },
+                        {
+                          "text": "✅ login - Found 9 colors\n"
+                        },
+                        {
+                          "text": "✅ register - Found 10 colors\n"
+                        },
+                        {
+                          "text": "🎨 Total unique colors across pages: 12\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:20.244Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-f46872f9d7a751a29d4e",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 451,
+              "column": 3
+            },
+            {
+              "title": "📋 FASE 8.1 - Production Readiness Summary",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 243,
+                      "error": {
+                        "message": "ReferenceError: require is not defined",
+                        "stack": "ReferenceError: require is not defined\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:504:16",
+                        "location": {
+                          "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                          "column": 16,
+                          "line": 504
+                        },
+                        "snippet": "  502 |     \n  503 |     // Compilar todos los screenshots tomados\n> 504 |     const fs = require('fs');\n      |                ^\n  505 |     const path = require('path');\n  506 |     \n  507 |     try {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                            "column": 16,
+                            "line": 504
+                          },
+                          "message": "ReferenceError: require is not defined\n\n  502 |     \n  503 |     // Compilar todos los screenshots tomados\n> 504 |     const fs = require('fs');\n      |                ^\n  505 |     const path = require('path');\n  506 |     \n  507 |     try {\n    at /Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts:504:16"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "\n🎯 PRODUCTION READINESS SUMMARY\n"
+                        },
+                        {
+                          "text": "================================\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-26T12:03:26.792Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-24047-roduction-Readiness-Summary-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/test-results/comprehensive-production-s-24047-roduction-Readiness-Summary-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/nadalpiantini/Dev/axis6-mvp/axis6/tests/e2e/comprehensive-production-surfing.spec.ts",
+                        "column": 16,
+                        "line": 504
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ae7616b056ddf59f6e79-d9ee81cfcb7202dee6ec",
+              "file": "comprehensive-production-surfing.spec.ts",
+              "line": 499,
+              "column": 3
             }
           ]
         }
@@ -288,11 +913,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-03T18:46:56.685Z",
-    "duration": 28352.282,
-    "expected": 1,
+    "startTime": "2025-09-26T12:02:55.845Z",
+    "duration": 42019.966,
+    "expected": 9,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 3,
     "flaky": 0
   }
 }
