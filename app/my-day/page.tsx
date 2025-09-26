@@ -5,9 +5,8 @@ import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { StandardHeader } from '@/components/layout/StandardHeader'
-import { TimelineGrid } from '@/components/my-day/TimelineGrid'
-import { SimpleAxisMenu } from '@/components/my-day/SimpleAxisMenu'
-import { ReflectionCard } from '@/components/my-day/ReflectionCard'
+import { MobileFriendlyMyDay } from '@/components/my-day/MobileFriendlyMyDay'
+import { ImprovedAxisMenu } from '@/components/my-day/ImprovedAxisMenu'
 import { AxisIcon } from '@/components/icons'
 import { useUser } from '@/lib/react-query/hooks'
 import { useDayData, useQuickAddBlock, AXES } from '@/lib/hooks/useDayData'
@@ -53,6 +52,11 @@ export default function MyDayPage() {
         note: `${selectedAxis.name} activity`
       })
     }
+  }
+
+  const handleEditBlock = (block: any) => {
+    // TODO: Implement block editing functionality
+    console.log('Edit block:', block)
   }
 
   const handleAxisMenuSelect = async (activity: string, duration: number) => {
@@ -133,229 +137,21 @@ export default function MyDayPage() {
           </button>
         </motion.div>
 
-        {/* 3-Column Layout: Timeline | Hexagon | Quick Actions + Reflection */}
-        <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr_320px] gap-6">
-          
-          {/* LEFT COLUMN - Timeline (5am-9pm, 15min blocks) */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <TimelineGrid
-              onBlockClick={handleBlockClick}
-              blocks={blocks}
-              selectedAxis={selectedAxis}
-            />
-          </motion.div>
-
-          {/* CENTER COLUMN - Dynamic Hexagon */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="glass rounded-xl p-6 flex flex-col items-center justify-center text-white"
-          >
-            <h2 className="text-xl font-semibold text-white mb-4 text-center">
-              Balance Overview
-            </h2>
-            
-            {/* Dynamic Hexagon using AXES data */}
-            <div className="relative">
-              <svg className="w-full h-auto max-w-[400px]" viewBox="0 0 400 400">
-                {/* Grid lines */}
-                {[0.2, 0.4, 0.6, 0.8, 1].map((level, idx) => {
-                  const angles = [0, 60, 120, 180, 240, 300]
-                  const radius = 130 * level
-                  const points = AXES.map((_, i) => {
-                    const angle = angles[i] * Math.PI / 180
-                    const x = 200 + radius * Math.cos(angle)
-                    const y = 200 + radius * Math.sin(angle)
-                    return `${x},${y}`
-                  }).join(' ')
-                  
-                  return (
-                    <polygon
-                      key={idx}
-                      points={points}
-                      fill="none"
-                      stroke="rgba(255, 255, 255, 0.1)"
-                      strokeWidth="1"
-                    />
-                  )
-                })}
-
-                {/* Axis lines */}
-                {AXES.map((_, idx) => {
-                  const angles = [0, 60, 120, 180, 240, 300]
-                  const angle = angles[idx] * Math.PI / 180
-                  const x2 = 200 + 130 * Math.cos(angle)
-                  const y2 = 200 + 130 * Math.sin(angle)
-                  
-                  return (
-                    <line
-                      key={idx}
-                      x1="200"
-                      y1="200"
-                      x2={x2}
-                      y2={y2}
-                      stroke="rgba(255, 255, 255, 0.15)"
-                      strokeWidth="1"
-                    />
-                  )
-                })}
-
-                {/* Data polygon */}
-                {(() => {
-                  const maxMinutes = 120
-                  const angles = [0, 60, 120, 180, 240, 300]
-                  
-                  const dataPoints = AXES.map((axis, i) => {
-                    const axisBlocks = blocks.filter(block => block.axis_id === axis.id)
-                    const minutes = axisBlocks.reduce((sum, block) => sum + block.minutes, 0)
-                    const value = Math.min(minutes / maxMinutes, 1)
-                    const angle = angles[i] * Math.PI / 180
-                    const x = 200 + 130 * value * Math.cos(angle)
-                    const y = 200 + 130 * value * Math.sin(angle)
-                    return { x, y, value, minutes, axis }
-                  })
-                  
-                  const points = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
-                  
-                  return (
-                    <>
-                      <polygon
-                        points={points}
-                        fill="rgba(156, 163, 175, 0.2)"
-                        stroke="rgba(156, 163, 175, 0.5)"
-                        strokeWidth="2"
-                      />
-                      {dataPoints.map((point, idx) => (
-                        <circle
-                          key={idx}
-                          cx={point.x}
-                          cy={point.y}
-                          r="4"
-                          fill={point.axis.color}
-                          stroke="white"
-                          strokeWidth="2"
-                        />
-                      ))}
-                    </>
-                  )
-                })()}
-                
-                {/* Axis labels */}
-                {AXES.map((axis, index) => {
-                  const angles = [0, 60, 120, 180, 240, 300]
-                  const angle = angles[index] * Math.PI / 180
-                  const x = 200 + 160 * Math.cos(angle)
-                  const y = 200 + 160 * Math.sin(angle)
-                  
-                  return (
-                    <g key={axis.id}>
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r="30"
-                        fill="rgba(255,255,255,0.05)"
-                        stroke={axis.color}
-                        strokeWidth="2"
-                        strokeOpacity="0.3"
-                        className="cursor-pointer hover:fill-white/10 transition-colors"
-                        onClick={() => {
-                          setSelectedAxis(axis)
-                          setShowAxisMenu(true)
-                        }}
-                      />
-                      <text
-                        x={x}
-                        y={y}
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fontSize="20"
-                        className="cursor-pointer"
-                        onClick={() => {
-                          setSelectedAxis(axis)
-                          setShowAxisMenu(true)
-                        }}
-                      >
-                        {axis.icon}
-                      </text>
-                      <text
-                        x={x}
-                        y={y + 45}
-                        textAnchor="middle"
-                        fontSize="12"
-                        fill="white"
-                        className="font-medium"
-                      >
-                        {axis.name}
-                      </text>
-                    </g>
-                  )
-                })}
-              </svg>
-            </div>
-
-            {/* Quick stats */}
-            <div className="grid grid-cols-3 gap-4 mt-6 w-full max-w-[300px]">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-white">{totalMinutes}m</div>
-                <div className="text-xs text-gray-400">Total Time</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{blocks.length}</div>
-                <div className="text-xs text-gray-400">Activities</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">{axesActive}/6</div>
-                <div className="text-xs text-gray-400">Axes Active</div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* RIGHT COLUMN - Quick Actions + Reflection */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-4"
-          >
-            {/* Quick Add Buttons */}
-            <div className="glass rounded-xl p-4">
-              <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
-                <Plus className="w-5 h-5" />
-                Quick Actions
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {AXES.map(axis => (
-                  <button
-                    key={axis.id}
-                    onClick={() => {
-                      setSelectedAxis(axis)
-                      setShowAxisMenu(true)
-                    }}
-                    className="p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-center"
-                    style={{ borderLeft: `3px solid ${axis.color}` }}
-                  >
-                    <div className="text-lg mb-1">{axis.icon}</div>
-                    <div className="text-xs text-gray-400">{axis.name}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Daily Reflection */}
-            <ReflectionCard
-              reflection={dayData?.reflection}
-              date={selectedDate}
-            />
-          </motion.div>
-        </div>
+        {/* Mobile-Friendly Vertical Layout */}
+        <MobileFriendlyMyDay
+          selectedDate={selectedDate}
+          onDateChange={handleDateChange}
+          blocks={blocks}
+          onAxisClick={(axis) => {
+            setSelectedAxis(axis)
+            setShowAxisMenu(true)
+          }}
+          onBlockClick={handleBlockClick}
+          onEditBlock={handleEditBlock}
+        />
       </main>
-      {/* Simple Axis Menu */}
-      <SimpleAxisMenu
+      {/* Improved Axis Menu */}
+      <ImprovedAxisMenu
         isOpen={showAxisMenu}
         onClose={handleAxisMenuClose}
         axis={selectedAxis}

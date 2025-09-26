@@ -1,7 +1,7 @@
 'use client'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { logger } from '@/lib/utils/logger';
 interface Props {
   children: ReactNode

@@ -2,7 +2,7 @@
 import { Hash, Users, X, Settings, Phone, Video, Search } from 'lucide-react'
 import React from 'react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { ChatRoomWithParticipants } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
 import { getCategoryName } from '@/lib/utils/i18n'

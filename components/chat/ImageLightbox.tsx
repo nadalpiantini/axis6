@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Download, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { ChatAttachment } from '@/lib/supabase/chat-storage'
 import { cn } from '@/lib/utils'
 import { handleError } from '@/lib/error/standardErrorHandler'

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Save } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/Button"
 import { DatePicker } from "@/components/ui/date-picker"
 import {
   Form,

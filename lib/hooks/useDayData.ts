@@ -29,15 +29,15 @@ export function useDayData(date: Date) {
   return useQuery<DayData>({
     queryKey: ['day-summary', dateISO],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('axis6_get_day_summary', { 
-        d: dateISO 
-      })
+      const response = await fetch(`/api/day-summary?date=${dateISO}`)
       
-      if (error) {
-        console.error('Error fetching day summary:', error)
-        throw error
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Error fetching day summary:', errorData)
+        throw new Error(errorData.error || 'Failed to fetch day summary')
       }
       
+      const data = await response.json()
       return data || {
         minutesByAxis: {},
         blocks: [],
@@ -65,14 +65,24 @@ export function useQuickAddBlock() {
       minutes: number
       note?: string 
     }) => {
-      const { data, error } = await supabase.rpc('axis6_quick_add_block', {
-        p_axis_id: axisId,
-        p_minutes: minutes,
-        p_note: note || null
+      const response = await fetch('/api/quick-add-block', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          axisId,
+          minutes,
+          note: note || null
+        })
       })
 
-      if (error) throw error
-      return data
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to add quick block')
+      }
+
+      return await response.json()
     },
     onSuccess: () => {
       // Invalidate day data to refetch

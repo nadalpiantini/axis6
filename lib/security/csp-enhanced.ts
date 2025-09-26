@@ -57,6 +57,8 @@ export function buildSecureCSP(nonce?: string, isDevelopment = false): string {
     "'sha256-ZzT3m4e7j8f/3m4e7j8f/3m4e7j8f/3m4e7j8f/3m4e7j8='",
     // Supabase auth
     "'sha256-YyQ9m4e7j8f/3m4e7j8f/3m4e7j8f/3m4e7j8f/3m4e7j9='",
+    // Additional required hash for inline scripts
+    "'sha256-CjG1SF7x5vU6t2FPiTodr3rfhCM7n03YT9lcVSo0pnA='",
   ]
   const directives: Record<string, string[]> = {
     'default-src': ["'self'"],

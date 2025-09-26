@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Paperclip, Image, Smile, Plus, X } from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/textarea'
 import { mentionsService, MentionUser } from '@/lib/services/mentions-service'
 import { ChatAttachment } from '@/lib/supabase/chat-storage'

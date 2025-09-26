@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MoreVertical, Users, Hash, Phone, Video, Settings } from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { animations } from '@/lib/design-system/theme'
 import {
