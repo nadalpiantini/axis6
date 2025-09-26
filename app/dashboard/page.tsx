@@ -38,7 +38,9 @@ import { ClickableSVG } from '@/components/ui/ClickableSVG'
 import { StandardHeader } from '@/components/layout/StandardHeader'
 import { useToast, ToastContainer } from '@/components/ui/Toast'
 
-// Memoized hexagon visualization
+// 🚀 REVOLUTIONARY HEXAGON - Rescued from HexagonClock component
+import HexagonClock from '@/components/hexagon-clock/HexagonClock'
+
 const HexagonVisualization = memo(({ 
   axes, 
   onToggleAxis,
@@ -54,189 +56,56 @@ const HexagonVisualization = memo(({
   onToggleAxis: (id: string | number) => void
   isToggling: boolean
 }) => {
-  const showAnimations = usePreferencesStore(state => state.showAnimations)
-  
-  // Memoize hexagon path calculation
-  const hexagonPath = useMemo(() => {
-    const points = []
-    const size = 160
-    const centerX = 200
-    const centerY = 200
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 3) * i - Math.PI / 2
-      const x = centerX + size * Math.cos(angle)
-      const y = centerY + size * Math.sin(angle)
-      points.push(`${x},${y}`)
+  // Transform axes data to HexagonClock data format
+  const completionData = useMemo(() => {
+    const data: any = {}
+    const categoryMap: { [key: string]: string } = {
+      'Physical': 'physical',
+      'Mental': 'mental', 
+      'Emotional': 'emotional',
+      'Social': 'social',
+      'Spiritual': 'spiritual',
+      'Material': 'material'
     }
-    return points.join(' ')
-  }, [])
-
-  // Memoize completion calculation
-  const { completedCount, completionPercentage } = useMemo(
-    () => {
-      const completed = axes.filter(a => a.completed).length
-      return {
-        completedCount: completed,
-        completionPercentage: (completed / axes.length) * 100
-      }
-    },
-    [axes]
-  )
-  
-  // Memoize axis positions
-  const axisPositions = useMemo(() => {
-    return axes.map((axis, index) => {
-      const angle = (Math.PI / 3) * index - Math.PI / 2
-      const x = 200 + 160 * Math.cos(angle)
-      const y = 200 + 160 * Math.sin(angle)
-      return { ...axis, x, y, angle }
+    
+    axes.forEach(axis => {
+      const key = categoryMap[axis.name] || axis.name.toLowerCase()
+      data[key] = axis.completed ? 100 : 0
     })
+    
+    return data
   }, [axes])
 
   return (
     <div className="flex justify-center mb-4 sm:mb-8" data-testid="hexagon-chart">
-      <svg 
-        className="w-full h-auto max-w-[280px] sm:max-w-[350px] md:max-w-[400px]" 
-        viewBox="0 0 400 400" 
-        role="img" 
-        aria-label={`Hexagonal progress: ${axes.filter(a => a.completed).length} of 6 axes completed`}
-        style={{ pointerEvents: 'auto' }}
-      >
-        {/* Background hexagon */}
-        <polygon
-          points={hexagonPath}
-          fill="none"
-          stroke="rgba(255,255,255,0.1)"
-          strokeWidth="2"
-        />
-        
-        {/* Enhanced progress hexagon that fills based on completion */}
-        <AnimatePresence>
-          {completionPercentage > 0 && (
-            <motion.polygon
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ 
-                scale: (completionPercentage || 0) / 100, 
-                opacity: completionPercentage === 100 ? 0.5 : 0.25
-              }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ 
-                duration: showAnimations ? 0.8 : 0,
-                ease: "easeInOut",
-                scale: { type: "spring", stiffness: 100, damping: 15 }
-              }}
-              points={hexagonPath}
-              fill="url(#gradient)"
-              stroke="url(#gradientStroke)"
-              strokeWidth="2"
-              style={{ 
-                transformOrigin: 'center',
-                filter: completionPercentage === 100 ? 'drop-shadow(0 0 20px rgba(155, 138, 230, 0.4))' : 'none'
-              }}
-            />
-          )}
-        </AnimatePresence>
-        
-        {/* Enhanced connecting lines between circles */}
-        {axisPositions.map((axis, index) => {
-          const nextAxis = axisPositions[(index + 1) % axisPositions.length]
-          const bothCompleted = axis.completed && nextAxis.completed
-          const oneCompleted = axis.completed || nextAxis.completed
-          
-          return (
-            <line
-              key={`line-${axis.id}-${nextAxis.id}`}
-              x1={axis.x}
-              y1={axis.y}
-              x2={nextAxis.x}
-              y2={nextAxis.y}
-              stroke={bothCompleted ? 'rgba(255,255,255,0.4)' : oneCompleted ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)'}
-              strokeWidth={bothCompleted ? "3" : oneCompleted ? "2" : "1"}
-              strokeDasharray={bothCompleted ? "none" : "4 4"}
-              className="transition-all duration-500 ease-out"
-              style={{
-                filter: bothCompleted ? 'drop-shadow(0 0 4px rgba(255,255,255,0.2))' : 'none'
-              }}
-            />
-          )
-        })}
-        
-        {/* Enhanced gradient definitions */}
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#9B8AE6" />
-            <stop offset="50%" stopColor="#6AA6FF" />
-            <stop offset="100%" stopColor="#FF8B7D" />
-          </linearGradient>
-          <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#9B8AE6" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#6AA6FF" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#FF8B7D" stopOpacity="0.8" />
-          </linearGradient>
-        </defs>
-        
-        {/* Axis points with expanded click targets */}
-        {axisPositions.map((axis) => (
-          <g 
-            key={axis.id}
-            style={{ cursor: isToggling ? 'wait' : 'pointer' }}
-            data-testid={`hexagon-${axis.name.toLowerCase()}`}
-          >
-            {/* Invisible larger click target */}
-            <circle
-              cx={axis.x}
-              cy={axis.y}
-              r="45"
-              fill="transparent"
-              style={{ pointerEvents: 'auto', cursor: isToggling ? 'wait' : 'pointer' }}
-              onClick={(e) => {
-                if (isToggling) return
-                e.preventDefault()
-                e.stopPropagation()
-                onToggleAxis(axis.id)
-              }}
-            />
-            {/* Visual circle (no click events - handled by invisible target above) */}
-            <circle
-              cx={axis.x}
-              cy={axis.y}
-              r="30"
-              fill={axis.completed ? axis.color : 'rgba(255,255,255,0.08)'}
-              fillOpacity={axis.completed ? 0.9 : 0.4}
-              stroke={axis.completed ? axis.color : 'rgba(255,255,255,0.15)'}
-              strokeWidth={axis.completed ? "4" : "2"}
-              className={`transition-all duration-500 ease-out ${
-                isToggling ? 'animate-pulse' : ''
-              }`}
-              style={{ 
-                pointerEvents: 'none',
-                filter: axis.completed ? `drop-shadow(0 0 12px ${axis.color}60)` : 'none',
-                transformOrigin: 'center'
-              }}
-            />
-            <foreignObject 
-              x={axis.x - 14} 
-              y={axis.y - 14} 
-              width="28" 
-              height="28"
-              style={{ pointerEvents: 'none' }}
-              className={`transition-all duration-500 ${axis.completed ? 'scale-110' : 'scale-100'}`}
-            >
-              <AxisIcon 
-                axis={axis.icon}
-                size={28}
-                color={axis.completed ? 'white' : '#9ca3af'}
-                custom
-              />
-            </foreignObject>
-          </g>
-        ))}
-      </svg>
+      <HexagonClock
+        data={completionData}
+        showResonance={true}
+        animate={true}
+        mobileOptimized={true}
+        hardwareAccelerated={true}
+        onCategoryClick={(category) => {
+          // Find matching axis and trigger toggle
+          const matchingAxis = axes.find(axis => {
+            const categoryMap: { [key: string]: string } = {
+              'physical': 'Physical',
+              'mental': 'Mental',
+              'emotional': 'Emotional', 
+              'social': 'Social',
+              'spiritual': 'Spiritual',
+              'material': 'Material'
+            }
+            return categoryMap[category.key] === axis.name
+          })
+          if (matchingAxis) {
+            onToggleAxis(matchingAxis.id)
+          }
+        }}
+      />
     </div>
   )
 })
 
-HexagonVisualization.displayName = 'HexagonVisualization'
 
 // Dropdown options for each axis category
 const getAxisOptions = (axisName: string) => {
