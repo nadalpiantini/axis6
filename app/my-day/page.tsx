@@ -280,36 +280,57 @@ export default function MyDayPage() {
                           </span>
                         </span>
                         
-                        <div className="flex-1 grid grid-cols-4 gap-0.5 h-7">
+                        <div className="flex-1 grid grid-cols-4 gap-0.5 h-8">
                           {[0, 15, 30, 45].map(min => {
                             const timeSlot = `${hourStr}:${min.toString().padStart(2, '0')}`
                             const activity = hourBlocks.find((b: any) => 
                               b.start_time === timeSlot
                             )
                             
+                            // Calculate duration visual indicator
+                            const duration = activity?.duration_minutes || 15
+                            const heightPercent = Math.min((duration / 60) * 100, 100)
+                            
                             return (
                               <div
                                 key={min}
                                 className={`
-                                  border border-white/10 rounded-sm transition-all
-                                  ${activity ? 'cursor-default' : 'cursor-pointer hover:bg-white/10'}
+                                  relative border border-white/10 rounded-sm transition-all min-h-[32px] flex items-center
+                                  ${activity ? 'cursor-pointer hover:shadow-lg' : 'cursor-pointer hover:bg-white/10'}
+                                  ${activity ? 'shadow-sm' : ''}
                                 `}
                                 style={activity ? {
-                                  backgroundColor: `${activity.category_color}30`,
-                                  borderLeftWidth: '2px',
-                                  borderLeftColor: activity.category_color
-                                } : {}}
-                                onClick={() => !activity && handleAddTimeBlock()}
+                                  backgroundColor: `${activity.category_color}40`,
+                                  borderLeftWidth: '3px',
+                                  borderLeftColor: activity.category_color,
+                                  height: `${32 + (heightPercent / 100) * 16}px`
+                                } : { height: '32px' }}
+                                onClick={() => activity ? 
+                                  handleAxisClick(categories.find(c => c.id === activity.category_id), { 
+                                    target: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 0, height: 0 }) } 
+                                  } as any) : 
+                                  handleAddTimeBlock()
+                                }
                                 title={activity ? 
-                                  `${activity.category_name}: ${activity.activity_name}` : 
+                                  `${activity.category_name}: ${activity.activity_name} (${duration}min)` : 
                                   'Click to schedule'
                                 }
                               >
                                 {activity && (
-                                  <div className="px-1 truncate">
-                                    <span className="text-[9px] text-white/80">
-                                      {activity.activity_name.substring(0, 6)}
-                                    </span>
+                                  <div className="absolute inset-0 p-0.5 flex flex-col justify-center">
+                                    <div className="text-[8px] font-medium text-white/90 truncate leading-tight">
+                                      {activity.activity_name.substring(0, 8)}
+                                    </div>
+                                    {duration > 15 && (
+                                      <div className="text-[7px] text-white/70">
+                                        {duration}m
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {!activity && (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <div className="w-1 h-1 bg-white/20 rounded-full"></div>
                                   </div>
                                 )}
                               </div>
@@ -426,18 +447,20 @@ export default function MyDayPage() {
                     )
                   })()}
                   
-                  {/* Data polygon - líneas de progreso dinámicas */}
+                  {/* Data polygon - líneas de progreso dinámicas usando timeDistribution */}
                   {(() => {
-                    // Calcular minutos por categoría
+                    // Usar datos optimizados de timeDistribution en lugar de cálculo manual
                     const categoryMinutes: Record<string, number> = {}
-                    categories.forEach(cat => {
-                      const catBlocks = myDayData?.filter((b: any) => 
-                        b.category_id === cat.id
-                      ) || []
-                      categoryMinutes[cat.slug] = catBlocks.reduce((sum: number, b: any) => 
-                        sum + (b.actual_duration || b.duration_minutes || 0), 0
-                      )
-                    })
+                    
+                    if (timeDistribution && Array.isArray(timeDistribution)) {
+                      timeDistribution.forEach((dist: any) => {
+                        const category = categories.find(c => c.id === dist.category_id)
+                        if (category) {
+                          // Usar actual_minutes del timeDistribution optimizado
+                          categoryMinutes[category.slug] = dist.actual_minutes || 0
+                        }
+                      })
+                    }
                     
                     // Generar puntos del polígono de progreso
                     const maxMinutes = 120 // Máximo para visualización
@@ -450,7 +473,7 @@ export default function MyDayPage() {
                       const angle = angles[i] * Math.PI / 180
                       const x = 200 + 130 * value * Math.cos(angle)
                       const y = 200 + 130 * value * Math.sin(angle)
-                      return { x, y, value, minutes }
+                      return { x, y, value, minutes, category: cat }
                     })
                     
                     const points = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
@@ -465,18 +488,38 @@ export default function MyDayPage() {
                           stroke="url(#hexGradientStroke)"
                           strokeWidth="2"
                         />
-                        {/* Data points */}
-                        {dataPoints.map((point, idx) => (
-                          <circle
-                            key={idx}
-                            cx={point.x}
-                            cy={point.y}
-                            r="4"
-                            fill={categories[idx].color}
-                            stroke="white"
-                            strokeWidth="2"
-                          />
-                        ))}
+                        {/* Data points with improved visualization */}
+                        {dataPoints.map((point, idx) => {
+                          const category = categories[idx]
+                          if (!category) return null
+                          
+                          return (
+                            <g key={idx}>
+                              <circle
+                                cx={point.x}
+                                cy={point.y}
+                                r="5"
+                                fill={category.color || '#9B8AE6'}
+                                stroke="white"
+                                strokeWidth="2"
+                                opacity={point.value > 0 ? 1 : 0.3}
+                              />
+                              {/* Show minutes as text when > 0 */}
+                              {point.minutes > 0 && (
+                                <text
+                                  x={point.x}
+                                  y={point.y - 12}
+                                  textAnchor="middle"
+                                  fontSize="10"
+                                  fill="white"
+                                  className="font-medium"
+                                >
+                                  {point.minutes}m
+                                </text>
+                              )}
+                            </g>
+                          )
+                        })}
                       </>
                     )
                   })()}
@@ -515,30 +558,44 @@ export default function MyDayPage() {
                 </svg>
               </div>
               
-              {/* Mini stats de balance */}
+              {/* Mini stats de balance usando timeDistribution */}
               <div className="grid grid-cols-3 gap-2 mt-4 w-full max-w-[300px]">
                 {categories.slice(0, 6).map(cat => {
-                  const catMinutes = myDayData?.filter((b: any) => 
-                    b.category_id === cat.id
-                  ).reduce((sum: number, b: any) => 
-                    sum + (b.actual_duration || b.duration_minutes || 0), 0
-                  ) || 0
+                  // Usar timeDistribution para datos optimizados
+                  const distData = timeDistribution?.find((d: any) => d.category_id === cat.id)
+                  const actualMinutes = distData?.actual_minutes || 0
+                  const plannedMinutes = distData?.planned_minutes || 0
+                  const percentage = distData?.percentage || 0
                   
                   return (
                     <div 
                       key={cat.id}
-                      className="text-center p-2 rounded-lg bg-white/5"
+                      className="text-center p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                      onClick={(e) => handleAxisClick(cat, e)}
+                      title={`${cat.name}: ${actualMinutes}/${plannedMinutes} min (${percentage.toFixed(0)}%)`}
                     >
                       <div 
                         className="w-2 h-2 rounded-full mx-auto mb-1"
-                        style={{ backgroundColor: cat.color }}
+                        style={{ backgroundColor: cat.color || '#9B8AE6' }}
                       />
                       <div className="text-xs text-gray-400">
                         {getLocalizedText(cat.name, 'en', cat.slug).substring(0, 4)}
                       </div>
                       <div className="text-sm font-semibold text-white">
-                        {catMinutes}m
+                        {actualMinutes}m
                       </div>
+                      {/* Progress bar */}
+                      {plannedMinutes > 0 && (
+                        <div className="w-full bg-white/20 rounded-full h-1 mt-1">
+                          <div 
+                            className="h-1 rounded-full transition-all"
+                            style={{ 
+                              backgroundColor: cat.color || '#9B8AE6',
+                              width: `${Math.min((actualMinutes / plannedMinutes) * 100, 100)}%`
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -552,37 +609,57 @@ export default function MyDayPage() {
               transition={{ delay: 0.6 }}
               className="space-y-4"
             >
-              {/* Daily Stats */}
+              {/* Daily Stats using timeDistribution */}
               <div className="glass rounded-xl p-4">
                 <h3 className="text-sm font-semibold mb-3 text-white">Today's Progress</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Active Time</span>
-                    <span className="text-lg font-bold text-green-400">
-                      {Math.floor(totalActualMinutes / 60)}h {totalActualMinutes % 60}m
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Planned</span>
-                    <span className="text-sm text-white">
-                      {Math.floor(totalPlannedMinutes / 60)}h {totalPlannedMinutes % 60}m
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Efficiency</span>
-                    <span className="text-sm font-semibold text-purple-400">
-                      {totalPlannedMinutes > 0 
-                        ? Math.round((totalActualMinutes / totalPlannedMinutes) * 100)
-                        : 0}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Axes Active</span>
-                    <span className="text-sm text-white">
-                      {new Set(myDayData?.map((b: any) => b.category_id)).size}/6
-                    </span>
-                  </div>
-                </div>
+                {(() => {
+                  // Calculate stats from timeDistribution
+                  const totalActual = timeDistribution?.reduce((sum: number, d: any) => sum + (d.actual_minutes || 0), 0) || 0
+                  const totalPlanned = timeDistribution?.reduce((sum: number, d: any) => sum + (d.planned_minutes || 0), 0) || 0
+                  const activeAxes = timeDistribution?.filter((d: any) => (d.actual_minutes || 0) > 0).length || 0
+                  const efficiency = totalPlanned > 0 ? Math.round((totalActual / totalPlanned) * 100) : 0
+                  const topCategory = timeDistribution?.reduce((max: any, d: any) => 
+                    (d.actual_minutes || 0) > (max?.actual_minutes || 0) ? d : max, null
+                  )
+                  const topCategoryName = topCategory ? categories.find(c => c.id === topCategory.category_id)?.name : null
+                  
+                  return (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">Active Time</span>
+                        <span className="text-lg font-bold text-green-400">
+                          {Math.floor(totalActual / 60)}h {totalActual % 60}m
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">Planned</span>
+                        <span className="text-sm text-white">
+                          {Math.floor(totalPlanned / 60)}h {totalPlanned % 60}m
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">Efficiency</span>
+                        <span className={`text-sm font-semibold ${efficiency >= 80 ? 'text-green-400' : efficiency >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
+                          {efficiency}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">Axes Active</span>
+                        <span className="text-sm text-white">
+                          {activeAxes}/6
+                        </span>
+                      </div>
+                      {topCategoryName && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-400">Top Focus</span>
+                          <span className="text-sm text-blue-400">
+                            {getLocalizedText(topCategoryName, 'en', topCategory.category_id)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
 
               {/* Quick Actions */}
